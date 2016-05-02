@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service.camera;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -22,16 +22,17 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import timber.log.Timber;
 
-@TargetApi(Build.VERSION_CODES.M) public final class MarshmallowCamera extends CameraCommon {
+@TargetApi(Build.VERSION_CODES.M) final class MarshmallowCamera extends CameraCommon {
 
-  private static final String TAG = MarshmallowCamera.class.getSimpleName();
   private final TorchCallback torchCallback;
   private final CameraManager cameraManager;
 
-  public MarshmallowCamera(final @NonNull Context context) {
-    super(context);
+  public MarshmallowCamera(final @NonNull Context context,
+      final @NonNull VolumeServicePresenter presenter) {
+    super(context, presenter);
     cameraManager = LollipopCamera.setupCameraManager(context);
     this.torchCallback = new TorchCallback();
     setupCamera();
@@ -61,10 +62,12 @@ import timber.log.Timber;
       setTorch(false);
     }
 
+    Timber.d("Unregister torch callback");
     cameraManager.unregisterTorchCallback(torchCallback);
   }
 
   private void setupCamera() {
+    Timber.d("Register torch callback");
     cameraManager.registerTorchCallback(torchCallback, null);
   }
 

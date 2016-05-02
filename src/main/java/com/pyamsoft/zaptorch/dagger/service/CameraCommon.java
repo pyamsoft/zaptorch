@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service.camera;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
+import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
 
 abstract class CameraCommon implements CameraInterface {
 
+  @NonNull private final VolumeServicePresenter presenter;
+
   private final Context appContext;
   private final Handler handler;
   private final Intent errorExplain;
-  private VolumeServicePresenter presenter;
 
-  CameraCommon(final @NonNull Context context) {
+  CameraCommon(final @NonNull Context context, final @NonNull VolumeServicePresenter presenter) {
     this.appContext = context.getApplicationContext();
+    this.presenter = presenter;
     handler = new Handler(Looper.getMainLooper());
     errorExplain = new Intent(appContext, CameraErrorExplanation.class);
     errorExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   }
 
   void startErrorExplanationActivity() {
-    if (presenter != null && presenter.shouldShowErrorDialog()) {
+    if (presenter.shouldShowErrorDialog()) {
       handler.post(() -> appContext.startActivity(errorExplain));
     }
   }
 
   Context getAppContext() {
     return appContext;
-  }
-
-  public void setPresenter(final @Nullable VolumeServicePresenter presenter) {
-    this.presenter = presenter;
   }
 }

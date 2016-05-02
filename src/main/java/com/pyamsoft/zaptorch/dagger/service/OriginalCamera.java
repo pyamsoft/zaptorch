@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service.camera;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -25,15 +25,15 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import timber.log.Timber;
 
-@SuppressWarnings("deprecation") public final class OriginalCamera extends CameraCommon
+@SuppressWarnings("deprecation") final class OriginalCamera extends CameraCommon
     implements SurfaceHolder.Callback {
 
-  private static final String TAG = OriginalCamera.class.getSimpleName();
   private final WindowManager windowManager;
   private final SurfaceView surfaceView;
   private final WindowManager.LayoutParams params;
@@ -42,8 +42,8 @@ import timber.log.Timber;
   private boolean opened;
   private CameraAsyncTask cameraAsyncTask;
 
-  public OriginalCamera(final @NonNull Context context) {
-    super(context);
+  public OriginalCamera(final @NonNull Context context, final @NonNull VolumeServicePresenter presenter) {
+    super(context, presenter);
     opened = false;
 
     surfaceView = new SurfaceView(getAppContext());

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service.camera;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -36,6 +36,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
@@ -46,8 +47,9 @@ import timber.log.Timber;
   private final String flashCameraId;
   private final CameraCallback cameraCallback;
 
-  public LollipopCamera(final @NonNull Context context) {
-    super(context);
+  public LollipopCamera(final @NonNull Context context,
+      final @NonNull VolumeServicePresenter presenter) {
+    super(context, presenter);
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();
     this.cameraCallback = new CameraCallback(cameraManager);
