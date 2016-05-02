@@ -17,7 +17,6 @@
 package com.pyamsoft.zaptorch.dagger.frag;
 
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterImpl;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;

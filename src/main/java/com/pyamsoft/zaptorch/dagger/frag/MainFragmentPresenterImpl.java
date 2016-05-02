@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.PresenterImplBase;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
+import com.pyamsoft.zaptorch.app.frag.MainFragmentView;
 import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
 import javax.inject.Inject;
 
-public class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView>
+final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView>
     implements MainFragmentPresenter {
 
   @NonNull private final VolumeServiceInteractor serviceInteractor;

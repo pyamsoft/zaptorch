@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.app.frag;
 
-interface MainFragmentView {
+public interface MainFragmentView {
 
   void setDisplayErrors();
 

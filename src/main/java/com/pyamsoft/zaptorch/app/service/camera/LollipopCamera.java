@@ -42,7 +42,6 @@ import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) public final class LollipopCamera extends CameraCommon {
 
-  private static final String TAG = LollipopCamera.class.getSimpleName();
   private final CameraManager cameraManager;
   private final String flashCameraId;
   private final CameraCallback cameraCallback;

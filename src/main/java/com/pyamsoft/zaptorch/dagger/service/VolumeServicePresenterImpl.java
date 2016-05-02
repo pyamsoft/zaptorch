@@ -14,38 +14,34 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.service;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImplBase;
+import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
+import com.pyamsoft.zaptorch.app.service.VolumeServiceProvider;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
-import com.pyamsoft.zaptorch.app.service.camera.LollipopCamera;
-import com.pyamsoft.zaptorch.app.service.camera.MarshmallowCamera;
-import com.pyamsoft.zaptorch.app.service.camera.OriginalCamera;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
+final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
     implements VolumeServicePresenter {
 
-  private static final String TAG = VolumeServicePresenterImpl.class.getSimpleName();
   @NonNull private final Handler handler;
+  @NonNull private final CameraInterface cameraInterface;
   @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private final Context appContext;
 
-  private CameraInterface cameraInterface;
   private boolean pressed;
   private boolean running;
 
-  @Inject public VolumeServicePresenterImpl(@NonNull final Context context,
-      @NonNull final VolumeServiceInteractor interactor) {
-    this.appContext = context.getApplicationContext();
-    this.interactor = interactor;
+  @Inject public VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor,
+      @NonNull final CameraInterface cameraInterface) {
     this.handler = new Handler();
+    this.interactor = interactor;
+    this.cameraInterface = cameraInterface;
     this.pressed = false;
   }
 
@@ -87,29 +83,15 @@ public final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeSe
     pressed = false;
     running = true;
 
-    if (cameraInterface != null) {
-      cameraInterface.release();
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      cameraInterface = new MarshmallowCamera(appContext);
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      cameraInterface = new LollipopCamera(appContext);
-    } else {
-      cameraInterface = new OriginalCamera(appContext);
-    }
-
+    cameraInterface.release();
     cameraInterface.setPresenter(this);
   }
 
   @Override public void unbind() {
     super.unbind();
     Timber.d("Unbind");
-    if (cameraInterface != null) {
-      cameraInterface.release();
-      cameraInterface.setPresenter(null);
-      cameraInterface = null;
-    }
-
+    cameraInterface.release();
+    cameraInterface.setPresenter(null);
     handler.removeCallbacksAndMessages(null);
     pressed = false;
     running = false;

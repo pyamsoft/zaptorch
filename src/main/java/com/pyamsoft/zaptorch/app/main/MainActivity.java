@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -25,9 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
 import com.pyamsoft.pydroid.base.ActivityBase;
-import com.pyamsoft.pydroid.util.IMMLeakUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.app.AccessibilityRequestFragment;
@@ -35,32 +32,19 @@ import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
 import javax.inject.Inject;
-import timber.log.Timber;
 
-public class MainActivity extends ActivityBase
-    implements BillingProcessor.IBillingHandler, MainActivityView {
+public class MainActivity extends ActivityBase implements MainActivityView {
 
-  private static final String TAG = MainActivity.class.getSimpleName();
   @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.toolbar) Toolbar toolbar;
   @Inject MainActivityPresenter mainActivityPresenter;
-  private BillingProcessor billingProcessor;
   private Unbinder unbinder;
   private boolean serviceEnabled = false;
-
-  public MainActivity() {
-  }
 
   @Override protected String getPlayStoreAppPackage() {
     return getPackageName();
   }
 
-  @Override public BillingProcessor getBillingProcessor() {
-    return billingProcessor;
-  }
-
   @Override protected void onCreate(Bundle savedInstanceState) {
-    IMMLeakUtil.fixFocusedViewLeak(getApplication());
-    setupFakeFullscreenWindow();
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     unbinder = ButterKnife.bind(this);
@@ -73,8 +57,6 @@ public class MainActivity extends ActivityBase
     mainActivityPresenter.create();
     mainActivityPresenter.bind(this);
 
-    billingProcessor = new BillingProcessor(this, getPackageName(), this);
-
     setupAppBar();
     if (VolumeMonitorService.isRunning()) {
       showMainFragment();
@@ -85,25 +67,11 @@ public class MainActivity extends ActivityBase
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (billingProcessor != null) {
-      billingProcessor.release();
-    }
-
     mainActivityPresenter.unbind();
     mainActivityPresenter.destroy();
 
     if (unbinder != null) {
       unbinder.unbind();
-    }
-  }
-
-  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (billingProcessor != null) {
-      if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
-        super.onActivityResult(requestCode, resultCode, data);
-      }
-    } else {
-      super.onActivityResult(requestCode, resultCode, data);
     }
   }
 
@@ -159,27 +127,5 @@ public class MainActivity extends ActivityBase
   private void setupAppBar() {
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
-  }
-
-  @Override public void onProductPurchased(String productId, TransactionDetails details) {
-    Timber.d("onProductPurchased");
-    Timber.d("Details: %s", details);
-    if (billingProcessor != null) {
-      Timber.d("Consume item: %s", productId);
-      billingProcessor.consumePurchase(productId);
-    }
-  }
-
-  @Override public void onPurchaseHistoryRestored() {
-    Timber.d("onPurchaseHistoryRestored");
-  }
-
-  @Override public void onBillingError(int errorCode, Throwable error) {
-    Timber.e("onBillingError");
-    Timber.e(error, "CODE: %d", errorCode);
-  }
-
-  @Override public void onBillingInitialized() {
-    Timber.d("onBillingInitialized");
   }
 }

@@ -16,10 +16,14 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import android.content.Context;
+import android.os.Build;
 import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
-import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractorImpl;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenterImpl;
+import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
+import com.pyamsoft.zaptorch.app.service.camera.LollipopCamera;
+import com.pyamsoft.zaptorch.app.service.camera.MarshmallowCamera;
+import com.pyamsoft.zaptorch.app.service.camera.OriginalCamera;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
@@ -34,5 +38,19 @@ import dagger.Provides;
   @Provides @ActivityScope VolumeServiceInteractor provideVolumeServiceInteractor(
       final VolumeServiceInteractorImpl interactor) {
     return interactor;
+  }
+
+  @Provides @ActivityScope CameraInterface provideCameraInterface(final Context context) {
+    final Context appContext = context.getApplicationContext();
+    CameraInterface cameraInterface;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      cameraInterface = new MarshmallowCamera(appContext);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      cameraInterface = new LollipopCamera(appContext);
+    } else {
+      cameraInterface = new OriginalCamera(appContext);
+    }
+
+    return cameraInterface;
   }
 }

@@ -16,5 +16,5 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
-interface VolumeServiceProvider {
+public interface VolumeServiceProvider {
 }

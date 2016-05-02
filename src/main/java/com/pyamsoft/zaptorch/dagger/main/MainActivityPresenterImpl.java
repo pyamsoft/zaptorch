@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImplBase;
+import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
+import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
+import com.pyamsoft.zaptorch.app.main.MainActivityView;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView>
+final class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView>
     implements MainActivityPresenter {
 
   private static final String TAG = MainActivityPresenterImpl.class.getSimpleName();
