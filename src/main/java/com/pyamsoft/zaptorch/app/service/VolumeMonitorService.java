@@ -27,7 +27,6 @@ import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService implements VolumeServiceProvider {
 
-  private static final String TAG = VolumeMonitorService.class.getSimpleName();
   private static VolumeMonitorService instance;
 
   @Inject VolumeServicePresenter servicePresenter;
