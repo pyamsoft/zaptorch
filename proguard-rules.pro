@@ -16,18 +16,24 @@
 #   public *;
 #}
 
+# We are open source, we don't need obfuscation.
+# We will still use optimizations though
+-dontobfuscate
+
+# Don't obfuscate causes the gradle build to fail after the optimization step
+# The addition of !code/allocation/variable is needed to prevent this
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*,!code/allocation/variable
+
+# https://code.google.com/p/android/issues/detail?id=194513
+# ProGuard include the legacy HTTP jar even if it is not used.
+# This creates an issue where there are 7 duplicate classes and
+# causes the build to fail.
+# Because the duplicate classes are Note and not Warning level,
+# we must ignore the Note classes here.
+-dontnote android.net.http.*
+-dontnote org.apache.commons.codec.**
+-dontnote org.apache.http.**
+
 # RetroLambda
 -dontwarn java.lang.invoke.*
 
-# Butterknife
--keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
--keep class **$$ViewBinder { *; }
-
--keepclasseswithmembernames class * {
-    @butterknife.* <fields>;
-}
-
--keepclasseswithmembernames class * {
-    @butterknife.* <methods>;
-}
