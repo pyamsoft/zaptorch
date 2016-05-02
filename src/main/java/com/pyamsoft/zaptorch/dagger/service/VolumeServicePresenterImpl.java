@@ -16,6 +16,8 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
@@ -31,18 +33,24 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     implements VolumeServicePresenter {
 
   @NonNull private final Handler handler;
-  @NonNull private final CameraInterface cameraInterface;
   @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private final CameraInterface cameraInterface;
 
   private boolean pressed;
   private boolean running;
 
-  @Inject public VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor,
-      @NonNull final CameraInterface cameraInterface) {
+  @Inject public VolumeServicePresenterImpl(final @NonNull Context context,
+      @NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
-    this.cameraInterface = cameraInterface;
     this.pressed = false;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      cameraInterface = new MarshmallowCamera(context.getApplicationContext(), this);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      cameraInterface = new LollipopCamera(context.getApplicationContext(), this);
+    } else {
+      cameraInterface = new OriginalCamera(context.getApplicationContext(), this);
+    }
   }
 
   private void handleKeyEvent() {
@@ -82,16 +90,12 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     super.bind(view);
     pressed = false;
     running = true;
-
-    cameraInterface.release();
-    cameraInterface.setPresenter(this);
   }
 
   @Override public void unbind() {
     super.unbind();
     Timber.d("Unbind");
     cameraInterface.release();
-    cameraInterface.setPresenter(null);
     handler.removeCallbacksAndMessages(null);
     pressed = false;
     running = false;

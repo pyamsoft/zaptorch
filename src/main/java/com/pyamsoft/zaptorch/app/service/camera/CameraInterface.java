@@ -16,14 +16,9 @@
 
 package com.pyamsoft.zaptorch.app.service.camera;
 
-import android.support.annotation.Nullable;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
-
 public interface CameraInterface {
 
   void toggleTorch();
 
   void release();
-
-  void setPresenter(@Nullable VolumeServicePresenter presenter);
 }
