@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import javax.inject.Inject;
 
 public class MainActivityInteractorImpl implements MainActivityInteractor {

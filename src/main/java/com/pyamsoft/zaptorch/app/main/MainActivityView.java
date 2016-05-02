@@ -16,5 +16,5 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-interface MainActivityView {
+public interface MainActivityView {
 }

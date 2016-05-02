@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
 import javax.inject.Inject;
 
-public final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
+final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
   @NonNull private final ZapTorchPreferences preferences;
 
