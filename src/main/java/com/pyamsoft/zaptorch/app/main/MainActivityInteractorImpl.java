@@ -16,24 +16,23 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import javax.inject.Inject;
 
-interface MainFragmentView {
+public class MainActivityInteractorImpl implements MainActivityInteractor {
 
-  @NonNull Context getContext();
+  @NonNull private final ZapTorchPreferences preferences;
 
-  void setDisplayErrors();
+  @Inject public MainActivityInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+    this.preferences = preferences;
+  }
 
-  void unsetDisplayErrors();
+  @Override public boolean shouldHandleKeys() {
+    return preferences.shouldHandleKeys();
+  }
 
-  void setDelayShort();
-
-  void setDelayDefault();
-
-  void setDelayLong();
-
-  void setHandleKeys();
-
-  void unsetHandleKeys();
+  @Override public void setHandleKeys(boolean b) {
+    preferences.setHandleKeys(b);
+  }
 }

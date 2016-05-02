@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.app.frag;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
+interface MainFragmentView {
 
-public interface MainActivityInteractor {
+  void setDisplayErrors();
 
-  boolean shouldHandleKeys(@NonNull Context context);
+  void unsetDisplayErrors();
 
-  void setHandleKeys(@NonNull Context context, boolean b);
+  void setDelayShort();
+
+  void setDelayDefault();
+
+  void setDelayLong();
+
+  void setHandleKeys();
+
+  void unsetHandleKeys();
 }

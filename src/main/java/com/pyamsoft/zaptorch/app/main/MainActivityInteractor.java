@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.app.main;
 
-interface VolumeServiceProvider {
+public interface MainActivityInteractor {
+
+  boolean shouldHandleKeys();
+
+  void setHandleKeys(boolean b);
 }

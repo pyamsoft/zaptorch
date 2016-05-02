@@ -16,51 +16,51 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImplBase;
-import com.pyamsoft.pydroid.util.LogUtil;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.camera.LollipopCamera;
 import com.pyamsoft.zaptorch.app.service.camera.MarshmallowCamera;
 import com.pyamsoft.zaptorch.app.service.camera.OriginalCamera;
+import javax.inject.Inject;
+import timber.log.Timber;
 
-final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
+public final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
     implements VolumeServicePresenter {
 
   private static final String TAG = VolumeServicePresenterImpl.class.getSimpleName();
   @NonNull private final Handler handler;
   @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private final Context appContext;
 
   private CameraInterface cameraInterface;
   private boolean pressed;
   private boolean running;
 
-  public VolumeServicePresenterImpl() {
-    this.interactor = new VolumeServiceInteractorImpl();
+  @Inject public VolumeServicePresenterImpl(@NonNull final Context context,
+      @NonNull final VolumeServiceInteractor interactor) {
+    this.appContext = context.getApplicationContext();
+    this.interactor = interactor;
     this.handler = new Handler();
     this.pressed = false;
   }
 
   private void handleKeyEvent() {
-    final VolumeServiceProvider provider = get();
-    if (provider == null) {
-      throw new NullPointerException("VolumeServiceProvider is NULL");
-    }
-
     handler.removeCallbacksAndMessages(null);
     if (pressed) {
-      LogUtil.d(TAG, "Key has been double pressed");
+      Timber.d("Key has been double pressed");
       pressed = false;
       cameraInterface.toggleTorch();
     } else {
       pressed = true;
-      final long delay = interactor.getButtonDelayTime(provider.getContext());
-      LogUtil.d(TAG, "Post back to false after delay: ", delay);
+      final long delay = interactor.getButtonDelayTime();
+      Timber.d("Post back to false after delay: %d", delay);
       handler.postDelayed(() -> {
-        LogUtil.d(TAG, "Set pressed back to false");
+        Timber.d("Set pressed back to false");
         pressed = false;
       }, delay);
     }
@@ -70,7 +70,7 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     if (action == KeyEvent.ACTION_UP) {
       switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
-          LogUtil.d(TAG, "onKeyEvent: " + KeyEvent.keyCodeToString(keyCode));
+          Timber.d("onKeyEvent: %s", KeyEvent.keyCodeToString(keyCode));
           handleKeyEvent();
           break;
         default:
@@ -79,8 +79,7 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
   }
 
   @Override public boolean shouldShowErrorDialog() {
-    final VolumeServiceProvider provider = get();
-    return provider != null && interactor.shouldShowErrorDialog(provider.getContext());
+    return interactor.shouldShowErrorDialog();
   }
 
   @Override public void bind(@NonNull VolumeServiceProvider view) {
@@ -92,11 +91,11 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
       cameraInterface.release();
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      cameraInterface = new MarshmallowCamera(view.getContext());
+      cameraInterface = new MarshmallowCamera(appContext);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      cameraInterface = new LollipopCamera(view.getContext());
+      cameraInterface = new LollipopCamera(appContext);
     } else {
-      cameraInterface = new OriginalCamera(view.getContext());
+      cameraInterface = new OriginalCamera(appContext);
     }
 
     cameraInterface.setPresenter(this);
@@ -104,7 +103,7 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
 
   @Override public void unbind() {
     super.unbind();
-    LogUtil.d(TAG, "Unbind");
+    Timber.d("Unbind");
     if (cameraInterface != null) {
       cameraInterface.release();
       cameraInterface.setPresenter(null);

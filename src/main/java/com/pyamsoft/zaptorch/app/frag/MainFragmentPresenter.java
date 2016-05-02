@@ -14,7 +14,29 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.app.frag;
 
-interface VolumeServiceProvider {
+import com.pyamsoft.pydroid.base.PresenterBase;
+
+public interface MainFragmentPresenter extends PresenterBase<MainFragmentView> {
+
+  void setDisplayErrorsFromPreference();
+
+  void setDisplayErrors();
+
+  void unsetDisplayErrors();
+
+  void setDelayFromPreference();
+
+  void setDelayShort();
+
+  void setDelayDefault();
+
+  void setDelayLong();
+
+  void setHandleKeysFromPreference();
+
+  void setHandleKeys();
+
+  void unsetHandleKeys();
 }

@@ -14,33 +14,30 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import javax.inject.Inject;
+import dagger.Module;
+import dagger.Provides;
+import javax.inject.Singleton;
 
-public final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
+@Module public class ZapTorchModule {
 
+  @NonNull private final Context appContext;
   @NonNull private final ZapTorchPreferences preferences;
 
-  @Inject public VolumeServiceInteractorImpl(@NonNull ZapTorchPreferences preferences) {
-    this.preferences = preferences;
+  public ZapTorchModule(final @NonNull Context context) {
+    appContext = context.getApplicationContext();
+    preferences = new ZapTorchPreferences(context);
   }
 
-  @Override public long getButtonDelayTime() {
-    return preferences.getButtonDelayTime();
+  @Singleton @Provides Context provideContext() {
+    return appContext;
   }
 
-  @Override public void setButtonDelayTime(long time) {
-    preferences.setButtonDelayTime(time);
-  }
-
-  @Override public boolean shouldShowErrorDialog() {
-    return preferences.shouldShowErrorDialog();
-  }
-
-  @Override public void setShowErrorDialog(boolean b) {
-    preferences.setShowErrorDialog(b);
+  @Singleton @Provides ZapTorchPreferences providePreferences() {
+    return preferences;
   }
 }

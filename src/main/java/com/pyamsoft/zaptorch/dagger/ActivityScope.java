@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger;
 
-interface VolumeServiceProvider {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.inject.Scope;
+
+@Scope @Retention(RetentionPolicy.RUNTIME) public @interface ActivityScope {
 }

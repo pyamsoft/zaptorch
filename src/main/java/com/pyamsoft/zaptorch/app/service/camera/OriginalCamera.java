@@ -25,10 +25,10 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import com.pyamsoft.pydroid.util.LogUtil;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
+import timber.log.Timber;
 
 @SuppressWarnings("deprecation") public final class OriginalCamera extends CameraCommon
     implements SurfaceHolder.Callback {
@@ -61,21 +61,21 @@ import java.util.List;
         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
   }
 
-  final void setOpened(boolean opened) {
-    LogUtil.d(TAG, "Set opened: ", opened);
+  private void setOpened(boolean opened) {
+    Timber.d("Set opened: %s", opened);
     this.opened = opened;
   }
 
-  final void setCamera(Camera camera) {
-    LogUtil.d(TAG, "Set camera field to: ", camera);
+  private void setCamera(Camera camera) {
+    Timber.d("Set camera field to: %s", camera);
     this.camera = camera;
   }
 
-  final void addSurface() {
+  private void addSurface() {
     windowManager.addView(surfaceView, params);
   }
 
-  final SurfaceHolder getInitializedHolder() {
+  private SurfaceHolder getInitializedHolder() {
     final SurfaceHolder holder = surfaceView.getHolder();
     holder.addCallback(this);
     return holder;
@@ -83,10 +83,10 @@ import java.util.List;
 
   @Override public void toggleTorch() {
     if (opened) {
-      LogUtil.d(TAG, "Camera is open, close it");
+      Timber.d("Camera is open, close it");
       release();
     } else {
-      LogUtil.d(TAG, "Camera is closed, open it");
+      Timber.d("Camera is closed, open it");
       if (cameraAsyncTask != null) {
         cameraAsyncTask.cancel(true);
       }
@@ -101,7 +101,7 @@ import java.util.List;
       params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
       camera.setParameters(params);
       camera.stopPreview();
-      LogUtil.d(TAG, "release camera");
+      Timber.d("release camera");
       camera.release();
       camera = null;
       opened = false;
@@ -118,11 +118,10 @@ import java.util.List;
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {
     if (surfaceHolder != null && camera != null) {
       try {
-        LogUtil.d(TAG, "Surface created");
+        Timber.d("Surface created");
         camera.setPreviewDisplay(surfaceHolder);
       } catch (IOException e) {
-        LogUtil.e(TAG, "surfaceCreated ERROR");
-        LogUtil.exception(TAG, e);
+        Timber.e(e, "surfaceCreated ERROR");
       }
     }
   }
@@ -133,7 +132,7 @@ import java.util.List;
 
   @Override public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
     if (surfaceHolder != null && camera != null) {
-      LogUtil.d(TAG, "Surface destroyed");
+      Timber.d("Surface destroyed");
       camera.stopPreview();
     }
   }
@@ -146,6 +145,30 @@ import java.util.List;
       this.cameraWeakReference = new WeakReference<>(originalCamera);
     }
 
+    private static boolean hasFlash(final Camera camera) {
+      if (camera == null) {
+        Timber.e("Null camera");
+        return false;
+      }
+
+      final Camera.Parameters parameters = camera.getParameters();
+      if (parameters.getFlashMode() == null) {
+        Timber.e("Null flash mode");
+        return false;
+      }
+
+      final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+      if (supportedFlashModes == null
+          || supportedFlashModes.isEmpty()
+          || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
+        Timber.e("Camera parameters do not include Torch");
+        return false;
+      }
+
+      Timber.d("Camera should have torch mode");
+      return true;
+    }
+
     @Override protected Camera doInBackground(Void... voids) {
       return Camera.open();
     }
@@ -154,34 +177,33 @@ import java.util.List;
       super.onPostExecute(camera);
       final OriginalCamera originalCamera = cameraWeakReference.get();
       if (originalCamera == null) {
-        LogUtil.e(TAG, "Camera weakRef is NULL");
+        Timber.e("Camera weakRef is NULL");
         return;
       }
 
       try {
-        LogUtil.d(TAG, "Check if camera has flash");
+        Timber.d("Check if camera has flash");
         if (hasFlash(camera)) {
-          LogUtil.d(TAG, "Camera has flash");
+          Timber.d("Camera has flash");
           originalCamera.setCamera(camera);
           originalCamera.addSurface();
-          LogUtil.d(TAG, "set preview");
+          Timber.d("set preview");
           final SurfaceHolder holder = originalCamera.getInitializedHolder();
           camera.setPreviewDisplay(holder);
           final Camera.Parameters params1 = camera.getParameters();
           params1.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
           camera.setParameters(params1);
-          LogUtil.d(TAG, "start camera");
+          Timber.d("start camera");
           camera.startPreview();
           originalCamera.setOpened(true);
         } else {
-          LogUtil.e(TAG, "Camera does not have flash");
+          Timber.e("Camera does not have flash");
           camera.release();
           originalCamera.setCamera(null);
           originalCamera.setOpened(false);
         }
       } catch (Exception e) {
-        LogUtil.e(TAG, "toggleTorch onError");
-        LogUtil.exception(TAG, e);
+        Timber.e(e, "toggleTorch onError");
         originalCamera.setCamera(null);
         originalCamera.setOpened(false);
         originalCamera.startErrorExplanationActivity();
@@ -189,36 +211,12 @@ import java.util.List;
     }
 
     @Override protected void onCancelled(Camera camera) {
-      LogUtil.e(TAG, "CameraAsyncTask has been cancelled");
+      Timber.e("CameraAsyncTask has been cancelled");
       final OriginalCamera originalCamera = cameraWeakReference.get();
       if (originalCamera != null) {
         originalCamera.setCamera(null);
         originalCamera.setOpened(false);
       }
-    }
-
-    private static boolean hasFlash(final Camera camera) {
-      if (camera == null) {
-        LogUtil.e(TAG, "Null camera");
-        return false;
-      }
-
-      final Camera.Parameters parameters = camera.getParameters();
-      if (parameters.getFlashMode() == null) {
-        LogUtil.e(TAG, "Null flash mode");
-        return false;
-      }
-
-      final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-      if (supportedFlashModes == null
-          || supportedFlashModes.isEmpty()
-          || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
-        LogUtil.e(TAG, "Camera parameters do not include Torch");
-        return false;
-      }
-
-      LogUtil.d(TAG, "Camera should have torch mode");
-      return true;
     }
   }
 }

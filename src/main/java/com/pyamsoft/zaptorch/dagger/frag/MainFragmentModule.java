@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch.dagger.frag;
 
-import com.pyamsoft.pydroid.base.PresenterBase;
+import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
+import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterImpl;
+import com.pyamsoft.zaptorch.dagger.ActivityScope;
+import dagger.Module;
+import dagger.Provides;
 
-interface MainFragmentPresenter extends PresenterBase<MainFragmentView> {
+@Module public class MainFragmentModule {
 
-  void setDisplayErrorsFromPreference();
-
-  void setDisplayErrors();
-
-  void unsetDisplayErrors();
-
-  void setDelayFromPreference();
-
-  void setDelayShort();
-
-  void setDelayDefault();
-
-  void setDelayLong();
-
-  void setHandleKeysFromPreference();
-
-  void setHandleKeys();
-
-  void unsetHandleKeys();
+  @Provides @ActivityScope MainFragmentPresenter provideMainFragmentPresenter(
+      final MainFragmentPresenterImpl presenter) {
+    return presenter;
+  }
 }
