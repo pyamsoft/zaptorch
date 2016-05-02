@@ -28,7 +28,6 @@ import timber.log.Timber;
 final class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView>
     implements MainActivityPresenter {
 
-  private static final String TAG = MainActivityPresenterImpl.class.getSimpleName();
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
   @Inject public MainActivityPresenterImpl(@NonNull MainActivityInteractor mainActivityInteractor) {

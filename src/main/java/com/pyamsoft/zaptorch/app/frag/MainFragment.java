@@ -41,8 +41,6 @@ import timber.log.Timber;
 
 public final class MainFragment extends Fragment implements MainFragmentView {
 
-  private static final String TAG = MainFragment.class.getSimpleName();
-
   @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_explain_howto) TextView
       explainHowTo;
 
