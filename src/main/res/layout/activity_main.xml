@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:fitsSystemWindows="@bool/root_fits_system"
-    tools:context=".app.MainActivity"
+    tools:context=".app.main.MainActivity"
     >
 
   <android.support.design.widget.AppBarLayout

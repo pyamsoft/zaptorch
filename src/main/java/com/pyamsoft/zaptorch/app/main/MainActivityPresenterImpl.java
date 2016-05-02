@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.app.main;
 
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImplBase;
-import com.pyamsoft.pydroid.util.LogUtil;
+import javax.inject.Inject;
+import timber.log.Timber;
 
 public class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView>
     implements MainActivityPresenter {
@@ -27,29 +28,24 @@ public class MainActivityPresenterImpl extends PresenterImplBase<MainActivityVie
   private static final String TAG = MainActivityPresenterImpl.class.getSimpleName();
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
-  public MainActivityPresenterImpl() {
-    this.mainActivityInteractor = new MainActivityInteractorImpl();
+  @Inject public MainActivityPresenterImpl(@NonNull MainActivityInteractor mainActivityInteractor) {
+    this.mainActivityInteractor = mainActivityInteractor;
   }
 
   @Override public boolean shouldHandleKeycode(int keyCode) {
-    final MainActivityView view = get();
-    if (view != null) {
-      boolean handled;
-      switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-          LogUtil.d(TAG, "Detected a Volume Down event. Consume and do nothing");
-          handled = true;
-          break;
-        case KeyEvent.KEYCODE_VOLUME_UP:
-          LogUtil.d(TAG, "Detected a Volume Up event. Consume and do nothing");
-          handled = true;
-          break;
-        default:
-          handled = false;
-      }
-      return mainActivityInteractor.shouldHandleKeys(view.getContext()) && handled;
-    } else {
-      return false;
+    boolean handled;
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_VOLUME_DOWN:
+        Timber.d("Detected a Volume Down event. Consume and do nothing");
+        handled = true;
+        break;
+      case KeyEvent.KEYCODE_VOLUME_UP:
+        Timber.d("Detected a Volume Up event. Consume and do nothing");
+        handled = true;
+        break;
+      default:
+        handled = false;
     }
+    return mainActivityInteractor.shouldHandleKeys() && handled;
   }
 }

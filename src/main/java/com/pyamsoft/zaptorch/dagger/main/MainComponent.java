@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.main;
 
-interface VolumeServiceProvider {
+import com.pyamsoft.zaptorch.app.main.MainActivity;
+import com.pyamsoft.zaptorch.dagger.ActivityScope;
+import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
+import dagger.Component;
+
+@ActivityScope @Component(modules = MainModule.class, dependencies = ZapTorchComponent.class)
+public interface MainComponent {
+
+  void inject(MainActivity activity);
 }

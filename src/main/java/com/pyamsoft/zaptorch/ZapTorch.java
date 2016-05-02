@@ -16,15 +16,49 @@
 
 package com.pyamsoft.zaptorch;
 
+import android.app.Activity;
+import android.app.Application;
+import android.app.Service;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.crash.CrashHandler;
+import android.support.v4.app.Fragment;
 import com.pyamsoft.pydroid.base.ApplicationBase;
+import com.pyamsoft.pydroid.crash.CrashHandler;
+import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
+import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
+import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
 public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
+  private ZapTorchComponent zapTorchComponent;
+
+  private static ZapTorchComponent zapTorchComponent(final Application application) {
+    if (application instanceof ZapTorch) {
+      final ZapTorch zapTorch = (ZapTorch) application;
+      return zapTorch.zapTorchComponent;
+    } else {
+      throw new ClassCastException("Cannot cast Application to ZapTorch");
+    }
+  }
+
+  public static ZapTorchComponent zapTorchComponent(final Activity activity) {
+    return zapTorchComponent(activity.getApplication());
+  }
+
+  public static ZapTorchComponent zapTorchComponent(final Fragment fragment) {
+    return zapTorchComponent(fragment.getActivity());
+  }
+
+  public static ZapTorchComponent zapTorchComponent(final Service service) {
+    return zapTorchComponent(service.getApplication());
+  }
+
   @Override protected boolean buildConfigDebug() {
     return BuildConfig.DEBUG;
+  }
+
+  @NonNull @Override public String appName() {
+    return getString(R.string.app_name);
   }
 
   @NonNull @Override public String buildConfigApplicationId() {
@@ -53,5 +87,8 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
       StrictMode.setVmPolicy(
           new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
     }
+
+    zapTorchComponent =
+        DaggerZapTorchComponent.builder().zapTorchModule(new ZapTorchModule(this)).build();
   }
 }

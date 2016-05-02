@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.app.main;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.base.PresenterBase;
 
-interface MainActivityView {
+public interface MainActivityPresenter extends PresenterBase<MainActivityView> {
 
-  @NonNull Context getContext();
+  boolean shouldHandleKeycode(int keyCode);
 }

@@ -36,9 +36,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
-import com.pyamsoft.pydroid.util.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
+import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) public final class LollipopCamera extends CameraCommon {
 
@@ -47,15 +47,15 @@ import java.util.List;
   private final String flashCameraId;
   private final CameraCallback cameraCallback;
 
-  static CameraManager setupCameraManager(final @NonNull Context context) {
-    return (CameraManager) context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
-  }
-
   public LollipopCamera(final @NonNull Context context) {
     super(context);
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();
     this.cameraCallback = new CameraCallback(cameraManager);
+  }
+
+  static CameraManager setupCameraManager(final @NonNull Context context) {
+    return (CameraManager) context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
   }
 
   @Nullable private String setupCamera() {
@@ -69,8 +69,7 @@ import java.util.List;
         }
       }
     } catch (CameraAccessException e) {
-      LogUtil.e(TAG, "setupCamera ERROR");
-      LogUtil.exception(TAG, e);
+      Timber.e(e, "setupCamera ERROR");
     }
     return null;
   }
@@ -81,10 +80,10 @@ import java.util.List;
 
   @Override public void toggleTorch() {
     if (flashCameraId == null) {
-      LogUtil.e(TAG, "No camera with Flash");
+      Timber.e("No camera with Flash");
       startErrorExplanationActivity();
     } else {
-      LogUtil.d(TAG, "Open camera");
+      Timber.d("Open camera");
       cameraCallback.accessCamera(getAppContext(), flashCameraId);
     }
   }
@@ -105,17 +104,42 @@ import java.util.List;
       list = new ArrayList<>(1);
     }
 
+    @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
+        final @NonNull String id) throws CameraAccessException {
+      Timber.d("Get stream config map");
+      final StreamConfigurationMap map = manager.getCameraCharacteristics(id)
+          .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+      if (map == null) {
+        throw new IllegalStateException("Camera " + id + "doesn't support any Stream Maps.");
+      }
+
+      Timber.d("Get possible output sizes");
+      final Size[] outputSizes = map.getOutputSizes(SurfaceTexture.class);
+      if (outputSizes == null || outputSizes.length == 0) {
+        throw new IllegalStateException("Camera " + id + "doesn't support any outputSize.");
+      }
+
+      Timber.d("Select a size");
+      Size chosen = outputSizes[0];
+      for (final Size s : outputSizes) {
+        if (chosen.getWidth() >= s.getWidth() && chosen.getHeight() >= s.getHeight()) {
+          chosen = s;
+        }
+      }
+      return chosen;
+    }
+
     public void close() {
       // Surface texture is released by CameraManager so we don't have to
       if (opened) {
         if (session != null) {
-          LogUtil.d(TAG, "close SessionCallback");
+          Timber.d("close SessionCallback");
           session.close();
           session = null;
         }
 
         if (cameraDevice != null) {
-          LogUtil.d(TAG, "close camera device");
+          Timber.d("close camera device");
           cameraDevice.close();
           cameraDevice = null;
         }
@@ -127,46 +151,45 @@ import java.util.List;
       if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
           == PackageManager.PERMISSION_GRANTED) {
         try {
-          LogUtil.d(TAG, "Has camera permission, attempt to access");
+          Timber.d("Has camera permission, attempt to access");
           if (opened) {
-            LogUtil.d(TAG, "Close opened camera");
+            Timber.d("Close opened camera");
             close();
           } else {
-            LogUtil.d(TAG, "Open closed camera");
+            Timber.d("Open closed camera");
             manager.openCamera(id, this, null);
           }
         } catch (CameraAccessException e) {
-          LogUtil.e(TAG, "toggleTorch ERROR");
-          LogUtil.exception(TAG, e);
+          Timber.e(e, "toggleTorch ERROR");
         }
       } else {
-        LogUtil.e(TAG, "Missing camera permission");
+        Timber.e("Missing camera permission");
       }
     }
 
     @Override public void onOpened(@NonNull CameraDevice camera) {
-      LogUtil.d(TAG, "onOpened");
+      Timber.d("onOpened");
       opened = true;
       this.cameraDevice = camera;
 
       try {
-        LogUtil.d(TAG, "create capture builder");
+        Timber.d("create capture builder");
         final CaptureRequest.Builder captureBuilder =
             camera.createCaptureRequest(CameraDevice.TEMPLATE_MANUAL);
         captureBuilder.set(CaptureRequest.CONTROL_AE_MODE, CameraMetadata.CONTROL_AF_MODE_AUTO);
         captureBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH);
 
         if (size == null) {
-          LogUtil.d(TAG, "get smallest size for texture");
+          Timber.d("get smallest size for texture");
           size = getSmallestSize(manager, camera.getId());
         } else {
-          LogUtil.d(TAG, "using cached smallest size");
+          Timber.d("using cached smallest size");
         }
         // The camera session recycles the surface texture, so we should not have to
         @SuppressLint("Recycle") final SurfaceTexture surfaceTexture = new SurfaceTexture(1);
         surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
 
-        LogUtil.d(TAG, "add surface to texture");
+        Timber.d("add surface to texture");
         final Surface surface = new Surface(surfaceTexture);
         if (list.isEmpty()) {
           list.add(0, surface);
@@ -174,54 +197,28 @@ import java.util.List;
           list.set(0, surface);
         }
 
-        LogUtil.d(TAG, "add capture target");
+        Timber.d("add capture target");
         captureBuilder.addTarget(surface);
 
-        LogUtil.d(TAG, "create new session callback");
+        Timber.d("create new session callback");
         session = new SessionCallback(captureBuilder.build());
 
-        LogUtil.d(TAG, "register capture session");
+        Timber.d("register capture session");
         camera.createCaptureSession(list, session, null);
       } catch (CameraAccessException e) {
-        LogUtil.e(TAG, "onOpened");
-        LogUtil.exception(TAG, e);
+        Timber.e(e, "onOpened");
       }
-    }
-
-    @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
-        final @NonNull String id) throws CameraAccessException {
-      LogUtil.d(TAG, "Get stream config map");
-      final StreamConfigurationMap map = manager.getCameraCharacteristics(id)
-          .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-      if (map == null) {
-        throw new IllegalStateException("Camera " + id + "doesn't support any Stream Maps.");
-      }
-
-      LogUtil.d(TAG, "Get possible output sizes");
-      final Size[] outputSizes = map.getOutputSizes(SurfaceTexture.class);
-      if (outputSizes == null || outputSizes.length == 0) {
-        throw new IllegalStateException("Camera " + id + "doesn't support any outputSize.");
-      }
-
-      LogUtil.d(TAG, "Select a size");
-      Size chosen = outputSizes[0];
-      for (final Size s : outputSizes) {
-        if (chosen.getWidth() >= s.getWidth() && chosen.getHeight() >= s.getHeight()) {
-          chosen = s;
-        }
-      }
-      return chosen;
     }
 
     @Override public void onDisconnected(@NonNull CameraDevice cameraDevice) {
       this.cameraDevice = null;
-      LogUtil.d(TAG, "onDisconnected");
+      Timber.d("onDisconnected");
       opened = false;
     }
 
     @Override public void onError(@NonNull CameraDevice cameraDevice, int i) {
       this.cameraDevice = null;
-      LogUtil.e(TAG, "onError");
+      Timber.e("onError");
       opened = false;
     }
   }
@@ -237,26 +234,25 @@ import java.util.List;
     }
 
     @Override public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-      LogUtil.d(TAG, "Camera configured");
+      Timber.d("Camera configured");
       session = cameraCaptureSession;
       try {
-        LogUtil.d(TAG, "set repeating");
+        Timber.d("set repeating");
         cameraCaptureSession.setRepeatingRequest(request, null, null);
       } catch (CameraAccessException e) {
-        LogUtil.e(TAG, "onConfigured");
-        LogUtil.exception(TAG, e);
+        Timber.e(e, "onConfigured");
       }
     }
 
     @Override public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-      LogUtil.e(TAG, "onConfigureFailed");
+      Timber.e("onConfigureFailed");
       session = cameraCaptureSession;
       close();
     }
 
     public void close() {
       if (session != null) {
-        LogUtil.d(TAG, "close session");
+        Timber.d("close session");
         session.close();
         session = null;
       }

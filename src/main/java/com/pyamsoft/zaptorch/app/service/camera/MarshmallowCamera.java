@@ -22,7 +22,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.util.LogUtil;
+import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) public final class MarshmallowCamera extends CameraCommon {
 
@@ -45,14 +45,13 @@ import com.pyamsoft.pydroid.util.LogUtil;
     final String cameraId = torchCallback.getCameraId();
     if (cameraId != null) {
       try {
-        LogUtil.d(TAG, "Set torch: ", enable);
+        Timber.d("Set torch: %s", enable);
         cameraManager.setTorchMode(cameraId, enable);
       } catch (CameraAccessException e) {
-        LogUtil.e(TAG, "toggleTorch ERROR");
-        LogUtil.exception(TAG, e);
+        Timber.e(e, "toggleTorch ERROR");
       }
     } else {
-      LogUtil.e(TAG, "Torch unavailable");
+      Timber.e("Torch unavailable");
       startErrorExplanationActivity();
     }
   }
@@ -84,14 +83,14 @@ import com.pyamsoft.pydroid.util.LogUtil;
 
     @Override public void onTorchModeChanged(@NonNull String cameraId, boolean enabled) {
       super.onTorchModeChanged(cameraId, enabled);
-      LogUtil.d(TAG, "Torch changed: ", enabled);
+      Timber.d("Torch changed: %s", enabled);
       this.cameraId = cameraId;
       this.enabled = enabled;
     }
 
     @Override public void onTorchModeUnavailable(@NonNull String cameraId) {
       super.onTorchModeUnavailable(cameraId);
-      LogUtil.e(TAG, "Torch unavailable");
+      Timber.e("Torch unavailable");
       this.cameraId = null;
       this.enabled = false;
     }

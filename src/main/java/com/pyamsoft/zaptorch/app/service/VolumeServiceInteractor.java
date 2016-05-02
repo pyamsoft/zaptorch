@@ -16,16 +16,13 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-
 public interface VolumeServiceInteractor {
 
-  long getButtonDelayTime(@NonNull Context context);
+  long getButtonDelayTime();
 
-  void setButtonDelayTime(@NonNull Context context, final long time);
+  void setButtonDelayTime(final long time);
 
-  boolean shouldShowErrorDialog(@NonNull Context context);
+  boolean shouldShowErrorDialog();
 
-  void setShowErrorDialog(@NonNull Context context, final boolean b);
+  void setShowErrorDialog(final boolean b);
 }

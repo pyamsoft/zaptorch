@@ -25,25 +25,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.pyamsoft.zaptorch.R;
 
 public final class AccessibilityRequestFragment extends Fragment {
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.enable_accessibility_button) Button enableService;
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.enable_accessibility_button) Button
+      enableService;
+  private Unbinder unbinder;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_enableaccessibility, container, false);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
     return view;
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    ButterKnife.unbind(this);
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch.app.frag;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,39 +28,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.pyamsoft.pydroid.util.LogUtil;
+import butterknife.Unbinder;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.R;
+import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.dagger.frag.DaggerMainFragmentComponent;
+import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
+import javax.inject.Inject;
+import timber.log.Timber;
 
 public final class MainFragment extends Fragment implements MainFragmentView {
 
   private static final String TAG = MainFragment.class.getSimpleName();
-  private final MainFragmentPresenter mainFragmentPresenter;
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_explain_howto) TextView
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_explain_howto) TextView
       explainHowTo;
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_display_camera_errors)
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_display_camera_errors)
   SwitchCompat displayErrors;
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_handle_keys) SwitchCompat
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_handle_keys) SwitchCompat
       handleKeys;
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_buttondelay_short) RadioButton
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_short) RadioButton
       delayShort;
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_buttondelay_default) RadioButton
-      delayDefault;
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.main_buttondelay_long) RadioButton
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_default)
+  RadioButton delayDefault;
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_long) RadioButton
       delayLong;
-
-  public MainFragment() {
-    this.mainFragmentPresenter = new MainFragmentPresenterImpl();
-  }
+  @Inject MainFragmentPresenter mainFragmentPresenter;
+  private Unbinder unbinder;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    DaggerMainFragmentComponent.builder()
+        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .mainFragmentModule(new MainFragmentModule())
+        .build()
+        .inject(this);
+
     mainFragmentPresenter.create();
   }
 
@@ -73,15 +82,17 @@ public final class MainFragment extends Fragment implements MainFragmentView {
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_main, container, false);
-    ButterKnife.bind(this, view);
+    unbinder = ButterKnife.bind(this, view);
     mainFragmentPresenter.bind(this);
     return view;
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    ButterKnife.unbind(this);
     mainFragmentPresenter.unbind();
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -140,7 +151,7 @@ public final class MainFragment extends Fragment implements MainFragmentView {
         "Shows a dialog if an error has occurred while trying to access the device's camera");
     final int index = spannable.toString().indexOf(':');
     if (index != -1) {
-      LogUtil.d(TAG, "New line at: ", index);
+      Timber.d("New line at: %d", index);
       final int largeTextSize =
           StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
       final int largeTextColor =
@@ -167,7 +178,7 @@ public final class MainFragment extends Fragment implements MainFragmentView {
         "Pressing the volume keys while ZapTorch is open will not change the volume");
     final int index = spannable.toString().indexOf(':');
     if (index != -1) {
-      LogUtil.d(TAG, "New line at: ", index);
+      Timber.d("New line at: %d", index);
       final int largeTextSize =
           StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
       final int largeTextColor =

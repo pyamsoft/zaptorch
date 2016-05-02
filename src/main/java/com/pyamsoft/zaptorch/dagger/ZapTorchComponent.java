@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.dagger;
 
-import com.pyamsoft.pydroid.base.PresenterBase;
+import android.content.Context;
+import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import dagger.Component;
+import javax.inject.Singleton;
 
-interface MainActivityPresenter extends PresenterBase<MainActivityView> {
+@Singleton @Component(modules = ZapTorchModule.class) public interface ZapTorchComponent {
 
-  boolean shouldHandleKeycode(int keyCode);
+  Context provideContext();
+
+  ZapTorchPreferences providePreferences();
 }

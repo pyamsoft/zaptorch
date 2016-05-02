@@ -17,22 +17,20 @@
 package com.pyamsoft.zaptorch.app.service;
 
 import android.accessibilityservice.AccessibilityService;
-import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
-import com.pyamsoft.pydroid.util.LogUtil;
+import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.dagger.service.DaggerVolumeServiceComponent;
+import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
+import javax.inject.Inject;
+import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService implements VolumeServiceProvider {
 
   private static final String TAG = VolumeMonitorService.class.getSimpleName();
   private static VolumeMonitorService instance;
 
-  private final VolumeServicePresenter servicePresenter;
-
-  public VolumeMonitorService() {
-    servicePresenter = new VolumeServicePresenterImpl();
-  }
+  @Inject VolumeServicePresenter servicePresenter;
 
   private static void setInstance(VolumeMonitorService i) {
     instance = i;
@@ -52,15 +50,22 @@ public class VolumeMonitorService extends AccessibilityService implements Volume
   }
 
   @Override public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
-    LogUtil.d(TAG, "onAccessibilityEvent");
+    Timber.d("onAccessibilityEvent");
   }
 
   @Override public void onInterrupt() {
-    LogUtil.e(TAG, "onInterrupt");
+    Timber.e("onInterrupt");
   }
 
   @Override protected void onServiceConnected() {
     super.onServiceConnected();
+
+    DaggerVolumeServiceComponent.builder()
+        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .volumeServiceModule(new VolumeServiceModule())
+        .build()
+        .inject(this);
+
     servicePresenter.bind(this);
     setInstance(this);
   }
@@ -69,9 +74,5 @@ public class VolumeMonitorService extends AccessibilityService implements Volume
     super.onDestroy();
     setInstance(null);
     servicePresenter.unbind();
-  }
-
-  @NonNull @Override public Context getContext() {
-    return this;
   }
 }

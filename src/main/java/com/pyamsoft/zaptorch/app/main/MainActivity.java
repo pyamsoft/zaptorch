@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.app.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.pyamsoft.pydroid.base.ActivityBase;
 import com.pyamsoft.pydroid.util.IMMLeakUtil;
-import com.pyamsoft.pydroid.util.LogUtil;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.app.main.MainFragment;
+import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.app.AccessibilityRequestFragment;
+import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
+import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
+import javax.inject.Inject;
+import timber.log.Timber;
 
 public class MainActivity extends ActivityBase
     implements BillingProcessor.IBillingHandler, MainActivityView {
 
   private static final String TAG = MainActivity.class.getSimpleName();
+  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.toolbar) Toolbar toolbar;
+  @Inject MainActivityPresenter mainActivityPresenter;
+  private BillingProcessor billingProcessor;
+  private Unbinder unbinder;
+  private boolean serviceEnabled = false;
 
   public MainActivity() {
-    this.mainActivityPresenter = new MainActivityPresenterImpl();
   }
-
-  private final MainActivityPresenter mainActivityPresenter;
-  private BillingProcessor billingProcessor;
-
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @Bind(R.id.toolbar) Toolbar toolbar;
-
-  private boolean serviceEnabled = false;
 
   @Override protected String getPlayStoreAppPackage() {
     return getPackageName();
@@ -63,11 +63,17 @@ public class MainActivity extends ActivityBase
     setupFakeFullscreenWindow();
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    ButterKnife.bind(this);
+    unbinder = ButterKnife.bind(this);
+
+    DaggerMainComponent.builder()
+        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .build()
+        .inject(this);
+
     mainActivityPresenter.create();
     mainActivityPresenter.bind(this);
 
-    billingProcessor = new BillingProcessor(this, getBillingKey(), this);
+    billingProcessor = new BillingProcessor(this, getPackageName(), this);
 
     setupAppBar();
     if (VolumeMonitorService.isRunning()) {
@@ -85,6 +91,10 @@ public class MainActivity extends ActivityBase
 
     mainActivityPresenter.unbind();
     mainActivityPresenter.destroy();
+
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -152,29 +162,24 @@ public class MainActivity extends ActivityBase
   }
 
   @Override public void onProductPurchased(String productId, TransactionDetails details) {
-    LogUtil.d(TAG, "onProductPurchased");
-    LogUtil.d(TAG, "Details: ", details);
+    Timber.d("onProductPurchased");
+    Timber.d("Details: %s", details);
     if (billingProcessor != null) {
-      LogUtil.d(TAG, "Consume item: ", productId);
+      Timber.d("Consume item: %s", productId);
       billingProcessor.consumePurchase(productId);
     }
   }
 
   @Override public void onPurchaseHistoryRestored() {
-    LogUtil.d(TAG, "onPurchaseHistoryRestored");
+    Timber.d("onPurchaseHistoryRestored");
   }
 
   @Override public void onBillingError(int errorCode, Throwable error) {
-    LogUtil.e(TAG, "onBillingError");
-    LogUtil.e(TAG, "CODE: ", errorCode);
-    LogUtil.exception(TAG, error);
+    Timber.e("onBillingError");
+    Timber.e(error, "CODE: %d", errorCode);
   }
 
   @Override public void onBillingInitialized() {
-    LogUtil.d(TAG, "onBillingInitialized");
-  }
-
-  @NonNull @Override public Context getContext() {
-    return this;
+    Timber.d("onBillingInitialized");
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.app.main;
 
-interface VolumeServiceProvider {
+interface MainActivityView {
 }

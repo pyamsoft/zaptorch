@@ -34,7 +34,7 @@
       android:supportsRtl="false"
       android:theme="@style/Theme.ZapTorch"
       tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-    <activity android:name=".app.MainActivity">
+    <activity android:name=".app.main.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
