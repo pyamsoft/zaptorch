@@ -60,7 +60,7 @@ android {
     versionCode 6
     versionName "1.0.3"
     // For vector drawables
-//    vectorDrawables.useSupportLibrary = true
+    vectorDrawables.useSupportLibrary = true
   }
 
   compileOptions {
