@@ -1,0 +1,99 @@
+/*
+ * Copyright 2016 Peter Kenji Yamanaka
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.pyamsoft.zaptorch.app.service.camera;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.util.LogUtil;
+
+@TargetApi(Build.VERSION_CODES.M) public final class MarshmallowCamera extends CameraCommon {
+
+  private static final String TAG = MarshmallowCamera.class.getSimpleName();
+  private final TorchCallback torchCallback;
+  private final CameraManager cameraManager;
+
+  public MarshmallowCamera(final @NonNull Context context) {
+    super(context);
+    cameraManager = LollipopCamera.setupCameraManager(context);
+    this.torchCallback = new TorchCallback();
+    setupCamera();
+  }
+
+  @Override public void toggleTorch() {
+    setTorch(!torchCallback.isEnabled());
+  }
+
+  private void setTorch(final boolean enable) {
+    final String cameraId = torchCallback.getCameraId();
+    if (cameraId != null) {
+      try {
+        LogUtil.d(TAG, "Set torch: ", enable);
+        cameraManager.setTorchMode(cameraId, enable);
+      } catch (CameraAccessException e) {
+        LogUtil.e(TAG, "toggleTorch ERROR");
+        LogUtil.exception(TAG, e);
+      }
+    } else {
+      LogUtil.e(TAG, "Torch unavailable");
+      startErrorExplanationActivity();
+    }
+  }
+
+  @Override public void release() {
+    if (torchCallback.isEnabled()) {
+      setTorch(false);
+    }
+
+    cameraManager.unregisterTorchCallback(torchCallback);
+  }
+
+  private void setupCamera() {
+    cameraManager.registerTorchCallback(torchCallback, null);
+  }
+
+  static final class TorchCallback extends CameraManager.TorchCallback {
+
+    private String cameraId;
+    private boolean enabled;
+
+    public String getCameraId() {
+      return cameraId;
+    }
+
+    boolean isEnabled() {
+      return enabled;
+    }
+
+    @Override public void onTorchModeChanged(@NonNull String cameraId, boolean enabled) {
+      super.onTorchModeChanged(cameraId, enabled);
+      LogUtil.d(TAG, "Torch changed: ", enabled);
+      this.cameraId = cameraId;
+      this.enabled = enabled;
+    }
+
+    @Override public void onTorchModeUnavailable(@NonNull String cameraId) {
+      super.onTorchModeUnavailable(cameraId);
+      LogUtil.e(TAG, "Torch unavailable");
+      this.cameraId = null;
+      this.enabled = false;
+    }
+  }
+}
