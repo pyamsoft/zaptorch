@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright 2016 Peter Kenji Yamanaka
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+  <string name="app_name">ZapTorch</string>
+  <string name="double_click_delay">Double Click Delay</string>
+  <string name="short_300ms_delay">Short: 360ms Delay</string>
+  <string name="default_600ms_delay">Default: 500ms Delay</string>
+  <string name="long_1000ms_delay">Long: 1000ms Delay</string>
+  <string name="enable_accessibility_service">Enable Accessibility Service</string>
+  <string name="explain_accessibility_service">
+    In order to run correctly, ZapTorch needs to enable a system Accessibility Service.
+    This service will monitor when you press the Volume Down key on your device.
+    It will not monitor any other keys nor will it collect any user information.
+
+    \n\nPlease Enable ZapTorch in the System Accesibility Settings.
+  </string>
+  <string name="accessibility_service_description">
+    ZapTorch needs this to observe when you press the Volume Down key to turn on the flash light.
+
+    \n\nIt does not collect any information. It does not monitor anything else at all.
+  </string>
+  <string name="options">Options</string>
+</resources>
