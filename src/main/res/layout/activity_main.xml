@@ -23,7 +23,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:fitsSystemWindows="@bool/root_fits_system"
     tools:context=".app.main.MainActivity"
     >
 
@@ -31,7 +30,6 @@
       android:id="@+id/appbar"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:fitsSystemWindows="@bool/appbar_fits_system"
       android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
       >
 
