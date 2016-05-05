@@ -32,26 +32,26 @@ public class ZapTorchPreferences extends PreferenceBase {
   }
 
   public final long getButtonDelayTime() {
-    return getLong(DELAY, DELAY_DEFAULT);
+    return get(DELAY, DELAY_DEFAULT);
   }
 
   public final void setButtonDelayTime(final long l) {
-    putLong(DELAY, l);
+    put(DELAY, l);
   }
 
   public final boolean shouldShowErrorDialog() {
-    return getBoolean(ERROR, true);
+    return get(ERROR, true);
   }
 
   public final void setShowErrorDialog(final boolean b) {
-    putBoolean(ERROR, b);
+    put(ERROR, b);
   }
 
   public final boolean shouldHandleKeys() {
-    return getBoolean(HANDLE_KEYS, true);
+    return get(HANDLE_KEYS, true);
   }
 
   public final void setHandleKeys(final boolean b) {
-    putBoolean(HANDLE_KEYS, b);
+    put(HANDLE_KEYS, b);
   }
 }
