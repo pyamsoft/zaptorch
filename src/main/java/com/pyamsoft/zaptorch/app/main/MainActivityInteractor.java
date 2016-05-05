@@ -16,9 +16,13 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
+import rx.Observable;
+
 public interface MainActivityInteractor {
 
-  boolean shouldHandleKeys();
+  @WorkerThread @NonNull Observable<Boolean> shouldHandleKeys();
 
-  void setHandleKeys(boolean b);
+  @WorkerThread @NonNull Observable<Boolean> setHandleKeys(boolean b);
 }

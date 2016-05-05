@@ -21,4 +21,8 @@ import com.pyamsoft.pydroid.base.PresenterBase;
 public interface MainActivityPresenter extends PresenterBase<MainActivityView> {
 
   boolean shouldHandleKeycode(int keyCode);
+
+  void registerOnKeyHandlerBus();
+
+  void unregisterFromKeyHandlerBus();
 }

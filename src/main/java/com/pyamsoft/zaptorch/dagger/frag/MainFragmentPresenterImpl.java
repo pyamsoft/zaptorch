@@ -24,6 +24,11 @@ import com.pyamsoft.zaptorch.app.frag.MainFragmentView;
 import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
 import javax.inject.Inject;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
+import timber.log.Timber;
 
 final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView>
     implements MainFragmentPresenter {
@@ -31,10 +36,17 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
   @NonNull private final VolumeServiceInteractor serviceInteractor;
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
+  @NonNull private Subscription handleKeysSubscription = Subscriptions.empty();
+
   @Inject public MainFragmentPresenterImpl(@NonNull VolumeServiceInteractor serviceInteractor,
       @NonNull MainActivityInteractor mainActivityInteractor) {
     this.serviceInteractor = serviceInteractor;
     this.mainActivityInteractor = mainActivityInteractor;
+  }
+
+  @Override public void unbind() {
+    super.unbind();
+    unsubHandleKeysSubscription();
   }
 
   @Override public void setDisplayErrorsFromPreference() {
@@ -84,17 +96,28 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
   }
 
   @Override public void setHandleKeysFromPreference() {
-    final MainFragmentView view = get();
-    final boolean set = serviceInteractor.shouldShowErrorDialog();
-    if (set) {
-      view.setHandleKeys();
-    } else {
-      view.unsetHandleKeys();
-    }
+    unsubHandleKeysSubscription();
+    handleKeysSubscription = mainActivityInteractor.shouldHandleKeys()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(aBoolean -> {
+          if (aBoolean) {
+            get().setHandleKeys();
+          } else {
+            get().unsetHandleKeys();
+          }
+        }, throwable -> {
+          // TODO handle errors
+          Timber.e(throwable, "onError");
+        });
   }
 
   private void setHandleKeys(boolean b) {
-    mainActivityInteractor.setHandleKeys(b);
+    unsubHandleKeysSubscription();
+    handleKeysSubscription = mainActivityInteractor.setHandleKeys(b)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe();
   }
 
   @Override public void setHandleKeys() {
@@ -103,5 +126,11 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
 
   @Override public void unsetHandleKeys() {
     setHandleKeys(false);
+  }
+
+  private void unsubHandleKeysSubscription() {
+    if (!handleKeysSubscription.isUnsubscribed()) {
+      handleKeysSubscription.unsubscribe();
+    }
   }
 }

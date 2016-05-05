@@ -17,9 +17,12 @@
 package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
 import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import javax.inject.Inject;
+import rx.Observable;
 
 public class MainActivityInteractorImpl implements MainActivityInteractor {
 
@@ -29,11 +32,16 @@ public class MainActivityInteractorImpl implements MainActivityInteractor {
     this.preferences = preferences;
   }
 
-  @Override public boolean shouldHandleKeys() {
-    return preferences.shouldHandleKeys();
+  @WorkerThread @NonNull @Override public Observable<Boolean> shouldHandleKeys() {
+    return Observable.defer(() -> Observable.just(preferences.shouldHandleKeys()))
+        .map(aBoolean -> aBoolean == null ? false : aBoolean);
   }
 
-  @Override public void setHandleKeys(boolean b) {
-    preferences.setHandleKeys(b);
+  @WorkerThread @NonNull @Override public Observable<Boolean> setHandleKeys(boolean b) {
+    return Observable.defer(() -> {
+      preferences.setHandleKeys(b);
+      KeyHandlerBus.post(new KeyHandlerBus.Event(b));
+      return Observable.just(b);
+    }).map(aBoolean -> aBoolean == null ? false : aBoolean);
   }
 }
