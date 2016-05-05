@@ -42,7 +42,8 @@ import timber.log.Timber;
   private boolean opened;
   private CameraAsyncTask cameraAsyncTask;
 
-  public OriginalCamera(final @NonNull Context context, final @NonNull VolumeServicePresenter presenter) {
+  public OriginalCamera(final @NonNull Context context,
+      final @NonNull VolumeServicePresenter presenter) {
     super(context, presenter);
     opened = false;
 
@@ -96,6 +97,7 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
+    super.release();
     if (camera != null && opened) {
       final Camera.Parameters params = camera.getParameters();
       params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);

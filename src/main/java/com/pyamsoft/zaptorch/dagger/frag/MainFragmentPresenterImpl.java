@@ -37,6 +37,8 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
   @NonNull private Subscription handleKeysSubscription = Subscriptions.empty();
+  @NonNull private Subscription errorDialogSubscription = Subscriptions.empty();
+  @NonNull private Subscription delaySubscription = Subscriptions.empty();
 
   @Inject public MainFragmentPresenterImpl(@NonNull VolumeServiceInteractor serviceInteractor,
       @NonNull MainActivityInteractor mainActivityInteractor) {
@@ -47,20 +49,45 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
   @Override public void unbind() {
     super.unbind();
     unsubHandleKeysSubscription();
+    unsubErrorDialogSubscription();
+    unsubDelaySubscription();
   }
 
-  @Override public void setDisplayErrorsFromPreference() {
-    final MainFragmentView view = get();
-    final boolean set = serviceInteractor.shouldShowErrorDialog();
-    if (set) {
-      view.setDisplayErrors();
-    } else {
-      view.unsetDisplayErrors();
+  private void unsubErrorDialogSubscription() {
+    if (!errorDialogSubscription.isUnsubscribed()) {
+      errorDialogSubscription.unsubscribe();
     }
   }
 
+  private void unsubDelaySubscription() {
+    if (!delaySubscription.isUnsubscribed()) {
+      delaySubscription.unsubscribe();
+    }
+  }
+
+  @Override public void setDisplayErrorsFromPreference() {
+    unsubErrorDialogSubscription();
+    errorDialogSubscription = serviceInteractor.shouldShowErrorDialog()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(aBoolean -> {
+          if (aBoolean) {
+            get().setDisplayErrors();
+          } else {
+            get().unsetDisplayErrors();
+          }
+        }, throwable -> {
+          // todo handle error
+          Timber.e(throwable, "onError");
+        });
+  }
+
   private void setDisplayErrors(boolean b) {
-    serviceInteractor.setShowErrorDialog(b);
+    unsubErrorDialogSubscription();
+    errorDialogSubscription = serviceInteractor.setShowErrorDialog(b)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe();
   }
 
   @Override public void setDisplayErrors() {
@@ -72,27 +99,46 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
   }
 
   @Override public void setDelayFromPreference() {
-    final MainFragmentView view = get();
-    final long delay = serviceInteractor.getButtonDelayTime();
-    if (delay == ZapTorchPreferences.DELAY_SHORT) {
-      view.setDelayShort();
-    } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
-      view.setDelayDefault();
-    } else {
-      view.setDelayLong();
-    }
+    unsubDelaySubscription();
+    delaySubscription = serviceInteractor.getButtonDelayTime()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(delay -> {
+          if (delay == ZapTorchPreferences.DELAY_SHORT) {
+            get().setDelayShort();
+          } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
+            get().setDelayDefault();
+          } else {
+            get().setDelayLong();
+          }
+        }, throwable -> {
+          // todo handle error
+          Timber.e(throwable, "onError");
+        });
   }
 
   @Override public void setDelayShort() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_SHORT);
+    unsubDelaySubscription();
+    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_SHORT)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe();
   }
 
   @Override public void setDelayDefault() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_DEFAULT);
+    unsubDelaySubscription();
+    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_DEFAULT)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe();
   }
 
   @Override public void setDelayLong() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_LONG);
+    unsubDelaySubscription();
+    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_LONG)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe();
   }
 
   @Override public void setHandleKeysFromPreference() {

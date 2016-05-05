@@ -16,7 +16,10 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import com.pyamsoft.pydroid.base.PresenterBase;
+import rx.Observable;
 
 public interface VolumeServicePresenter extends PresenterBase<VolumeServiceProvider> {
 
@@ -24,5 +27,5 @@ public interface VolumeServicePresenter extends PresenterBase<VolumeServiceProvi
 
   boolean isStarted();
 
-  boolean shouldShowErrorDialog();
+  @WorkerThread @NonNull Observable<Boolean> shouldShowErrorDialog();
 }

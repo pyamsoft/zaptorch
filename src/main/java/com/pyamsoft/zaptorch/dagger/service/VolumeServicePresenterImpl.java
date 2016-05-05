@@ -27,6 +27,11 @@ import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.VolumeServiceProvider;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
+import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
@@ -35,6 +40,8 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
   @NonNull private final Handler handler;
   @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private final CameraInterface cameraInterface;
+
+  @NonNull private Subscription buttonDelaySubscription = Subscriptions.empty();
 
   private boolean pressed;
   private boolean running;
@@ -53,6 +60,12 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     }
   }
 
+  private void unsubButtonDelay() {
+    if (!buttonDelaySubscription.isUnsubscribed()) {
+      buttonDelaySubscription.unsubscribe();
+    }
+  }
+
   private void handleKeyEvent() {
     handler.removeCallbacksAndMessages(null);
     if (pressed) {
@@ -61,12 +74,21 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
       cameraInterface.toggleTorch();
     } else {
       pressed = true;
-      final long delay = interactor.getButtonDelayTime();
-      Timber.d("Post back to false after delay: %d", delay);
-      handler.postDelayed(() -> {
-        Timber.d("Set pressed back to false");
-        pressed = false;
-      }, delay);
+      unsubButtonDelay();
+      interactor.getButtonDelayTime()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(delay -> {
+            Timber.d("Post back to false after delay: %d", delay);
+            handler.postDelayed(() -> {
+              Timber.d("Set pressed back to false");
+              pressed = false;
+            }, delay);
+          }, throwable -> {
+            // todo handle error
+            Timber.e(throwable, "onError");
+            pressed = false;
+          });
     }
   }
 
@@ -82,10 +104,6 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     }
   }
 
-  @Override public boolean shouldShowErrorDialog() {
-    return interactor.shouldShowErrorDialog();
-  }
-
   @Override public void bind(@NonNull VolumeServiceProvider view) {
     super.bind(view);
     pressed = false;
@@ -99,9 +117,16 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     handler.removeCallbacksAndMessages(null);
     pressed = false;
     running = false;
+    unsubButtonDelay();
   }
 
   @Override public boolean isStarted() {
     return running;
+  }
+
+  @NonNull @Override public Observable<Boolean> shouldShowErrorDialog() {
+    return interactor.shouldShowErrorDialog()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
   }
 }
