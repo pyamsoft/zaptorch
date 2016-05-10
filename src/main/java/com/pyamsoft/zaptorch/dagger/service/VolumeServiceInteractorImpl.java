@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.dagger.service;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
 import javax.inject.Inject;
 import rx.Observable;
 

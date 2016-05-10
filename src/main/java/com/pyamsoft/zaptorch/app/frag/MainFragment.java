@@ -39,7 +39,7 @@ import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public final class MainFragment extends Fragment implements MainFragmentView {
+public final class MainFragment extends Fragment implements MainFragmentPresenter.MainFragmentView {
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_explain_howto) TextView
       explainHowTo;
@@ -61,19 +61,11 @@ public final class MainFragment extends Fragment implements MainFragmentView {
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     DaggerMainFragmentComponent.builder()
         .zapTorchComponent(ZapTorch.zapTorchComponent(this))
         .mainFragmentModule(new MainFragmentModule())
         .build()
         .inject(this);
-
-    mainFragmentPresenter.create();
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    mainFragmentPresenter.destroy();
   }
 
   @Nullable @Override
@@ -81,13 +73,13 @@ public final class MainFragment extends Fragment implements MainFragmentView {
       @Nullable Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.fragment_main, container, false);
     unbinder = ButterKnife.bind(this, view);
-    mainFragmentPresenter.bind(this);
+    mainFragmentPresenter.onCreateView(this);
     return view;
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    mainFragmentPresenter.unbind();
+    mainFragmentPresenter.onDestroyView();
     if (unbinder != null) {
       unbinder.unbind();
     }

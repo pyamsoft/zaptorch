@@ -16,9 +16,9 @@
 
 package com.pyamsoft.zaptorch.app.frag;
 
-import com.pyamsoft.pydroid.base.PresenterBase;
+import com.pyamsoft.pydroid.base.Presenter;
 
-public interface MainFragmentPresenter extends PresenterBase<MainFragmentView> {
+public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
 
   void setDisplayErrorsFromPreference();
 
@@ -39,4 +39,21 @@ public interface MainFragmentPresenter extends PresenterBase<MainFragmentView> {
   void setHandleKeys();
 
   void unsetHandleKeys();
+
+  interface MainFragmentView {
+
+    void setDisplayErrors();
+
+    void unsetDisplayErrors();
+
+    void setDelayShort();
+
+    void setDelayDefault();
+
+    void setDelayLong();
+
+    void setHandleKeys();
+
+    void unsetHandleKeys();
+  }
 }

@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.service;
 
-public interface VolumeServiceProvider {
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
+import rx.Observable;
+
+public interface VolumeServiceInteractor {
+
+  @WorkerThread @NonNull Observable<Long> getButtonDelayTime();
+
+  @WorkerThread @NonNull Observable<Long> setButtonDelayTime(final long time);
+
+  @WorkerThread @NonNull Observable<Boolean> shouldShowErrorDialog();
+
+  @WorkerThread @NonNull Observable<Boolean> setShowErrorDialog(final boolean b);
 }

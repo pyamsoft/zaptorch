@@ -17,9 +17,9 @@
 package com.pyamsoft.zaptorch;
 
 import android.content.Context;
-import com.pyamsoft.pydroid.base.PreferenceBase;
+import com.pyamsoft.pydroid.base.ApplicationPreferences;
 
-public class ZapTorchPreferences extends PreferenceBase {
+public class ZapTorchPreferences extends ApplicationPreferences {
   public static final long DELAY_SHORT = 360L;
   public static final long DELAY_DEFAULT = 500L;
   public static final long DELAY_LONG = 1000L;

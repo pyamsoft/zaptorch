@@ -21,10 +21,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.base.PresenterImplBase;
-import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
+import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
-import com.pyamsoft.zaptorch.app.service.VolumeServiceProvider;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
 import rx.Observable;
@@ -34,7 +32,7 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServiceProvider>
+final class VolumeServicePresenterImpl extends PresenterImpl<VolumeServicePresenter.VolumeServiceView>
     implements VolumeServicePresenter {
 
   @NonNull private final Handler handler;
@@ -104,14 +102,14 @@ final class VolumeServicePresenterImpl extends PresenterImplBase<VolumeServicePr
     }
   }
 
-  @Override public void bind(@NonNull VolumeServiceProvider view) {
-    super.bind(view);
+  @Override public void onCreateView(@NonNull VolumeServiceView view) {
+    super.onCreateView(view);
     pressed = false;
     running = true;
   }
 
-  @Override public void unbind() {
-    super.unbind();
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Timber.d("Unbind");
     cameraInterface.release();
     handler.removeCallbacksAndMessages(null);

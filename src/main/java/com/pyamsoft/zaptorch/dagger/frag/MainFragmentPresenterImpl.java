@@ -17,12 +17,11 @@
 package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.PresenterImplBase;
+import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentView;
-import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
-import com.pyamsoft.zaptorch.app.service.VolumeServiceInteractor;
+import com.pyamsoft.zaptorch.dagger.main.MainActivityInteractor;
+import com.pyamsoft.zaptorch.dagger.service.VolumeServiceInteractor;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,7 +29,7 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView>
+final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresenter.MainFragmentView>
     implements MainFragmentPresenter {
 
   @NonNull private final VolumeServiceInteractor serviceInteractor;
@@ -46,8 +45,8 @@ final class MainFragmentPresenterImpl extends PresenterImplBase<MainFragmentView
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
-  @Override public void unbind() {
-    super.unbind();
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     unsubHandleKeysSubscription();
     unsubErrorDialogSubscription();
     unsubDelaySubscription();

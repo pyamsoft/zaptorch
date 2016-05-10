@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
-import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import javax.inject.Inject;
 import rx.Observable;
 
