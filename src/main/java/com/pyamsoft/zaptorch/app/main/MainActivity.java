@@ -33,7 +33,7 @@ import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
 import javax.inject.Inject;
 
-public class MainActivity extends ActivityBase implements MainActivityView {
+public class MainActivity extends ActivityBase implements MainActivityPresenter.MainActivityView {
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.toolbar) Toolbar toolbar;
   @Inject MainActivityPresenter mainActivityPresenter;
@@ -54,8 +54,7 @@ public class MainActivity extends ActivityBase implements MainActivityView {
         .build()
         .inject(this);
 
-    mainActivityPresenter.create();
-    mainActivityPresenter.bind(this);
+    mainActivityPresenter.onCreateView(this);
 
     setupAppBar();
     if (VolumeMonitorService.isRunning()) {
@@ -67,8 +66,7 @@ public class MainActivity extends ActivityBase implements MainActivityView {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    mainActivityPresenter.unbind();
-    mainActivityPresenter.destroy();
+    mainActivityPresenter.onDestroyView();
 
     if (unbinder != null) {
       unbinder.unbind();

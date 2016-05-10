@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;

@@ -25,7 +25,8 @@ import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public class VolumeMonitorService extends AccessibilityService implements VolumeServiceProvider {
+public class VolumeMonitorService extends AccessibilityService implements
+    VolumeServicePresenter.VolumeServiceView {
 
   private static VolumeMonitorService instance;
 
@@ -65,13 +66,13 @@ public class VolumeMonitorService extends AccessibilityService implements Volume
         .build()
         .inject(this);
 
-    servicePresenter.bind(this);
+    servicePresenter.onCreateView(this);
     setInstance(this);
   }
 
   @Override public void onDestroy() {
     super.onDestroy();
     setInstance(null);
-    servicePresenter.unbind();
+    servicePresenter.onDestroyView();
   }
 }

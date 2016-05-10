@@ -18,11 +18,9 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.base.PresenterImplBase;
+import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
-import com.pyamsoft.zaptorch.app.main.MainActivityInteractor;
 import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
-import com.pyamsoft.zaptorch.app.main.MainActivityView;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,7 +28,7 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-final class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView>
+final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresenter.MainActivityView>
     implements MainActivityPresenter {
 
   @NonNull private final MainActivityInteractor mainActivityInteractor;
@@ -43,8 +41,8 @@ final class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
-  @Override public void bind(@NonNull MainActivityView view) {
-    super.bind(view);
+  @Override public void onCreateView(@NonNull MainActivityView view) {
+    super.onCreateView(view);
     registerOnKeyHandlerBus();
     unsubHandleKeysSubscription();
     mainActivityInteractor.shouldHandleKeys()
@@ -59,8 +57,8 @@ final class MainActivityPresenterImpl extends PresenterImplBase<MainActivityView
         });
   }
 
-  @Override public void unbind() {
-    super.unbind();
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     unregisterFromKeyHandlerBus();
     unsubHandleKeysSubscription();
   }

@@ -16,13 +16,16 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-import com.pyamsoft.pydroid.base.PresenterBase;
+import com.pyamsoft.pydroid.base.Presenter;
 
-public interface MainActivityPresenter extends PresenterBase<MainActivityView> {
+public interface MainActivityPresenter extends Presenter<MainActivityPresenter.MainActivityView> {
 
   boolean shouldHandleKeycode(int keyCode);
 
   void registerOnKeyHandlerBus();
 
   void unregisterFromKeyHandlerBus();
+
+  interface MainActivityView {
+  }
 }
