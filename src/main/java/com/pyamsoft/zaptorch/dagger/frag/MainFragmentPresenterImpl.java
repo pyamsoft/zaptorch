@@ -70,10 +70,13 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(aBoolean -> {
-          if (aBoolean) {
-            get().setDisplayErrors();
-          } else {
-            get().unsetDisplayErrors();
+          final MainFragmentView mainFragmentView = getView();
+          if (mainFragmentView != null) {
+            if (aBoolean) {
+              mainFragmentView.setDisplayErrors();
+            } else {
+              mainFragmentView.unsetDisplayErrors();
+            }
           }
         }, throwable -> {
           // todo handle error
@@ -103,12 +106,15 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(delay -> {
-          if (delay == ZapTorchPreferences.DELAY_SHORT) {
-            get().setDelayShort();
-          } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
-            get().setDelayDefault();
-          } else {
-            get().setDelayLong();
+          final MainFragmentView mainFragmentView = getView();
+          if (mainFragmentView != null) {
+            if (delay == ZapTorchPreferences.DELAY_SHORT) {
+              mainFragmentView.setDelayShort();
+            } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
+              mainFragmentView.setDelayDefault();
+            } else {
+              mainFragmentView.setDelayLong();
+            }
           }
         }, throwable -> {
           // todo handle error
@@ -146,10 +152,13 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(aBoolean -> {
-          if (aBoolean) {
-            get().setHandleKeys();
-          } else {
-            get().unsetHandleKeys();
+          final MainFragmentView mainFragmentView = getView();
+          if (mainFragmentView != null) {
+            if (aBoolean) {
+              mainFragmentView.setHandleKeys();
+            } else {
+              mainFragmentView.unsetHandleKeys();
+            }
           }
         }, throwable -> {
           // TODO handle errors
