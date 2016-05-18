@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.app.main;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.pyamsoft.pydroid.base.ActivityBase;
+import com.pyamsoft.pydroid.base.DonationActivityBase;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.app.AccessibilityRequestFragment;
@@ -33,14 +34,15 @@ import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
 import javax.inject.Inject;
 
-public class MainActivity extends ActivityBase implements MainActivityPresenter.MainActivityView {
+public class MainActivity extends DonationActivityBase
+    implements MainActivityPresenter.MainActivityView {
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) Toolbar toolbar;
   @Inject MainActivityPresenter mainActivityPresenter;
   private Unbinder unbinder;
   private boolean serviceEnabled = false;
 
-  @Override protected String getPlayStoreAppPackage() {
+  @NonNull @Override protected String getPlayStoreAppPackage() {
     return getPackageName();
   }
 
