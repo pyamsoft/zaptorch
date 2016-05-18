@@ -77,7 +77,13 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onResume() {
     super.onResume();
+    mainActivityPresenter.onResume();
     animateActionBarToolbar(toolbar);
+  }
+
+  @Override protected void onPause() {
+    super.onPause();
+    mainActivityPresenter.onPause();
   }
 
   @Override protected void onPostResume() {
@@ -97,15 +103,15 @@ public class MainActivity extends DonationActivityBase
     }
   }
 
-  @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+  @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
     return mainActivityPresenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event);
   }
 
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+  @Override public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
     return mainActivityPresenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
-  @Override public boolean onCreateOptionsMenu(Menu menu) {
+  @Override public boolean onCreateOptionsMenu(@NonNull Menu menu) {
     getMenuInflater().inflate(R.menu.main_bugreport_dark, menu);
     return super.onCreateOptionsMenu(menu);
   }

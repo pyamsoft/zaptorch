@@ -23,11 +23,6 @@ import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
 import com.pyamsoft.zaptorch.dagger.main.MainActivityInteractor;
 import com.pyamsoft.zaptorch.dagger.service.VolumeServiceInteractor;
 import javax.inject.Inject;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.Subscriptions;
-import timber.log.Timber;
 
 final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresenter.MainFragmentView>
     implements MainFragmentPresenter {
@@ -35,61 +30,26 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
   @NonNull private final VolumeServiceInteractor serviceInteractor;
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
-  @NonNull private Subscription handleKeysSubscription = Subscriptions.empty();
-  @NonNull private Subscription errorDialogSubscription = Subscriptions.empty();
-  @NonNull private Subscription delaySubscription = Subscriptions.empty();
-
   @Inject public MainFragmentPresenterImpl(@NonNull VolumeServiceInteractor serviceInteractor,
       @NonNull MainActivityInteractor mainActivityInteractor) {
     this.serviceInteractor = serviceInteractor;
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
-    unsubHandleKeysSubscription();
-    unsubErrorDialogSubscription();
-    unsubDelaySubscription();
-  }
-
-  private void unsubErrorDialogSubscription() {
-    if (!errorDialogSubscription.isUnsubscribed()) {
-      errorDialogSubscription.unsubscribe();
-    }
-  }
-
-  private void unsubDelaySubscription() {
-    if (!delaySubscription.isUnsubscribed()) {
-      delaySubscription.unsubscribe();
-    }
-  }
-
   @Override public void setDisplayErrorsFromPreference() {
-    unsubErrorDialogSubscription();
-    errorDialogSubscription = serviceInteractor.shouldShowErrorDialog()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(aBoolean -> {
-          final MainFragmentView mainFragmentView = getView();
-          if (mainFragmentView != null) {
-            if (aBoolean) {
-              mainFragmentView.setDisplayErrors();
-            } else {
-              mainFragmentView.unsetDisplayErrors();
-            }
-          }
-        }, throwable -> {
-          // todo handle error
-          Timber.e(throwable, "onError");
-        });
+    final boolean show = serviceInteractor.shouldShowErrorDialog();
+    final MainFragmentView mainFragmentView = getView();
+    if (mainFragmentView != null) {
+      if (show) {
+        mainFragmentView.setDisplayErrors();
+      } else {
+        mainFragmentView.unsetDisplayErrors();
+      }
+    }
   }
 
   private void setDisplayErrors(boolean b) {
-    unsubErrorDialogSubscription();
-    errorDialogSubscription = serviceInteractor.setShowErrorDialog(b)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+    serviceInteractor.setShowErrorDialog(b);
   }
 
   @Override public void setDisplayErrors() {
@@ -101,77 +61,45 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
   }
 
   @Override public void setDelayFromPreference() {
-    unsubDelaySubscription();
-    delaySubscription = serviceInteractor.getButtonDelayTime()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(delay -> {
-          final MainFragmentView mainFragmentView = getView();
-          if (mainFragmentView != null) {
-            if (delay == ZapTorchPreferences.DELAY_SHORT) {
-              mainFragmentView.setDelayShort();
-            } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
-              mainFragmentView.setDelayDefault();
-            } else {
-              mainFragmentView.setDelayLong();
-            }
-          }
-        }, throwable -> {
-          // todo handle error
-          Timber.e(throwable, "onError");
-        });
+    final long delay = serviceInteractor.getButtonDelayTime();
+    final MainFragmentView mainFragmentView = getView();
+    if (mainFragmentView != null) {
+      if (delay == ZapTorchPreferences.DELAY_SHORT) {
+        mainFragmentView.setDelayShort();
+      } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
+        mainFragmentView.setDelayDefault();
+      } else {
+        mainFragmentView.setDelayLong();
+      }
+    }
   }
 
   @Override public void setDelayShort() {
-    unsubDelaySubscription();
-    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_SHORT)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_SHORT);
   }
 
   @Override public void setDelayDefault() {
-    unsubDelaySubscription();
-    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_DEFAULT)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_DEFAULT);
   }
 
   @Override public void setDelayLong() {
-    unsubDelaySubscription();
-    delaySubscription = serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_LONG)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_LONG);
   }
 
   @Override public void setHandleKeysFromPreference() {
-    unsubHandleKeysSubscription();
-    handleKeysSubscription = mainActivityInteractor.shouldHandleKeys()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(aBoolean -> {
-          final MainFragmentView mainFragmentView = getView();
-          if (mainFragmentView != null) {
-            if (aBoolean) {
-              mainFragmentView.setHandleKeys();
-            } else {
-              mainFragmentView.unsetHandleKeys();
-            }
-          }
-        }, throwable -> {
-          // TODO handle errors
-          Timber.e(throwable, "onError");
-        });
+    final boolean handle = mainActivityInteractor.shouldHandleKeys();
+    final MainFragmentView mainFragmentView = getView();
+    if (mainFragmentView != null) {
+      if (handle) {
+        mainFragmentView.setHandleKeys();
+      } else {
+        mainFragmentView.unsetHandleKeys();
+      }
+    }
   }
 
   private void setHandleKeys(boolean b) {
-    unsubHandleKeysSubscription();
-    handleKeysSubscription = mainActivityInteractor.setHandleKeys(b)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+    mainActivityInteractor.setHandleKeys(b);
   }
 
   @Override public void setHandleKeys() {
@@ -180,11 +108,5 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
 
   @Override public void unsetHandleKeys() {
     setHandleKeys(false);
-  }
-
-  private void unsubHandleKeysSubscription() {
-    if (!handleKeysSubscription.isUnsubscribed()) {
-      handleKeysSubscription.unsubscribe();
-    }
   }
 }

@@ -22,10 +22,6 @@ public interface MainActivityPresenter extends Presenter<MainActivityPresenter.M
 
   boolean shouldHandleKeycode(int keyCode);
 
-  void registerOnKeyHandlerBus();
-
-  void unregisterFromKeyHandlerBus();
-
   interface MainActivityView {
   }
 }

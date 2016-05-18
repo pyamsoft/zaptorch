@@ -20,22 +20,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
-import timber.log.Timber;
 
 abstract class CameraCommon implements CameraInterface {
 
   @NonNull private final VolumeServicePresenter presenter;
-
-  private final Context appContext;
-  private final Handler handler;
-  private final Intent errorExplain;
-  @NonNull private Subscription errorSubscription = Subscriptions.empty();
+  @NonNull private final Context appContext;
+  @NonNull private final Handler handler;
+  @NonNull private final Intent errorExplain;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServicePresenter presenter) {
     this.appContext = context.getApplicationContext();
@@ -46,28 +42,13 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   void startErrorExplanationActivity() {
-    unsubErrorSubscription();
-    errorSubscription = presenter.shouldShowErrorDialog().subscribe(aBoolean -> {
-      if (aBoolean) {
-        handler.post(() -> appContext.startActivity(errorExplain));
-      }
-    }, throwable -> {
-      // todo handle error
-      Timber.e(throwable, "onError");
-    });
-  }
-
-  private void unsubErrorSubscription() {
-    if (!errorSubscription.isUnsubscribed()) {
-      errorSubscription.unsubscribe();
+    final boolean show = presenter.shouldShowErrorDialog();
+    if (show) {
+      handler.post(() -> appContext.startActivity(errorExplain));
     }
   }
 
-  Context getAppContext() {
+  @CheckResult @NonNull Context getAppContext() {
     return appContext;
-  }
-
-  @Override public void release() {
-    unsubErrorSubscription();
   }
 }
