@@ -16,17 +16,15 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-import rx.Observable;
+import android.support.annotation.CheckResult;
 
 public interface VolumeServiceInteractor {
 
-  @WorkerThread @NonNull Observable<Long> getButtonDelayTime();
+  @CheckResult long getButtonDelayTime();
 
-  @WorkerThread @NonNull Observable<Long> setButtonDelayTime(final long time);
+  @CheckResult boolean shouldShowErrorDialog();
 
-  @WorkerThread @NonNull Observable<Boolean> shouldShowErrorDialog();
+  void setButtonDelayTime(final long time);
 
-  @WorkerThread @NonNull Observable<Boolean> setShowErrorDialog(final boolean b);
+  void setShowErrorDialog(final boolean b);
 }

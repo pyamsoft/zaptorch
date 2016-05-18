@@ -25,14 +25,12 @@ import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
-import rx.Observable;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-final class VolumeServicePresenterImpl extends PresenterImpl<VolumeServicePresenter.VolumeServiceView>
+final class VolumeServicePresenterImpl
+    extends PresenterImpl<VolumeServicePresenter.VolumeServiceView>
     implements VolumeServicePresenter {
 
   @NonNull private final Handler handler;
@@ -73,20 +71,12 @@ final class VolumeServicePresenterImpl extends PresenterImpl<VolumeServicePresen
     } else {
       pressed = true;
       unsubButtonDelay();
-      interactor.getButtonDelayTime()
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(delay -> {
-            Timber.d("Post back to false after delay: %d", delay);
-            handler.postDelayed(() -> {
-              Timber.d("Set pressed back to false");
-              pressed = false;
-            }, delay);
-          }, throwable -> {
-            // todo handle error
-            Timber.e(throwable, "onError");
-            pressed = false;
-          });
+      final long delay = interactor.getButtonDelayTime();
+      Timber.d("Post back to false after delay: %d", delay);
+      handler.postDelayed(() -> {
+        Timber.d("Set pressed back to false");
+        pressed = false;
+      }, delay);
     }
   }
 
@@ -122,9 +112,7 @@ final class VolumeServicePresenterImpl extends PresenterImpl<VolumeServicePresen
     return running;
   }
 
-  @NonNull @Override public Observable<Boolean> shouldShowErrorDialog() {
-    return interactor.shouldShowErrorDialog()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread());
+  @Override public boolean shouldShowErrorDialog() {
+    return interactor.shouldShowErrorDialog();
   }
 }
