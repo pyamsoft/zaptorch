@@ -20,7 +20,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
 import android.os.StrictMode;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.pyamsoft.pydroid.base.ApplicationBase;
 import com.pyamsoft.pydroid.crash.CrashHandler;
@@ -30,26 +32,31 @@ import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
 public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
-  private ZapTorchComponent zapTorchComponent;
+  @Nullable private ZapTorchComponent zapTorchComponent;
 
+  @NonNull @CheckResult
   private static ZapTorchComponent zapTorchComponent(final Application application) {
     if (application instanceof ZapTorch) {
       final ZapTorch zapTorch = (ZapTorch) application;
-      return zapTorch.zapTorchComponent;
+      final ZapTorchComponent component = zapTorch.zapTorchComponent;
+      if (component == null) {
+        throw new NullPointerException("ZapTorchComponent cannot be NULL");
+      }
+      return component;
     } else {
       throw new ClassCastException("Cannot cast Application to ZapTorch");
     }
   }
 
-  public static ZapTorchComponent zapTorchComponent(final Activity activity) {
+  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Activity activity) {
     return zapTorchComponent(activity.getApplication());
   }
 
-  public static ZapTorchComponent zapTorchComponent(final Fragment fragment) {
+  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Fragment fragment) {
     return zapTorchComponent(fragment.getActivity());
   }
 
-  public static ZapTorchComponent zapTorchComponent(final Service service) {
+  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Service service) {
     return zapTorchComponent(service.getApplication());
   }
 
