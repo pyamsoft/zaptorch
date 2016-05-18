@@ -16,13 +16,14 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import rx.Observable;
 
 public interface MainActivityInteractor {
 
-  @WorkerThread @NonNull Observable<Boolean> shouldHandleKeys();
+  @CheckResult boolean shouldHandleKeys();
 
-  @WorkerThread @NonNull Observable<Boolean> setHandleKeys(boolean b);
+  void setHandleKeys(boolean b);
 }

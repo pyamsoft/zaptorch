@@ -140,7 +140,6 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
-    super.release();
     if (camera != null && opened) {
       final Camera.Parameters params = camera.getParameters();
       params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);

@@ -76,7 +76,6 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
-    super.release();
     cameraCallback.close();
   }
 

@@ -23,8 +23,6 @@ import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
 import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
 import javax.inject.Inject;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
@@ -33,7 +31,6 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
 
   @NonNull private final MainActivityInteractor mainActivityInteractor;
 
-  @NonNull private Subscription handleKeysSubscription = Subscriptions.empty();
   @NonNull private Subscription handleKeysBus = Subscriptions.empty();
   private boolean handleKeys;
 
@@ -43,24 +40,17 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
 
   @Override public void onCreateView(@NonNull MainActivityView view) {
     super.onCreateView(view);
-    registerOnKeyHandlerBus();
-    unsubHandleKeysSubscription();
-    mainActivityInteractor.shouldHandleKeys()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(aBoolean -> {
-          Timber.d("Initial handlekeys: ", handleKeys);
-          handleKeys = aBoolean;
-        }, throwable -> {
-          // TODO handle error
-          Timber.e(throwable, "onError");
-        });
+    handleKeys = mainActivityInteractor.shouldHandleKeys();
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
+  @Override public void onResume() {
+    super.onResume();
+    registerOnKeyHandlerBus();
+  }
+
+  @Override public void onPause() {
+    super.onPause();
     unregisterFromKeyHandlerBus();
-    unsubHandleKeysSubscription();
   }
 
   @Override public boolean shouldHandleKeycode(int keyCode) {
@@ -80,7 +70,7 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
     return handleKeys && handled;
   }
 
-  @Override public void registerOnKeyHandlerBus() {
+  private void registerOnKeyHandlerBus() {
     unregisterFromKeyHandlerBus();
     handleKeysBus = KeyHandlerBus.register().subscribe(event -> {
       handleKeys = event.handle();
@@ -91,15 +81,9 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
     });
   }
 
-  @Override public void unregisterFromKeyHandlerBus() {
+  private void unregisterFromKeyHandlerBus() {
     if (!handleKeysBus.isUnsubscribed()) {
       handleKeysBus.unsubscribe();
-    }
-  }
-
-  private void unsubHandleKeysSubscription() {
-    if (!handleKeysSubscription.isUnsubscribed()) {
-      handleKeysSubscription.unsubscribe();
     }
   }
 }
