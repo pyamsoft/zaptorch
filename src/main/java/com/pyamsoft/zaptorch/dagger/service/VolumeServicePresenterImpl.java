@@ -37,8 +37,6 @@ final class VolumeServicePresenterImpl
   @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private final CameraInterface cameraInterface;
 
-  @NonNull private Subscription buttonDelaySubscription = Subscriptions.empty();
-
   private boolean pressed;
   private boolean running;
 
@@ -56,12 +54,6 @@ final class VolumeServicePresenterImpl
     }
   }
 
-  private void unsubButtonDelay() {
-    if (!buttonDelaySubscription.isUnsubscribed()) {
-      buttonDelaySubscription.unsubscribe();
-    }
-  }
-
   private void handleKeyEvent() {
     handler.removeCallbacksAndMessages(null);
     if (pressed) {
@@ -70,7 +62,6 @@ final class VolumeServicePresenterImpl
       cameraInterface.toggleTorch();
     } else {
       pressed = true;
-      unsubButtonDelay();
       final long delay = interactor.getButtonDelayTime();
       Timber.d("Post back to false after delay: %d", delay);
       handler.postDelayed(() -> {
@@ -105,7 +96,6 @@ final class VolumeServicePresenterImpl
     handler.removeCallbacksAndMessages(null);
     pressed = false;
     running = false;
-    unsubButtonDelay();
   }
 
   @Override public boolean isStarted() {
