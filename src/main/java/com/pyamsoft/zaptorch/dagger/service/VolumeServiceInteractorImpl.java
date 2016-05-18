@@ -19,7 +19,6 @@ package com.pyamsoft.zaptorch.dagger.service;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import javax.inject.Inject;
-import rx.Observable;
 
 final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
@@ -29,27 +28,19 @@ final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
     this.preferences = preferences;
   }
 
-  @NonNull @Override public Observable<Long> getButtonDelayTime() {
-    return Observable.defer(() -> Observable.just(preferences.getButtonDelayTime()))
-        .map(aLong -> aLong == null ? ZapTorchPreferences.DELAY_DEFAULT : aLong);
+  @Override public long getButtonDelayTime() {
+    return preferences.getButtonDelayTime();
   }
 
-  @NonNull @Override public Observable<Long> setButtonDelayTime(long time) {
-    return Observable.defer(() -> {
-      preferences.setButtonDelayTime(time);
-      return Observable.just(time);
-    });
+  @Override public boolean shouldShowErrorDialog() {
+    return preferences.shouldShowErrorDialog();
   }
 
-  @NonNull @Override public Observable<Boolean> shouldShowErrorDialog() {
-    return Observable.defer(() -> Observable.just(preferences.shouldShowErrorDialog()))
-        .map(aBoolean -> aBoolean == null ? true : aBoolean);
+  @Override public void setButtonDelayTime(long time) {
+    preferences.setButtonDelayTime(time);
   }
 
-  @NonNull @Override public Observable<Boolean> setShowErrorDialog(boolean b) {
-    return Observable.defer(() -> {
-      preferences.setShowErrorDialog(b);
-      return Observable.just(b);
-    });
+  @Override public void setShowErrorDialog(boolean b) {
+    preferences.setShowErrorDialog(b);
   }
 }

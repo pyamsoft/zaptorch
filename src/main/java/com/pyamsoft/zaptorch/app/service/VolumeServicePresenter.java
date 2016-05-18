@@ -16,18 +16,17 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
+import android.support.annotation.CheckResult;
 import com.pyamsoft.pydroid.base.Presenter;
-import rx.Observable;
 
-public interface VolumeServicePresenter extends Presenter<VolumeServicePresenter.VolumeServiceView> {
+public interface VolumeServicePresenter
+    extends Presenter<VolumeServicePresenter.VolumeServiceView> {
 
   void handleKeyEvent(int action, int keyCode);
 
-  boolean isStarted();
+  @CheckResult boolean isStarted();
 
-  @WorkerThread @NonNull Observable<Boolean> shouldShowErrorDialog();
+  @CheckResult boolean shouldShowErrorDialog();
 
   interface VolumeServiceView {
   }
