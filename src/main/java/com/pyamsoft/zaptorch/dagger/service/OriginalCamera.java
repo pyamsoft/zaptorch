@@ -177,7 +177,7 @@ import timber.log.Timber;
     }
   }
 
-  static final class CameraSetupError extends RuntimeException {
+  private static final class CameraSetupError extends RuntimeException {
 
   }
 }
