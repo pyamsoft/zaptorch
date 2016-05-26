@@ -33,8 +33,8 @@ public class ZapTorchPreferences extends ApplicationPreferences {
     super(context);
     final Context appContext = context.getApplicationContext();
     doublePressDelayKey = appContext.getString(R.string.double_press_delay_key);
-    displayCameraErrorsKey = appContext.getString(R.string.double_press_delay_key);
-    handleVolumeKeysKey = appContext.getString(R.string.double_press_delay_key);
+    displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key);
+    handleVolumeKeysKey = appContext.getString(R.string.handle_volume_keys_key);
     doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default);
     displayCameraErrorsDefault =
         appContext.getResources().getBoolean(R.bool.display_camera_errors_default);
