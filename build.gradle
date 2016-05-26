@@ -157,7 +157,7 @@ dependencies {
   compile 'io.reactivex:rxandroid:1.2.0'
   compile 'com.artemzin.rxjava:proguard-rules:1.1.5.0'
 
-  // Pydroid 18 1.4.0
+  // Pydroid 19 1.4.1
   compile project(':PYDroid')
 }
 
