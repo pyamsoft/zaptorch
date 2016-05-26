@@ -86,9 +86,9 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
   @Override public void onCreate() {
     super.onCreate();
-    new CrashHandler(getApplicationContext(), this).register();
 
     if (buildConfigDebug()) {
+      new CrashHandler(getApplicationContext(), this).register();
       StrictMode.setThreadPolicy(
           new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
       StrictMode.setVmPolicy(
