@@ -135,15 +135,17 @@ public class MainActivity extends DonationActivityBase
     // The changelog text
     final String title = "What's New in Version " + BuildConfig.VERSION_NAME;
     final String line1 =
-        "BUGFIX: LockScreen will only launch when the Window changes, not when dialogs or keyboards are opened";
+        "BUGFIX: Fix a crash that occurred occasionally when stopping the Torch on devices below Lollipop";
     final String line2 =
-        "FEATURE: Lock the screen again whenever the Window changes, instead of just when the user switches applications";
+        "FEATURE: Select between different available Camera APIs at runtime. By default, the Camera API is set to the newest for the platform";
     final String line3 =
         "BUGFIX: Properly clear all application when using the 'Reset All Settings' option";
+    final String line4 =
+        "CHANGE: Lower the 'small' camera delay period from 360 to 300 milliseconds";
 
     // Turn it into a spannable
     final Spannable spannable =
-        StringUtil.createBuilder(title, "\n\n", line1, "\n\n", line2, "\n\n", line3);
+        StringUtil.createBuilder(title, "\n\n", line1, "\n\n", line2, "\n\n", line3, "\n\n", line4);
 
     int start = 0;
     int end = title.length();
@@ -161,7 +163,7 @@ public class MainActivity extends DonationActivityBase
     StringUtil.colorSpan(spannable, start, end, largeColor);
 
     start += end + 2;
-    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length();
+    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length() + 2 + line4.length();
 
     StringUtil.sizeSpan(spannable, start, end, smallSize);
     StringUtil.colorSpan(spannable, start, end, smallColor);
