@@ -19,8 +19,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pyamsoft.zaptorch">
 
-  <uses-permission
-      android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
 
   <uses-permission android:name="com.android.vending.BILLING"/>
   <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
