@@ -33,6 +33,7 @@ import timber.log.Timber;
   public MarshmallowCamera(final @NonNull Context context,
       final @NonNull VolumeServicePresenter presenter) {
     super(context, presenter);
+    Timber.d("MARSHMALLOW CAMERA API");
     cameraManager = LollipopCamera.setupCameraManager(context);
     this.torchCallback = new TorchCallback();
     setupCamera();

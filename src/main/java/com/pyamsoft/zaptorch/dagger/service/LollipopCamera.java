@@ -50,6 +50,7 @@ import timber.log.Timber;
   public LollipopCamera(final @NonNull Context context,
       final @NonNull VolumeServicePresenter presenter) {
     super(context, presenter);
+    Timber.d("LOLLIPOP CAMERA API");
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();
     this.cameraCallback = new CameraCallback(cameraManager);

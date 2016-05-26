@@ -23,4 +23,6 @@ public interface VolumeServiceInteractor {
   @CheckResult long getButtonDelayTime();
 
   @CheckResult boolean shouldShowErrorDialog();
+
+  @CheckResult int getCameraApi();
 }

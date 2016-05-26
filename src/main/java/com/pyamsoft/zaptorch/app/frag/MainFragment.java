@@ -29,6 +29,7 @@ import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.dagger.frag.DaggerMainFragmentComponent;
 import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
 import javax.inject.Inject;
@@ -50,6 +51,19 @@ public final class MainFragment extends PreferenceFragmentCompat
       Timber.d("Reset settings onClick");
       mainFragmentPresenter.confirmSettingsClear();
       return true;
+    });
+
+    final Preference cameraApi = findPreference(getString(R.string.camera_api_key));
+    cameraApi.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+      @Override public boolean onPreferenceChange(Preference preference, Object o) {
+        Timber.d("onPreferenceChange %s", preference.getKey());
+        if (o instanceof Integer) {
+          final int newCameraApi = (int) o;
+          Timber.d("Camera api change: %d", newCameraApi);
+          VolumeMonitorService.getInstance().changeCameraApi();
+        }
+        return false;
+      }
     });
   }
 

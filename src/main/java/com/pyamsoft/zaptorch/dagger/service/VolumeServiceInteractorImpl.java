@@ -35,4 +35,8 @@ final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   @Override public boolean shouldShowErrorDialog() {
     return preferences.shouldShowErrorDialog();
   }
+
+  @Override public int getCameraApi() {
+    return preferences.getCameraApi();
+  }
 }

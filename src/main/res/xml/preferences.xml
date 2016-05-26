@@ -8,6 +8,16 @@
         android:key="@string/zaptorch_explain_key"/>
 
     <ListPreference
+        android:defaultValue="@string/camera_api_default"
+        android:dialogTitle="@string/camera_api_title"
+        android:entries="@array/camera_api"
+        android:entryValues="@array/camera_api_entries"
+        android:key="@string/camera_api_key"
+        android:summary="@string/camera_api_summary"
+        android:title="@string/camera_api_title"/>
+    />
+
+    <ListPreference
         android:defaultValue="@string/double_press_delay_default"
         android:dialogTitle="@string/double_press_delay_title"
         android:entries="@array/double_press_delay"
