@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.app.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.view.KeyEvent;
@@ -52,6 +53,7 @@ public class MainActivity extends DonationActivityBase
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
     DaggerMainComponent.builder()

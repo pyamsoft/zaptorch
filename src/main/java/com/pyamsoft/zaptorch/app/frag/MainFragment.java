@@ -32,6 +32,7 @@ import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.dagger.frag.DaggerMainFragmentComponent;
 import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
 import javax.inject.Inject;
+import timber.log.Timber;
 
 public final class MainFragment extends PreferenceFragmentCompat
     implements MainFragmentPresenter.MainFragmentView {
@@ -43,6 +44,13 @@ public final class MainFragment extends PreferenceFragmentCompat
 
     final Preference zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key));
     setExplainHowToText(zapTorchExplain);
+
+    final Preference resetAll = findPreference(getString(R.string.clear_all_key));
+    resetAll.setOnPreferenceClickListener(preference -> {
+      Timber.d("Reset settings onClick");
+      mainFragmentPresenter.confirmSettingsClear();
+      return true;
+    });
   }
 
   @Nullable @Override

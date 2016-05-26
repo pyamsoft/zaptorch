@@ -102,6 +102,9 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
   }
 
   @Override public void confirmSettingsClear() {
-
+    final MainFragmentView mainFragmentView = getView();
+    if (mainFragmentView != null) {
+      mainFragmentView.onConfirmAttempt();
+    }
   }
 }
