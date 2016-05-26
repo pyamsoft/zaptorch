@@ -21,6 +21,4 @@ import android.support.annotation.CheckResult;
 public interface MainActivityInteractor {
 
   @CheckResult boolean shouldHandleKeys();
-
-  void setHandleKeys(boolean b);
 }

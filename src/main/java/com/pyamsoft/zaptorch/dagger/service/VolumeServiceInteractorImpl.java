@@ -35,12 +35,4 @@ final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   @Override public boolean shouldShowErrorDialog() {
     return preferences.shouldShowErrorDialog();
   }
-
-  @Override public void setButtonDelayTime(long time) {
-    preferences.setButtonDelayTime(time);
-  }
-
-  @Override public void setShowErrorDialog(boolean b) {
-    preferences.setShowErrorDialog(b);
-  }
 }

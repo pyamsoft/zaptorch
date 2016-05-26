@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
 import javax.inject.Inject;
 
 public class MainActivityInteractorImpl implements MainActivityInteractor {
@@ -31,10 +30,5 @@ public class MainActivityInteractorImpl implements MainActivityInteractor {
 
   @Override public boolean shouldHandleKeys() {
     return preferences.shouldHandleKeys();
-  }
-
-  @Override public void setHandleKeys(boolean b) {
-    preferences.setHandleKeys(b);
-    KeyHandlerBus.post(new KeyHandlerBus.Event(b));
   }
 }

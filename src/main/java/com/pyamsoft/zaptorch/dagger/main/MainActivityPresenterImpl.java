@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
-import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
 import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
 import javax.inject.Inject;
 import rx.Subscription;
@@ -33,27 +32,21 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
   @NonNull private final MainActivityInteractor mainActivityInteractor;
   @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
 
-  @NonNull private Subscription handleKeysBus = Subscriptions.empty();
-  private boolean handleKeys;
-
   @Inject public MainActivityPresenterImpl(@NonNull MainActivityInteractor mainActivityInteractor) {
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
   @Override public void onCreateView(@NonNull MainActivityView view) {
     super.onCreateView(view);
-    handleKeys = mainActivityInteractor.shouldHandleKeys();
   }
 
   @Override public void onResume() {
     super.onResume();
-    registerOnKeyHandlerBus();
     registerOnConfirmDialogBus();
   }
 
   @Override public void onPause() {
     super.onPause();
-    unregisterFromKeyHandlerBus();
     unregisterFromConfirmDialogBus();
   }
 
@@ -71,24 +64,7 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
       default:
         handled = false;
     }
-    return handleKeys && handled;
-  }
-
-  private void registerOnKeyHandlerBus() {
-    unregisterFromKeyHandlerBus();
-    handleKeysBus = KeyHandlerBus.register().subscribe(event -> {
-      handleKeys = event.handle();
-      Timber.d("Update handle keys: %s", handleKeys);
-    }, throwable -> {
-      // TODO handle error
-      Timber.e(throwable, "onError");
-    });
-  }
-
-  private void unregisterFromKeyHandlerBus() {
-    if (!handleKeysBus.isUnsubscribed()) {
-      handleKeysBus.unsubscribe();
-    }
+    return mainActivityInteractor.shouldHandleKeys() && handled;
   }
 
   private void registerOnConfirmDialogBus() {

@@ -19,12 +19,10 @@ package com.pyamsoft.zaptorch.dagger.frag;
 import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
-import com.pyamsoft.zaptorch.dagger.main.MainModule;
-import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
 import dagger.Component;
 
 @ActivityScope @Component(modules = {
-    MainFragmentModule.class, MainModule.class, VolumeServiceModule.class
+    MainFragmentModule.class
 }, dependencies = ZapTorchComponent.class) public interface MainFragmentComponent {
 
   void inject(MainFragment fragment);
