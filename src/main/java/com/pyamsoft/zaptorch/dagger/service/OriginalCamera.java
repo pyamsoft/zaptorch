@@ -16,10 +16,13 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -79,65 +82,69 @@ import timber.log.Timber;
   }
 
   @Override public void toggleTorch() {
-    if (opened) {
-      Timber.d("Camera is open, close it");
-      release();
+    if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.CAMERA)
+        == PackageManager.PERMISSION_GRANTED) {
+      if (opened) {
+        Timber.d("Camera is open, close it");
+        release();
+      } else {
+        connectToCameraService();
+      }
     } else {
-      Timber.d("Camera is closed, open it");
-      unsubCameraSubscription();
-      cameraSubscription =
-          Observable.defer(() -> Observable.just(Camera.open()))
-              .filter(camera1 -> {
-                final Camera.Parameters parameters = camera1.getParameters();
-                if (parameters.getFlashMode() == null) {
-                  Timber.e("Null flash mode");
-                  camera1.release();
-                  return false;
-                }
-
-                final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-                if (supportedFlashModes == null
-                    || supportedFlashModes.isEmpty()
-                    || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
-                  Timber.e("Camera parameters do not include Torch");
-                  camera1.release();
-                  return false;
-                }
-
-                Timber.d("Camera should have torch mode");
-                return true;
-              })
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(camera1 -> {
-                try {
-                  Timber.d("Camera has flash");
-                  camera = camera1;
-                  windowManager.addView(surfaceView, params);
-
-                  Timber.d("set preview");
-                  final SurfaceHolder holder = getInitializedHolder();
-                  camera.setPreviewDisplay(holder);
-                  final Camera.Parameters cameraParameters = camera.getParameters();
-                  cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                  camera.setParameters(cameraParameters);
-
-                  Timber.d("start camera");
-                  camera.startPreview();
-                  opened = true;
-                } catch (IOException e) {
-                  throw new CameraSetupError();
-                }
-              }, throwable -> {
-                Timber.e(throwable, "Error opening camera");
-                if (camera != null) {
-                  camera.release();
-                  camera = null;
-                  opened = false;
-                }
-                startErrorExplanationActivity();
-              });
+      Timber.e("Missing camera permission");
     }
+  }
+
+  private void connectToCameraService() {
+    Timber.d("Camera is closed, open it");
+    unsubCameraSubscription();
+    cameraSubscription = Observable.defer(() -> Observable.just(Camera.open())).filter(camera1 -> {
+      final Camera.Parameters parameters = camera1.getParameters();
+      if (parameters.getFlashMode() == null) {
+        Timber.e("Null flash mode");
+        camera1.release();
+        return false;
+      }
+
+      final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+      if (supportedFlashModes == null
+          || supportedFlashModes.isEmpty()
+          || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
+        Timber.e("Camera parameters do not include Torch");
+        camera1.release();
+        return false;
+      }
+
+      Timber.d("Camera should have torch mode");
+      return true;
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(camera1 -> {
+      try {
+        Timber.d("Camera has flash");
+        camera = camera1;
+        windowManager.addView(surfaceView, params);
+
+        Timber.d("set preview");
+        final SurfaceHolder holder = getInitializedHolder();
+        camera.setPreviewDisplay(holder);
+        final Camera.Parameters cameraParameters = camera.getParameters();
+        cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(cameraParameters);
+
+        Timber.d("start camera");
+        camera.startPreview();
+        opened = true;
+      } catch (IOException e) {
+        throw new CameraSetupError();
+      }
+    }, throwable -> {
+      Timber.e(throwable, "Error opening camera");
+      if (camera != null) {
+        camera.release();
+        camera = null;
+        opened = false;
+      }
+      startErrorExplanationActivity();
+    });
   }
 
   @Override public void release() {
@@ -150,10 +157,9 @@ import timber.log.Timber;
       camera.release();
       camera = null;
       opened = false;
+      windowManager.removeView(surfaceView);
     }
     unsubCameraSubscription();
-
-    windowManager.removeView(surfaceView);
   }
 
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {
