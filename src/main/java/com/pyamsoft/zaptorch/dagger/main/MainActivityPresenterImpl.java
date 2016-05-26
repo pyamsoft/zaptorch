@@ -54,11 +54,11 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
     boolean handled;
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_DOWN:
-        Timber.d("Detected a Volume Down event. Consume and do nothing");
+        Timber.d("Detected a Volume Down event.");
         handled = true;
         break;
       case KeyEvent.KEYCODE_VOLUME_UP:
-        Timber.d("Detected a Volume Up event. Consume and do nothing");
+        Timber.d("Detected a Volume Up event.");
         handled = true;
         break;
       default:

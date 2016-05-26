@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.app.service;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -25,8 +26,8 @@ import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public class VolumeMonitorService extends AccessibilityService implements
-    VolumeServicePresenter.VolumeServiceView {
+public class VolumeMonitorService extends AccessibilityService
+    implements VolumeServicePresenter.VolumeServiceView {
 
   private static VolumeMonitorService instance;
 
@@ -70,9 +71,9 @@ public class VolumeMonitorService extends AccessibilityService implements
     setInstance(this);
   }
 
-  @Override public void onDestroy() {
-    super.onDestroy();
+  @Override public boolean onUnbind(Intent intent) {
     setInstance(null);
     servicePresenter.onDestroyView();
+    return super.onUnbind(intent);
   }
 }
