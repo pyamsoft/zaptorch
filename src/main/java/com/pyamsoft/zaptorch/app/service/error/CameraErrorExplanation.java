@@ -28,8 +28,4 @@ public final class CameraErrorExplanation extends AppCompatActivity {
     AppUtil.guaranteeSingleDialogFragment(getSupportFragmentManager(), new CameraErrorDialog(),
         CAMERA_ERROR_TAG);
   }
-
-  public final void onDismiss() {
-    finish();
-  }
 }

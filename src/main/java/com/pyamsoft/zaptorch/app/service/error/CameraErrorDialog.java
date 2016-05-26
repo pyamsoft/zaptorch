@@ -17,11 +17,9 @@
 package com.pyamsoft.zaptorch.app.service.error;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 
 public final class CameraErrorDialog extends DialogFragment {
@@ -37,12 +35,8 @@ public final class CameraErrorDialog extends DialogFragment {
         .create();
   }
 
-  @Override public void onDismiss(DialogInterface dialog) {
-    super.onDismiss(dialog);
-    final FragmentActivity activity = getActivity();
-    if (activity instanceof CameraErrorExplanation) {
-      final CameraErrorExplanation explanation = (CameraErrorExplanation) activity;
-      explanation.onDismiss();
-    }
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    getActivity().finish();
   }
 }
