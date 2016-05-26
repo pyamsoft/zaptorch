@@ -4,9 +4,9 @@
   <string name="zaptorch_explain_key">zaptorch_explain</string>
 
   <string-array name="double_press_delay">
-    <item name="time_short">Ignore For 5 Minutes</item>
-    <item name="time_medium">Ignore For 10 Minutes</item>
-    <item name="time_long">Ignore For 30 Minutes</item>
+    <item name="time_short">300 Milliseconds</item>
+    <item name="time_medium">500 Milliseconds</item>
+    <item name="time_long">1000 Milliseconds</item>
   </string-array>
 
   <string-array name="double_press_delay_entries">
@@ -15,7 +15,7 @@
     <item name="time_long">1000</item>
   </string-array>
 
-  <string name="double_press_delay_title">Double Press Delay</string>
+  <string name="double_press_delay_title">Double Press Duration</string>
   <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
   <string name="double_press_delay_key">double_press_delay</string>
   <string name="double_press_delay_default">500</string>
