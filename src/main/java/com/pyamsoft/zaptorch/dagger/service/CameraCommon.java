@@ -22,27 +22,26 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
 
 abstract class CameraCommon implements CameraInterface {
 
-  @NonNull private final VolumeServicePresenter presenter;
+  @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private final Context appContext;
   @NonNull private final Handler handler;
   @NonNull private final Intent errorExplain;
 
-  CameraCommon(final @NonNull Context context, final @NonNull VolumeServicePresenter presenter) {
+  CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
     this.appContext = context.getApplicationContext();
-    this.presenter = presenter;
+    this.interactor = interactor;
     handler = new Handler(Looper.getMainLooper());
     errorExplain = new Intent(appContext, CameraErrorExplanation.class);
     errorExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   }
 
   void startErrorExplanationActivity() {
-    final boolean show = presenter.shouldShowErrorDialog();
+    final boolean show = interactor.shouldShowErrorDialog();
     if (show) {
       handler.post(() -> appContext.startActivity(errorExplain));
     }

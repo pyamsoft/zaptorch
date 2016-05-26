@@ -22,7 +22,6 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) final class MarshmallowCamera extends CameraCommon {
@@ -31,8 +30,8 @@ import timber.log.Timber;
   private final CameraManager cameraManager;
 
   public MarshmallowCamera(final @NonNull Context context,
-      final @NonNull VolumeServicePresenter presenter) {
-    super(context, presenter);
+      final @NonNull VolumeServiceInteractor interactor) {
+    super(context, interactor);
     Timber.d("MARSHMALLOW CAMERA API");
     cameraManager = LollipopCamera.setupCameraManager(context);
     this.torchCallback = new TorchCallback();

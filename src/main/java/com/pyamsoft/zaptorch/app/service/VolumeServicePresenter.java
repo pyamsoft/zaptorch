@@ -26,8 +26,6 @@ public interface VolumeServicePresenter
 
   @CheckResult boolean isStarted();
 
-  @CheckResult boolean shouldShowErrorDialog();
-
   interface VolumeServiceView {
   }
 }

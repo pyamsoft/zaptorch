@@ -36,7 +36,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
@@ -48,8 +47,8 @@ import timber.log.Timber;
   private final CameraCallback cameraCallback;
 
   public LollipopCamera(final @NonNull Context context,
-      final @NonNull VolumeServicePresenter presenter) {
-    super(context, presenter);
+      final @NonNull VolumeServiceInteractor interactor) {
+    super(context, interactor);
     Timber.d("LOLLIPOP CAMERA API");
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();

@@ -16,10 +16,14 @@
 
 package com.pyamsoft.zaptorch.dagger.frag;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.base.ApplicationPreferences;
 import com.pyamsoft.pydroid.base.PresenterImpl;
 import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import rx.Observable;
@@ -38,6 +42,8 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
   @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
   @NonNull private Subscription confirmDialogSubscription = Subscriptions.empty();
 
+  @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
+
   @Inject public MainFragmentPresenterImpl(@NonNull MainFragmentInteractor interactor,
       @NonNull @Named("main") Scheduler mainScheduler,
       @NonNull @Named("io") Scheduler ioScheduler) {
@@ -49,16 +55,39 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
   @Override public void onResume() {
     super.onResume();
     registerOnConfirmDialogBus();
+    registerCameraApiListener();
   }
 
   @Override public void onPause() {
     super.onPause();
     unregisterFromConfirmDialogBus();
+    unregisterCameraApiListener();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
     unsubscribeConfirmDialog();
+  }
+
+  private void registerCameraApiListener() {
+    unregisterCameraApiListener();
+    cameraApiListener = new ApplicationPreferences.OnSharedPreferenceChangeListener() {
+      @Override
+      public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (interactor.getCameraApiKey().equals(key)) {
+          Timber.d("Camera API has changed");
+          VolumeMonitorService.getInstance().changeCameraApi();
+        }
+      }
+    };
+    interactor.registerCameraApiListener(cameraApiListener);
+  }
+
+  private void unregisterCameraApiListener() {
+    if (cameraApiListener != null) {
+      interactor.unregisterCameraApiListener(cameraApiListener);
+      cameraApiListener = null;
+    }
   }
 
   private void unsubscribeConfirmDialog() {
