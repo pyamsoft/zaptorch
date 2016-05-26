@@ -32,5 +32,4 @@ import dagger.Provides;
       final VolumeServiceInteractorImpl interactor) {
     return interactor;
   }
-
 }

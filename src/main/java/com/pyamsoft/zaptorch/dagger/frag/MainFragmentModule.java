@@ -17,17 +17,18 @@
 package com.pyamsoft.zaptorch.dagger.frag;
 
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
+import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
 
 @Module public class MainFragmentModule {
 
-  @Provides MainFragmentPresenter provideMainFragmentPresenter(
+  @ActivityScope @Provides MainFragmentPresenter provideMainFragmentPresenter(
       final MainFragmentPresenterImpl presenter) {
     return presenter;
   }
 
-  @Provides MainFragmentInteractor provideMainFragmentInteractor(
+  @ActivityScope @Provides MainFragmentInteractor provideMainFragmentInteractor(
       final MainFragmentInteractorImpl interactor) {
     return interactor;
   }

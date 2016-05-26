@@ -22,6 +22,7 @@ import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -36,19 +37,19 @@ import rx.schedulers.Schedulers;
     preferences = new ZapTorchPreferences(context);
   }
 
-  @Provides Context provideContext() {
+  @Singleton @Provides Context provideContext() {
     return appContext;
   }
 
-  @Provides ZapTorchPreferences providePreferences() {
+  @Singleton @Provides ZapTorchPreferences providePreferences() {
     return preferences;
   }
 
-  @Provides @Named("main") Scheduler provideMainScheduler() {
+  @Singleton @Provides @Named("main") Scheduler provideMainScheduler() {
     return AndroidSchedulers.mainThread();
   }
 
-  @Provides @Named("io") Scheduler provideIoScheduler() {
+  @Singleton @Provides @Named("io") Scheduler provideIoScheduler() {
     return Schedulers.io();
   }
 }
