@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.app.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.support.annotation.CheckResult;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -37,7 +38,7 @@ public class VolumeMonitorService extends AccessibilityService
     instance = i;
   }
 
-  public static boolean isRunning() {
+  @CheckResult public static boolean isRunning() {
     return instance != null && instance.servicePresenter.isStarted();
   }
 
