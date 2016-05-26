@@ -22,7 +22,6 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.view.KeyEvent;
-import android.view.Menu;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -116,11 +115,6 @@ public class MainActivity extends DonationActivityBase
 
   @Override public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
     return mainActivityPresenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
-  }
-
-  @Override public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-    getMenuInflater().inflate(R.menu.main_bugreport_dark, menu);
-    return super.onCreateOptionsMenu(menu);
   }
 
   private void showAccessibilityRequestFragment() {
