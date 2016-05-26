@@ -32,8 +32,7 @@ import com.pyamsoft.zaptorch.R;
 
 public final class AccessibilityRequestFragment extends Fragment {
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.enable_accessibility_button) Button
-      enableService;
+  @BindView(R.id.enable_accessibility_button) Button enableService;
   private Unbinder unbinder;
 
   @Nullable @Override

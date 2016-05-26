@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.dagger;
 
-import com.pyamsoft.pydroid.base.Presenter;
+import android.support.annotation.NonNull;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
+import rx.subjects.Subject;
 
-public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
+public abstract class RxBus<T> {
 
-  void confirmSettingsClear();
+  @NonNull private final Subject<T, T> bus = new SerializedSubject<>(PublishSubject.create());
 
-  interface MainFragmentView {
+  public void post(@NonNull T event) {
+    if (bus.hasObservers()) {
+      bus.onNext(event);
+    }
+  }
 
-    void onConfirmAttempt();
+  @NonNull public Observable<T> register() {
+    return bus.filter(confirmationEvent -> confirmationEvent != null);
   }
 }

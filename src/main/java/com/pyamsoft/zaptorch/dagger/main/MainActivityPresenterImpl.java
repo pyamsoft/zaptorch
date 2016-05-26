@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.dagger.main;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.PresenterImpl;
+import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
 import com.pyamsoft.zaptorch.app.main.KeyHandlerBus;
 import com.pyamsoft.zaptorch.app.main.MainActivityPresenter;
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
     implements MainActivityPresenter {
 
   @NonNull private final MainActivityInteractor mainActivityInteractor;
+  @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
 
   @NonNull private Subscription handleKeysBus = Subscriptions.empty();
   private boolean handleKeys;
@@ -46,11 +48,13 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
   @Override public void onResume() {
     super.onResume();
     registerOnKeyHandlerBus();
+    registerOnConfirmDialogBus();
   }
 
   @Override public void onPause() {
     super.onPause();
     unregisterFromKeyHandlerBus();
+    unregisterFromConfirmDialogBus();
   }
 
   @Override public boolean shouldHandleKeycode(int keyCode) {
@@ -84,6 +88,25 @@ final class MainActivityPresenterImpl extends PresenterImpl<MainActivityPresente
   private void unregisterFromKeyHandlerBus() {
     if (!handleKeysBus.isUnsubscribed()) {
       handleKeysBus.unsubscribe();
+    }
+  }
+
+  private void registerOnConfirmDialogBus() {
+    unregisterFromConfirmDialogBus();
+    confirmDialogBusSubscription =
+        ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
+          if (confirmationEvent.isComplete()) {
+            Timber.d("received completed clearAll event. Kill Process");
+            android.os.Process.killProcess(android.os.Process.myPid());
+          }
+        }, throwable -> {
+          Timber.e(throwable, "ConfirmationDialogBus onError");
+        });
+  }
+
+  private void unregisterFromConfirmDialogBus() {
+    if (!confirmDialogBusSubscription.isUnsubscribed()) {
+      confirmDialogBusSubscription.unsubscribe();
     }
   }
 }

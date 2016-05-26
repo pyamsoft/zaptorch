@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+      android:title="Service Settings">
+
+    <Preference
+        android:key="@string/zaptorch_explain_key"/>
+
+    <ListPreference
+        android:defaultValue="@string/double_press_delay_default"
+        android:dialogTitle="@string/double_press_delay_title"
+        android:entries="@array/double_press_delay"
+        android:entryValues="@array/double_press_delay_entries"
+        android:key="@string/double_press_delay_key"
+        android:summary="@string/double_press_delay_summary"
+        android:title="@string/double_press_delay_title"/>
+    />
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/display_camera_errors_default"
+        android:key="@string/display_camera_errors_key"
+        android:summary="@string/display_camera_errors_summary"
+        android:title="@string/display_camera_errors_title"/>
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/handle_volume_keys_default"
+        android:key="@string/handle_volume_keys_key"
+        android:summaryOff="@string/handle_volume_keys_summary_unchecked"
+        android:summaryOn="@string/handle_volume_keys_summary_checked"
+        android:title="@string/handle_volume_keys_title"/>
+
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:title="ZapTorch Settings">
+
+    <Preference
+        android:key="@string/clear_all_key"
+        android:summary="@string/clear_all_summary"
+        android:title="@string/clear_all_title"/>
+
+  </PreferenceCategory>
+
+</PreferenceScreen>
