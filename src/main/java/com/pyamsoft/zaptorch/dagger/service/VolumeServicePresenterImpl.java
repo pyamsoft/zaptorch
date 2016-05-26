@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,7 +32,6 @@ final class VolumeServicePresenterImpl
     implements VolumeServicePresenter {
 
   @NonNull private final Handler handler;
-  @NonNull private final Context appContext;
   @NonNull private final VolumeServiceInteractor interactor;
   private final int cameraApiOld;
   private final int cameraApiLollipop;
@@ -43,9 +41,7 @@ final class VolumeServicePresenterImpl
   private boolean pressed;
   private boolean running;
 
-  @Inject public VolumeServicePresenterImpl(final @NonNull Context context,
-      @NonNull final VolumeServiceInteractor interactor) {
-    this.appContext = context.getApplicationContext();
+  @Inject public VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
     this.pressed = false;
@@ -94,12 +90,12 @@ final class VolumeServicePresenterImpl
 
     final int cameraApi = interactor.getCameraApi();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
-      cameraInterface = new MarshmallowCamera(appContext, this);
+      cameraInterface = interactor.marshmallowCamera();
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
         && cameraApi == cameraApiLollipop) {
-      cameraInterface = new LollipopCamera(appContext, this);
+      cameraInterface = interactor.lollipopCamera();
     } else if (cameraApi == cameraApiOld) {
-      cameraInterface = new OriginalCamera(appContext, this);
+      cameraInterface = interactor.originalCamera();
     } else {
       throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
     }
@@ -119,9 +115,5 @@ final class VolumeServicePresenterImpl
 
   @Override public boolean isStarted() {
     return running;
-  }
-
-  @Override public boolean shouldShowErrorDialog() {
-    return interactor.shouldShowErrorDialog();
   }
 }

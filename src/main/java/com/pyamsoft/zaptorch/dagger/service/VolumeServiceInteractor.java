@@ -17,6 +17,8 @@
 package com.pyamsoft.zaptorch.dagger.service;
 
 import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 
 public interface VolumeServiceInteractor {
 
@@ -25,4 +27,10 @@ public interface VolumeServiceInteractor {
   @CheckResult boolean shouldShowErrorDialog();
 
   @CheckResult int getCameraApi();
+
+  @CheckResult @NonNull CameraInterface marshmallowCamera();
+
+  @CheckResult @NonNull CameraInterface lollipopCamera();
+
+  @CheckResult @NonNull CameraInterface originalCamera();
 }

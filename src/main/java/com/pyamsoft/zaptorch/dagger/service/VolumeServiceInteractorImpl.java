@@ -16,15 +16,20 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
 
 final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
   @NonNull private final ZapTorchPreferences preferences;
+  @NonNull private final Context appContext;
 
-  @Inject public VolumeServiceInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+  @Inject public VolumeServiceInteractorImpl(@NonNull Context context,
+      @NonNull ZapTorchPreferences preferences) {
+    this.appContext = context.getApplicationContext();
     this.preferences = preferences;
   }
 
@@ -38,5 +43,17 @@ final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
   @Override public int getCameraApi() {
     return preferences.getCameraApi();
+  }
+
+  @NonNull @Override public CameraInterface marshmallowCamera() {
+    return new MarshmallowCamera(appContext, this);
+  }
+
+  @NonNull @Override public CameraInterface lollipopCamera() {
+    return new LollipopCamera(appContext, this);
+  }
+
+  @NonNull @Override public CameraInterface originalCamera() {
+    return new OriginalCamera(appContext, this);
   }
 }

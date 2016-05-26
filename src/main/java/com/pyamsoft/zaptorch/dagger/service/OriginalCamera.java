@@ -24,7 +24,6 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import java.io.IOException;
 import java.util.List;
 import rx.Observable;
@@ -47,8 +46,8 @@ import timber.log.Timber;
   private boolean opened;
 
   public OriginalCamera(final @NonNull Context context,
-      final @NonNull VolumeServicePresenter presenter) {
-    super(context, presenter);
+      final @NonNull VolumeServiceInteractor interactor) {
+    super(context, interactor);
     Timber.d("OLD CAMERA API");
     opened = false;
 
