@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app;
+package com.pyamsoft.zaptorch.app.main;
 
 import android.content.Intent;
 import android.os.Bundle;
