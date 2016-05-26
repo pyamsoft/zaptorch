@@ -17,41 +17,40 @@
 package com.pyamsoft.zaptorch;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.ApplicationPreferences;
 
 public class ZapTorchPreferences extends ApplicationPreferences {
-  public static final long DELAY_SHORT = 360L;
-  public static final long DELAY_DEFAULT = 500L;
-  public static final long DELAY_LONG = 1000L;
-  private static final String DELAY = "delay";
-  private static final String ERROR = "error";
-  private static final String HANDLE_KEYS = "handle_keys";
+
+  @NonNull private final String doublePressDelayKey;
+  @NonNull private final String displayCameraErrorsKey;
+  @NonNull private final String handleVolumeKeysKey;
+  @NonNull private final String doublePressDelayDefault;
+  private final boolean displayCameraErrorsDefault;
+  private final boolean handleVolumeKeysDefault;
 
   public ZapTorchPreferences(Context context) {
     super(context);
+    final Context appContext = context.getApplicationContext();
+    doublePressDelayKey = appContext.getString(R.string.double_press_delay_key);
+    displayCameraErrorsKey = appContext.getString(R.string.double_press_delay_key);
+    handleVolumeKeysKey = appContext.getString(R.string.double_press_delay_key);
+    doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default);
+    displayCameraErrorsDefault =
+        appContext.getResources().getBoolean(R.bool.display_camera_errors_default);
+    handleVolumeKeysDefault =
+        appContext.getResources().getBoolean(R.bool.handle_volume_keys_default);
   }
 
   public final long getButtonDelayTime() {
-    return get(DELAY, DELAY_DEFAULT);
-  }
-
-  public final void setButtonDelayTime(final long l) {
-    put(DELAY, l);
+    return Long.parseLong(get(doublePressDelayKey, doublePressDelayDefault));
   }
 
   public final boolean shouldShowErrorDialog() {
-    return get(ERROR, true);
-  }
-
-  public final void setShowErrorDialog(final boolean b) {
-    put(ERROR, b);
+    return get(displayCameraErrorsKey, displayCameraErrorsDefault);
   }
 
   public final boolean shouldHandleKeys() {
-    return get(HANDLE_KEYS, true);
-  }
-
-  public final void setHandleKeys(final boolean b) {
-    put(HANDLE_KEYS, b);
+    return get(handleVolumeKeysKey, handleVolumeKeysDefault);
   }
 }

@@ -18,95 +18,90 @@ package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.PresenterImpl;
-import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
-import com.pyamsoft.zaptorch.dagger.main.MainActivityInteractor;
-import com.pyamsoft.zaptorch.dagger.service.VolumeServiceInteractor;
 import javax.inject.Inject;
+import javax.inject.Named;
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+import timber.log.Timber;
 
 final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresenter.MainFragmentView>
     implements MainFragmentPresenter {
 
-  @NonNull private final VolumeServiceInteractor serviceInteractor;
-  @NonNull private final MainActivityInteractor mainActivityInteractor;
+  @NonNull private final MainFragmentInteractor interactor;
+  @NonNull private final Scheduler mainScheduler;
+  @NonNull private final Scheduler ioScheduler;
 
-  @Inject public MainFragmentPresenterImpl(@NonNull VolumeServiceInteractor serviceInteractor,
-      @NonNull MainActivityInteractor mainActivityInteractor) {
-    this.serviceInteractor = serviceInteractor;
-    this.mainActivityInteractor = mainActivityInteractor;
+  @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
+  @NonNull private Subscription confirmDialogSubscription = Subscriptions.empty();
+
+  @Inject public MainFragmentPresenterImpl(@NonNull MainFragmentInteractor interactor,
+      @NonNull @Named("main") Scheduler mainScheduler,
+      @NonNull @Named("io") Scheduler ioScheduler) {
+    this.interactor = interactor;
+    this.mainScheduler = mainScheduler;
+    this.ioScheduler = ioScheduler;
   }
 
-  @Override public void setDisplayErrorsFromPreference() {
-    final boolean show = serviceInteractor.shouldShowErrorDialog();
-    final MainFragmentView mainFragmentView = getView();
-    if (mainFragmentView != null) {
-      if (show) {
-        mainFragmentView.setDisplayErrors();
-      } else {
-        mainFragmentView.unsetDisplayErrors();
-      }
+  @Override public void onResume() {
+    super.onResume();
+    registerOnConfirmDialogBus();
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    unregisterFromConfirmDialogBus();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    unsubscribeConfirmDialog();
+  }
+
+  private void unsubscribeConfirmDialog() {
+    if (confirmDialogSubscription.isUnsubscribed()) {
+      confirmDialogSubscription.unsubscribe();
     }
   }
 
-  private void setDisplayErrors(boolean b) {
-    serviceInteractor.setShowErrorDialog(b);
+  private Observable<Boolean> clearAll() {
+    return interactor.clearAll().subscribeOn(ioScheduler).observeOn(mainScheduler);
   }
 
-  @Override public void setDisplayErrors() {
-    setDisplayErrors(true);
-  }
-
-  @Override public void unsetDisplayErrors() {
-    setDisplayErrors(false);
-  }
-
-  @Override public void setDelayFromPreference() {
-    final long delay = serviceInteractor.getButtonDelayTime();
-    final MainFragmentView mainFragmentView = getView();
-    if (mainFragmentView != null) {
-      if (delay == ZapTorchPreferences.DELAY_SHORT) {
-        mainFragmentView.setDelayShort();
-      } else if (delay == ZapTorchPreferences.DELAY_DEFAULT) {
-        mainFragmentView.setDelayDefault();
-      } else {
-        mainFragmentView.setDelayLong();
-      }
+  private void unregisterFromConfirmDialogBus() {
+    if (!confirmDialogBusSubscription.isUnsubscribed()) {
+      confirmDialogBusSubscription.unsubscribe();
     }
   }
 
-  @Override public void setDelayShort() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_SHORT);
+  private void registerOnConfirmDialogBus() {
+    unregisterFromConfirmDialogBus();
+    confirmDialogBusSubscription =
+        ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
+          if (!confirmationEvent.isComplete()) {
+            Timber.d("Received confirmation event!");
+            // KLUDGE nested subscriptions are ugly
+            unsubscribeConfirmDialog();
+            Timber.d("Received all cleared confirmation event, clear All");
+            confirmDialogSubscription = clearAll().subscribe(aBoolean -> {
+
+                }, throwable -> Timber.e(throwable, "ConfirmationDialogBus in clearAll onError"),
+                () -> {
+                  Timber.d("ConfirmationDialogBus in clearAll onComplete");
+                  // TODO post completed event
+                  ConfirmationDialog.ConfirmationDialogBus.get()
+                      .post(new ConfirmationDialog.ConfirmationEvent(true));
+                });
+          }
+        }, throwable -> {
+          Timber.e(throwable, "ConfirmationDialogBus onError");
+        });
   }
 
-  @Override public void setDelayDefault() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_DEFAULT);
-  }
+  @Override public void confirmSettingsClear() {
 
-  @Override public void setDelayLong() {
-    serviceInteractor.setButtonDelayTime(ZapTorchPreferences.DELAY_LONG);
-  }
-
-  @Override public void setHandleKeysFromPreference() {
-    final boolean handle = mainActivityInteractor.shouldHandleKeys();
-    final MainFragmentView mainFragmentView = getView();
-    if (mainFragmentView != null) {
-      if (handle) {
-        mainFragmentView.setHandleKeys();
-      } else {
-        mainFragmentView.unsetHandleKeys();
-      }
-    }
-  }
-
-  private void setHandleKeys(boolean b) {
-    mainActivityInteractor.setHandleKeys(b);
-  }
-
-  @Override public void setHandleKeys() {
-    setHandleKeys(true);
-  }
-
-  @Override public void unsetHandleKeys() {
-    setHandleKeys(false);
   }
 }

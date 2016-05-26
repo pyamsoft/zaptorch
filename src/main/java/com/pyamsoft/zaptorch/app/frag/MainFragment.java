@@ -19,91 +19,60 @@ package com.pyamsoft.zaptorch.app.frag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.SwitchCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.text.Spannable;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.dagger.frag.DaggerMainFragmentComponent;
 import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
 import javax.inject.Inject;
-import timber.log.Timber;
 
-public final class MainFragment extends Fragment implements MainFragmentPresenter.MainFragmentView {
+public final class MainFragment extends PreferenceFragmentCompat
+    implements MainFragmentPresenter.MainFragmentView {
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_explain_howto) TextView
-      explainHowTo;
-
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_display_camera_errors)
-  SwitchCompat displayErrors;
-
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_handle_keys) SwitchCompat
-      handleKeys;
-
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_short) RadioButton
-      delayShort;
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_default)
-  RadioButton delayDefault;
-  @SuppressWarnings({ "WeakerAccess", "unused" }) @BindView(R.id.main_buttondelay_long) RadioButton
-      delayLong;
   @Inject MainFragmentPresenter mainFragmentPresenter;
-  private Unbinder unbinder;
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    DaggerMainFragmentComponent.builder()
-        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
-        .mainFragmentModule(new MainFragmentModule())
-        .build()
-        .inject(this);
+  @Override public void onCreatePreferences(Bundle bundle, String s) {
+    addPreferencesFromResource(R.xml.preferences);
+
+    final Preference zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key));
+    setExplainHowToText(zapTorchExplain);
   }
 
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.fragment_main, container, false);
-    unbinder = ButterKnife.bind(this, view);
+    DaggerMainFragmentComponent.builder()
+        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .mainFragmentModule(new MainFragmentModule())
+        .build()
+        .inject(this);
     mainFragmentPresenter.onCreateView(this);
-    return view;
+    return super.onCreateView(inflater, container, savedInstanceState);
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    mainFragmentPresenter.onResume();
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    mainFragmentPresenter.onPause();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
     mainFragmentPresenter.onDestroyView();
-    if (unbinder != null) {
-      unbinder.unbind();
-    }
   }
 
-  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    setExplainHowToText();
-    setDisplayErrorsText();
-    setHandleKeysText();
-
-    mainFragmentPresenter.setDisplayErrorsFromPreference();
-    mainFragmentPresenter.setDelayFromPreference();
-    mainFragmentPresenter.setHandleKeysFromPreference();
-
-    setOnSwitchListenerDisplayErrors();
-    setOnSwitchListenerHandleKeys();
-    setOnCheckedListenerSmall();
-    setOnCheckedListenerDefault();
-    setOnCheckedListenerLarge();
-  }
-
-  private void setExplainHowToText() {
+  private static void setExplainHowToText(final Preference zapTorchExplain) {
     final String text1 = "ZapTorch prides itself on being easy to use.";
     final String text2 = "\n\n";
     final String text3 = "To get going, just make sure that the screen is ";
@@ -134,146 +103,11 @@ public final class MainFragment extends Fragment implements MainFragmentPresente
     postBoldLength = preBoldLength + text10.length();
     StringUtil.boldSpan(spannable, preBoldLength, postBoldLength);
 
-    explainHowTo.setText(spannable);
+    zapTorchExplain.setSummary(spannable);
   }
 
-  private void setDisplayErrorsText() {
-    final Spannable spannable = StringUtil.createBuilder("Display Camera Errors:", "\n",
-        "Shows a dialog if an error has occurred while trying to access the device's camera");
-    final int index = spannable.toString().indexOf(':');
-    if (index != -1) {
-      Timber.d("New line at: %d", index);
-      final int largeTextSize =
-          StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
-      final int largeTextColor =
-          StringUtil.getTextColorFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
-      if (largeTextColor != 0 && largeTextSize != 0) {
-        StringUtil.multiSpannable(spannable, 0, index + 1, new AbsoluteSizeSpan(largeTextSize),
-            new ForegroundColorSpan(largeTextColor));
-      }
-
-      final int smallTextSize =
-          StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceSmall);
-      final int smallTextColor =
-          StringUtil.getTextColorFromAppearance(getContext(), android.R.attr.textAppearanceSmall);
-      if (smallTextColor != 0 && smallTextSize != 0) {
-        StringUtil.multiSpannable(spannable, index + 1, spannable.length(),
-            new AbsoluteSizeSpan(smallTextSize), new ForegroundColorSpan(smallTextColor));
-      }
-    }
-    displayErrors.setText(spannable);
-  }
-
-  private void setHandleKeysText() {
-    final Spannable spannable = StringUtil.createBuilder("Handle Volume Key Press:", "\n",
-        "Pressing the volume keys while ZapTorch is open will not change the volume");
-    final int index = spannable.toString().indexOf(':');
-    if (index != -1) {
-      Timber.d("New line at: %d", index);
-      final int largeTextSize =
-          StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
-      final int largeTextColor =
-          StringUtil.getTextColorFromAppearance(getContext(), android.R.attr.textAppearanceLarge);
-      if (largeTextColor != 0 && largeTextSize != 0) {
-        StringUtil.multiSpannable(spannable, 0, index + 1, new AbsoluteSizeSpan(largeTextSize),
-            new ForegroundColorSpan(largeTextColor));
-      }
-
-      final int smallTextSize =
-          StringUtil.getTextSizeFromAppearance(getContext(), android.R.attr.textAppearanceSmall);
-      final int smallTextColor =
-          StringUtil.getTextColorFromAppearance(getContext(), android.R.attr.textAppearanceSmall);
-      if (smallTextColor != 0 && smallTextSize != 0) {
-        StringUtil.multiSpannable(spannable, index + 1, spannable.length(),
-            new AbsoluteSizeSpan(smallTextSize), new ForegroundColorSpan(smallTextColor));
-      }
-    }
-    handleKeys.setText(spannable);
-  }
-
-  private void setOnCheckedListenerSmall() {
-    delayShort.setOnCheckedChangeListener((btn, b) -> {
-      if (b) {
-        mainFragmentPresenter.setDelayShort();
-      }
-    });
-  }
-
-  private void setOnCheckedListenerDefault() {
-    delayDefault.setOnCheckedChangeListener((btn, b) -> {
-      if (b) {
-        mainFragmentPresenter.setDelayDefault();
-      }
-    });
-  }
-
-  private void setOnCheckedListenerLarge() {
-    delayLong.setOnCheckedChangeListener((btn, b) -> {
-      if (b) {
-        mainFragmentPresenter.setDelayLong();
-      }
-    });
-  }
-
-  private void setOnSwitchListenerDisplayErrors() {
-    displayErrors.setOnCheckedChangeListener((btn, b) -> {
-      if (b) {
-        mainFragmentPresenter.setDisplayErrors();
-      } else {
-        mainFragmentPresenter.unsetDisplayErrors();
-      }
-    });
-  }
-
-  private void setOnSwitchListenerHandleKeys() {
-    handleKeys.setOnCheckedChangeListener((btn, b) -> {
-      if (b) {
-        mainFragmentPresenter.setHandleKeys();
-      } else {
-        mainFragmentPresenter.unsetHandleKeys();
-      }
-    });
-  }
-
-  @Override public void setDelayShort() {
-    delayShort.setOnCheckedChangeListener(null);
-    delayShort.setChecked(true);
-    setOnCheckedListenerSmall();
-  }
-
-  @Override public void setDelayDefault() {
-    delayDefault.setOnCheckedChangeListener(null);
-    delayDefault.setChecked(true);
-    setOnCheckedListenerDefault();
-  }
-
-  @Override public void setDelayLong() {
-    delayLong.setOnCheckedChangeListener(null);
-    delayLong.setChecked(true);
-    setOnCheckedListenerLarge();
-  }
-
-  @Override public void setHandleKeys() {
-    handleKeys.setOnCheckedChangeListener(null);
-    handleKeys.setChecked(true);
-    setOnSwitchListenerHandleKeys();
-  }
-
-  @Override public void unsetHandleKeys() {
-    handleKeys.setOnCheckedChangeListener(null);
-    handleKeys.setChecked(false);
-    setOnSwitchListenerHandleKeys();
-  }
-
-  @Override public void setDisplayErrors() {
-    displayErrors.setOnCheckedChangeListener(null);
-    displayErrors.setChecked(true);
-    setOnSwitchListenerDisplayErrors();
-  }
-
-  @Override public void unsetDisplayErrors() {
-    displayErrors.setOnCheckedChangeListener(null);
-    displayErrors.setChecked(false);
-    setOnSwitchListenerDisplayErrors();
+  @Override public void onConfirmAttempt() {
+    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), ConfirmationDialog.newInstance(),
+        "confirm_dialog");
   }
 }
