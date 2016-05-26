@@ -49,6 +49,7 @@ import timber.log.Timber;
   public OriginalCamera(final @NonNull Context context,
       final @NonNull VolumeServicePresenter presenter) {
     super(context, presenter);
+    Timber.d("OLD CAMERA API");
     opened = false;
 
     surfaceView = new SurfaceView(getAppContext());

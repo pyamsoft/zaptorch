@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.app.service;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -34,8 +35,16 @@ public class VolumeMonitorService extends AccessibilityService
 
   @Inject VolumeServicePresenter servicePresenter;
 
-  private static void setInstance(VolumeMonitorService i) {
+  private static synchronized void setInstance(VolumeMonitorService i) {
     instance = i;
+  }
+
+  @CheckResult @NonNull public static synchronized VolumeMonitorService getInstance() {
+    if (instance == null) {
+      throw new NullPointerException("VolumeMonitorService instance is NULL");
+    }
+
+    return instance;
   }
 
   @CheckResult public static boolean isRunning() {
@@ -76,5 +85,14 @@ public class VolumeMonitorService extends AccessibilityService
     setInstance(null);
     servicePresenter.onDestroyView();
     return super.onUnbind(intent);
+  }
+
+  public final void changeCameraApi() {
+    if (servicePresenter != null) {
+      // Simulate the lifecycle for destroying and re-creating the presenter
+      Timber.d("Change camera API");
+      servicePresenter.onDestroyView();
+      servicePresenter.onCreateView(this);
+    }
   }
 }

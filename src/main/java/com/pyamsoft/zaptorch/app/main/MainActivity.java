@@ -25,7 +25,6 @@ import android.view.KeyEvent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.anjlab.android.iab.v3.BillingProcessor;
 import com.pyamsoft.pydroid.base.DonationActivityBase;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.StringUtil;
@@ -92,10 +91,6 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onPostResume() {
     super.onPostResume();
-    if (!BillingProcessor.isIabServiceAvailable(this)) {
-      showDonationUnavailableDialog();
-    }
-
     RatingDialog.showRatingDialog(this, this);
 
     if (VolumeMonitorService.isRunning()) {
