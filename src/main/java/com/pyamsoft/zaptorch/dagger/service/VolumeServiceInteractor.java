@@ -23,8 +23,4 @@ public interface VolumeServiceInteractor {
   @CheckResult long getButtonDelayTime();
 
   @CheckResult boolean shouldShowErrorDialog();
-
-  void setButtonDelayTime(final long time);
-
-  void setShowErrorDialog(final boolean b);
 }

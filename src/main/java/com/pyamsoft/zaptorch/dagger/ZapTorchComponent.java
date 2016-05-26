@@ -19,11 +19,16 @@ package com.pyamsoft.zaptorch.dagger;
 import android.content.Context;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import dagger.Component;
+import javax.inject.Named;
 import javax.inject.Singleton;
+import rx.Scheduler;
 
 @Singleton @Component(modules = ZapTorchModule.class) public interface ZapTorchComponent {
 
   Context provideContext();
 
   ZapTorchPreferences providePreferences();
+
+  @Named("main") Scheduler provideMainScheduler();
+  @Named("io") Scheduler provideIoScheduler();
 }
