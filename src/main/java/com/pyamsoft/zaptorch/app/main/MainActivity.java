@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.app.main;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
 import android.view.KeyEvent;
 import android.view.Menu;
 import butterknife.BindView;
@@ -26,6 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.pyamsoft.pydroid.base.DonationActivityBase;
+import com.pyamsoft.pydroid.support.RatingDialog;
+import com.pyamsoft.pydroid.util.StringUtil;
+import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.app.AccessibilityRequestFragment;
@@ -35,7 +39,7 @@ import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
 import javax.inject.Inject;
 
 public class MainActivity extends DonationActivityBase
-    implements MainActivityPresenter.MainActivityView {
+    implements MainActivityPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
   @BindView(R.id.toolbar) Toolbar toolbar;
   @Inject MainActivityPresenter mainActivityPresenter;
@@ -92,6 +96,8 @@ public class MainActivity extends DonationActivityBase
       showDonationUnavailableDialog();
     }
 
+    RatingDialog.showRatingDialog(this, this);
+
     if (VolumeMonitorService.isRunning()) {
       if (!serviceEnabled) {
         showMainFragment();
@@ -133,5 +139,55 @@ public class MainActivity extends DonationActivityBase
   private void setupAppBar() {
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
+  }
+
+  @NonNull @Override public Spannable getChangeLogText() {
+    // The changelog text
+    final String title = "What's New in Version " + BuildConfig.VERSION_NAME;
+    final String line1 =
+        "BUGFIX: LockScreen will only launch when the Window changes, not when dialogs or keyboards are opened";
+    final String line2 =
+        "FEATURE: Lock the screen again whenever the Window changes, instead of just when the user switches applications";
+    final String line3 =
+        "BUGFIX: Properly clear all application when using the 'Reset All Settings' option";
+
+    // Turn it into a spannable
+    final Spannable spannable =
+        StringUtil.createBuilder(title, "\n\n", line1, "\n\n", line2, "\n\n", line3);
+
+    int start = 0;
+    int end = title.length();
+    final int largeSize =
+        StringUtil.getTextSizeFromAppearance(this, android.R.attr.textAppearanceLarge);
+    final int largeColor =
+        StringUtil.getTextColorFromAppearance(this, android.R.attr.textAppearanceLarge);
+    final int smallSize =
+        StringUtil.getTextSizeFromAppearance(this, android.R.attr.textAppearanceSmall);
+    final int smallColor =
+        StringUtil.getTextColorFromAppearance(this, android.R.attr.textAppearanceSmall);
+
+    StringUtil.boldSpan(spannable, start, end);
+    StringUtil.sizeSpan(spannable, start, end, largeSize);
+    StringUtil.colorSpan(spannable, start, end, largeColor);
+
+    start += end + 2;
+    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length();
+
+    StringUtil.sizeSpan(spannable, start, end, smallSize);
+    StringUtil.colorSpan(spannable, start, end, smallColor);
+
+    return spannable;
+  }
+
+  @Override public int getChangeLogIcon() {
+    return R.mipmap.ic_launcher;
+  }
+
+  @NonNull @Override public String getChangeLogPackageName() {
+    return getPackageName();
+  }
+
+  @Override public int getChangeLogVersion() {
+    return BuildConfig.VERSION_CODE;
   }
 }
