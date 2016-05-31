@@ -52,6 +52,7 @@ import timber.log.Timber;
         cameraManager.setTorchMode(cameraId, enable);
       } catch (CameraAccessException e) {
         Timber.e(e, "toggleTorch ERROR");
+        startErrorExplanationActivity();
       }
     } else {
       Timber.e("Torch unavailable");

@@ -37,6 +37,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
+import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
 import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
@@ -86,7 +87,17 @@ import timber.log.Timber;
       startErrorExplanationActivity();
     } else {
       Timber.d("Open camera");
-      cameraCallback.accessCamera(getAppContext(), flashCameraId);
+      final int result = cameraCallback.accessCamera(getAppContext(), flashCameraId);
+      switch (result) {
+        case CameraErrorExplanation.TYPE_ERROR:
+          startErrorExplanationActivity();
+          break;
+        case CameraErrorExplanation.TYPE_PERMISSION:
+          startPermissionExplanationActivity();
+          break;
+        default:
+          Timber.d("Do nothing");
+      }
     }
   }
 
@@ -106,8 +117,7 @@ import timber.log.Timber;
       list = new ArrayList<>(1);
     }
 
-    @CheckResult
-    @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
+    @CheckResult @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
         final @NonNull String id) throws CameraAccessException {
       Timber.d("Get stream config map");
       final StreamConfigurationMap map = manager.getCameraCharacteristics(id)
@@ -150,7 +160,7 @@ import timber.log.Timber;
       opened = false;
     }
 
-    public void accessCamera(final @NonNull Context context, final @NonNull String id) {
+    @CheckResult public int accessCamera(final @NonNull Context context, final @NonNull String id) {
       if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
           == PackageManager.PERMISSION_GRANTED) {
         try {
@@ -162,11 +172,14 @@ import timber.log.Timber;
             Timber.d("Open closed camera");
             manager.openCamera(id, this, null);
           }
+          return CameraErrorExplanation.TYPE_NONE;
         } catch (CameraAccessException e) {
           Timber.e(e, "toggleTorch ERROR");
+          return CameraErrorExplanation.TYPE_ERROR;
         }
       } else {
         Timber.e("Missing camera permission");
+        return CameraErrorExplanation.TYPE_PERMISSION;
       }
     }
 

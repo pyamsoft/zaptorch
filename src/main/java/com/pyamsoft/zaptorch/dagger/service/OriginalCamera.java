@@ -93,6 +93,7 @@ import timber.log.Timber;
       }
     } else {
       Timber.e("Missing camera permission");
+      startPermissionExplanationActivity();
     }
   }
 
