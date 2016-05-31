@@ -101,13 +101,17 @@ public class VolumeMonitorService extends AccessibilityService
     return super.onUnbind(intent);
   }
 
-  public final void changeCameraApi() {
-    if (presenter == null) {
+  public static void changeCameraApi() {
+    final VolumeMonitorService currentInstance = getInstance();
+    if (currentInstance == null) {
+      throw new NullPointerException("No current instance of VolumeMonitorService");
+    }
+    if (currentInstance.presenter == null) {
       throw new NullPointerException("Presenter is NULL");
     }
     // Simulate the lifecycle for destroying and re-creating the presenter
     Timber.d("Change camera API");
-    presenter.onDestroyView();
-    presenter.onCreateView(this);
+    currentInstance.presenter.onDestroyView();
+    currentInstance.presenter.onCreateView(currentInstance);
   }
 }

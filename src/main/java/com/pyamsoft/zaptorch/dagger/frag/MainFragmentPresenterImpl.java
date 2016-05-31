@@ -76,7 +76,7 @@ final class MainFragmentPresenterImpl extends PresenterImpl<MainFragmentPresente
       public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (interactor.getCameraApiKey().equals(key)) {
           Timber.d("Camera API has changed");
-          VolumeMonitorService.getInstance().changeCameraApi();
+          VolumeMonitorService.changeCameraApi();
         }
       }
     };
