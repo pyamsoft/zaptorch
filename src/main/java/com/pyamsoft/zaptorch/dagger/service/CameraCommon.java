@@ -31,13 +31,20 @@ abstract class CameraCommon implements CameraInterface {
   @NonNull private final Context appContext;
   @NonNull private final Handler handler;
   @NonNull private final Intent errorExplain;
+  @NonNull private final Intent permissionExplain;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
     this.appContext = context.getApplicationContext();
     this.interactor = interactor;
     handler = new Handler(Looper.getMainLooper());
     errorExplain = new Intent(appContext, CameraErrorExplanation.class);
+    errorExplain.putExtra(CameraErrorExplanation.DIALOG_WHICH, CameraErrorExplanation.TYPE_ERROR);
     errorExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+    permissionExplain = new Intent(appContext, CameraErrorExplanation.class);
+    permissionExplain.putExtra(CameraErrorExplanation.DIALOG_WHICH,
+        CameraErrorExplanation.TYPE_PERMISSION);
+    permissionExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
   }
 
   void startErrorExplanationActivity() {
@@ -45,6 +52,10 @@ abstract class CameraCommon implements CameraInterface {
     if (show) {
       handler.post(() -> appContext.startActivity(errorExplain));
     }
+  }
+
+  void startPermissionExplanationActivity() {
+    handler.post(() -> appContext.startActivity(permissionExplain));
   }
 
   @CheckResult @NonNull Context getAppContext() {

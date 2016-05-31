@@ -17,16 +17,33 @@
 package com.pyamsoft.zaptorch.app.service.error;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import com.pyamsoft.pydroid.util.AppUtil;
 
 public final class CameraErrorExplanation extends AppCompatActivity {
 
-  @NonNull private static final String CAMERA_ERROR_TAG = "camera_error";
+  @NonNull public static final String DIALOG_WHICH = "dialog";
+  public static final int TYPE_NONE = -1;
+  public static final int TYPE_PERMISSION = 0;
+  public static final int TYPE_ERROR = 1;
 
   @Override protected void onPostResume() {
     super.onPostResume();
-    AppUtil.guaranteeSingleDialogFragment(getSupportFragmentManager(), new CameraErrorDialog(),
-        CAMERA_ERROR_TAG);
+    final int type = getIntent().getIntExtra(DIALOG_WHICH, TYPE_NONE);
+    DialogFragment fragment;
+    switch (type) {
+      case TYPE_PERMISSION:
+        fragment = new CameraErrorDialog();
+        break;
+      case TYPE_ERROR:
+        fragment = new CameraErrorDialog();
+        break;
+      default:
+        fragment = null;
+    }
+    if (fragment != null) {
+      AppUtil.guaranteeSingleDialogFragment(getSupportFragmentManager(), fragment, "error");
+    }
   }
 }
