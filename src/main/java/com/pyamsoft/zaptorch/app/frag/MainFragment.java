@@ -37,7 +37,7 @@ import timber.log.Timber;
 public final class MainFragment extends PreferenceFragmentCompat
     implements MainFragmentPresenter.MainFragmentView {
 
-  @Inject MainFragmentPresenter mainFragmentPresenter;
+  @Nullable @Inject MainFragmentPresenter presenter;
 
   @Override public void onCreatePreferences(Bundle bundle, String s) {
     addPreferencesFromResource(R.xml.preferences);
@@ -48,7 +48,10 @@ public final class MainFragment extends PreferenceFragmentCompat
     final Preference resetAll = findPreference(getString(R.string.clear_all_key));
     resetAll.setOnPreferenceClickListener(preference -> {
       Timber.d("Reset settings onClick");
-      mainFragmentPresenter.confirmSettingsClear();
+      if (presenter == null) {
+        throw new NullPointerException("Presenter is NULL");
+      }
+      presenter.confirmSettingsClear();
       return true;
     });
   }
@@ -61,23 +64,34 @@ public final class MainFragment extends PreferenceFragmentCompat
         .mainFragmentModule(new MainFragmentModule())
         .build()
         .inject(this);
-    mainFragmentPresenter.onCreateView(this);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onCreateView(this);
     return super.onCreateView(inflater, container, savedInstanceState);
   }
 
   @Override public void onResume() {
     super.onResume();
-    mainFragmentPresenter.onResume();
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onResume();
   }
 
   @Override public void onPause() {
     super.onPause();
-    mainFragmentPresenter.onPause();
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onPause();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    mainFragmentPresenter.onDestroyView();
+    if (presenter != null) {
+      presenter.onDestroyView();
+    }
   }
 
   private static void setExplainHowToText(final Preference zapTorchExplain) {

@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.app.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,8 +33,10 @@ import com.pyamsoft.zaptorch.R;
 
 public final class AccessibilityRequestFragment extends Fragment {
 
-  @BindView(R.id.enable_accessibility_button) Button enableService;
-  private Unbinder unbinder;
+  @NonNull private final Intent accessibilityServiceIntent =
+      new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+  @Nullable @BindView(R.id.enable_accessibility_button) Button enableService;
+  @Nullable private Unbinder unbinder;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,8 +56,10 @@ public final class AccessibilityRequestFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
+    if (enableService == null) {
+      throw new NullPointerException("Enable Service button is NULL");
+    }
     enableService.setOnClickListener(view1 -> {
-      final Intent accessibilityServiceIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
       startActivity(accessibilityServiceIntent);
     });
   }

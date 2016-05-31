@@ -22,6 +22,7 @@ import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -44,8 +45,8 @@ import timber.log.Timber;
   @NonNull private final WindowManager.LayoutParams params;
 
   @NonNull private Subscription cameraSubscription = Subscriptions.empty();
+  @Nullable private Camera camera;
 
-  private Camera camera;
   private boolean opened;
 
   public OriginalCamera(final @NonNull Context context,
@@ -120,6 +121,10 @@ import timber.log.Timber;
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(camera1 -> {
       try {
         Timber.d("Camera has flash");
+        if (camera1 == null) {
+          throw new NullPointerException("Camera is NULL");
+        }
+
         camera = camera1;
         windowManager.addView(surfaceView, params);
 

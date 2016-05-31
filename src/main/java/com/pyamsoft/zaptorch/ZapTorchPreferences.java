@@ -33,7 +33,7 @@ public class ZapTorchPreferences extends ApplicationPreferences {
   private final boolean displayCameraErrorsDefault;
   private final boolean handleVolumeKeysDefault;
 
-  public ZapTorchPreferences(Context context) {
+  public ZapTorchPreferences(@NonNull Context context) {
     super(context);
     final Context appContext = context.getApplicationContext();
     final Resources res = appContext.getResources();
