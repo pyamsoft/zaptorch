@@ -16,10 +16,6 @@
 
 <resources>
   <string name="app_name">ZapTorch</string>
-  <string name="double_click_delay">Double Click Delay</string>
-  <string name="short_300ms_delay">Short: 360ms Delay</string>
-  <string name="default_600ms_delay">Default: 500ms Delay</string>
-  <string name="long_1000ms_delay">Long: 1000ms Delay</string>
   <string name="enable_accessibility_service">Enable Accessibility Service</string>
   <string name="explain_accessibility_service">
     In order to run correctly, ZapTorch needs to enable a system Accessibility Service.
@@ -33,5 +29,4 @@
 
     \n\nIt does not collect any information. It does not monitor anything else at all.
   </string>
-  <string name="options">Options</string>
 </resources>

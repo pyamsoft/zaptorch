@@ -36,9 +36,6 @@ buildscript {
 
     // Gradle version checked
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
-
-    // Facebook ReDex
-    classpath 'au.com.timmutton:redex:1.1.0'
   }
 }
 
@@ -47,7 +44,6 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'redex'
 
 android {
   compileSdkVersion 23
@@ -57,8 +53,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion 18
     targetSdkVersion 23
-    versionCode 9
-    versionName "1.1.0"
+    versionCode 10
+    versionName "1.1.1"
     // For vector drawables
     vectorDrawables.useSupportLibrary = true
   }
@@ -122,20 +118,6 @@ retrolambda {
   jvmArgs '-noverify'
 }
 
-redex {
-  passes = ["ReBindRefsPass",
-            //    Doesn't work yet with Retrolambda
-            //    "BridgePass",
-            "SynthPass",
-            "FinalInlinePass",
-            "DelSuperPass",
-            "SingleImplPass",
-            "SimpleInlinePass",
-            "StaticReloPass",
-            "RemoveEmptyClassesPass",
-            "ShortenSrcStringsPass"]
-}
-
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
@@ -157,7 +139,7 @@ dependencies {
   compile 'io.reactivex:rxandroid:1.2.0'
   compile 'com.artemzin.rxjava:proguard-rules:1.1.5.0'
 
-  // Pydroid 19 1.4.1
+  // Pydroid 1.5.0
   compile project(':PYDroid')
 }
 
