@@ -21,13 +21,15 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) final class MarshmallowCamera extends CameraCommon {
 
-  private final TorchCallback torchCallback;
-  private final CameraManager cameraManager;
+  @NonNull private final TorchCallback torchCallback;
+  @NonNull private final CameraManager cameraManager;
 
   public MarshmallowCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -73,14 +75,14 @@ import timber.log.Timber;
 
   static final class TorchCallback extends CameraManager.TorchCallback {
 
-    private String cameraId;
+    @Nullable private String cameraId;
     private boolean enabled;
 
-    public String getCameraId() {
+    @Nullable @CheckResult public String getCameraId() {
       return cameraId;
     }
 
-    boolean isEnabled() {
+    @CheckResult boolean isEnabled() {
       return enabled;
     }
 

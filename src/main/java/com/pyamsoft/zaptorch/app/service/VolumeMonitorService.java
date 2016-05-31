@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch.app.service;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -31,15 +31,14 @@ import timber.log.Timber;
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  private static VolumeMonitorService instance;
+  @Nullable private static VolumeMonitorService instance;
+  @Nullable @Inject VolumeServicePresenter presenter;
 
-  @Inject VolumeServicePresenter servicePresenter;
-
-  private static synchronized void setInstance(VolumeMonitorService i) {
+  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
     instance = i;
   }
 
-  @CheckResult @NonNull public static synchronized VolumeMonitorService getInstance() {
+  @CheckResult @Nullable private static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
       throw new NullPointerException("VolumeMonitorService instance is NULL");
     }
@@ -48,13 +47,22 @@ public class VolumeMonitorService extends AccessibilityService
   }
 
   @CheckResult public static boolean isRunning() {
-    return instance != null && instance.servicePresenter.isStarted();
+    final VolumeMonitorService currentInstance = getInstance();
+    if (currentInstance == null) {
+      return false;
+    }
+
+    final VolumeServicePresenter servicePresenter = currentInstance.presenter;
+    return servicePresenter != null && servicePresenter.isStarted();
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
     final int action = event.getAction();
     final int keyCode = event.getKeyCode();
-    servicePresenter.handleKeyEvent(action, keyCode);
+    presenter.handleKeyEvent(action, keyCode);
 
     // Never consume events
     return false;
@@ -77,22 +85,29 @@ public class VolumeMonitorService extends AccessibilityService
         .build()
         .inject(this);
 
-    servicePresenter.onCreateView(this);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onCreateView(this);
     setInstance(this);
   }
 
   @Override public boolean onUnbind(Intent intent) {
+    if (presenter != null) {
+      presenter.onDestroyView();
+    }
+
     setInstance(null);
-    servicePresenter.onDestroyView();
     return super.onUnbind(intent);
   }
 
   public final void changeCameraApi() {
-    if (servicePresenter != null) {
-      // Simulate the lifecycle for destroying and re-creating the presenter
-      Timber.d("Change camera API");
-      servicePresenter.onDestroyView();
-      servicePresenter.onCreateView(this);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
     }
+    // Simulate the lifecycle for destroying and re-creating the presenter
+    Timber.d("Change camera API");
+    presenter.onDestroyView();
+    presenter.onCreateView(this);
   }
 }

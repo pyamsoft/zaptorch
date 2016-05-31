@@ -16,12 +16,13 @@
 
 package com.pyamsoft.zaptorch.app.service.error;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import com.pyamsoft.pydroid.util.AppUtil;
 
 public final class CameraErrorExplanation extends AppCompatActivity {
 
-  private static final String CAMERA_ERROR_TAG = "camera_error";
+  @NonNull private static final String CAMERA_ERROR_TAG = "camera_error";
 
   @Override protected void onPostResume() {
     super.onPostResume();

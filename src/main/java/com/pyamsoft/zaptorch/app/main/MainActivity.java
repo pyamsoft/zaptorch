@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.app.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -39,10 +40,9 @@ import javax.inject.Inject;
 public class MainActivity extends DonationActivityBase
     implements MainActivityPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
-  @Inject MainActivityPresenter mainActivityPresenter;
-  private Unbinder unbinder;
-  private boolean serviceEnabled = false;
+  @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
+  @Nullable @Inject MainActivityPresenter presenter;
+  @Nullable private Unbinder unbinder;
 
   @NonNull @Override protected String getPlayStoreAppPackage() {
     return getPackageName();
@@ -59,7 +59,10 @@ public class MainActivity extends DonationActivityBase
         .build()
         .inject(this);
 
-    mainActivityPresenter.onCreateView(this);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onCreateView(this);
 
     setupAppBar();
     if (VolumeMonitorService.isRunning()) {
@@ -71,7 +74,9 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    mainActivityPresenter.onDestroyView();
+    if (presenter != null) {
+      presenter.onDestroyView();
+    }
 
     if (unbinder != null) {
       unbinder.unbind();
@@ -80,13 +85,23 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onResume() {
     super.onResume();
-    mainActivityPresenter.onResume();
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onResume();
+
+    if (toolbar == null) {
+      throw new NullPointerException("Toolbar is NULL");
+    }
     animateActionBarToolbar(toolbar);
   }
 
   @Override protected void onPause() {
     super.onPause();
-    mainActivityPresenter.onPause();
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    presenter.onPause();
   }
 
   @Override protected void onPostResume() {
@@ -94,39 +109,43 @@ public class MainActivity extends DonationActivityBase
     RatingDialog.showRatingDialog(this, this);
 
     if (VolumeMonitorService.isRunning()) {
-      if (!serviceEnabled) {
-        showMainFragment();
-      }
+      showMainFragment();
     } else {
-      if (serviceEnabled) {
-        showAccessibilityRequestFragment();
-      }
+      showAccessibilityRequestFragment();
     }
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-    return mainActivityPresenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    return presenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event);
   }
 
   @Override public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-    return mainActivityPresenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+    return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
   private void showAccessibilityRequestFragment() {
-    serviceEnabled = false;
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.main_viewport, new AccessibilityRequestFragment())
         .commit();
   }
 
   private void showMainFragment() {
-    serviceEnabled = true;
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.main_viewport, new MainFragment())
         .commit();
   }
 
   private void setupAppBar() {
+    if (toolbar == null) {
+      throw new NullPointerException("Toolbar is NULL");
+    }
+
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
   }
@@ -145,7 +164,7 @@ public class MainActivity extends DonationActivityBase
 
     // Turn it into a spannable
     final Spannable spannable =
-        StringUtil.createBuilder(title, "\n\n", line1, "\n\n", line2, "\n\n", line3, "\n\n", line4);
+        StringUtil.createLineBreakBuilder(title, line1, line2, line3, line4);
 
     int start = 0;
     int end = title.length();

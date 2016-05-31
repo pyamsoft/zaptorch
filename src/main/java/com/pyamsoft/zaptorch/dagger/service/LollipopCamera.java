@@ -31,6 +31,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -42,9 +43,9 @@ import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) public final class LollipopCamera extends CameraCommon {
 
-  private final CameraManager cameraManager;
-  private final String flashCameraId;
-  private final CameraCallback cameraCallback;
+  @NonNull private final CameraManager cameraManager;
+  @NonNull private final CameraCallback cameraCallback;
+  @Nullable private final String flashCameraId;
 
   public LollipopCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -55,11 +56,11 @@ import timber.log.Timber;
     this.cameraCallback = new CameraCallback(cameraManager);
   }
 
-  static CameraManager setupCameraManager(final @NonNull Context context) {
+  @CheckResult @NonNull static CameraManager setupCameraManager(final @NonNull Context context) {
     return (CameraManager) context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
   }
 
-  @Nullable private String setupCamera() {
+  @CheckResult @Nullable private String setupCamera() {
     try {
       final String[] cameraList = cameraManager.getCameraIdList();
       for (final String camera : cameraList) {
@@ -90,14 +91,14 @@ import timber.log.Timber;
   }
 
   static final class CameraCallback extends CameraDevice.StateCallback {
-    private final CameraManager manager;
-    private final List<Surface> list;
+    @NonNull private final CameraManager manager;
+    @NonNull private final List<Surface> list;
 
-    private CameraDevice cameraDevice;
-    private SessionCallback session;
+    @Nullable private CameraDevice cameraDevice;
+    @Nullable private SessionCallback session;
 
+    @Nullable private Size size;
     private boolean opened;
-    private Size size;
 
     public CameraCallback(final @NonNull CameraManager manager) {
       this.manager = manager;
@@ -105,6 +106,7 @@ import timber.log.Timber;
       list = new ArrayList<>(1);
     }
 
+    @CheckResult
     @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
         final @NonNull String id) throws CameraAccessException {
       Timber.d("Get stream config map");
@@ -226,11 +228,10 @@ import timber.log.Timber;
 
   static final class SessionCallback extends CameraCaptureSession.StateCallback {
 
-    private final CaptureRequest request;
+    @NonNull private final CaptureRequest request;
+    @Nullable private CameraCaptureSession session;
 
-    private CameraCaptureSession session;
-
-    public SessionCallback(CaptureRequest request) {
+    public SessionCallback(@NonNull CaptureRequest request) {
       this.request = request;
     }
 
