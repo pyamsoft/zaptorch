@@ -153,18 +153,14 @@ public class MainActivity extends DonationActivityBase
   @NonNull @Override public Spannable getChangeLogText() {
     // The changelog text
     final String title = "What's New in Version " + BuildConfig.VERSION_NAME;
-    final String line1 =
-        "BUGFIX: Fix a crash that occurred occasionally when stopping the Torch on devices below Lollipop";
+    final String line1 = "BUGFIX: Fix a display bug where the 'How to Use' was not fully displayed";
     final String line2 =
-        "FEATURE: Select between different available Camera APIs at runtime. By default, the Camera API is set to the newest for the platform";
+        "FEATURE: Display an error dialog when Android Permissions need to be granted instead of silently failing.";
     final String line3 =
-        "BUGFIX: Properly clear all application when using the 'Reset All Settings' option";
-    final String line4 =
-        "CHANGE: Lower the 'small' camera delay period from 360 to 300 milliseconds";
+        "BUGFIX: Cleaner checking for whether or not the Accessibility Service is running";
 
     // Turn it into a spannable
-    final Spannable spannable =
-        StringUtil.createLineBreakBuilder(title, line1, line2, line3, line4);
+    final Spannable spannable = StringUtil.createLineBreakBuilder(title, line1, line2, line3);
 
     int start = 0;
     int end = title.length();
@@ -182,7 +178,7 @@ public class MainActivity extends DonationActivityBase
     StringUtil.colorSpan(spannable, start, end, largeColor);
 
     start += end + 2;
-    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length() + 2 + line4.length();
+    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length();
 
     StringUtil.sizeSpan(spannable, start, end, smallSize);
     StringUtil.colorSpan(spannable, start, end, smallColor);
