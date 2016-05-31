@@ -5,7 +5,9 @@
       android:title="Service Settings">
 
     <Preference
-        android:key="@string/zaptorch_explain_key"/>
+        android:key="@string/zaptorch_explain_key"
+        android:summary="@string/zaptorch_explain_summary"
+        android:title="@string/zaptorch_explain_title"/>
 
     <ListPreference
         android:defaultValue="@string/camera_api_default"

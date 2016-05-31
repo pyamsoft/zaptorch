@@ -39,10 +39,6 @@ public class VolumeMonitorService extends AccessibilityService
   }
 
   @CheckResult @Nullable private static synchronized VolumeMonitorService getInstance() {
-    if (instance == null) {
-      throw new NullPointerException("VolumeMonitorService instance is NULL");
-    }
-
     return instance;
   }
 
