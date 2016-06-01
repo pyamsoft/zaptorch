@@ -34,7 +34,7 @@ public final class CameraErrorExplanation extends AppCompatActivity {
     DialogFragment fragment;
     switch (type) {
       case TYPE_PERMISSION:
-        fragment = new CameraErrorDialog();
+        fragment = new PermissionErrorDialog();
         break;
       case TYPE_ERROR:
         fragment = new CameraErrorDialog();
