@@ -53,11 +53,9 @@ public class VolumeMonitorService extends AccessibilityService
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
     final int action = event.getAction();
     final int keyCode = event.getKeyCode();
+    assert presenter != null;
     presenter.handleKeyEvent(action, keyCode);
 
     // Never consume events
@@ -81,17 +79,14 @@ public class VolumeMonitorService extends AccessibilityService
         .build()
         .inject(this);
 
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onCreateView(this);
     setInstance(this);
   }
 
   @Override public boolean onUnbind(Intent intent) {
-    if (presenter != null) {
-      presenter.onDestroyView();
-    }
+    assert presenter != null;
+    presenter.onDestroyView();
 
     setInstance(null);
     return super.onUnbind(intent);
@@ -99,14 +94,10 @@ public class VolumeMonitorService extends AccessibilityService
 
   public static void changeCameraApi() {
     final VolumeMonitorService currentInstance = getInstance();
-    if (currentInstance == null) {
-      throw new NullPointerException("No current instance of VolumeMonitorService");
-    }
-    if (currentInstance.presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
     // Simulate the lifecycle for destroying and re-creating the presenter
     Timber.d("Change camera API");
+    assert currentInstance != null;
+    assert currentInstance.presenter != null;
     currentInstance.presenter.onDestroyView();
     currentInstance.presenter.onCreateView(currentInstance);
   }

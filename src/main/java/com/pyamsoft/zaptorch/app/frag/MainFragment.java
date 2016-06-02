@@ -51,9 +51,7 @@ public final class MainFragment extends PreferenceFragmentCompat
     final Preference resetAll = findPreference(getString(R.string.clear_all_key));
     resetAll.setOnPreferenceClickListener(preference -> {
       Timber.d("Reset settings onClick");
-      if (presenter == null) {
-        throw new NullPointerException("Presenter is NULL");
-      }
+      assert presenter != null;
       presenter.confirmSettingsClear();
       return true;
     });
@@ -79,34 +77,28 @@ public final class MainFragment extends PreferenceFragmentCompat
         .mainFragmentModule(new MainFragmentModule())
         .build()
         .inject(this);
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onCreateView(this);
     return super.onCreateView(inflater, container, savedInstanceState);
   }
 
   @Override public void onResume() {
     super.onResume();
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onResume();
   }
 
   @Override public void onPause() {
     super.onPause();
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onPause();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    if (presenter != null) {
-      presenter.onDestroyView();
-    }
+
+    assert presenter != null;
+    presenter.onDestroyView();
   }
 
   @Override public void onConfirmAttempt() {
