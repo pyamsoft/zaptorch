@@ -48,19 +48,15 @@ public final class AccessibilityRequestFragment extends Fragment {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    if (unbinder != null) {
-      unbinder.unbind();
-    }
+
+    assert unbinder != null;
+    unbinder.unbind();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    if (enableService == null) {
-      throw new NullPointerException("Enable Service button is NULL");
-    }
-    enableService.setOnClickListener(view1 -> {
-      startActivity(accessibilityServiceIntent);
-    });
+    assert enableService != null;
+    enableService.setOnClickListener(view1 -> startActivity(accessibilityServiceIntent));
   }
 }

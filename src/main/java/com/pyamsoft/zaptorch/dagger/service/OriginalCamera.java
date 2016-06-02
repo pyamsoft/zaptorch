@@ -122,13 +122,11 @@ import timber.log.Timber;
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(camera1 -> {
       try {
         Timber.d("Camera has flash");
-        if (camera1 == null) {
-          throw new NullPointerException("Camera is NULL");
-        }
 
         camera = camera1;
         windowManager.addView(surfaceView, params);
 
+        assert camera != null;
         Timber.d("set preview");
         final SurfaceHolder holder = getInitializedHolder();
         camera.setPreviewDisplay(holder);

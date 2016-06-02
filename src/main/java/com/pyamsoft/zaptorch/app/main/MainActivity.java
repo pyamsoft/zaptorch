@@ -59,9 +59,7 @@ public class MainActivity extends DonationActivityBase
         .build()
         .inject(this);
 
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onCreateView(this);
 
     setupAppBar();
@@ -74,33 +72,26 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (presenter != null) {
-      presenter.onDestroyView();
-    }
 
-    if (unbinder != null) {
-      unbinder.unbind();
-    }
+    assert presenter != null;
+    presenter.onDestroyView();
+
+    assert unbinder != null;
+    unbinder.unbind();
   }
 
   @Override protected void onResume() {
     super.onResume();
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onResume();
 
-    if (toolbar == null) {
-      throw new NullPointerException("Toolbar is NULL");
-    }
+    assert toolbar != null;
     animateActionBarToolbar(toolbar);
   }
 
   @Override protected void onPause() {
     super.onPause();
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     presenter.onPause();
   }
 
@@ -116,16 +107,12 @@ public class MainActivity extends DonationActivityBase
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event);
   }
 
   @Override public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+    assert presenter != null;
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
@@ -142,10 +129,7 @@ public class MainActivity extends DonationActivityBase
   }
 
   private void setupAppBar() {
-    if (toolbar == null) {
-      throw new NullPointerException("Toolbar is NULL");
-    }
-
+    assert toolbar != null;
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
   }
