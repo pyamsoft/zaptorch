@@ -39,9 +39,7 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
     if (application instanceof ZapTorch) {
       final ZapTorch zapTorch = (ZapTorch) application;
       final ZapTorchComponent component = zapTorch.zapTorchComponent;
-      if (component == null) {
-        throw new NullPointerException("ZapTorchComponent cannot be NULL");
-      }
+      assert component != null;
       return component;
     } else {
       throw new ClassCastException("Cannot cast Application to ZapTorch");
