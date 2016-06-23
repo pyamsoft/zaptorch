@@ -16,13 +16,123 @@
 
 package com.pyamsoft.zaptorch.app.frag;
 
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.base.Presenter;
+import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
+import com.pyamsoft.zaptorch.dagger.frag.MainFragmentInteractor;
+import javax.inject.Inject;
+import javax.inject.Named;
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+import timber.log.Timber;
 
-public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
+public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
 
-  void confirmSettingsClear();
+  @NonNull private final MainFragmentInteractor interactor;
+  @NonNull private final Scheduler mainScheduler;
+  @NonNull private final Scheduler ioScheduler;
 
-  interface MainFragmentView {
+  @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
+  @NonNull private Subscription confirmDialogSubscription = Subscriptions.empty();
+
+  @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
+
+  @Inject public MainFragmentPresenter(@NonNull MainFragmentInteractor interactor,
+      @NonNull @Named("main") Scheduler mainScheduler,
+      @NonNull @Named("io") Scheduler ioScheduler) {
+    this.interactor = interactor;
+    this.mainScheduler = mainScheduler;
+    this.ioScheduler = ioScheduler;
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    registerOnConfirmDialogBus();
+    registerCameraApiListener();
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    unregisterFromConfirmDialogBus();
+    unregisterCameraApiListener();
+  }
+
+  @Override protected void onUnbind() {
+    super.onUnbind();
+    unsubscribeConfirmDialog();
+  }
+
+  private void registerCameraApiListener() {
+    unregisterCameraApiListener();
+    cameraApiListener = new ApplicationPreferences.OnSharedPreferenceChangeListener() {
+      @Override
+      public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (interactor.getCameraApiKey().equals(key)) {
+          Timber.d("Camera API has changed");
+          VolumeMonitorService.changeCameraApi();
+        }
+      }
+    };
+    interactor.registerCameraApiListener(cameraApiListener);
+  }
+
+  private void unregisterCameraApiListener() {
+    if (cameraApiListener != null) {
+      interactor.unregisterCameraApiListener(cameraApiListener);
+      cameraApiListener = null;
+    }
+  }
+
+  private void unsubscribeConfirmDialog() {
+    if (confirmDialogSubscription.isUnsubscribed()) {
+      confirmDialogSubscription.unsubscribe();
+    }
+  }
+
+  private Observable<Boolean> clearAll() {
+    return interactor.clearAll().subscribeOn(ioScheduler).observeOn(mainScheduler);
+  }
+
+  private void unregisterFromConfirmDialogBus() {
+    if (!confirmDialogBusSubscription.isUnsubscribed()) {
+      confirmDialogBusSubscription.unsubscribe();
+    }
+  }
+
+  private void registerOnConfirmDialogBus() {
+    unregisterFromConfirmDialogBus();
+    confirmDialogBusSubscription =
+        ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
+          if (!confirmationEvent.isComplete()) {
+            Timber.d("Received confirmation event!");
+            // KLUDGE nested subscriptions are ugly
+            unsubscribeConfirmDialog();
+            Timber.d("Received all cleared confirmation event, clear All");
+            confirmDialogSubscription = clearAll().subscribe(aBoolean -> {
+
+                }, throwable -> Timber.e(throwable, "ConfirmationDialogBus in clearAll onError"),
+                () -> {
+                  Timber.d("ConfirmationDialogBus in clearAll onComplete");
+                  // TODO post completed event
+                  ConfirmationDialog.ConfirmationDialogBus.get()
+                      .post(new ConfirmationDialog.ConfirmationEvent(true));
+                });
+          }
+        }, throwable -> {
+          Timber.e(throwable, "ConfirmationDialogBus onError");
+        });
+  }
+
+  public final void confirmSettingsClear() {
+    getView().onConfirmAttempt();
+  }
+
+  public interface MainFragmentView {
 
     void onConfirmAttempt();
   }

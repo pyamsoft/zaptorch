@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.app.service;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -31,31 +32,27 @@ import timber.log.Timber;
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  @Nullable private static VolumeMonitorService instance;
-  @Nullable @Inject VolumeServicePresenter presenter;
+  private static VolumeMonitorService instance;
+  @Inject VolumeServicePresenter presenter;
 
   private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
     instance = i;
   }
 
-  @CheckResult @Nullable private static synchronized VolumeMonitorService getInstance() {
+  @CheckResult @NonNull private static synchronized VolumeMonitorService getInstance() {
+    if (instance == null) {
+      throw new NullPointerException("VolumeMonitorService instance is NULL");
+    }
     return instance;
   }
 
   @CheckResult public static boolean isRunning() {
-    final VolumeMonitorService currentInstance = getInstance();
-    if (currentInstance == null) {
-      return false;
-    }
-
-    final VolumeServicePresenter servicePresenter = currentInstance.presenter;
-    return servicePresenter != null && servicePresenter.isStarted();
+    return instance != null;
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
     final int action = event.getAction();
     final int keyCode = event.getKeyCode();
-    assert presenter != null;
     presenter.handleKeyEvent(action, keyCode);
 
     // Never consume events
@@ -74,19 +71,17 @@ public class VolumeMonitorService extends AccessibilityService
     super.onServiceConnected();
 
     DaggerVolumeServiceComponent.builder()
-        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
         .volumeServiceModule(new VolumeServiceModule())
         .build()
         .inject(this);
 
-    assert presenter != null;
-    presenter.onCreateView(this);
+    presenter.bindView(this);
     setInstance(this);
   }
 
   @Override public boolean onUnbind(Intent intent) {
-    assert presenter != null;
-    presenter.onDestroyView();
+    presenter.unbindView();
 
     setInstance(null);
     return super.onUnbind(intent);
@@ -96,9 +91,7 @@ public class VolumeMonitorService extends AccessibilityService
     final VolumeMonitorService currentInstance = getInstance();
     // Simulate the lifecycle for destroying and re-creating the presenter
     Timber.d("Change camera API");
-    assert currentInstance != null;
-    assert currentInstance.presenter != null;
-    currentInstance.presenter.onDestroyView();
-    currentInstance.presenter.onCreateView(currentInstance);
+    currentInstance.presenter.unbindView();
+    currentInstance.presenter.bindView(currentInstance);
   }
 }

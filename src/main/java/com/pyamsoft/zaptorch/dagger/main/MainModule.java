@@ -24,8 +24,8 @@ import dagger.Provides;
 @Module public class MainModule {
 
   @Provides @ActivityScope MainActivityPresenter provideMainActivityPresenter(
-      final MainActivityPresenterImpl presenter) {
-    return presenter;
+      final MainActivityInteractor interactor) {
+    return new MainActivityPresenter(interactor);
   }
 
   @Provides @ActivityScope MainActivityInteractor provideMainActivityInteractor(

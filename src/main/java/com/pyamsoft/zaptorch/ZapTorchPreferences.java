@@ -16,50 +16,23 @@
 
 package com.pyamsoft.zaptorch;
 
-import android.content.Context;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.ApplicationPreferences;
 
-public class ZapTorchPreferences extends ApplicationPreferences {
+public interface ZapTorchPreferences {
 
-  @NonNull private final String doublePressDelayKey;
-  @NonNull private final String displayCameraErrorsKey;
-  @NonNull private final String handleVolumeKeysKey;
-  @NonNull private final String doublePressDelayDefault;
-  @NonNull private final String cameraApiKey;
-  @NonNull private final String cameraApiDefault;
-  private final boolean displayCameraErrorsDefault;
-  private final boolean handleVolumeKeysDefault;
+  @CheckResult long getButtonDelayTime();
 
-  public ZapTorchPreferences(@NonNull Context context) {
-    super(context);
-    final Context appContext = context.getApplicationContext();
-    final Resources res = appContext.getResources();
-    doublePressDelayKey = appContext.getString(R.string.double_press_delay_key);
-    displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key);
-    handleVolumeKeysKey = appContext.getString(R.string.handle_volume_keys_key);
-    doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default);
-    displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default);
-    handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default);
-    cameraApiKey = appContext.getString(R.string.camera_api_key);
-    cameraApiDefault = appContext.getString(R.string.camera_api_default);
-  }
+  @CheckResult boolean shouldShowErrorDialog();
 
-  @CheckResult public final long getButtonDelayTime() {
-    return Long.parseLong(get(doublePressDelayKey, doublePressDelayDefault));
-  }
+  @CheckResult boolean shouldHandleKeys();
 
-  @CheckResult public final boolean shouldShowErrorDialog() {
-    return get(displayCameraErrorsKey, displayCameraErrorsDefault);
-  }
+  @CheckResult int getCameraApi();
 
-  @CheckResult public final boolean shouldHandleKeys() {
-    return get(handleVolumeKeysKey, handleVolumeKeysDefault);
-  }
+  void clearAll();
 
-  @CheckResult public final int getCameraApi() {
-    return Integer.parseInt(get(cameraApiKey, cameraApiDefault));
-  }
+  void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
+
+  void unregister(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
 }

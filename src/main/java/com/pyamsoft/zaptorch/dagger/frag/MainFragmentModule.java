@@ -20,12 +20,15 @@ import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Named;
+import rx.Scheduler;
 
 @Module public class MainFragmentModule {
 
   @ActivityScope @Provides MainFragmentPresenter provideMainFragmentPresenter(
-      final MainFragmentPresenterImpl presenter) {
-    return presenter;
+      final MainFragmentInteractor interactor, @Named("main") Scheduler mainScheduler,
+      @Named("io") Scheduler ioScheduler) {
+    return new MainFragmentPresenter(interactor, mainScheduler, ioScheduler);
   }
 
   @ActivityScope @Provides MainFragmentInteractor provideMainFragmentInteractor(

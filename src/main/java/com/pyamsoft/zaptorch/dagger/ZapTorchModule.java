@@ -34,7 +34,7 @@ import rx.schedulers.Schedulers;
 
   public ZapTorchModule(final @NonNull Context context) {
     appContext = context.getApplicationContext();
-    preferences = new ZapTorchPreferences(context);
+    preferences = new ZapTorchPreferencesImpl(context);
   }
 
   @Singleton @Provides Context provideContext() {

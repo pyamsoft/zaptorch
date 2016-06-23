@@ -18,10 +18,10 @@ package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.ApplicationPreferences;
+import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
 import rx.Observable;
 
-interface MainFragmentInteractor {
+public interface MainFragmentInteractor {
 
   @CheckResult @NonNull Observable<Boolean> clearAll();
 

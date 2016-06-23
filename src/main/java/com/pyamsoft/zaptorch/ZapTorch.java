@@ -16,15 +16,10 @@
 
 package com.pyamsoft.zaptorch;
 
-import android.app.Activity;
-import android.app.Application;
-import android.app.Service;
 import android.os.StrictMode;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import com.pyamsoft.pydroid.base.ApplicationBase;
+import com.pyamsoft.pydroid.base.app.ApplicationBase;
 import com.pyamsoft.pydroid.crash.CrashHandler;
 import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
@@ -32,30 +27,27 @@ import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
 public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
-  @Nullable private ZapTorchComponent zapTorchComponent;
+  private ZapTorchComponent zapTorchComponent;
+  private static volatile ZapTorch instance = null;
 
-  @NonNull @CheckResult
-  private static ZapTorchComponent zapTorchComponent(final Application application) {
-    if (application instanceof ZapTorch) {
-      final ZapTorch zapTorch = (ZapTorch) application;
-      final ZapTorchComponent component = zapTorch.zapTorchComponent;
-      assert component != null;
-      return component;
+  @CheckResult @NonNull public static ZapTorch getInstance() {
+    if (instance == null) {
+      throw new NullPointerException("ZapTorch instance is NULL");
     } else {
-      throw new ClassCastException("Cannot cast Application to ZapTorch");
+      return instance;
     }
   }
 
-  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Activity activity) {
-    return zapTorchComponent(activity.getApplication());
+  public static void setInstance(ZapTorch instance) {
+    ZapTorch.instance = instance;
   }
 
-  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Fragment fragment) {
-    return zapTorchComponent(fragment.getActivity());
-  }
-
-  @NonNull @CheckResult public static ZapTorchComponent zapTorchComponent(final Service service) {
-    return zapTorchComponent(service.getApplication());
+  @CheckResult @NonNull public final ZapTorchComponent getZapTorchComponent() {
+    if (zapTorchComponent == null) {
+      throw new NullPointerException("ZapTorchComponent instance is NULL");
+    } else {
+      return zapTorchComponent;
+    }
   }
 
   @Override protected boolean buildConfigDebug() {
@@ -95,5 +87,7 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
     zapTorchComponent =
         DaggerZapTorchComponent.builder().zapTorchModule(new ZapTorchModule(this)).build();
+
+    setInstance(this);
   }
 }
