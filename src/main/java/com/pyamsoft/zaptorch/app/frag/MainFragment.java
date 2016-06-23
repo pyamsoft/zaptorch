@@ -73,12 +73,12 @@ public final class MainFragment extends PreferenceFragmentCompat
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     DaggerMainFragmentComponent.builder()
-        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
         .mainFragmentModule(new MainFragmentModule())
         .build()
         .inject(this);
     assert presenter != null;
-    presenter.onCreateView(this);
+    presenter.bindView(this);
     return super.onCreateView(inflater, container, savedInstanceState);
   }
 
@@ -98,7 +98,7 @@ public final class MainFragment extends PreferenceFragmentCompat
     super.onDestroyView();
 
     assert presenter != null;
-    presenter.onDestroyView();
+    presenter.unbindView();
   }
 
   @Override public void onConfirmAttempt() {

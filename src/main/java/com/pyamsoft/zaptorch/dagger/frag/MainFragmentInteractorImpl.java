@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.ApplicationPreferences;
+import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import javax.inject.Inject;
@@ -41,7 +41,7 @@ final class MainFragmentInteractorImpl implements MainFragmentInteractor {
   @NonNull @Override public Observable<Boolean> clearAll() {
     return Observable.defer(() -> {
       Timber.d("Clear all preferences");
-      preferences.clear(true);
+      preferences.clearAll();
       return Observable.just(true);
     });
   }
@@ -49,12 +49,12 @@ final class MainFragmentInteractorImpl implements MainFragmentInteractor {
   @Override public void registerCameraApiListener(
       @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
     unregisterCameraApiListener(cameraApiListener);
-    cameraApiListener.register(preferences);
+    preferences.register(cameraApiListener);
   }
 
   @Override public void unregisterCameraApiListener(
       @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
-    cameraApiListener.unregister(preferences);
+    preferences.unregister(cameraApiListener);
   }
 
   @NonNull @Override public String getCameraApiKey() {

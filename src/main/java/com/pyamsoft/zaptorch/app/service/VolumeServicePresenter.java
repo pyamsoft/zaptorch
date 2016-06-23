@@ -16,16 +16,99 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
-import android.support.annotation.CheckResult;
+import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.Presenter;
+import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
+import com.pyamsoft.zaptorch.dagger.service.VolumeServiceInteractor;
+import javax.inject.Inject;
+import timber.log.Timber;
 
-public interface VolumeServicePresenter
+public final class VolumeServicePresenter
     extends Presenter<VolumeServicePresenter.VolumeServiceView> {
 
-  void handleKeyEvent(int action, int keyCode);
+  @NonNull private final Handler handler;
+  @NonNull private final VolumeServiceInteractor interactor;
+  private final int cameraApiOld;
+  private final int cameraApiLollipop;
+  private final int cameraApiMarshmallow;
 
-  @CheckResult boolean isStarted();
+  @Nullable private CameraInterface cameraInterface;
+  private boolean pressed;
 
-  interface VolumeServiceView {
+  @Inject public VolumeServicePresenter(@NonNull final VolumeServiceInteractor interactor) {
+    this.handler = new Handler();
+    this.interactor = interactor;
+    this.pressed = false;
+
+    // KLUDGE duplication of values between preferences and java code
+    cameraApiOld = 0;
+    cameraApiLollipop = 1;
+    cameraApiMarshmallow = 2;
+  }
+
+  private void handleKeyEvent() {
+    handler.removeCallbacksAndMessages(null);
+    if (pressed) {
+      Timber.d("Key has been double pressed");
+      pressed = false;
+      if (cameraInterface != null) {
+        cameraInterface.toggleTorch();
+      }
+    } else {
+      pressed = true;
+      final long delay = interactor.getButtonDelayTime();
+      Timber.d("Post back to false after delay: %d", delay);
+      handler.postDelayed(() -> {
+        Timber.d("Set pressed back to false");
+        pressed = false;
+      }, delay);
+    }
+  }
+
+  public final void handleKeyEvent(int action, int keyCode) {
+    if (action == KeyEvent.ACTION_UP) {
+      switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+          Timber.d("onKeyEvent: %s", KeyEvent.keyCodeToString(keyCode));
+          handleKeyEvent();
+          break;
+        default:
+      }
+    }
+  }
+
+  @Override protected void onBind() {
+    super.onBind();
+    pressed = false;
+
+    final int cameraApi = interactor.getCameraApi();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
+      cameraInterface = interactor.marshmallowCamera();
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        && cameraApi == cameraApiLollipop) {
+      cameraInterface = interactor.lollipopCamera();
+    } else if (cameraApi == cameraApiOld) {
+      cameraInterface = interactor.originalCamera();
+    } else {
+      throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
+    }
+  }
+
+  @Override protected void onUnbind() {
+    super.onUnbind();
+    Timber.d("Unbind");
+    if (cameraInterface != null) {
+      cameraInterface.release();
+      cameraInterface = null;
+    }
+    handler.removeCallbacksAndMessages(null);
+    pressed = false;
+  }
+
+  public interface VolumeServiceView {
   }
 }

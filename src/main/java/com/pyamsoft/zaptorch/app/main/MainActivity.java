@@ -26,7 +26,7 @@ import android.view.KeyEvent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.base.DonationActivityBase;
+import com.pyamsoft.pydroid.base.activity.DonationActivityBase;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
@@ -55,26 +55,21 @@ public class MainActivity extends DonationActivityBase
     unbinder = ButterKnife.bind(this);
 
     DaggerMainComponent.builder()
-        .zapTorchComponent(ZapTorch.zapTorchComponent(this))
+        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
         .build()
         .inject(this);
 
     assert presenter != null;
-    presenter.onCreateView(this);
+    presenter.bindView(this);
 
     setupAppBar();
-    if (VolumeMonitorService.isRunning()) {
-      showMainFragment();
-    } else {
-      showAccessibilityRequestFragment();
-    }
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
 
     assert presenter != null;
-    presenter.onDestroyView();
+    presenter.unbindView();
 
     assert unbinder != null;
     unbinder.unbind();

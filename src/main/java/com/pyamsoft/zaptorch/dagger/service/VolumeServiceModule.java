@@ -24,8 +24,8 @@ import dagger.Provides;
 @Module public class VolumeServiceModule {
 
   @Provides @ActivityScope VolumeServicePresenter provideVolumeServicePresenter(
-      final VolumeServicePresenterImpl presenter) {
-    return presenter;
+      final VolumeServiceInteractor interactor) {
+    return new VolumeServicePresenter(interactor);
   }
 
   @Provides @ActivityScope VolumeServiceInteractor provideVolumeServiceInteractor(
