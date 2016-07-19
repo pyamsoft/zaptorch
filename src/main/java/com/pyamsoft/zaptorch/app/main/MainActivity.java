@@ -78,7 +78,7 @@ public class MainActivity extends DonationActivityBase
   @Override protected void onResume() {
     super.onResume();
     assert presenter != null;
-    presenter.onResume();
+    presenter.resume();
 
     assert toolbar != null;
     animateActionBarToolbar(toolbar);
@@ -87,7 +87,7 @@ public class MainActivity extends DonationActivityBase
   @Override protected void onPause() {
     super.onPause();
     assert presenter != null;
-    presenter.onPause();
+    presenter.pause();
   }
 
   @Override protected void onPostResume() {

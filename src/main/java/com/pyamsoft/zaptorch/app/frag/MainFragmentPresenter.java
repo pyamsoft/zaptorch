@@ -50,20 +50,20 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
     this.ioScheduler = ioScheduler;
   }
 
-  @Override public void onResume() {
-    super.onResume();
+  @Override protected void onResume(@NonNull MainFragmentView view) {
+    super.onResume(view);
     registerOnConfirmDialogBus();
     registerCameraApiListener();
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override protected void onPause(@NonNull MainFragmentView view) {
+    super.onPause(view);
     unregisterFromConfirmDialogBus();
     unregisterCameraApiListener();
   }
 
-  @Override protected void onUnbind() {
-    super.onUnbind();
+  @Override protected void onUnbind(@NonNull MainFragmentView view) {
+    super.onUnbind(view);
     unsubscribeConfirmDialog();
   }
 

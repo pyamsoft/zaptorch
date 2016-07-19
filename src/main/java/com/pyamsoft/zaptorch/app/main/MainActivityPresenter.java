@@ -36,13 +36,13 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
-  @Override public void onResume() {
-    super.onResume();
+  @Override protected void onResume(@NonNull MainActivityView view) {
+    super.onResume(view);
     registerOnConfirmDialogBus();
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override protected void onPause(@NonNull MainActivityView view) {
+    super.onPause(view);
     unregisterFromConfirmDialogBus();
   }
 

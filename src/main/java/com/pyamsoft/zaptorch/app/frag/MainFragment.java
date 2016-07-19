@@ -85,13 +85,13 @@ public final class MainFragment extends PreferenceFragmentCompat
   @Override public void onResume() {
     super.onResume();
     assert presenter != null;
-    presenter.onResume();
+    presenter.resume();
   }
 
   @Override public void onPause() {
     super.onPause();
     assert presenter != null;
-    presenter.onPause();
+    presenter.pause();
   }
 
   @Override public void onDestroyView() {

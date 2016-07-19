@@ -81,8 +81,8 @@ public final class VolumeServicePresenter
     }
   }
 
-  @Override protected void onBind() {
-    super.onBind();
+  @Override protected void onBind(@NonNull VolumeServiceView view) {
+    super.onBind(view);
     pressed = false;
 
     final int cameraApi = interactor.getCameraApi();
@@ -98,8 +98,8 @@ public final class VolumeServicePresenter
     }
   }
 
-  @Override protected void onUnbind() {
-    super.onUnbind();
+  @Override protected void onUnbind(@NonNull VolumeServiceView view) {
+    super.onUnbind(view);
     Timber.d("Unbind");
     if (cameraInterface != null) {
       cameraInterface.release();
