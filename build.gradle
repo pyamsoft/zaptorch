@@ -111,7 +111,7 @@ dependencies {
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 
   // Needs to compile support annotations into actual project
-  compile 'com.android.support:support-annotations:24.1.0'
+  compile 'com.android.support:support-annotations:24.1.1'
 
   // Dagger2
   // Dagger 2 and Compiler

@@ -50,7 +50,6 @@ public class MainActivity extends DonationActivityBase
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
@@ -63,6 +62,11 @@ public class MainActivity extends DonationActivityBase
     presenter.bindView(this);
 
     setupAppBar();
+  }
+
+  @Override protected int bindActivityToView() {
+    setContentView(R.layout.activity_main);
+    return R.id.ad_view;
   }
 
   @Override protected void onDestroy() {
