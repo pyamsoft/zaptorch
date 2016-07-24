@@ -53,8 +53,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion 18
     targetSdkVersion 24
-    versionCode 13
-    versionName "1.1.4"
+    versionCode 14
+    versionName "1.1.5"
     // For vector drawables
     vectorDrawables.useSupportLibrary = true
   }
@@ -124,11 +124,11 @@ dependencies {
 
   // RxJava
   // rxandroid pulls in sometimes old rxjava
-  compile 'io.reactivex:rxjava:1.1.7'
+  compile 'io.reactivex:rxjava:1.1.8'
   compile 'io.reactivex:rxandroid:1.2.1'
   compile 'com.artemzin.rxjava:proguard-rules:1.1.7.0'
 
-  // Pydroid 2.4.1
+  // Pydroid 3.0.1
   compile project(':PYDroid')
 }
 
