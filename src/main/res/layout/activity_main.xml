@@ -55,7 +55,7 @@
 
   </android.support.design.widget.CoordinatorLayout>
 
-  <com.pyamsoft.pydroid.support.RelatedAdvertisement
+  <com.pyamsoft.pydroid.support.AdvertisementView
       android:id="@+id/ad_view"
       android:layout_width="match_parent"
       android:layout_height="?attr/actionBarSize"
