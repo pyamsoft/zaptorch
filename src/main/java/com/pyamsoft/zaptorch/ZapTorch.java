@@ -17,38 +17,11 @@
 package com.pyamsoft.zaptorch;
 
 import android.os.StrictMode;
-import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.app.ApplicationBase;
 import com.pyamsoft.pydroid.crash.CrashHandler;
-import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
-import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
-import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
 public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
-
-  private ZapTorchComponent zapTorchComponent;
-  private static volatile ZapTorch instance = null;
-
-  @CheckResult @NonNull public static ZapTorch getInstance() {
-    if (instance == null) {
-      throw new NullPointerException("ZapTorch instance is NULL");
-    } else {
-      return instance;
-    }
-  }
-
-  public static void setInstance(ZapTorch instance) {
-    ZapTorch.instance = instance;
-  }
-
-  @CheckResult @NonNull public final ZapTorchComponent getZapTorchComponent() {
-    if (zapTorchComponent == null) {
-      throw new NullPointerException("ZapTorchComponent instance is NULL");
-    } else {
-      return zapTorchComponent;
-    }
-  }
 
   @Override protected boolean buildConfigDebug() {
     return BuildConfig.DEBUG;
@@ -70,10 +43,6 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
     return BuildConfig.VERSION_CODE;
   }
 
-  @NonNull @Override public String getApplicationPackageName() {
-    return getPackageName();
-  }
-
   @Override public void onCreate() {
     super.onCreate();
 
@@ -84,10 +53,5 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
       StrictMode.setVmPolicy(
           new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
     }
-
-    zapTorchComponent =
-        DaggerZapTorchComponent.builder().zapTorchModule(new ZapTorchModule(this)).build();
-
-    setInstance(this);
   }
 }

@@ -14,31 +14,6 @@
  * limitations under the License.
  */
 
-tasks.whenTaskAdded { task ->
-  if (task.name.startsWith("lint")) {
-    task.enabled = false
-  }
-}
-
-buildscript {
-  repositories {
-    jcenter()
-  }
-  dependencies {
-    // Retro lambda
-    classpath 'me.tatarka:gradle-retrolambda:3.3.0-beta4'
-
-    // Dex count
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5'
-
-    // Android APT
-    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-
-    // Gradle version checked
-    classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-  }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
@@ -91,12 +66,8 @@ android {
     }
   }
 
-  lintOptions {
-    disable 'InvalidPackage'
-  }
-
-  packagingOptions {
-    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  dexOptions {
+    javaMaxHeapSize "1g"
   }
 }
 
@@ -111,7 +82,7 @@ dependencies {
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 
   // Needs to compile support annotations into actual project
-  compile 'com.android.support:support-annotations:24.1.1'
+  compile 'com.android.support:support-annotations:24.2.0'
 
   // Dagger2
   // Dagger 2 and Compiler
@@ -122,12 +93,7 @@ dependencies {
   compile 'com.jakewharton:butterknife:8.2.1'
   apt 'com.jakewharton:butterknife-compiler:8.2.1'
 
-  // RxJava
-  // rxandroid pulls in sometimes old rxjava
-  compile 'io.reactivex:rxjava:1.1.8'
-  compile 'io.reactivex:rxandroid:1.2.1'
-
-  // Pydroid 3.0.1
+  // Pydroid 3.1.1
   compile project(':PYDroid')
 }
 

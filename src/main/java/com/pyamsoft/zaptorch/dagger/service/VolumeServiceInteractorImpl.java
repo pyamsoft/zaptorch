@@ -27,7 +27,7 @@ final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   @NonNull private final ZapTorchPreferences preferences;
   @NonNull private final Context appContext;
 
-  @Inject public VolumeServiceInteractorImpl(@NonNull Context context,
+  @Inject VolumeServiceInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {
     this.appContext = context.getApplicationContext();
     this.preferences = preferences;

@@ -24,7 +24,7 @@ public class MainActivityInteractorImpl implements MainActivityInteractor {
 
   @NonNull private final ZapTorchPreferences preferences;
 
-  @Inject public MainActivityInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+  @Inject MainActivityInteractorImpl(@NonNull ZapTorchPreferences preferences) {
     this.preferences = preferences;
   }
 

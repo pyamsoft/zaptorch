@@ -31,7 +31,7 @@ import timber.log.Timber;
   @NonNull private final TorchCallback torchCallback;
   @NonNull private final CameraManager cameraManager;
 
-  public MarshmallowCamera(final @NonNull Context context,
+  MarshmallowCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
     super(context, interactor);
     Timber.d("MARSHMALLOW CAMERA API");
@@ -44,7 +44,7 @@ import timber.log.Timber;
     setTorch(!torchCallback.isEnabled());
   }
 
-  private void setTorch(final boolean enable) {
+  void setTorch(final boolean enable) {
     final String cameraId = torchCallback.getCameraId();
     if (cameraId != null) {
       try {
@@ -69,7 +69,7 @@ import timber.log.Timber;
     cameraManager.unregisterTorchCallback(torchCallback);
   }
 
-  private void setupCamera() {
+  void setupCamera() {
     Timber.d("Register torch callback");
     cameraManager.registerTorchCallback(torchCallback, null);
   }

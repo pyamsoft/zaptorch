@@ -18,11 +18,9 @@ package com.pyamsoft.zaptorch.dagger.service;
 
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
-import dagger.Component;
+import dagger.Subcomponent;
 
-@ActivityScope
-@Component(modules = VolumeServiceModule.class, dependencies = ZapTorchComponent.class)
+@ActivityScope @Subcomponent(modules = VolumeServiceModule.class)
 public interface VolumeServiceComponent {
 
   void inject(VolumeMonitorService service);

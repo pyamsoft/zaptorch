@@ -48,7 +48,7 @@ import timber.log.Timber;
   @NonNull private final CameraCallback cameraCallback;
   @Nullable private final String flashCameraId;
 
-  public LollipopCamera(final @NonNull Context context,
+  LollipopCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
     super(context, interactor);
     Timber.d("LOLLIPOP CAMERA API");
@@ -61,7 +61,7 @@ import timber.log.Timber;
     return (CameraManager) context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
   }
 
-  @CheckResult @Nullable private String setupCamera() {
+  @CheckResult @Nullable String setupCamera() {
     try {
       final String[] cameraList = cameraManager.getCameraIdList();
       for (final String camera : cameraList) {
@@ -111,13 +111,13 @@ import timber.log.Timber;
     @Nullable private Size size;
     private boolean opened;
 
-    public CameraCallback(final @NonNull CameraManager manager) {
+    CameraCallback(final @NonNull CameraManager manager) {
       this.manager = manager;
       opened = false;
       list = new ArrayList<>(1);
     }
 
-    @CheckResult @NonNull private static Size getSmallestSize(final @NonNull CameraManager manager,
+    @CheckResult @NonNull static Size getSmallestSize(final @NonNull CameraManager manager,
         final @NonNull String id) throws CameraAccessException {
       Timber.d("Get stream config map");
       final StreamConfigurationMap map = manager.getCameraCharacteristics(id)
@@ -244,7 +244,7 @@ import timber.log.Timber;
     @NonNull private final CaptureRequest request;
     @Nullable private CameraCaptureSession session;
 
-    public SessionCallback(@NonNull CaptureRequest request) {
+    SessionCallback(@NonNull CaptureRequest request) {
       this.request = request;
     }
 

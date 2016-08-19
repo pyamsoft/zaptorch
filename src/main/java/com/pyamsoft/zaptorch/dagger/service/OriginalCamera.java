@@ -49,7 +49,7 @@ import timber.log.Timber;
 
   private boolean opened;
 
-  public OriginalCamera(final @NonNull Context context,
+  OriginalCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
     super(context, interactor);
     Timber.d("OLD CAMERA API");
@@ -70,13 +70,13 @@ import timber.log.Timber;
         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
   }
 
-  private SurfaceHolder getInitializedHolder() {
+  SurfaceHolder getInitializedHolder() {
     final SurfaceHolder holder = surfaceView.getHolder();
     holder.addCallback(this);
     return holder;
   }
 
-  private void unsubCameraSubscription() {
+  void unsubCameraSubscription() {
     if (!cameraSubscription.isUnsubscribed()) {
       cameraSubscription.unsubscribe();
     }
@@ -97,7 +97,7 @@ import timber.log.Timber;
     }
   }
 
-  private void connectToCameraService() {
+  void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     unsubCameraSubscription();
     cameraSubscription = Observable.defer(() -> Observable.just(Camera.open())).filter(camera1 -> {
