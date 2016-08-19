@@ -19,23 +19,20 @@ package com.pyamsoft.zaptorch.app.frag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.pyamsoft.pydroid.support.RatingDialog;
+import com.pyamsoft.pydroid.base.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.Singleton;
-import com.pyamsoft.zaptorch.app.main.MainActivity;
 import com.pyamsoft.zaptorch.dagger.frag.MainFragmentPresenter;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public final class MainFragment extends PreferenceFragmentCompat
+public final class MainFragment extends ActionBarSettingsPreferenceFragment
     implements MainFragmentPresenter.MainFragmentView {
 
   @Inject MainFragmentPresenter presenter;
@@ -72,34 +69,11 @@ public final class MainFragment extends PreferenceFragmentCompat
     });
 
     final Preference upgradeInfo = findPreference(getString(R.string.upgrade_info_key));
-    upgradeInfo.setOnPreferenceClickListener(preference -> {
-      final FragmentActivity activity = getActivity();
-      if (activity instanceof RatingDialog.ChangeLogProvider) {
-        final RatingDialog.ChangeLogProvider provider = (RatingDialog.ChangeLogProvider) activity;
-        RatingDialog.showRatingDialog(activity, provider, true);
-      } else {
-        throw new ClassCastException("Activity is not a change log provider");
-      }
-      return true;
-    });
+    upgradeInfo.setOnPreferenceClickListener(preference -> showChangelog());
 
     final SwitchPreferenceCompat showAds =
         (SwitchPreferenceCompat) findPreference(getString(R.string.adview_key));
-    showAds.setOnPreferenceChangeListener((preference, newValue) -> {
-      if (newValue instanceof Boolean) {
-        final boolean b = (boolean) newValue;
-        final MainActivity activity = (MainActivity) getActivity();
-        if (b) {
-          Timber.d("Turn on ads");
-          activity.showAd();
-        } else {
-          Timber.d("Turn off ads");
-          activity.hideAd();
-        }
-        return true;
-      }
-      return false;
-    });
+    showAds.setOnPreferenceChangeListener((preference, newValue) -> toggleAdVisibility(newValue));
   }
 
   @Override public void onResume() {
