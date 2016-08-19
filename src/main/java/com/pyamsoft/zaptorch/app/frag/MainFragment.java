@@ -29,20 +29,34 @@ import android.view.ViewGroup;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.Singleton;
 import com.pyamsoft.zaptorch.app.main.MainActivity;
-import com.pyamsoft.zaptorch.dagger.frag.DaggerMainFragmentComponent;
-import com.pyamsoft.zaptorch.dagger.frag.MainFragmentModule;
+import com.pyamsoft.zaptorch.dagger.frag.MainFragmentPresenter;
 import javax.inject.Inject;
 import timber.log.Timber;
 
 public final class MainFragment extends PreferenceFragmentCompat
     implements MainFragmentPresenter.MainFragmentView {
 
-  @Nullable @Inject MainFragmentPresenter presenter;
+  @Inject MainFragmentPresenter presenter;
 
   @Override public void onCreatePreferences(Bundle bundle, String s) {
+    Singleton.Dagger.with(getContext()).plusMainFragmentComponent().inject(this);
     addPreferencesFromResource(R.xml.preferences);
+  }
+
+  @Nullable @Override
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    final View view = super.onCreateView(inflater, container, savedInstanceState);
+
+    presenter.bindView(this);
+
+    return view;
+  }
+
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
 
     final Preference zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key));
     zapTorchExplain.setOnPreferenceClickListener(preference -> {
@@ -53,7 +67,6 @@ public final class MainFragment extends PreferenceFragmentCompat
     final Preference resetAll = findPreference(getString(R.string.clear_all_key));
     resetAll.setOnPreferenceClickListener(preference -> {
       Timber.d("Reset settings onClick");
-      assert presenter != null;
       presenter.confirmSettingsClear();
       return true;
     });
@@ -89,35 +102,18 @@ public final class MainFragment extends PreferenceFragmentCompat
     });
   }
 
-  @Nullable @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    DaggerMainFragmentComponent.builder()
-        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
-        .mainFragmentModule(new MainFragmentModule())
-        .build()
-        .inject(this);
-    assert presenter != null;
-    presenter.bindView(this);
-    return super.onCreateView(inflater, container, savedInstanceState);
-  }
-
   @Override public void onResume() {
     super.onResume();
-    assert presenter != null;
     presenter.resume();
   }
 
   @Override public void onPause() {
     super.onPause();
-    assert presenter != null;
     presenter.pause();
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-
-    assert presenter != null;
     presenter.unbindView();
   }
 

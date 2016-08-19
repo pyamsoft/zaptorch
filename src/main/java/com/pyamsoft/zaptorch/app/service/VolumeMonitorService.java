@@ -23,9 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
-import com.pyamsoft.zaptorch.ZapTorch;
-import com.pyamsoft.zaptorch.dagger.service.DaggerVolumeServiceComponent;
-import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
+import com.pyamsoft.zaptorch.Singleton;
+import com.pyamsoft.zaptorch.dagger.service.VolumeServicePresenter;
 import javax.inject.Inject;
 import timber.log.Timber;
 
@@ -35,10 +34,6 @@ public class VolumeMonitorService extends AccessibilityService
   private static VolumeMonitorService instance;
   @Inject VolumeServicePresenter presenter;
 
-  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
-    instance = i;
-  }
-
   @CheckResult @NonNull private static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
       throw new NullPointerException("VolumeMonitorService instance is NULL");
@@ -46,8 +41,20 @@ public class VolumeMonitorService extends AccessibilityService
     return instance;
   }
 
+  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
+    instance = i;
+  }
+
   @CheckResult public static boolean isRunning() {
     return instance != null;
+  }
+
+  public static void changeCameraApi() {
+    final VolumeMonitorService currentInstance = getInstance();
+    // Simulate the lifecycle for destroying and re-creating the presenter
+    Timber.d("Change camera API");
+    currentInstance.presenter.unbindView();
+    currentInstance.presenter.bindView(currentInstance);
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
@@ -70,11 +77,7 @@ public class VolumeMonitorService extends AccessibilityService
   @Override protected void onServiceConnected() {
     super.onServiceConnected();
 
-    DaggerVolumeServiceComponent.builder()
-        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
-        .volumeServiceModule(new VolumeServiceModule())
-        .build()
-        .inject(this);
+    Singleton.Dagger.with(this).plusVolumeServiceComponent().inject(this);
 
     presenter.bindView(this);
     setInstance(this);
@@ -85,13 +88,5 @@ public class VolumeMonitorService extends AccessibilityService
 
     setInstance(null);
     return super.onUnbind(intent);
-  }
-
-  public static void changeCameraApi() {
-    final VolumeMonitorService currentInstance = getInstance();
-    // Simulate the lifecycle for destroying and re-creating the presenter
-    Timber.d("Change camera API");
-    currentInstance.presenter.unbindView();
-    currentInstance.presenter.bindView(currentInstance);
   }
 }

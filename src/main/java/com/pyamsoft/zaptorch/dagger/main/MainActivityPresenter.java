@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.Presenter;
 import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
-import com.pyamsoft.zaptorch.dagger.main.MainActivityInteractor;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
@@ -32,7 +31,7 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
   @NonNull private final MainActivityInteractor mainActivityInteractor;
   @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
 
-  @Inject public MainActivityPresenter(@NonNull MainActivityInteractor mainActivityInteractor) {
+  @Inject MainActivityPresenter(@NonNull MainActivityInteractor mainActivityInteractor) {
     this.mainActivityInteractor = mainActivityInteractor;
   }
 
@@ -46,7 +45,7 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
     unregisterFromConfirmDialogBus();
   }
 
-  @CheckResult public final boolean shouldHandleKeycode(int keyCode) {
+  @CheckResult public boolean shouldHandleKeycode(int keyCode) {
     boolean handled;
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -63,7 +62,7 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
     return mainActivityInteractor.shouldHandleKeys() && handled;
   }
 
-  private void registerOnConfirmDialogBus() {
+  void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
         ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
@@ -76,7 +75,7 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
         });
   }
 
-  private void unregisterFromConfirmDialogBus() {
+  void unregisterFromConfirmDialogBus() {
     if (!confirmDialogBusSubscription.isUnsubscribed()) {
       confirmDialogBusSubscription.unsubscribe();
     }

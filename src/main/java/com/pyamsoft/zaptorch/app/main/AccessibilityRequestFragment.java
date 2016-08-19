@@ -35,8 +35,8 @@ public final class AccessibilityRequestFragment extends Fragment {
 
   @NonNull private final Intent accessibilityServiceIntent =
       new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-  @Nullable @BindView(R.id.enable_accessibility_button) Button enableService;
-  @Nullable private Unbinder unbinder;
+  @BindView(R.id.enable_accessibility_button) Button enableService;
+  private Unbinder unbinder;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -48,15 +48,11 @@ public final class AccessibilityRequestFragment extends Fragment {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-
-    assert unbinder != null;
     unbinder.unbind();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    assert enableService != null;
     enableService.setOnClickListener(view1 -> startActivity(accessibilityServiceIntent));
   }
 }

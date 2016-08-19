@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.app.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -28,37 +27,30 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.pyamsoft.pydroid.base.activity.DonationActivityBase;
 import com.pyamsoft.pydroid.support.RatingDialog;
+import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.Singleton;
 import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
-import com.pyamsoft.zaptorch.dagger.main.DaggerMainComponent;
+import com.pyamsoft.zaptorch.dagger.main.MainActivityPresenter;
 import javax.inject.Inject;
 
 public class MainActivity extends DonationActivityBase
     implements MainActivityPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
-  @Nullable @BindView(R.id.toolbar) Toolbar toolbar;
-  @Nullable @Inject MainActivityPresenter presenter;
-  @Nullable private Unbinder unbinder;
-
-  @NonNull @Override protected String getPlayStoreAppPackage() {
-    return getPackageName();
-  }
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @Inject MainActivityPresenter presenter;
+  private Unbinder unbinder;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
-    DaggerMainComponent.builder()
-        .zapTorchComponent(ZapTorch.getInstance().getZapTorchComponent())
-        .build()
-        .inject(this);
+    Singleton.Dagger.with(this).plusMainComponent().inject(this);
 
-    assert presenter != null;
     presenter.bindView(this);
 
     setupAppBar();
@@ -72,25 +64,18 @@ public class MainActivity extends DonationActivityBase
   @Override protected void onDestroy() {
     super.onDestroy();
 
-    assert presenter != null;
     presenter.unbindView();
-
-    assert unbinder != null;
     unbinder.unbind();
   }
 
   @Override protected void onResume() {
     super.onResume();
-    assert presenter != null;
     presenter.resume();
-
-    assert toolbar != null;
-    animateActionBarToolbar(toolbar);
+    AnimUtil.animateActionBarToolbar(toolbar);
   }
 
   @Override protected void onPause() {
     super.onPause();
-    assert presenter != null;
     presenter.pause();
   }
 
@@ -106,12 +91,10 @@ public class MainActivity extends DonationActivityBase
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
-    assert presenter != null;
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event);
   }
 
   @Override public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-    assert presenter != null;
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
@@ -128,7 +111,6 @@ public class MainActivity extends DonationActivityBase
   }
 
   private void setupAppBar() {
-    assert toolbar != null;
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
   }

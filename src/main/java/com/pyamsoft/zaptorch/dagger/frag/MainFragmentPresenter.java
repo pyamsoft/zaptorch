@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.base.Presenter;
 import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
+import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
-import com.pyamsoft.zaptorch.dagger.frag.MainFragmentInteractor;
 import javax.inject.Inject;
 import javax.inject.Named;
 import rx.Observable;
@@ -42,7 +42,7 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
 
   @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
-  @Inject public MainFragmentPresenter(@NonNull MainFragmentInteractor interactor,
+  @Inject MainFragmentPresenter(@NonNull MainFragmentInteractor interactor,
       @NonNull @Named("main") Scheduler mainScheduler,
       @NonNull @Named("io") Scheduler ioScheduler) {
     this.interactor = interactor;
@@ -67,7 +67,7 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
     unsubscribeConfirmDialog();
   }
 
-  private void registerCameraApiListener() {
+  void registerCameraApiListener() {
     unregisterCameraApiListener();
     cameraApiListener = new ApplicationPreferences.OnSharedPreferenceChangeListener() {
       @Override
@@ -81,30 +81,30 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
     interactor.registerCameraApiListener(cameraApiListener);
   }
 
-  private void unregisterCameraApiListener() {
+  void unregisterCameraApiListener() {
     if (cameraApiListener != null) {
       interactor.unregisterCameraApiListener(cameraApiListener);
       cameraApiListener = null;
     }
   }
 
-  private void unsubscribeConfirmDialog() {
+  void unsubscribeConfirmDialog() {
     if (confirmDialogSubscription.isUnsubscribed()) {
       confirmDialogSubscription.unsubscribe();
     }
   }
 
-  private Observable<Boolean> clearAll() {
+  Observable<Boolean> clearAll() {
     return interactor.clearAll().subscribeOn(ioScheduler).observeOn(mainScheduler);
   }
 
-  private void unregisterFromConfirmDialogBus() {
+  void unregisterFromConfirmDialogBus() {
     if (!confirmDialogBusSubscription.isUnsubscribed()) {
       confirmDialogBusSubscription.unsubscribe();
     }
   }
 
-  private void registerOnConfirmDialogBus() {
+  void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
         ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
@@ -128,7 +128,7 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
         });
   }
 
-  public final void confirmSettingsClear() {
+  public void confirmSettingsClear() {
     getView().onConfirmAttempt();
   }
 

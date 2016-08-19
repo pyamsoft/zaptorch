@@ -18,11 +18,9 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import com.pyamsoft.zaptorch.app.main.MainActivity;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
-import dagger.Component;
+import dagger.Subcomponent;
 
-@ActivityScope @Component(modules = MainModule.class, dependencies = ZapTorchComponent.class)
-public interface MainComponent {
+@ActivityScope @Subcomponent(modules = MainModule.class) public interface MainComponent {
 
   void inject(MainActivity activity);
 }

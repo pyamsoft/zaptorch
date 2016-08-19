@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.service;
 
 import android.os.Build;
 import android.os.Handler;
@@ -23,7 +23,6 @@ import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.base.Presenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
-import com.pyamsoft.zaptorch.dagger.service.VolumeServiceInteractor;
 import javax.inject.Inject;
 import timber.log.Timber;
 
@@ -39,7 +38,7 @@ public final class VolumeServicePresenter
   @Nullable private CameraInterface cameraInterface;
   private boolean pressed;
 
-  @Inject public VolumeServicePresenter(@NonNull final VolumeServiceInteractor interactor) {
+  @Inject VolumeServicePresenter(@NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
     this.pressed = false;
@@ -50,7 +49,7 @@ public final class VolumeServicePresenter
     cameraApiMarshmallow = 2;
   }
 
-  private void handleKeyEvent() {
+  void handleKeyEvent() {
     handler.removeCallbacksAndMessages(null);
     if (pressed) {
       Timber.d("Key has been double pressed");
@@ -69,7 +68,7 @@ public final class VolumeServicePresenter
     }
   }
 
-  public final void handleKeyEvent(int action, int keyCode) {
+  public void handleKeyEvent(int action, int keyCode) {
     if (action == KeyEvent.ACTION_UP) {
       switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
