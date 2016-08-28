@@ -37,17 +37,17 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-@SuppressWarnings("deprecation") final class OriginalCamera extends CameraCommon
+@SuppressWarnings("deprecation") class OriginalCamera extends CameraCommon
     implements SurfaceHolder.Callback {
 
-  @NonNull private final WindowManager windowManager;
-  @NonNull private final SurfaceView surfaceView;
-  @NonNull private final WindowManager.LayoutParams params;
+  @NonNull final WindowManager windowManager;
+  @NonNull final SurfaceView surfaceView;
+  @NonNull final WindowManager.LayoutParams params;
 
-  @NonNull private Subscription cameraSubscription = Subscriptions.empty();
-  @Nullable private Camera camera;
+  @NonNull Subscription cameraSubscription = Subscriptions.empty();
+  @Nullable Camera camera;
 
-  private boolean opened;
+  boolean opened;
 
   OriginalCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -188,7 +188,7 @@ import timber.log.Timber;
     }
   }
 
-  private static final class CameraSetupError extends RuntimeException {
+  static final class CameraSetupError extends RuntimeException {
 
   }
 }

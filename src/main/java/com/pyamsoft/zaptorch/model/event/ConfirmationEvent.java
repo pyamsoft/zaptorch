@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.model.event;
 
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import dagger.Subcomponent;
+public class ConfirmationEvent {
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+  private final boolean complete;
 
-  void inject(MainFragmentPresenterLoader loader);
+  public ConfirmationEvent(boolean complete) {
+    this.complete = complete;
+  }
+
+  public boolean isComplete() {
+    return complete;
+  }
 }

@@ -16,11 +16,11 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.zaptorch.app.main.MainActivity;
+import com.pyamsoft.zaptorch.app.main.MainPresenterLoader;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Subcomponent;
 
 @ActivityScope @Subcomponent(modules = MainModule.class) public interface MainComponent {
 
-  void inject(MainActivity activity);
+  void inject(MainPresenterLoader loader);
 }

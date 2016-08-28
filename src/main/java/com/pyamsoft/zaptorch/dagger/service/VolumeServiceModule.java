@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
@@ -24,7 +25,7 @@ import dagger.Provides;
 
   @Provides @ActivityScope VolumeServicePresenter provideVolumeServicePresenter(
       final VolumeServiceInteractor interactor) {
-    return new VolumeServicePresenter(interactor);
+    return new VolumeServicePresenterImpl(interactor);
   }
 
   @Provides @ActivityScope VolumeServiceInteractor provideVolumeServiceInteractor(

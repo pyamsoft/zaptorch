@@ -19,10 +19,12 @@ package com.pyamsoft.zaptorch.dagger.frag;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.base.Presenter;
 import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
-import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
+import com.pyamsoft.pydroid.base.presenter.PresenterBase;
+import com.pyamsoft.zaptorch.app.bus.ConfirmationDialogBus;
+import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
+import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import rx.Observable;
@@ -31,18 +33,19 @@ import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
+class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.MainFragmentView>
+    implements MainFragmentPresenter {
 
-  @NonNull private final MainFragmentInteractor interactor;
-  @NonNull private final Scheduler mainScheduler;
-  @NonNull private final Scheduler ioScheduler;
+  @NonNull final MainFragmentInteractor interactor;
+  @NonNull final Scheduler mainScheduler;
+  @NonNull final Scheduler ioScheduler;
 
-  @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
-  @NonNull private Subscription confirmDialogSubscription = Subscriptions.empty();
+  @NonNull Subscription confirmDialogBusSubscription = Subscriptions.empty();
+  @NonNull Subscription confirmDialogSubscription = Subscriptions.empty();
 
-  @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
+  @Nullable ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
-  @Inject MainFragmentPresenter(@NonNull MainFragmentInteractor interactor,
+  @Inject MainFragmentPresenterImpl(@NonNull MainFragmentInteractor interactor,
       @NonNull @Named("main") Scheduler mainScheduler,
       @NonNull @Named("io") Scheduler ioScheduler) {
     this.interactor = interactor;
@@ -50,20 +53,16 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
     this.ioScheduler = ioScheduler;
   }
 
-  @Override protected void onResume(@NonNull MainFragmentView view) {
-    super.onResume(view);
+  @Override protected void onBind(@NonNull MainFragmentView view) {
+    super.onBind(view);
     registerOnConfirmDialogBus();
     registerCameraApiListener();
   }
 
-  @Override protected void onPause(@NonNull MainFragmentView view) {
-    super.onPause(view);
-    unregisterFromConfirmDialogBus();
-    unregisterCameraApiListener();
-  }
-
   @Override protected void onUnbind(@NonNull MainFragmentView view) {
     super.onUnbind(view);
+    unregisterFromConfirmDialogBus();
+    unregisterCameraApiListener();
     unsubscribeConfirmDialog();
   }
 
@@ -107,7 +106,7 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
   void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
-        ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
+        ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
           if (!confirmationEvent.isComplete()) {
             Timber.d("Received confirmation event!");
             // KLUDGE nested subscriptions are ugly
@@ -119,8 +118,8 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
                 () -> {
                   Timber.d("ConfirmationDialogBus in clearAll onComplete");
                   // TODO post completed event
-                  ConfirmationDialog.ConfirmationDialogBus.get()
-                      .post(new ConfirmationDialog.ConfirmationEvent(true));
+                  ConfirmationDialogBus.get()
+                      .post(new ConfirmationEvent(true));
                 });
           }
         }, throwable -> {
@@ -128,12 +127,7 @@ public final class MainFragmentPresenter extends Presenter<MainFragmentPresenter
         });
   }
 
-  public void confirmSettingsClear() {
+  @Override public void confirmSettingsClear() {
     getView().onConfirmAttempt();
-  }
-
-  public interface MainFragmentView {
-
-    void onConfirmAttempt();
   }
 }

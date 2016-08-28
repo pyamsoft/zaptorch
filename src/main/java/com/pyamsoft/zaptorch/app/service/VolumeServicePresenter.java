@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.main;
+package com.pyamsoft.zaptorch.app.service;
 
-import android.support.annotation.CheckResult;
+import com.pyamsoft.pydroid.base.presenter.Presenter;
 
-public interface MainActivityInteractor {
+public interface VolumeServicePresenter
+    extends Presenter<VolumeServicePresenter.VolumeServiceView> {
 
-  @CheckResult boolean shouldHandleKeys();
+  void handleKeyEvent(int action, int keyCode);
+
+  interface VolumeServiceView {
+  }
 }

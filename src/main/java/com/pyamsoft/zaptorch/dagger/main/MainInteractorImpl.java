@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import dagger.Subcomponent;
+import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import javax.inject.Inject;
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+class MainInteractorImpl implements MainInteractor {
 
-  void inject(MainFragmentPresenterLoader loader);
+  @NonNull final ZapTorchPreferences preferences;
+
+  @Inject MainInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+    this.preferences = preferences;
+  }
+
+  @Override public boolean shouldHandleKeys() {
+    return preferences.shouldHandleKeys();
+  }
 }

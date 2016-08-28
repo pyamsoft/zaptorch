@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorch.dagger.frag;
 
+import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
@@ -27,7 +28,7 @@ import rx.Scheduler;
   @ActivityScope @Provides MainFragmentPresenter provideMainFragmentPresenter(
       final MainFragmentInteractor interactor, @Named("main") Scheduler mainScheduler,
       @Named("io") Scheduler ioScheduler) {
-    return new MainFragmentPresenter(interactor, mainScheduler, ioScheduler);
+    return new MainFragmentPresenterImpl(interactor, mainScheduler, ioScheduler);
   }
 
   @ActivityScope @Provides MainFragmentInteractor provideMainFragmentInteractor(

@@ -25,11 +25,11 @@ import javax.inject.Inject;
 import rx.Observable;
 import timber.log.Timber;
 
-final class MainFragmentInteractorImpl implements MainFragmentInteractor {
+class MainFragmentInteractorImpl implements MainFragmentInteractor {
 
-  @NonNull private final ZapTorchPreferences preferences;
-  @NonNull private final Context appContext;
-  @NonNull private final String cameraApiKey;
+  @NonNull final ZapTorchPreferences preferences;
+  @NonNull final Context appContext;
+  @NonNull final String cameraApiKey;
 
   @Inject MainFragmentInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {

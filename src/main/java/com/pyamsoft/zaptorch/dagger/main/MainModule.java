@@ -16,19 +16,20 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
+import com.pyamsoft.zaptorch.app.main.MainPresenter;
 import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Module;
 import dagger.Provides;
 
 @Module public class MainModule {
 
-  @Provides @ActivityScope MainActivityPresenter provideMainActivityPresenter(
-      final MainActivityInteractor interactor) {
-    return new MainActivityPresenter(interactor);
+  @Provides @ActivityScope MainPresenter provideMainActivityPresenter(
+      final MainInteractor interactor) {
+    return new MainPresenterImpl(interactor);
   }
 
-  @Provides @ActivityScope MainActivityInteractor provideMainActivityInteractor(
-      final MainActivityInteractorImpl interactor) {
+  @Provides @ActivityScope MainInteractor provideMainActivityInteractor(
+      final MainInteractorImpl interactor) {
     return interactor;
   }
 }

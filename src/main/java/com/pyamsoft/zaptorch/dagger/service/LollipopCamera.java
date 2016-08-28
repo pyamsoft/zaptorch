@@ -42,11 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 import timber.log.Timber;
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP) public final class LollipopCamera extends CameraCommon {
+@TargetApi(Build.VERSION_CODES.LOLLIPOP) class LollipopCamera extends CameraCommon {
 
-  @NonNull private final CameraManager cameraManager;
-  @NonNull private final CameraCallback cameraCallback;
-  @Nullable private final String flashCameraId;
+  @NonNull final CameraManager cameraManager;
+  @NonNull final CameraCallback cameraCallback;
+  @Nullable final String flashCameraId;
 
   LollipopCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -102,14 +102,14 @@ import timber.log.Timber;
   }
 
   static final class CameraCallback extends CameraDevice.StateCallback {
-    @NonNull private final CameraManager manager;
-    @NonNull private final List<Surface> list;
+    @NonNull final CameraManager manager;
+    @NonNull final List<Surface> list;
 
-    @Nullable private CameraDevice cameraDevice;
-    @Nullable private SessionCallback session;
+    @Nullable CameraDevice cameraDevice;
+    @Nullable SessionCallback session;
 
-    @Nullable private Size size;
-    private boolean opened;
+    @Nullable Size size;
+    boolean opened;
 
     CameraCallback(final @NonNull CameraManager manager) {
       this.manager = manager;
@@ -117,8 +117,9 @@ import timber.log.Timber;
       list = new ArrayList<>(1);
     }
 
-    @CheckResult @NonNull static Size getSmallestSize(final @NonNull CameraManager manager,
-        final @NonNull String id) throws CameraAccessException {
+    @CheckResult @NonNull
+    static Size getSmallestSize(final @NonNull CameraManager manager, final @NonNull String id)
+        throws CameraAccessException {
       Timber.d("Get stream config map");
       final StreamConfigurationMap map = manager.getCameraCharacteristics(id)
           .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -241,8 +242,8 @@ import timber.log.Timber;
 
   static final class SessionCallback extends CameraCaptureSession.StateCallback {
 
-    @NonNull private final CaptureRequest request;
-    @Nullable private CameraCaptureSession session;
+    @NonNull final CaptureRequest request;
+    @Nullable CameraCaptureSession session;
 
     SessionCallback(@NonNull CaptureRequest request) {
       this.request = request;

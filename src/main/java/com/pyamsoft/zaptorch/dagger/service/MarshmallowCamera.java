@@ -26,10 +26,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import timber.log.Timber;
 
-@TargetApi(Build.VERSION_CODES.M) final class MarshmallowCamera extends CameraCommon {
+@TargetApi(Build.VERSION_CODES.M) class MarshmallowCamera extends CameraCommon {
 
-  @NonNull private final TorchCallback torchCallback;
-  @NonNull private final CameraManager cameraManager;
+  @NonNull final TorchCallback torchCallback;
+  @NonNull final CameraManager cameraManager;
 
   MarshmallowCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -76,8 +76,8 @@ import timber.log.Timber;
 
   static final class TorchCallback extends CameraManager.TorchCallback {
 
-    @Nullable private String cameraId;
-    private boolean enabled;
+    @Nullable String cameraId;
+    boolean enabled;
 
     @Nullable @CheckResult public String getCameraId() {
       return cameraId;

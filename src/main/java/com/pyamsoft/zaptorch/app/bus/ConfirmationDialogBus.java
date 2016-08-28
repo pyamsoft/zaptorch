@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.app.bus;
 
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import dagger.Subcomponent;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.tool.RxBus;
+import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+public class ConfirmationDialogBus extends RxBus<ConfirmationEvent> {
 
-  void inject(MainFragmentPresenterLoader loader);
+  @NonNull private static final ConfirmationDialogBus instance = new ConfirmationDialogBus();
+
+  @CheckResult @NonNull public static ConfirmationDialogBus get() {
+    return instance;
+  }
 }

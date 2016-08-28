@@ -22,10 +22,10 @@ import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
 
-final class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
+class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
-  @NonNull private final ZapTorchPreferences preferences;
-  @NonNull private final Context appContext;
+  @NonNull final ZapTorchPreferences preferences;
+  @NonNull final Context appContext;
 
   @Inject VolumeServiceInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {

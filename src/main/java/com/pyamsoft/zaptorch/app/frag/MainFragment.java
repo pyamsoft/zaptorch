@@ -17,39 +17,40 @@
 package com.pyamsoft.zaptorch.app.frag;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.SwitchPreferenceCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import com.pyamsoft.pydroid.base.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.Singleton;
-import com.pyamsoft.zaptorch.dagger.frag.MainFragmentPresenter;
-import javax.inject.Inject;
 import timber.log.Timber;
 
-public final class MainFragment extends ActionBarSettingsPreferenceFragment
+public class MainFragment extends ActionBarSettingsPreferenceFragment
     implements MainFragmentPresenter.MainFragmentView {
 
-  @Inject MainFragmentPresenter presenter;
+  MainFragmentPresenter presenter;
 
   @Override public void onCreatePreferences(Bundle bundle, String s) {
-    Singleton.Dagger.with(getContext()).plusMainFragmentComponent().inject(this);
     addPreferencesFromResource(R.xml.preferences);
-  }
 
-  @Nullable @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    final View view = super.onCreateView(inflater, container, savedInstanceState);
+    getLoaderManager().initLoader(0, null,
+        new LoaderManager.LoaderCallbacks<MainFragmentPresenter>() {
+          @Override public Loader<MainFragmentPresenter> onCreateLoader(int id, Bundle args) {
+            return new MainFragmentPresenterLoader(getContext());
+          }
 
-    presenter.bindView(this);
+          @Override public void onLoadFinished(Loader<MainFragmentPresenter> loader,
+              MainFragmentPresenter data) {
+            presenter = data;
+          }
 
-    return view;
+          @Override public void onLoaderReset(Loader<MainFragmentPresenter> loader) {
+            presenter = null;
+          }
+        });
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -78,16 +79,11 @@ public final class MainFragment extends ActionBarSettingsPreferenceFragment
 
   @Override public void onResume() {
     super.onResume();
-    presenter.resume();
+    presenter.bindView(this);
   }
 
   @Override public void onPause() {
     super.onPause();
-    presenter.pause();
-  }
-
-  @Override public void onDestroyView() {
-    super.onDestroyView();
     presenter.unbindView();
   }
 

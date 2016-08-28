@@ -21,24 +21,25 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.base.Presenter;
+import com.pyamsoft.pydroid.base.presenter.PresenterBase;
+import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public final class VolumeServicePresenter
-    extends Presenter<VolumeServicePresenter.VolumeServiceView> {
+class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.VolumeServiceView>
+    implements VolumeServicePresenter {
 
-  @NonNull private final Handler handler;
-  @NonNull private final VolumeServiceInteractor interactor;
-  private final int cameraApiOld;
-  private final int cameraApiLollipop;
-  private final int cameraApiMarshmallow;
+  @NonNull final Handler handler;
+  @NonNull final VolumeServiceInteractor interactor;
+  final int cameraApiOld;
+  final int cameraApiLollipop;
+  final int cameraApiMarshmallow;
 
-  @Nullable private CameraInterface cameraInterface;
-  private boolean pressed;
+  @Nullable CameraInterface cameraInterface;
+  boolean pressed;
 
-  @Inject VolumeServicePresenter(@NonNull final VolumeServiceInteractor interactor) {
+  @Inject VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
     this.pressed = false;
@@ -68,7 +69,7 @@ public final class VolumeServicePresenter
     }
   }
 
-  public void handleKeyEvent(int action, int keyCode) {
+  @Override public void handleKeyEvent(int action, int keyCode) {
     if (action == KeyEvent.ACTION_UP) {
       switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -106,8 +107,5 @@ public final class VolumeServicePresenter
     }
     handler.removeCallbacksAndMessages(null);
     pressed = false;
-  }
-
-  public interface VolumeServiceView {
   }
 }

@@ -16,8 +16,12 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -31,27 +35,37 @@ import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.Singleton;
+import com.pyamsoft.zaptorch.app.accessibility.AccessibilityRequestFragment;
 import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
-import com.pyamsoft.zaptorch.dagger.main.MainActivityPresenter;
-import javax.inject.Inject;
+import timber.log.Timber;
 
 public class MainActivity extends DonationActivityBase
-    implements MainActivityPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
+    implements MainPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
   @BindView(R.id.toolbar) Toolbar toolbar;
-  @Inject MainActivityPresenter presenter;
-  private Unbinder unbinder;
+  MainPresenter presenter;
+  Unbinder unbinder;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
-    Singleton.Dagger.with(this).plusMainComponent().inject(this);
+    getSupportLoaderManager().initLoader(0, null,
+        new LoaderManager.LoaderCallbacks<MainPresenter>() {
+          @Override public Loader<MainPresenter> onCreateLoader(int id, Bundle args) {
+            return new MainPresenterLoader(getApplicationContext());
+          }
 
-    presenter.bindView(this);
+          @Override public void onLoadFinished(Loader<MainPresenter> loader, MainPresenter data) {
+            presenter = data;
+          }
+
+          @Override public void onLoaderReset(Loader<MainPresenter> loader) {
+            presenter = null;
+          }
+        });
 
     setupAppBar();
   }
@@ -61,22 +75,24 @@ public class MainActivity extends DonationActivityBase
     return R.id.ad_view;
   }
 
+  @Override protected void onStart() {
+    super.onStart();
+    presenter.bindView(this);
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    presenter.unbindView();
+  }
+
   @Override protected void onDestroy() {
     super.onDestroy();
-
-    presenter.unbindView();
     unbinder.unbind();
   }
 
   @Override protected void onResume() {
     super.onResume();
-    presenter.resume();
     AnimUtil.animateActionBarToolbar(toolbar);
-  }
-
-  @Override protected void onPause() {
-    super.onPause();
-    presenter.pause();
   }
 
   @Override protected void onPostResume() {
@@ -98,21 +114,30 @@ public class MainActivity extends DonationActivityBase
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
-  private void showAccessibilityRequestFragment() {
+  void showAccessibilityRequestFragment() {
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.main_viewport, new AccessibilityRequestFragment())
         .commit();
   }
 
-  private void showMainFragment() {
+  void showMainFragment() {
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.main_viewport, new MainFragment())
         .commit();
   }
 
-  private void setupAppBar() {
+  void setupAppBar() {
     setSupportActionBar(toolbar);
     toolbar.setTitle(getString(R.string.app_name));
+  }
+
+  @Override public void onClearAll() {
+    Timber.d("received completed clearAll event. Kill Process");
+    VolumeMonitorService.finish();
+    final ActivityManager activityManager =
+        (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+    activityManager.clearApplicationUserData();
+    android.os.Process.killProcess(android.os.Process.myPid());
   }
 
   @NonNull @Override public Spannable getChangeLogText() {

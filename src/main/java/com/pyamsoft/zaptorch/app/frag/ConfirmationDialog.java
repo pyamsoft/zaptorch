@@ -18,12 +18,12 @@ package com.pyamsoft.zaptorch.app.frag;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import com.pyamsoft.pydroid.tool.RxBus;
+import com.pyamsoft.zaptorch.app.bus.ConfirmationDialogBus;
+import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
 public class ConfirmationDialog extends DialogFragment {
 
@@ -42,26 +42,5 @@ public class ConfirmationDialog extends DialogFragment {
     }).setNegativeButton("No", (dialogInterface, i) -> {
       dialogInterface.dismiss();
     }).create();
-  }
-
-  public static final class ConfirmationEvent {
-    private final boolean complete;
-
-    public ConfirmationEvent(boolean complete) {
-      this.complete = complete;
-    }
-
-    public boolean isComplete() {
-      return complete;
-    }
-  }
-
-  public static final class ConfirmationDialogBus extends RxBus<ConfirmationEvent> {
-
-    @NonNull private static final ConfirmationDialogBus instance = new ConfirmationDialogBus();
-
-    @CheckResult @NonNull public static ConfirmationDialogBus get() {
-      return instance;
-    }
   }
 }

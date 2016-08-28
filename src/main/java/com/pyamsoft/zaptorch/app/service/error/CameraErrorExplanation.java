@@ -21,7 +21,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import com.pyamsoft.pydroid.util.AppUtil;
 
-public final class CameraErrorExplanation extends AppCompatActivity {
+public class CameraErrorExplanation extends AppCompatActivity {
 
   @NonNull public static final String DIALOG_WHICH = "dialog";
   public static final int TYPE_NONE = -1;

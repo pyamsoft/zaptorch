@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.main;
+package com.pyamsoft.zaptorch.app.main;
 
-import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import javax.inject.Inject;
+import android.support.annotation.CheckResult;
+import com.pyamsoft.pydroid.base.presenter.Presenter;
 
-public class MainActivityInteractorImpl implements MainActivityInteractor {
+public interface MainPresenter extends Presenter<MainPresenter.MainActivityView> {
 
-  @NonNull private final ZapTorchPreferences preferences;
+  @CheckResult boolean shouldHandleKeycode(int keyCode);
 
-  @Inject MainActivityInteractorImpl(@NonNull ZapTorchPreferences preferences) {
-    this.preferences = preferences;
-  }
+  interface MainActivityView {
 
-  @Override public boolean shouldHandleKeys() {
-    return preferences.shouldHandleKeys();
+    void onClearAll();
   }
 }
