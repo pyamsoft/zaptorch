@@ -19,29 +19,31 @@ package com.pyamsoft.zaptorch.dagger.main;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.base.Presenter;
-import com.pyamsoft.zaptorch.app.frag.ConfirmationDialog;
+import com.pyamsoft.pydroid.base.presenter.PresenterBase;
+import com.pyamsoft.zaptorch.app.bus.ConfirmationDialogBus;
+import com.pyamsoft.zaptorch.app.main.MainPresenter;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-public final class MainActivityPresenter extends Presenter<MainActivityPresenter.MainActivityView> {
+class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
+    implements MainPresenter {
 
-  @NonNull private final MainActivityInteractor mainActivityInteractor;
-  @NonNull private Subscription confirmDialogBusSubscription = Subscriptions.empty();
+  @NonNull final MainInteractor interactor;
+  @NonNull Subscription confirmDialogBusSubscription = Subscriptions.empty();
 
-  @Inject MainActivityPresenter(@NonNull MainActivityInteractor mainActivityInteractor) {
-    this.mainActivityInteractor = mainActivityInteractor;
+  @Inject MainPresenterImpl(@NonNull MainInteractor interactor) {
+    this.interactor = interactor;
   }
 
-  @Override protected void onResume(@NonNull MainActivityView view) {
-    super.onResume(view);
-    registerOnConfirmDialogBus();
+  @Override protected void onBind(@NonNull MainActivityView view) {
+    super.onBind(view);
+    registerOnConfirmDialogBus(view);
   }
 
-  @Override protected void onPause(@NonNull MainActivityView view) {
-    super.onPause(view);
+  @Override protected void onUnbind(@NonNull MainActivityView view) {
+    super.onUnbind(view);
     unregisterFromConfirmDialogBus();
   }
 
@@ -59,16 +61,15 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
       default:
         handled = false;
     }
-    return mainActivityInteractor.shouldHandleKeys() && handled;
+    return interactor.shouldHandleKeys() && handled;
   }
 
-  void registerOnConfirmDialogBus() {
+  void registerOnConfirmDialogBus(@NonNull MainActivityView view) {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
-        ConfirmationDialog.ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
+        ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
           if (confirmationEvent.isComplete()) {
-            Timber.d("received completed clearAll event. Kill Process");
-            android.os.Process.killProcess(android.os.Process.myPid());
+            view.onClearAll();
           }
         }, throwable -> {
           Timber.e(throwable, "ConfirmationDialogBus onError");
@@ -79,8 +80,5 @@ public final class MainActivityPresenter extends Presenter<MainActivityPresenter
     if (!confirmDialogBusSubscription.isUnsubscribed()) {
       confirmDialogBusSubscription.unsubscribe();
     }
-  }
-
-  public interface MainActivityView {
   }
 }

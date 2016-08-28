@@ -20,6 +20,7 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.app.ApplicationBase;
 import com.pyamsoft.pydroid.crash.CrashHandler;
+import com.squareup.leakcanary.LeakCanary;
 
 public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
 
@@ -52,6 +53,7 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
           new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
       StrictMode.setVmPolicy(
           new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
+      LeakCanary.install(this);
     }
   }
 }

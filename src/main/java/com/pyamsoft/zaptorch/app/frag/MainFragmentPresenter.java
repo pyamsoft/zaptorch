@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.app.frag;
 
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import dagger.Subcomponent;
+import com.pyamsoft.pydroid.base.presenter.Presenter;
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
 
-  void inject(MainFragmentPresenterLoader loader);
+  void confirmSettingsClear();
+
+  interface MainFragmentView {
+
+    void onConfirmAttempt();
+  }
 }

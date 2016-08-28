@@ -27,11 +27,11 @@ import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
 
 abstract class CameraCommon implements CameraInterface {
 
-  @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private final Context appContext;
-  @NonNull private final Handler handler;
-  @NonNull private final Intent errorExplain;
-  @NonNull private final Intent permissionExplain;
+  @NonNull final VolumeServiceInteractor interactor;
+  @NonNull final Context appContext;
+  @NonNull final Handler handler;
+  @NonNull final Intent errorExplain;
+  @NonNull final Intent permissionExplain;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
     this.appContext = context.getApplicationContext();

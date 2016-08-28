@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
-import dagger.Subcomponent;
+import android.support.annotation.CheckResult;
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+public interface MainInteractor {
 
-  void inject(MainFragmentPresenterLoader loader);
+  @CheckResult boolean shouldHandleKeys();
 }

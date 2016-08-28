@@ -18,31 +18,37 @@ package com.pyamsoft.zaptorch.app.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.Singleton;
-import com.pyamsoft.zaptorch.dagger.service.VolumeServicePresenter;
 import javax.inject.Inject;
 import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  private static VolumeMonitorService instance;
+  static VolumeMonitorService instance;
   @Inject VolumeServicePresenter presenter;
 
-  @CheckResult @NonNull private static synchronized VolumeMonitorService getInstance() {
+  @CheckResult @NonNull static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
       throw new NullPointerException("VolumeMonitorService instance is NULL");
     }
     return instance;
   }
 
-  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
+  static synchronized void setInstance(@Nullable VolumeMonitorService i) {
     instance = i;
+  }
+
+  public static void finish() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      getInstance().disableSelf();
+    }
   }
 
   @CheckResult public static boolean isRunning() {
@@ -88,5 +94,10 @@ public class VolumeMonitorService extends AccessibilityService
 
     setInstance(null);
     return super.onUnbind(intent);
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    presenter.destroyView();
   }
 }
