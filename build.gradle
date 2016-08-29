@@ -91,10 +91,10 @@ dependencies {
   compile 'com.android.support:support-annotations:24.2.0'
 
   // Dagger2
-  apt "com.google.dagger:dagger-compiler:2.6"
+  apt "com.google.dagger:dagger-compiler:2.6.1"
 
   // Butterknife
-  apt 'com.jakewharton:butterknife-compiler:8.2.1'
+  apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
   // Pydroid 3.3.1
   compile project(':PYDroid')
