@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.base.activity.DonationActivityBase;
+import com.pyamsoft.pydroid.base.activity.DonationActivity;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.StringUtil;
@@ -40,7 +40,7 @@ import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import timber.log.Timber;
 
-public class MainActivity extends DonationActivityBase
+public class MainActivity extends DonationActivity
     implements MainPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
   @BindView(R.id.toolbar) Toolbar toolbar;

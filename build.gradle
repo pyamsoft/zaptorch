@@ -87,24 +87,16 @@ dependencies {
 
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 
-  // Leak Canary
-  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-
   // Needs to compile support annotations into actual project
   compile 'com.android.support:support-annotations:24.2.0'
 
   // Dagger2
-  // Dagger 2 and Compiler
-  compile 'com.google.dagger:dagger:2.6'
   apt "com.google.dagger:dagger-compiler:2.6"
 
   // Butterknife
-  compile 'com.jakewharton:butterknife:8.2.1'
   apt 'com.jakewharton:butterknife-compiler:8.2.1'
 
-  // Pydroid 3.3.0
+  // Pydroid 3.3.1
   compile project(':PYDroid')
 }
 
