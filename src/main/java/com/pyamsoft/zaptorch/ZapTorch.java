@@ -53,7 +53,6 @@ public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
           new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
       StrictMode.setVmPolicy(
           new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
-      LeakCanary.install(this);
     }
   }
 }
