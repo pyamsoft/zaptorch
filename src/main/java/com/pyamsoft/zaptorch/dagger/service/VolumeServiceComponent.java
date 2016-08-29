@@ -16,8 +16,8 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
+import com.pyamsoft.pydroid.base.app.ActivityScope;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
-import com.pyamsoft.zaptorch.dagger.ActivityScope;
 import dagger.Subcomponent;
 
 @ActivityScope @Subcomponent(modules = VolumeServiceModule.class)
