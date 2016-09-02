@@ -157,14 +157,11 @@ public class MainActivity extends DonationActivity
   @NonNull @Override public Spannable getChangeLogText() {
     // The changelog text
     final String title = "What's New in Version " + BuildConfig.VERSION_NAME;
-    final String line1 = "BUGFIX: Fix a display bug where the 'How to Use' was not fully displayed";
-    final String line2 =
-        "FEATURE: Display an error dialog when Android Permissions need to be granted instead of silently failing.";
-    final String line3 =
-        "BUGFIX: Cleaner checking for whether or not the Accessibility Service is running";
+    final String line1 = "FEATURE: Add advertisements (can be disabled in the settings section)";
+    final String line2 = "BUGFIX: Stability improvements";
 
     // Turn it into a spannable
-    final Spannable spannable = StringUtil.createLineBreakBuilder(title, line1, line2, line3);
+    final Spannable spannable = StringUtil.createLineBreakBuilder(title, line1, line2);
 
     int start = 0;
     int end = title.length();
@@ -182,7 +179,7 @@ public class MainActivity extends DonationActivity
     StringUtil.colorSpan(spannable, start, end, largeColor);
 
     start += end + 2;
-    end += 2 + line1.length() + 2 + line2.length() + 2 + line3.length();
+    end += 2 + line1.length() + 2 + line2.length();
 
     StringUtil.sizeSpan(spannable, start, end, smallSize);
     StringUtil.colorSpan(spannable, start, end, smallColor);
