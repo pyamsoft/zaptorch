@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch;
 
 import android.os.StrictMode;
 import com.pyamsoft.pydroid.base.app.ApplicationBase;
+import com.squareup.leakcanary.LeakCanary;
 
 public class ZapTorch extends ApplicationBase {
 
@@ -27,9 +28,6 @@ public class ZapTorch extends ApplicationBase {
 
   @Override protected void installInDebugMode() {
     super.installInDebugMode();
-    StrictMode.setThreadPolicy(
-        new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
-    StrictMode.setVmPolicy(
-        new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
+    LeakCanary.install(this);
   }
 }
