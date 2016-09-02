@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch;
 
-import android.os.StrictMode;
 import com.pyamsoft.pydroid.base.app.ApplicationBase;
 import com.squareup.leakcanary.LeakCanary;
 
