@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.dagger.frag;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.base.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.bus.ConfirmationDialogBus;
@@ -59,14 +60,14 @@ class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.Main
     registerCameraApiListener();
   }
 
-  @Override protected void onUnbind(@NonNull MainFragmentView view) {
-    super.onUnbind(view);
+  @Override protected void onUnbind() {
+    super.onUnbind();
     unregisterFromConfirmDialogBus();
     unregisterCameraApiListener();
     unsubscribeConfirmDialog();
   }
 
-  void registerCameraApiListener() {
+  @VisibleForTesting void registerCameraApiListener() {
     unregisterCameraApiListener();
     cameraApiListener = new ApplicationPreferences.OnSharedPreferenceChangeListener() {
       @Override
@@ -80,7 +81,7 @@ class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.Main
     interactor.registerCameraApiListener(cameraApiListener);
   }
 
-  void unregisterCameraApiListener() {
+  private void unregisterCameraApiListener() {
     if (cameraApiListener != null) {
       interactor.unregisterCameraApiListener(cameraApiListener);
       cameraApiListener = null;
@@ -97,29 +98,28 @@ class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.Main
     return interactor.clearAll().subscribeOn(ioScheduler).observeOn(mainScheduler);
   }
 
-  void unregisterFromConfirmDialogBus() {
+  private void unregisterFromConfirmDialogBus() {
     if (!confirmDialogBusSubscription.isUnsubscribed()) {
       confirmDialogBusSubscription.unsubscribe();
     }
   }
 
-  void registerOnConfirmDialogBus() {
+  @VisibleForTesting void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
         ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
-          if (!confirmationEvent.isComplete()) {
+          if (!confirmationEvent.complete()) {
             Timber.d("Received confirmation event!");
             // KLUDGE nested subscriptions are ugly
             unsubscribeConfirmDialog();
             Timber.d("Received all cleared confirmation event, clear All");
             confirmDialogSubscription = clearAll().subscribe(aBoolean -> {
-
+                  // Do nothing
                 }, throwable -> Timber.e(throwable, "ConfirmationDialogBus in clearAll onError"),
                 () -> {
                   Timber.d("ConfirmationDialogBus in clearAll onComplete");
                   // TODO post completed event
-                  ConfirmationDialogBus.get()
-                      .post(new ConfirmationEvent(true));
+                  ConfirmationDialogBus.get().post(ConfirmationEvent.create(true));
                 });
           }
         }, throwable -> {

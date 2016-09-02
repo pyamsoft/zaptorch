@@ -17,13 +17,14 @@
 package com.pyamsoft.zaptorch.app.frag;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.View;
+import com.pyamsoft.pydroid.base.app.PersistLoader;
 import com.pyamsoft.pydroid.base.fragment.ActionBarSettingsPreferenceFragment;
+import com.pyamsoft.pydroid.tool.PersistentCache;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.zaptorch.R;
 import timber.log.Timber;
@@ -31,26 +32,26 @@ import timber.log.Timber;
 public class MainFragment extends ActionBarSettingsPreferenceFragment
     implements MainFragmentPresenter.MainFragmentView {
 
+  @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   MainFragmentPresenter presenter;
+  private long loadedKey;
 
-  @Override public void onCreatePreferences(Bundle bundle, String s) {
-    addPreferencesFromResource(R.xml.preferences);
-
-    getLoaderManager().initLoader(0, null,
-        new LoaderManager.LoaderCallbacks<MainFragmentPresenter>() {
-          @Override public Loader<MainFragmentPresenter> onCreateLoader(int id, Bundle args) {
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    loadedKey = PersistentCache.load(KEY_PRESENTER, savedInstanceState,
+        new PersistLoader.Callback<MainFragmentPresenter>() {
+          @NonNull @Override public PersistLoader<MainFragmentPresenter> createLoader() {
             return new MainFragmentPresenterLoader(getContext());
           }
 
-          @Override public void onLoadFinished(Loader<MainFragmentPresenter> loader,
-              MainFragmentPresenter data) {
-            presenter = data;
-          }
-
-          @Override public void onLoaderReset(Loader<MainFragmentPresenter> loader) {
-            presenter = null;
+          @Override public void onPersistentLoaded(@NonNull MainFragmentPresenter persist) {
+            presenter = persist;
           }
         });
+  }
+
+  @Override public void onCreatePreferences(Bundle bundle, String s) {
+    addPreferencesFromResource(R.xml.preferences);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -77,14 +78,26 @@ public class MainFragment extends ActionBarSettingsPreferenceFragment
     showAds.setOnPreferenceChangeListener((preference, newValue) -> toggleAdVisibility(newValue));
   }
 
-  @Override public void onResume() {
-    super.onResume();
+  @Override public void onStart() {
+    super.onStart();
     presenter.bindView(this);
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override public void onStop() {
+    super.onStop();
     presenter.unbindView();
+  }
+
+  @Override public void onSaveInstanceState(Bundle outState) {
+    PersistentCache.saveKey(KEY_PRESENTER, outState, loadedKey);
+    super.onSaveInstanceState(outState);
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    if (!getActivity().isChangingConfigurations()) {
+      PersistentCache.unload(loadedKey);
+    }
   }
 
   @Override public void onConfirmAttempt() {

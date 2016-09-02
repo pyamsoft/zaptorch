@@ -23,7 +23,7 @@ import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class Singleton {
+public final class Singleton {
 
   private Singleton() {
     throw new RuntimeException("No instances");
@@ -52,8 +52,12 @@ public class Singleton {
       if (instance == null) {
         throw new NullPointerException("Dagger instance is NULL");
       } else {
-        return instance.component;
+        return instance.getComponent();
       }
+    }
+
+    @NonNull @CheckResult final ZapTorchComponent getComponent() {
+      return component;
     }
   }
 }

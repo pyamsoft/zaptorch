@@ -18,12 +18,12 @@ package com.pyamsoft.zaptorch.app.frag;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.presenter.PresenterLoader;
+import com.pyamsoft.pydroid.base.app.PersistLoader;
 import com.pyamsoft.zaptorch.Singleton;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class MainFragmentPresenterLoader extends PresenterLoader<MainFragmentPresenter> {
+public class MainFragmentPresenterLoader extends PersistLoader<MainFragmentPresenter> {
 
   @Inject Provider<MainFragmentPresenter> presenterProvider;
 
@@ -31,7 +31,7 @@ public class MainFragmentPresenterLoader extends PresenterLoader<MainFragmentPre
     super(context);
   }
 
-  @NonNull @Override protected MainFragmentPresenter loadPresenter() {
+  @NonNull @Override public MainFragmentPresenter loadPersistent() {
     Singleton.Dagger.with(getContext()).plusMainFragmentComponent().inject(this);
     return presenterProvider.get();
   }

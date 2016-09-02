@@ -17,42 +17,19 @@
 package com.pyamsoft.zaptorch;
 
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.app.ApplicationBase;
-import com.pyamsoft.pydroid.crash.CrashHandler;
-import com.squareup.leakcanary.LeakCanary;
 
-public class ZapTorch extends ApplicationBase implements CrashHandler.Provider {
+public class ZapTorch extends ApplicationBase {
 
   @Override protected boolean buildConfigDebug() {
     return BuildConfig.DEBUG;
   }
 
-  @NonNull @Override public String appName() {
-    return getString(R.string.app_name);
-  }
-
-  @NonNull @Override public String buildConfigApplicationId() {
-    return BuildConfig.APPLICATION_ID;
-  }
-
-  @NonNull @Override public String buildConfigVersionName() {
-    return BuildConfig.VERSION_NAME;
-  }
-
-  @Override public int buildConfigVersionCode() {
-    return BuildConfig.VERSION_CODE;
-  }
-
-  @Override public void onCreate() {
-    super.onCreate();
-
-    if (buildConfigDebug()) {
-      new CrashHandler(getApplicationContext(), this).register();
-      StrictMode.setThreadPolicy(
-          new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
-      StrictMode.setVmPolicy(
-          new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
-    }
+  @Override protected void installInDebugMode() {
+    super.installInDebugMode();
+    StrictMode.setThreadPolicy(
+        new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
+    StrictMode.setVmPolicy(
+        new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().penaltyDeath().build());
   }
 }
