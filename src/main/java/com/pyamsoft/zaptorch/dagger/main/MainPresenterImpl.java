@@ -42,12 +42,12 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     registerOnConfirmDialogBus(view);
   }
 
-  @Override protected void onUnbind(@NonNull MainActivityView view) {
-    super.onUnbind(view);
+  @Override protected void onUnbind() {
+    super.onUnbind();
     unregisterFromConfirmDialogBus();
   }
 
-  @CheckResult public boolean shouldHandleKeycode(int keyCode) {
+  @Override @CheckResult public boolean shouldHandleKeycode(int keyCode) {
     boolean handled;
     switch (keyCode) {
       case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -68,7 +68,7 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
         ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
-          if (confirmationEvent.isComplete()) {
+          if (confirmationEvent.complete()) {
             view.onClearAll();
           }
         }, throwable -> {

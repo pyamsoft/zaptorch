@@ -38,7 +38,7 @@ public class ConfirmationDialog extends DialogFragment {
     return new AlertDialog.Builder(getActivity()).setMessage(
         "Really clear all application settings?").setPositiveButton("Yes", (dialogInterface, i) -> {
       dialogInterface.dismiss();
-      ConfirmationDialogBus.get().post(new ConfirmationEvent(false));
+      ConfirmationDialogBus.get().post(ConfirmationEvent.create(false));
     }).setNegativeButton("No", (dialogInterface, i) -> {
       dialogInterface.dismiss();
     }).create();

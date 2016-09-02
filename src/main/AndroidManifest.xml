@@ -32,6 +32,7 @@
       android:supportsRtl="false"
       android:theme="@style/Theme.ZapTorch"
       tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
     <activity android:name=".app.main.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -39,6 +40,11 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+
+    <!-- Remove the Google API activity -->
+    <activity
+        android:name="com.google.android.gms.common.api.GoogleApiActivity"
+        tools:node="remove"/>
 
     <activity
         android:name=".app.service.error.CameraErrorExplanation"
@@ -48,19 +54,6 @@
         android:noHistory="true"
         android:theme="@style/Theme.ZapTorch.Error"
         android:windowSoftInputMode="stateHidden"/>
-
-    <activity
-        android:name="com.pyamsoft.pydroid.crash.CrashLogActivity"
-        android:excludeFromRecents="true"
-        android:exported="false"
-        android:launchMode="singleInstance"
-        android:noHistory="true"
-        android:windowSoftInputMode="stateHidden">
-      <intent-filter>
-        <action android:name="com.pyamsoft.zaptorch.crash.SEND_LOG"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
 
     <service
         android:name=".app.service.VolumeMonitorService"
@@ -72,16 +65,6 @@
           android:name="android.accessibilityservice"
           android:resource="@xml/zaptorch"/>
     </service>
-
-    <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="com.pyamsoft.zaptorch.crash.LOG_PROVIDER"
-        android:exported="false"
-        android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/crashlog_provider"/>
-    </provider>
 
   </application>
 

@@ -98,8 +98,8 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     }
   }
 
-  @Override protected void onUnbind(@NonNull VolumeServiceView view) {
-    super.onUnbind(view);
+  @Override protected void onUnbind() {
+    super.onUnbind();
     Timber.d("Unbind");
     if (cameraInterface != null) {
       cameraInterface.release();

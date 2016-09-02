@@ -98,6 +98,6 @@ public class VolumeMonitorService extends AccessibilityService
 
   @Override public void onDestroy() {
     super.onDestroy();
-    presenter.destroyView();
+    presenter.destroy();
   }
 }

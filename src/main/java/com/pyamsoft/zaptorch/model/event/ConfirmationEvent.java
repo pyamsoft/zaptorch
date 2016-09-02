@@ -16,15 +16,15 @@
 
 package com.pyamsoft.zaptorch.model.event;
 
-public class ConfirmationEvent {
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.google.auto.value.AutoValue;
 
-  private final boolean complete;
+@AutoValue public abstract class ConfirmationEvent {
 
-  public ConfirmationEvent(boolean complete) {
-    this.complete = complete;
+  @CheckResult @NonNull public static ConfirmationEvent create(boolean complete) {
+    return new AutoValue_ConfirmationEvent(complete);
   }
 
-  public boolean isComplete() {
-    return complete;
-  }
+  public abstract boolean complete();
 }
