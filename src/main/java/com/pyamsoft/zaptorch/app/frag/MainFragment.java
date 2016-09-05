@@ -83,7 +83,11 @@ public class MainFragment extends ActionBarSettingsPreferenceFragment
     final Preference showAboutLicenses = findPreference(getString(R.string.about_license_key));
     showAboutLicenses.setOnPreferenceClickListener(
         preference -> showAboutLicensesFragment(R.id.main_viewport,
-            AboutLibrariesFragment.Styling.DARK, Licenses.ANDROID, Licenses.PYDROID));
+            AboutLibrariesFragment.Styling.DARK, Licenses.ANDROID, Licenses.ANDROID_SUPPORT,
+            Licenses.PYDROID, Licenses.GOOGLE_PLAY_SERVICES, Licenses.ANDROID_IN_APP_BILLING,
+            Licenses.AUTO_VALUE, Licenses.BUTTERKNIFE, Licenses.DAGGER, Licenses.FAST_ADAPTER,
+            Licenses.FIREBASE, Licenses.LEAK_CANARY, Licenses.RETROFIT2, Licenses.RXANDROID,
+            Licenses.RXJAVA));
 
     final Preference checkVersion = findPreference(getString(R.string.check_version_key));
     checkVersion.setOnPreferenceClickListener(preference -> checkForUpdate());

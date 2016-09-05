@@ -41,11 +41,6 @@
       </intent-filter>
     </activity>
 
-    <!-- Remove the Google API activity -->
-    <activity
-        android:name="com.google.android.gms.common.api.GoogleApiActivity"
-        tools:node="remove"/>
-
     <activity
         android:name=".app.service.error.CameraErrorExplanation"
         android:excludeFromRecents="true"
