@@ -33,6 +33,7 @@ import com.pyamsoft.zaptorch.R;
 
 public class AccessibilityRequestFragment extends Fragment {
 
+  @NonNull public static final String TAG = "AccessibilityRequestFragment";
   @NonNull final Intent accessibilityServiceIntent =
       new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
   @BindView(R.id.enable_accessibility_button) Button enableService;

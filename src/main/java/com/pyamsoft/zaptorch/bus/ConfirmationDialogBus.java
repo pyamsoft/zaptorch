@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.bus;
+package com.pyamsoft.zaptorch.bus;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.tool.RxBus;
+import com.pyamsoft.pydroid.bus.RxBus;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
 public class ConfirmationDialogBus extends RxBus<ConfirmationEvent> {

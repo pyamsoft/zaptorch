@@ -16,14 +16,10 @@
 
 package com.pyamsoft.zaptorch;
 
-import com.pyamsoft.pydroid.base.app.ApplicationBase;
+import com.pyamsoft.pydroid.base.ApplicationBase;
 import com.squareup.leakcanary.LeakCanary;
 
 public class ZapTorch extends ApplicationBase {
-
-  @Override protected boolean buildConfigDebug() {
-    return BuildConfig.DEBUG;
-  }
 
   @Override protected void installInDebugMode() {
     super.installInDebugMode();

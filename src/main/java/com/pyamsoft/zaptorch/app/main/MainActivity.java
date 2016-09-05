@@ -20,18 +20,21 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.base.activity.DonationActivity;
-import com.pyamsoft.pydroid.base.app.PersistLoader;
+import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
+import com.pyamsoft.pydroid.app.activity.DonationActivity;
+import com.pyamsoft.pydroid.base.PersistLoader;
 import com.pyamsoft.pydroid.support.RatingDialog;
-import com.pyamsoft.pydroid.tool.PersistentCache;
 import com.pyamsoft.pydroid.util.AnimUtil;
+import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
@@ -75,10 +78,6 @@ public class MainActivity extends DonationActivity
 
   @NonNull @Override protected String provideAdViewUnitId() {
     return getString(R.string.banner_ad_id);
-  }
-
-  @Override protected boolean isAdDebugMode() {
-    return BuildConfig.DEBUG;
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
@@ -129,15 +128,45 @@ public class MainActivity extends DonationActivity
   }
 
   void showAccessibilityRequestFragment() {
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.main_viewport, new AccessibilityRequestFragment())
-        .commit();
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    if (fragmentManager.findFragmentByTag(AccessibilityRequestFragment.TAG) == null) {
+      fragmentManager.beginTransaction()
+          .replace(R.id.main_viewport, new AccessibilityRequestFragment(),
+              AccessibilityRequestFragment.TAG)
+          .commit();
+    }
   }
 
   void showMainFragment() {
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.main_viewport, new MainFragment())
-        .commit();
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
+        && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
+      fragmentManager.beginTransaction().replace(R.id.main_viewport, new MainFragment(), MainFragment.TAG).commit();
+    }
+  }
+
+  @Override public void onBackPressed() {
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final int backStackCount = fragmentManager.getBackStackEntryCount();
+    if (backStackCount > 0) {
+      fragmentManager.popBackStack();
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  @Override public boolean onOptionsItemSelected(final @NonNull MenuItem item) {
+    final int itemId = item.getItemId();
+    boolean handled;
+    switch (itemId) {
+      case android.R.id.home:
+        onBackPressed();
+        handled = true;
+        break;
+      default:
+        handled = false;
+    }
+    return handled || super.onOptionsItemSelected(item);
   }
 
   void setupAppBar() {
@@ -191,11 +220,11 @@ public class MainActivity extends DonationActivity
     return R.mipmap.ic_launcher;
   }
 
-  @NonNull @Override public String getChangeLogPackageName() {
-    return getPackageName();
+  @NonNull @Override public String provideApplicationName() {
+    return "ZapTorch";
   }
 
-  @Override public int getChangeLogVersion() {
+  @Override public int getCurrentApplicationVersion() {
     return BuildConfig.VERSION_CODE;
   }
 }

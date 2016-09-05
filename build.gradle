@@ -109,8 +109,9 @@ dependencies {
   // Butterknife
   apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
-  // Pydroid 3.5.1
-  compile project(':PYDroid')
+  // PYDroid 3.6.0
+  debugCompile project(path: ':PYDroid', configuration: "debug")
+  releaseCompile project(path: ':PYDroid', configuration: "release")
 }
 
 // AdView

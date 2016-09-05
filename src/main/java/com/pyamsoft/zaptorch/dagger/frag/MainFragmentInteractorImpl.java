@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.dagger.frag;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.app.ApplicationPreferences;
+import com.pyamsoft.pydroid.base.ApplicationPreferences;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import javax.inject.Inject;
