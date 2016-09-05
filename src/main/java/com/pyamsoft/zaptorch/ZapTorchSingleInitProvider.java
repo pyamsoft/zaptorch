@@ -16,8 +16,7 @@
 
 package com.pyamsoft.zaptorch;
 
-import com.pyamsoft.pydroid.base.ApplicationBase;
+import com.pyamsoft.pydroid.base.SingleInitContentProvider;
 
-public class ZapTorch extends ApplicationBase {
-
+public class ZapTorchSingleInitProvider extends SingleInitContentProvider {
 }
