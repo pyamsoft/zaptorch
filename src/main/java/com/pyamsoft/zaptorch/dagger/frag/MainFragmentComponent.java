@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.dagger.frag;
 
-import com.pyamsoft.pydroid.base.app.ActivityScope;
+import com.pyamsoft.pydroid.dagger.ActivityScope;
 import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
 import dagger.Subcomponent;
 

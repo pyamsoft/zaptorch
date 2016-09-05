@@ -22,16 +22,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.View;
-import com.pyamsoft.pydroid.base.app.PersistLoader;
-import com.pyamsoft.pydroid.base.fragment.ActionBarSettingsPreferenceFragment;
-import com.pyamsoft.pydroid.tool.PersistentCache;
+import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
+import com.pyamsoft.pydroid.app.fragment.ActionBarSettingsPreferenceFragment;
+import com.pyamsoft.pydroid.base.PersistLoader;
+import com.pyamsoft.pydroid.model.Licenses;
 import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import timber.log.Timber;
 
 public class MainFragment extends ActionBarSettingsPreferenceFragment
     implements MainFragmentPresenter.MainFragmentView {
 
+  @NonNull public static final String TAG = "MainFragment";
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   MainFragmentPresenter presenter;
   private long loadedKey;
@@ -76,6 +79,14 @@ public class MainFragment extends ActionBarSettingsPreferenceFragment
     final SwitchPreferenceCompat showAds =
         (SwitchPreferenceCompat) findPreference(getString(R.string.adview_key));
     showAds.setOnPreferenceChangeListener((preference, newValue) -> toggleAdVisibility(newValue));
+
+    final Preference showAboutLicenses = findPreference(getString(R.string.about_license_key));
+    showAboutLicenses.setOnPreferenceClickListener(
+        preference -> showAboutLicensesFragment(R.id.main_viewport,
+            AboutLibrariesFragment.Styling.DARK, Licenses.ANDROID, Licenses.PYDROID));
+
+    final Preference checkVersion = findPreference(getString(R.string.check_version_key));
+    checkVersion.setOnPreferenceClickListener(preference -> checkForUpdate());
   }
 
   @Override public void onStart() {

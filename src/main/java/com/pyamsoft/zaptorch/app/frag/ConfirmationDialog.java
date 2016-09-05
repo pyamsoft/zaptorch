@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import com.pyamsoft.zaptorch.app.bus.ConfirmationDialogBus;
+import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
 public class ConfirmationDialog extends DialogFragment {
