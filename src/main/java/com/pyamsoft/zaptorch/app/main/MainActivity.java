@@ -39,7 +39,7 @@ import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
-import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragment;
+import com.pyamsoft.zaptorch.app.settings.SettingsFragment;
 import timber.log.Timber;
 
 public class MainActivity extends DonationActivity
@@ -124,11 +124,10 @@ public class MainActivity extends DonationActivity
 
   void showMainFragment() {
     final FragmentManager fragmentManager = getSupportFragmentManager();
-    if (fragmentManager.findFragmentByTag(SettingsPreferenceFragment.TAG) == null
+    if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null
         && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .replace(R.id.main_viewport, new SettingsPreferenceFragment(),
-              SettingsPreferenceFragment.TAG)
+          .replace(R.id.main_viewport, new SettingsFragment(), SettingsFragment.TAG)
           .commit();
     }
   }
