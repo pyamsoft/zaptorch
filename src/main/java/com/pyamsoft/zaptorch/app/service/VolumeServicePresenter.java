@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.app.service;
 
-import com.pyamsoft.pydroid.dagger.presenter.Presenter;
+import com.pyamsoft.pydroid.base.Presenter;
 
 public interface VolumeServicePresenter
     extends Presenter<VolumeServicePresenter.VolumeServiceView> {
