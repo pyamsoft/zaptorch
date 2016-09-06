@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.app.settings;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,23 +31,24 @@ import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import timber.log.Timber;
 
-public class MainFragment extends ActionBarSettingsPreferenceFragment
-    implements MainFragmentPresenter.MainFragmentView {
+public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
+    implements SettingsPreferenceFragmentPresenter.MainFragmentView {
 
   @NonNull public static final String TAG = "MainFragment";
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
-  MainFragmentPresenter presenter;
+  SettingsPreferenceFragmentPresenter presenter;
   private long loadedKey;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     loadedKey = PersistentCache.load(KEY_PRESENTER, savedInstanceState,
-        new PersistLoader.Callback<MainFragmentPresenter>() {
-          @NonNull @Override public PersistLoader<MainFragmentPresenter> createLoader() {
-            return new MainFragmentPresenterLoader(getContext());
+        new PersistLoader.Callback<SettingsPreferenceFragmentPresenter>() {
+          @NonNull @Override public PersistLoader<SettingsPreferenceFragmentPresenter> createLoader() {
+            return new SettingsPreferenceFragmentPresenterLoader(getContext());
           }
 
-          @Override public void onPersistentLoaded(@NonNull MainFragmentPresenter persist) {
+          @Override public void onPersistentLoaded(@NonNull
+          SettingsPreferenceFragmentPresenter persist) {
             presenter = persist;
           }
         });

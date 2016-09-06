@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.app.settings;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -22,25 +22,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
-public class ConfirmationDialog extends DialogFragment {
-
-  public static ConfirmationDialog newInstance() {
-    final ConfirmationDialog fragment = new ConfirmationDialog();
-    final Bundle args = new Bundle();
-    fragment.setArguments(args);
-    return fragment;
-  }
+public class HowToDialog extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
     return new AlertDialog.Builder(getActivity()).setMessage(
-        "Really clear all application settings?").setPositiveButton("Yes", (dialogInterface, i) -> {
-      dialogInterface.dismiss();
-      ConfirmationDialogBus.get().post(ConfirmationEvent.create(false));
-    }).setNegativeButton("No", (dialogInterface, i) -> {
-      dialogInterface.dismiss();
-    }).create();
+        "Just double press the volume down key to turn the flashlight on and off")
+        .setTitle("How to Use")
+        .setNeutralButton("Got It", (dialog, which) -> {
+          dialog.dismiss();
+        })
+        .create();
   }
 }

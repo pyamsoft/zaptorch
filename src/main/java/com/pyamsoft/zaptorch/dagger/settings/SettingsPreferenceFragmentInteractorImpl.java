@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -25,13 +25,13 @@ import javax.inject.Inject;
 import rx.Observable;
 import timber.log.Timber;
 
-class MainFragmentInteractorImpl implements MainFragmentInteractor {
+class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFragmentInteractor {
 
   @NonNull final ZapTorchPreferences preferences;
   @NonNull final Context appContext;
   @NonNull final String cameraApiKey;
 
-  @Inject MainFragmentInteractorImpl(@NonNull Context context,
+  @Inject SettingsPreferenceFragmentInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {
     this.appContext = context.getApplicationContext();
     this.preferences = preferences;

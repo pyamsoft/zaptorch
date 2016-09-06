@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.dagger.settings;
 
 import com.pyamsoft.pydroid.dagger.ActivityScope;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.app.settings.SettingsFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenterLoader;
 import dagger.Subcomponent;
 
-@ActivityScope @Subcomponent(modules = MainFragmentModule.class)
-public interface MainFragmentComponent {
+@ActivityScope @Subcomponent(modules = SettingsPreferenceFragmentModule.class)
+public interface SettingsPreferenceFragmentComponent {
 
-  void inject(MainFragmentPresenterLoader loader);
+  void inject(SettingsPreferenceFragmentPresenterLoader loader);
+
+  void inject(SettingsFragmentPresenterLoader loader);
 }

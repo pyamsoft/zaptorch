@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.app.settings;
 
 import com.pyamsoft.pydroid.base.Presenter;
 
-public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
+public interface SettingsPreferenceFragmentPresenter
+    extends Presenter<SettingsPreferenceFragmentPresenter.MainFragmentView> {
 
   void confirmSettingsClear();
 

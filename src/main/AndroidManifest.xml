@@ -33,7 +33,11 @@
       android:theme="@style/Theme.ZapTorch"
       tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-    <activity android:name=".app.main.MainActivity">
+    <activity
+        android:name=".app.main.MainActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/Theme.ZapTorch.Splash"
+        >
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
