@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.app.settings;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
-public class HowToDialog extends DialogFragment {
+public class ServiceInfoDialog extends DialogFragment {
 
-  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-    return new AlertDialog.Builder(getActivity()).setMessage(
-        "Just double press the volume down key to turn the flashlight on and off")
-        .setTitle("How to Use")
-        .setNeutralButton("Got It", (dialog, which) -> {
-          dialog.dismiss();
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+    return new AlertDialog.Builder(getActivity()).setMessage("ZapTorch service is On")
+        .setPositiveButton("Okay", (dialogInterface, i) -> {
+          dismiss();
         })
         .create();
   }

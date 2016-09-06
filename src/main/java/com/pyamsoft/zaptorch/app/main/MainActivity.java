@@ -38,9 +38,8 @@ import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.app.accessibility.AccessibilityRequestFragment;
-import com.pyamsoft.zaptorch.app.frag.MainFragment;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
+import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragment;
 import timber.log.Timber;
 
 public class MainActivity extends DonationActivity
@@ -53,6 +52,7 @@ public class MainActivity extends DonationActivity
   private long loadedKey;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
+    setTheme(R.style.Theme_ZapTorch);
     super.onCreate(savedInstanceState);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
@@ -88,6 +88,7 @@ public class MainActivity extends DonationActivity
   @Override protected void onStart() {
     super.onStart();
     presenter.bindView(this);
+    showMainFragment();
   }
 
   @Override protected void onStop() {
@@ -111,12 +112,6 @@ public class MainActivity extends DonationActivity
   @Override protected void onPostResume() {
     super.onPostResume();
     RatingDialog.showRatingDialog(this, this);
-
-    if (VolumeMonitorService.isRunning()) {
-      showMainFragment();
-    } else {
-      showAccessibilityRequestFragment();
-    }
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
@@ -127,21 +122,14 @@ public class MainActivity extends DonationActivity
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
-  void showAccessibilityRequestFragment() {
-    final FragmentManager fragmentManager = getSupportFragmentManager();
-    if (fragmentManager.findFragmentByTag(AccessibilityRequestFragment.TAG) == null) {
-      fragmentManager.beginTransaction()
-          .replace(R.id.main_viewport, new AccessibilityRequestFragment(),
-              AccessibilityRequestFragment.TAG)
-          .commit();
-    }
-  }
-
   void showMainFragment() {
     final FragmentManager fragmentManager = getSupportFragmentManager();
-    if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
+    if (fragmentManager.findFragmentByTag(SettingsPreferenceFragment.TAG) == null
         && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
-      fragmentManager.beginTransaction().replace(R.id.main_viewport, new MainFragment(), MainFragment.TAG).commit();
+      fragmentManager.beginTransaction()
+          .replace(R.id.main_viewport, new SettingsPreferenceFragment(),
+              SettingsPreferenceFragment.TAG)
+          .commit();
     }
   }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.frag;
+package com.pyamsoft.zaptorch.app.settings;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -23,16 +23,16 @@ import com.pyamsoft.zaptorch.Singleton;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class MainFragmentPresenterLoader extends PersistLoader<MainFragmentPresenter> {
+public class SettingsFragmentPresenterLoader extends PersistLoader<SettingsFragmentPresenter> {
 
-  @Inject Provider<MainFragmentPresenter> presenterProvider;
+  @Inject Provider<SettingsFragmentPresenter> presenterProvider;
 
-  MainFragmentPresenterLoader(@NonNull Context context) {
+  SettingsFragmentPresenterLoader(@NonNull Context context) {
     super(context);
   }
 
-  @NonNull @Override public MainFragmentPresenter loadPersistent() {
-    Singleton.Dagger.with(getContext()).plusMainFragmentComponent().inject(this);
+  @NonNull @Override public SettingsFragmentPresenter loadPersistent() {
+    Singleton.Dagger.with(getContext()).plusSettingsComponent().inject(this);
     return presenterProvider.get();
   }
 }

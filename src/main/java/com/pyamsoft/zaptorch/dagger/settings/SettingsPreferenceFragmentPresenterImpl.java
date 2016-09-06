@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.dagger.frag;
+package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -22,8 +22,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.base.ApplicationPreferences;
 import com.pyamsoft.pydroid.dagger.presenter.PresenterBase;
+import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.app.frag.MainFragmentPresenter;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import javax.inject.Inject;
@@ -34,10 +34,10 @@ import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.MainFragmentView>
-    implements MainFragmentPresenter {
+class SettingsPreferenceFragmentPresenterImpl extends PresenterBase<SettingsPreferenceFragmentPresenter.MainFragmentView>
+    implements SettingsPreferenceFragmentPresenter {
 
-  @NonNull final MainFragmentInteractor interactor;
+  @NonNull final SettingsPreferenceFragmentInteractor interactor;
   @NonNull final Scheduler mainScheduler;
   @NonNull final Scheduler ioScheduler;
 
@@ -46,7 +46,7 @@ class MainFragmentPresenterImpl extends PresenterBase<MainFragmentPresenter.Main
 
   @Nullable ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
-  @Inject MainFragmentPresenterImpl(@NonNull MainFragmentInteractor interactor,
+  @Inject SettingsPreferenceFragmentPresenterImpl(@NonNull SettingsPreferenceFragmentInteractor interactor,
       @NonNull @Named("main") Scheduler mainScheduler,
       @NonNull @Named("io") Scheduler ioScheduler) {
     this.interactor = interactor;
