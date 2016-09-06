@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.app.frag;
 
-import com.pyamsoft.pydroid.dagger.presenter.Presenter;
+import com.pyamsoft.pydroid.base.Presenter;
 
 public interface MainFragmentPresenter extends Presenter<MainFragmentPresenter.MainFragmentView> {
 
