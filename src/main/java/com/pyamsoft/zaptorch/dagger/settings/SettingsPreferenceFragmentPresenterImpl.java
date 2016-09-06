@@ -74,7 +74,9 @@ class SettingsPreferenceFragmentPresenterImpl extends PresenterBase<SettingsPref
       public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (interactor.getCameraApiKey().equals(key)) {
           Timber.d("Camera API has changed");
-          VolumeMonitorService.changeCameraApi();
+          if (VolumeMonitorService.isRunning()) {
+            VolumeMonitorService.changeCameraApi();
+          }
         }
       }
     };
