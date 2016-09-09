@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.main;
+package com.pyamsoft.zaptorch;
 
-import android.content.Context;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.base.PersistLoader;
-import com.pyamsoft.zaptorch.ZapTorch;
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 
-public class MainPresenterLoader extends PersistLoader<MainPresenter> {
+public interface IZapTorch {
 
-  @Inject Provider<MainPresenter> presenterProvider;
-
-  MainPresenterLoader(@NonNull Context context) {
-    super(context);
-  }
-
-  @NonNull @Override public MainPresenter loadPersistent() {
-    ZapTorch.get(getContext()).provideComponent().plusMainComponent().inject(this);
-    return presenterProvider.get();
-  }
+  @CheckResult @NonNull <T extends ZapTorchComponent> T provideComponent();
 }

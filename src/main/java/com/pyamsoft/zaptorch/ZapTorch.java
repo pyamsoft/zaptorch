@@ -16,8 +16,40 @@
 
 package com.pyamsoft.zaptorch;
 
-import com.pyamsoft.pydroid.base.ApplicationBase;
+import android.content.Context;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.lib.PYDroidApplication;
+import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
+import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
+import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorch extends ApplicationBase {
+public class ZapTorch extends PYDroidApplication implements IZapTorch{
+
+  private ZapTorchComponent component;
+
+  @NonNull @CheckResult public static IZapTorch get(@NonNull Context context) {
+    final Context appContext = context.getApplicationContext();
+    if (appContext instanceof IZapTorch) {
+      return (IZapTorch) appContext;
+    } else {
+      throw new ClassCastException("Cannot cast Application Context to IZapTorch");
+    }
+  }
+
+  @Override protected void onFirstCreate() {
+    super.onFirstCreate();
+    component = DaggerZapTorchComponent.builder()
+        .zapTorchModule(new ZapTorchModule(getApplicationContext()))
+        .build();
+  }
+
+  @SuppressWarnings("unchecked") @NonNull @Override
+  public ZapTorchComponent provideComponent() {
+    if (component == null) {
+      throw new NullPointerException("ZapTorchComponent is NULL");
+    }
+    return component;
+  }
 
 }

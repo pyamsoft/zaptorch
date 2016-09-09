@@ -29,7 +29,7 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
+import com.pyamsoft.pydroid.lib.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.activity.DonationActivity;
 import com.pyamsoft.pydroid.base.PersistLoader;
 import com.pyamsoft.pydroid.support.RatingDialog;
@@ -57,7 +57,7 @@ public class MainActivity extends DonationActivity
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
-    loadedKey = PersistentCache.load(KEY_PRESENTER, savedInstanceState,
+    loadedKey = PersistentCache.get().load(KEY_PRESENTER, savedInstanceState,
         new PersistLoader.Callback<MainPresenter>() {
           @NonNull @Override public PersistLoader<MainPresenter> createLoader() {
             return new MainPresenterLoader(getApplicationContext());
@@ -81,7 +81,7 @@ public class MainActivity extends DonationActivity
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
-    PersistentCache.saveKey(outState, KEY_PRESENTER, loadedKey);
+    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey);
     super.onSaveInstanceState(outState);
   }
 
@@ -99,7 +99,7 @@ public class MainActivity extends DonationActivity
   @Override protected void onDestroy() {
     super.onDestroy();
     if (!isChangingConfigurations()) {
-      PersistentCache.unload(loadedKey);
+      PersistentCache.get().unload(loadedKey);
     }
     unbinder.unbind();
   }
@@ -128,7 +128,7 @@ public class MainActivity extends DonationActivity
         && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
       fragmentManager.beginTransaction()
           .replace(R.id.main_viewport, new SettingsFragment(), SettingsFragment.TAG)
-          .commit();
+          .commitNow();
     }
   }
 
