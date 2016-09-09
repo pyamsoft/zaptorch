@@ -29,9 +29,9 @@ import android.view.MenuItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.lib.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.activity.DonationActivity;
 import com.pyamsoft.pydroid.base.PersistLoader;
+import com.pyamsoft.pydroid.lib.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
@@ -57,8 +57,8 @@ public class MainActivity extends DonationActivity
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
     unbinder = ButterKnife.bind(this);
 
-    loadedKey = PersistentCache.get().load(KEY_PRESENTER, savedInstanceState,
-        new PersistLoader.Callback<MainPresenter>() {
+    loadedKey = PersistentCache.get()
+        .load(KEY_PRESENTER, savedInstanceState, new PersistLoader.Callback<MainPresenter>() {
           @NonNull @Override public PersistLoader<MainPresenter> createLoader() {
             return new MainPresenterLoader(getApplicationContext());
           }

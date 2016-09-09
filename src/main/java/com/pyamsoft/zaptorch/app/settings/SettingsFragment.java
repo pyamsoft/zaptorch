@@ -48,17 +48,18 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    loadedKey = PersistentCache.get().load(KEY_PRESENTER, savedInstanceState,
-        new PersistLoader.Callback<SettingsFragmentPresenter>() {
+    loadedKey = PersistentCache.get()
+        .load(KEY_PRESENTER, savedInstanceState,
+            new PersistLoader.Callback<SettingsFragmentPresenter>() {
 
-          @NonNull @Override public PersistLoader<SettingsFragmentPresenter> createLoader() {
-            return new SettingsFragmentPresenterLoader(getContext());
-          }
+              @NonNull @Override public PersistLoader<SettingsFragmentPresenter> createLoader() {
+                return new SettingsFragmentPresenterLoader(getContext());
+              }
 
-          @Override public void onPersistentLoaded(@NonNull SettingsFragmentPresenter persist) {
-            presenter = persist;
-          }
-        });
+              @Override public void onPersistentLoaded(@NonNull SettingsFragmentPresenter persist) {
+                presenter = persist;
+              }
+            });
   }
 
   @Nullable @Override

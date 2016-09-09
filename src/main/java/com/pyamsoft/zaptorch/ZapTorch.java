@@ -24,7 +24,7 @@ import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorch extends PYDroidApplication implements IZapTorch{
+public class ZapTorch extends PYDroidApplication implements IZapTorch {
 
   private ZapTorchComponent component;
 
@@ -44,12 +44,10 @@ public class ZapTorch extends PYDroidApplication implements IZapTorch{
         .build();
   }
 
-  @SuppressWarnings("unchecked") @NonNull @Override
-  public ZapTorchComponent provideComponent() {
+  @SuppressWarnings("unchecked") @NonNull @Override public ZapTorchComponent provideComponent() {
     if (component == null) {
       throw new NullPointerException("ZapTorchComponent is NULL");
     }
     return component;
   }
-
 }
