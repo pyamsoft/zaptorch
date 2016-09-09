@@ -22,9 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.base.ApplicationPreferences;
 import com.pyamsoft.pydroid.dagger.presenter.PresenterBase;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,7 +34,8 @@ import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
-class SettingsPreferenceFragmentPresenterImpl extends PresenterBase<SettingsPreferenceFragmentPresenter.MainFragmentView>
+class SettingsPreferenceFragmentPresenterImpl
+    extends PresenterBase<SettingsPreferenceFragmentPresenter.MainFragmentView>
     implements SettingsPreferenceFragmentPresenter {
 
   @NonNull final SettingsPreferenceFragmentInteractor interactor;
@@ -46,7 +47,8 @@ class SettingsPreferenceFragmentPresenterImpl extends PresenterBase<SettingsPref
 
   @Nullable ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
-  @Inject SettingsPreferenceFragmentPresenterImpl(@NonNull SettingsPreferenceFragmentInteractor interactor,
+  @Inject SettingsPreferenceFragmentPresenterImpl(
+      @NonNull SettingsPreferenceFragmentInteractor interactor,
       @NonNull @Named("main") Scheduler mainScheduler,
       @NonNull @Named("io") Scheduler ioScheduler) {
     this.interactor = interactor;

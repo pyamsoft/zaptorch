@@ -16,9 +16,9 @@
 
 package com.pyamsoft.zaptorch.dagger;
 
-import com.pyamsoft.zaptorch.dagger.settings.SettingsPreferenceFragmentComponent;
 import com.pyamsoft.zaptorch.dagger.main.MainComponent;
 import com.pyamsoft.zaptorch.dagger.service.VolumeServiceComponent;
+import com.pyamsoft.zaptorch.dagger.settings.SettingsPreferenceFragmentComponent;
 import dagger.Component;
 import javax.inject.Singleton;
 
