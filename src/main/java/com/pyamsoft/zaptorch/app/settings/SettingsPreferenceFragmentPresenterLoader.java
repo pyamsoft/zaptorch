@@ -19,11 +19,12 @@ package com.pyamsoft.zaptorch.app.settings;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.PersistLoader;
-import com.pyamsoft.zaptorch.Singleton;
+import com.pyamsoft.zaptorch.ZapTorch;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class SettingsPreferenceFragmentPresenterLoader extends PersistLoader<SettingsPreferenceFragmentPresenter> {
+public class SettingsPreferenceFragmentPresenterLoader
+    extends PersistLoader<SettingsPreferenceFragmentPresenter> {
 
   @Inject Provider<SettingsPreferenceFragmentPresenter> presenterProvider;
 
@@ -32,7 +33,7 @@ public class SettingsPreferenceFragmentPresenterLoader extends PersistLoader<Set
   }
 
   @NonNull @Override public SettingsPreferenceFragmentPresenter loadPersistent() {
-    Singleton.Dagger.with(getContext()).plusSettingsComponent().inject(this);
+    ZapTorch.get(getContext()).provideComponent().plusSettingsComponent().inject(this);
     return presenterProvider.get();
   }
 }
