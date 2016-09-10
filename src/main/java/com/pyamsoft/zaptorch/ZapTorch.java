@@ -24,14 +24,14 @@ import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorch extends PYDroidApplication implements IZapTorch {
+public class ZapTorch extends PYDroidApplication implements IZapTorch<ZapTorchComponent> {
 
   private ZapTorchComponent component;
 
   @NonNull @CheckResult public static IZapTorch get(@NonNull Context context) {
     final Context appContext = context.getApplicationContext();
     if (appContext instanceof IZapTorch) {
-      return (IZapTorch) appContext;
+      return ZapTorch.class.cast(appContext);
     } else {
       throw new ClassCastException("Cannot cast Application Context to IZapTorch");
     }
@@ -44,7 +44,7 @@ public class ZapTorch extends PYDroidApplication implements IZapTorch {
         .build();
   }
 
-  @SuppressWarnings("unchecked") @NonNull @Override public ZapTorchComponent provideComponent() {
+  @NonNull @Override public ZapTorchComponent provideComponent() {
     if (component == null) {
       throw new NullPointerException("ZapTorchComponent is NULL");
     }
