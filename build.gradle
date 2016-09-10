@@ -24,6 +24,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
@@ -87,6 +88,9 @@ dependencies {
 
   retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
 
+  // Error-Prone compiler
+  errorprone 'com.google.errorprone:error_prone_core:2.0.12'
+
   // Firebase Crash and Analytics
   compile 'com.google.firebase:firebase-core:9.4.0'
   compile 'com.google.firebase:firebase-crash:9.4.0'
@@ -104,7 +108,7 @@ dependencies {
   // Butterknife
   apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
-  // PYDroid 3.7.4
+  // PYDroid 3.7.5
   debugCompile project(path: ':PYDroid', configuration: "debug")
   releaseCompile project(path: ':PYDroid', configuration: "release")
 }

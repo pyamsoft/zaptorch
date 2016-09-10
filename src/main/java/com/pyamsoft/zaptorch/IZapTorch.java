@@ -20,7 +20,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 
-public interface IZapTorch {
+public interface IZapTorch<T extends ZapTorchComponent> {
 
-  @CheckResult @NonNull <T extends ZapTorchComponent> T provideComponent();
+  @CheckResult @NonNull T provideComponent();
 }
