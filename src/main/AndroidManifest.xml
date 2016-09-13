@@ -16,7 +16,6 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.pyamsoft.zaptorch">
 
   <uses-permission android:name="android.permission.CAMERA"/>
@@ -26,16 +25,14 @@
 
   <application
       android:name=".ZapTorch"
-      android:allowBackup="true"
+      android:allowBackup="false"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
-      android:supportsRtl="false"
-      android:theme="@style/Theme.ZapTorch"
-      tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+      android:theme="@style/Theme.ZapTorch">
 
     <activity
         android:name=".app.main.MainActivity"
-        android:launchMode="singleTop"
+        android:launchMode="singleTask"
         android:theme="@style/Theme.ZapTorch.Splash"
         >
       <intent-filter>
