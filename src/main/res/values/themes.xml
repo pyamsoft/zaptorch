@@ -17,7 +17,7 @@
 
 <resources>
 
-  <style name="Base.Theme.ZapTorch" parent="@style/Theme.AppCompat.NoActionBar">
+  <style name="Base.Theme.ZapTorch" parent="@style/Theme.Design.NoActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
