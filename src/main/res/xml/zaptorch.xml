@@ -20,4 +20,5 @@
     android:accessibilityFlags="flagRequestFilterKeyEvents"
     android:canRequestFilterKeyEvents="true"
     android:description="@string/accessibility_service_description"
+    android:settingsActivity="com.pyamsoft.zaptorch.app.main.MainActivity"
     android:notificationTimeout="10000"/>
