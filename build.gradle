@@ -20,16 +20,16 @@ tasks.whenTaskAdded { task ->
   }
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'net.ltgt.errorprone'
-apply plugin: 'me.tatarka.retrolambda'
+apply plugin: "com.android.application"
+apply plugin: "com.github.ben-manes.versions"
+apply plugin: "com.getkeepsafe.dexcount"
+apply plugin: "com.neenbedankt.android-apt"
+apply plugin: "net.ltgt.errorprone"
+apply plugin: "me.tatarka.retrolambda"
 
 android {
   compileSdkVersion 24
-  buildToolsVersion "24.0.2"
+  buildToolsVersion "$buildTools"
 
   defaultConfig {
     applicationId "com.pyamsoft.zaptorch"
@@ -68,51 +68,51 @@ android {
       signingConfig signingConfigs.release
       minifyEnabled true
       shrinkResources true
-      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-          'proguard-rules.pro'
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
+          "proguard-rules.pro"
     }
   }
 
   dexOptions {
-    javaMaxHeapSize "1g"
+    javaMaxHeapSize "$heapSize"
   }
 }
 
 retrolambda {
-  jvmArgs '-noverify'
+  jvmArgs "-noverify"
 }
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  testCompile 'junit:junit:4.12'
+  compile fileTree(dir: "libs", include: ["*.jar"])
+  testCompile "junit:junit:$junit"
 
-  retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+  retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambda"
 
   // Error-Prone compiler
-  errorprone 'com.google.errorprone:error_prone_core:2.0.12'
+  errorprone "com.google.errorprone:error_prone_core:$errorProne"
 
   // Firebase Crash and Analytics
-  compile 'com.google.firebase:firebase-core:9.4.0'
-  compile 'com.google.firebase:firebase-crash:9.4.0'
+  compile "com.google.firebase:firebase-core:$firebase"
+  compile "com.google.firebase:firebase-crash:$firebase"
 
   // Auto value
-  provided 'com.google.auto.value:auto-value:1.3'
-  apt 'com.google.auto.value:auto-value:1.3'
+  provided "com.google.auto.value:auto-value:$autoValue"
+  apt "com.google.auto.value:auto-value:$autoValue"
 
   // Needs to compile support annotations into actual project
-  compile 'com.android.support:support-annotations:24.2.1'
+  compile "com.android.support:support-annotations:$supportLib"
 
   // Dagger2
-  apt "com.google.dagger:dagger-compiler:2.7"
+  apt "com.google.dagger:dagger-compiler:$dagger"
 
   // Butterknife
-  apt 'com.jakewharton:butterknife-compiler:8.4.0'
+  apt "com.jakewharton:butterknife-compiler:$butterknife"
 
   // PYDroid 3.7.7
-  debugCompile project(path: ':PYDroid', configuration: "debug")
-  releaseCompile project(path: ':PYDroid', configuration: "release")
+  debugCompile project(path: ":PYDroid", configuration: "debug")
+  releaseCompile project(path: ":PYDroid", configuration: "release")
 }
 
 // AdView
-apply plugin: 'com.google.gms.google-services'
+apply plugin: "com.google.gms.google-services"
 
