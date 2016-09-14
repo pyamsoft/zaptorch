@@ -86,7 +86,7 @@ dependencies {
   compile fileTree(dir: "libs", include: ["*.jar"])
   testCompile "junit:junit:$junit"
 
-  retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambda"
+  retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:2.3.0"
 
   // Error-Prone compiler
   errorprone "com.google.errorprone:error_prone_core:$errorProne"
