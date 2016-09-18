@@ -32,18 +32,22 @@ class SettingsFragmentPresenterImpl extends SchedulerPresenter<SettingsFragmentP
   }
 
   @Override public void clickFAB() {
-    if (VolumeMonitorService.isRunning()) {
-      getView().onDisplayServiceInfo();
-    } else {
-      getView().onCreateAccessibilityDialog();
-    }
+    getView(view -> {
+      if (VolumeMonitorService.isRunning()) {
+        view.onDisplayServiceInfo();
+      } else {
+        view.onCreateAccessibilityDialog();
+      }
+    });
   }
 
   @Override public void loadFABFromState() {
-    if (VolumeMonitorService.isRunning()) {
-      getView().onFABEnabled();
-    } else {
-      getView().onFABDisabled();
-    }
+    getView(view -> {
+      if (VolumeMonitorService.isRunning()) {
+        view.onFABEnabled();
+      } else {
+        view.onFABDisabled();
+      }
+    });
   }
 }

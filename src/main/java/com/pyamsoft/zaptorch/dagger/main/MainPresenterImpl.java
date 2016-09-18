@@ -37,9 +37,9 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     this.interactor = interactor;
   }
 
-  @Override protected void onBind(@NonNull MainActivityView view) {
-    super.onBind(view);
-    registerOnConfirmDialogBus(view);
+  @Override protected void onBind() {
+    super.onBind();
+    registerOnConfirmDialogBus();
   }
 
   @Override protected void onUnbind() {
@@ -64,12 +64,12 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     return interactor.shouldHandleKeys() && handled;
   }
 
-  void registerOnConfirmDialogBus(@NonNull MainActivityView view) {
+  void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
     confirmDialogBusSubscription =
         ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
           if (confirmationEvent.complete()) {
-            view.onClearAll();
+            getView(MainActivityView::onClearAll);
           }
         }, throwable -> {
           Timber.e(throwable, "ConfirmationDialogBus onError");

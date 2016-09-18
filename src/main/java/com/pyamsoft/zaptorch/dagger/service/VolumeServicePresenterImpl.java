@@ -81,8 +81,8 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     }
   }
 
-  @Override protected void onBind(@NonNull VolumeServiceView view) {
-    super.onBind(view);
+  @Override protected void onBind() {
+    super.onBind();
     pressed = false;
 
     final int cameraApi = interactor.getCameraApi();
