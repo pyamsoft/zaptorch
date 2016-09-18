@@ -22,8 +22,9 @@ import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.base.ApplicationPreferences;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
+import javax.inject.Inject;
 
-public class ZapTorchPreferencesImpl extends ApplicationPreferences implements ZapTorchPreferences {
+class ZapTorchPreferencesImpl extends ApplicationPreferences implements ZapTorchPreferences {
 
   @NonNull private final String doublePressDelayKey;
   @NonNull private final String displayCameraErrorsKey;
@@ -34,7 +35,7 @@ public class ZapTorchPreferencesImpl extends ApplicationPreferences implements Z
   private final boolean displayCameraErrorsDefault;
   private final boolean handleVolumeKeysDefault;
 
-  public ZapTorchPreferencesImpl(@NonNull Context context) {
+  @Inject ZapTorchPreferencesImpl(@NonNull Context context) {
     super(context);
     final Context appContext = context.getApplicationContext();
     final Resources res = appContext.getResources();
