@@ -56,8 +56,8 @@ class SettingsPreferenceFragmentPresenterImpl
     this.ioScheduler = ioScheduler;
   }
 
-  @Override protected void onBind(@NonNull MainFragmentView view) {
-    super.onBind(view);
+  @Override protected void onBind() {
+    super.onBind();
     registerOnConfirmDialogBus();
     registerCameraApiListener();
   }
@@ -132,6 +132,6 @@ class SettingsPreferenceFragmentPresenterImpl
   }
 
   @Override public void confirmSettingsClear() {
-    getView().onConfirmAttempt();
+    getView(MainFragmentView::onConfirmAttempt);
   }
 }
