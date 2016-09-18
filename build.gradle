@@ -108,7 +108,7 @@ dependencies {
   // Butterknife
   apt "com.jakewharton:butterknife-compiler:$butterknife"
 
-  // PYDroid 3.7.7
+  // PYDroid 4.0.0
   debugCompile project(path: ":PYDroid", configuration: "debug")
   releaseCompile project(path: ":PYDroid", configuration: "release")
 }
