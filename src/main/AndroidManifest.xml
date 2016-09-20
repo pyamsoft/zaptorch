@@ -60,6 +60,12 @@
           android:resource="@xml/zaptorch"/>
     </service>
 
+    <provider
+        android:name=".ZapTorchSingleInitProvider"
+        android:authorities="com.pyamsoft.zaptorch.ZapTorchSingleInitProvider"
+        android:exported="false"
+        android:syncable="false"/>
+
   </application>
 
 </manifest>
