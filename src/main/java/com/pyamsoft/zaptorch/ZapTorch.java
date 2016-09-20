@@ -39,8 +39,8 @@ public class ZapTorch extends PYDroidApplication implements IZapTorch<ZapTorchCo
     }
   }
 
-  @Override protected void onFirstCreate() {
-    super.onFirstCreate();
+  @Override public void onCreate() {
+    super.onCreate();
     component = DaggerZapTorchComponent.builder()
         .zapTorchModule(new ZapTorchModule(getApplicationContext()))
         .build();
