@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.app.main;
 
 import android.support.annotation.CheckResult;
-import com.pyamsoft.pydroid.base.Presenter;
+import com.pyamsoft.pydroid.presenter.Presenter;
 
 public interface MainPresenter extends Presenter<MainPresenter.MainActivityView> {
 

@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.app.settings;
 
-import com.pyamsoft.pydroid.base.Presenter;
+import com.pyamsoft.pydroid.presenter.Presenter;
 
 public interface SettingsPreferenceFragmentPresenter
     extends Presenter<SettingsPreferenceFragmentPresenter.MainFragmentView> {

@@ -27,10 +27,9 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import com.pyamsoft.pydroid.base.ActionBarFragment;
-import com.pyamsoft.pydroid.base.PersistLoader;
-import com.pyamsoft.pydroid.tool.AsyncDrawable;
-import com.pyamsoft.pydroid.tool.AsyncDrawableMap;
+import com.pyamsoft.pydroid.ActionBarFragment;
+import com.pyamsoft.pydroid.PersistLoader;
+import com.pyamsoft.pydroid.util.AsyncDrawable;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
@@ -40,7 +39,8 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @NonNull public static final String TAG = "MainSettingsFragment";
   @NonNull private static final String KEY_PRESENTER = "key_settings_presenter";
-  @NonNull private final AsyncDrawableMap drawableMap = new AsyncDrawableMap();
+  @NonNull private final AsyncDrawable.Mapper
+      drawableMap = new AsyncDrawable.Mapper();
   @BindView(R.id.main_settings_fab) FloatingActionButton floatingActionButton;
   SettingsFragmentPresenter presenter;
   private Unbinder unbinder;
