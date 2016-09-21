@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.dagger.settings;
 
-import com.pyamsoft.pydroid.dagger.ActivityScope;
+import com.pyamsoft.pydroid.ActivityScope;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragmentPresenter;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import dagger.Module;

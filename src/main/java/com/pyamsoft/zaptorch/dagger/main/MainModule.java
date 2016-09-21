@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.pydroid.dagger.ActivityScope;
+import com.pyamsoft.pydroid.ActivityScope;
 import com.pyamsoft.zaptorch.app.main.MainPresenter;
 import dagger.Module;
 import dagger.Provides;

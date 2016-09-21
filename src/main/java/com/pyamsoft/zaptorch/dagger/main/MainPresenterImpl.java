@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch.dagger.main;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.dagger.presenter.PresenterBase;
+import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.main.MainPresenter;
 import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
 import javax.inject.Inject;
