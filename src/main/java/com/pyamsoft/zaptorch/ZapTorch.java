@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.pyamsoft.pydroid.PYDroidApplication;
 import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
@@ -54,7 +53,7 @@ public class ZapTorch extends PYDroidApplication implements IZapTorch<ZapTorchCo
   }
 
   @Nullable @Override public String provideGoogleOpenSourceLicenses() {
-    return GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this);
+    return null;
   }
 
   @Override public void insertCustomLicensesIntoMap() {
