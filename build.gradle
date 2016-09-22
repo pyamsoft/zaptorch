@@ -23,7 +23,6 @@ tasks.whenTaskAdded { task ->
 apply plugin: "com.android.application"
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "com.getkeepsafe.dexcount"
-apply plugin: "com.neenbedankt.android-apt"
 apply plugin: "net.ltgt.errorprone"
 apply plugin: "me.tatarka.retrolambda"
 
@@ -91,24 +90,23 @@ dependencies {
   // Error-Prone compiler
   errorprone "com.google.errorprone:error_prone_core:$errorProne"
 
-  // Firebase Crash and Analytics
-  compile "com.google.firebase:firebase-core:$firebase"
+  // Firebase Crash
   compile "com.google.firebase:firebase-crash:$firebase"
 
   // Auto value
   provided "com.google.auto.value:auto-value:$autoValue"
-  apt "com.google.auto.value:auto-value:$autoValue"
+  annotationProcessor"com.google.auto.value:auto-value:$autoValue"
 
   // Needs to compile support annotations into actual project
   compile "com.android.support:support-annotations:$supportLib"
 
   // Dagger2
-  apt "com.google.dagger:dagger-compiler:$dagger"
+  annotationProcessor"com.google.dagger:dagger-compiler:$dagger"
 
   // Butterknife
-  apt "com.jakewharton:butterknife-compiler:$butterknife"
+  annotationProcessor"com.jakewharton:butterknife-compiler:$butterknife"
 
-  // PYDroid 4.3.2
+  // PYDroid 4.4.1
   debugCompile project(path: ":PYDroid", configuration: "debug")
   releaseCompile project(path: ":PYDroid", configuration: "release")
 }
