@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.ApplicationPreferences;
+import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import rx.Observable;
 
 public interface SettingsPreferenceFragmentInteractor {

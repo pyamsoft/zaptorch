@@ -20,7 +20,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.pyamsoft.pydroid.ApplicationPreferences;
+import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
