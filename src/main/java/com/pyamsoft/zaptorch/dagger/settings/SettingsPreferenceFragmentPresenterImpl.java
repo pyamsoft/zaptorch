@@ -39,8 +39,8 @@ class SettingsPreferenceFragmentPresenterImpl
     implements SettingsPreferenceFragmentPresenter {
 
   @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @NonNull final Scheduler mainScheduler;
-  @NonNull final Scheduler ioScheduler;
+  @NonNull final Scheduler obsScheduler;
+  @NonNull final Scheduler subScheduler;
 
   @NonNull Subscription confirmDialogBusSubscription = Subscriptions.empty();
   @NonNull Subscription confirmDialogSubscription = Subscriptions.empty();
@@ -49,11 +49,11 @@ class SettingsPreferenceFragmentPresenterImpl
 
   @Inject SettingsPreferenceFragmentPresenterImpl(
       @NonNull SettingsPreferenceFragmentInteractor interactor,
-      @NonNull @Named("main") Scheduler mainScheduler,
-      @NonNull @Named("io") Scheduler ioScheduler) {
+      @NonNull @Named("obs") Scheduler obsScheduler,
+      @NonNull @Named("io") Scheduler subScheduler) {
     this.interactor = interactor;
-    this.mainScheduler = mainScheduler;
-    this.ioScheduler = ioScheduler;
+    this.obsScheduler = obsScheduler;
+    this.subScheduler = subScheduler;
   }
 
   @Override protected void onBind() {
@@ -99,7 +99,7 @@ class SettingsPreferenceFragmentPresenterImpl
   }
 
   Observable<Boolean> clearAll() {
-    return interactor.clearAll().subscribeOn(ioScheduler).observeOn(mainScheduler);
+    return interactor.clearAll().subscribeOn(subScheduler).observeOn(obsScheduler);
   }
 
   private void unregisterFromConfirmDialogBus() {
