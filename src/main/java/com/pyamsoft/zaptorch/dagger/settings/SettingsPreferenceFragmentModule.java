@@ -27,14 +27,14 @@ import rx.Scheduler;
 @Module public class SettingsPreferenceFragmentModule {
 
   @ActivityScope @Provides SettingsFragmentPresenter provideSettingsFragmentPresenter(
-      @Named("main") Scheduler mainScheduler, @Named("io") Scheduler ioScheduler) {
+      @Named("main") Scheduler mainScheduler, @Named("computation") Scheduler ioScheduler) {
     return new SettingsFragmentPresenterImpl(mainScheduler, ioScheduler);
   }
 
   @ActivityScope @Provides
   SettingsPreferenceFragmentPresenter provideSettingsPreferenceFragmentPresenter(
       final SettingsPreferenceFragmentInteractor interactor, @Named("main") Scheduler mainScheduler,
-      @Named("io") Scheduler ioScheduler) {
+      @Named("computation") Scheduler ioScheduler) {
     return new SettingsPreferenceFragmentPresenterImpl(interactor, mainScheduler, ioScheduler);
   }
 

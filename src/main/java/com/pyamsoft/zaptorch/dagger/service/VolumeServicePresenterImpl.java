@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,27 +29,18 @@ import timber.log.Timber;
 class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.VolumeServiceView>
     implements VolumeServicePresenter {
 
-  @NonNull final Handler handler;
-  @NonNull final VolumeServiceInteractor interactor;
-  final int cameraApiOld;
-  final int cameraApiLollipop;
-  final int cameraApiMarshmallow;
-
-  @Nullable CameraInterface cameraInterface;
-  boolean pressed;
+  @NonNull private final Handler handler;
+  @NonNull private final VolumeServiceInteractor interactor;
+  @SuppressWarnings("WeakerAccess") boolean pressed;
+  @Nullable private CameraInterface cameraInterface;
 
   @Inject VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
     this.pressed = false;
-
-    // KLUDGE duplication of values between preferences and java code
-    cameraApiOld = 0;
-    cameraApiLollipop = 1;
-    cameraApiMarshmallow = 2;
   }
 
-  void handleKeyEvent() {
+  @SuppressWarnings("WeakerAccess") void handleKeyEvent() {
     handler.removeCallbacksAndMessages(null);
     if (pressed) {
       Timber.d("Key has been double pressed");
@@ -84,18 +74,7 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
   @Override protected void onBind() {
     super.onBind();
     pressed = false;
-
-    final int cameraApi = interactor.getCameraApi();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
-      cameraInterface = interactor.marshmallowCamera();
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        && cameraApi == cameraApiLollipop) {
-      cameraInterface = interactor.lollipopCamera();
-    } else if (cameraApi == cameraApiOld) {
-      cameraInterface = interactor.originalCamera();
-    } else {
-      throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
-    }
+    cameraInterface = interactor.camera();
   }
 
   @Override protected void onUnbind() {
