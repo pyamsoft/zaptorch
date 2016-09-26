@@ -49,7 +49,7 @@ import rx.schedulers.Schedulers;
     return AndroidSchedulers.mainThread();
   }
 
-  @Singleton @Provides @Named("io") Scheduler provideIoScheduler() {
-    return Schedulers.io();
+  @Singleton @Provides @Named("computation") Scheduler provideIoScheduler() {
+    return Schedulers.computation();
   }
 }

@@ -27,15 +27,13 @@ import timber.log.Timber;
 
 class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFragmentInteractor {
 
-  @NonNull final ZapTorchPreferences preferences;
-  @NonNull final Context appContext;
-  @NonNull final String cameraApiKey;
+  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final String cameraApiKey;
 
   @Inject SettingsPreferenceFragmentInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {
-    this.appContext = context.getApplicationContext();
     this.preferences = preferences;
-    this.cameraApiKey = appContext.getString(R.string.camera_api_key);
+    this.cameraApiKey = context.getString(R.string.camera_api_key);
   }
 
   @NonNull @Override public Observable<Boolean> clearAll() {

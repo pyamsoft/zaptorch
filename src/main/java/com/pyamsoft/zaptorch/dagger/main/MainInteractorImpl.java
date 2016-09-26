@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 class MainInteractorImpl implements MainInteractor {
 
-  @NonNull final ZapTorchPreferences preferences;
+  @NonNull private final ZapTorchPreferences preferences;
 
   @Inject MainInteractorImpl(@NonNull ZapTorchPreferences preferences) {
     this.preferences = preferences;

@@ -26,11 +26,5 @@ public interface VolumeServiceInteractor {
 
   @CheckResult boolean shouldShowErrorDialog();
 
-  @CheckResult int getCameraApi();
-
-  @CheckResult @NonNull CameraInterface marshmallowCamera();
-
-  @CheckResult @NonNull CameraInterface lollipopCamera();
-
-  @CheckResult @NonNull CameraInterface originalCamera();
+  @CheckResult @NonNull CameraInterface camera();
 }
