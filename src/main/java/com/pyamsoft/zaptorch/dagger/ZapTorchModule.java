@@ -17,39 +17,50 @@
 package com.pyamsoft.zaptorch.dagger;
 
 import android.content.Context;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import dagger.Module;
-import dagger.Provides;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import com.pyamsoft.zaptorch.dagger.main.MainModule;
+import com.pyamsoft.zaptorch.dagger.service.VolumeServiceModule;
+import com.pyamsoft.zaptorch.dagger.settings.SettingsPreferenceFragmentModule;
 
-@Module public class ZapTorchModule {
+public class ZapTorchModule {
 
-  @NonNull private final Context appContext;
-  @NonNull private final ZapTorchPreferences preferences;
+  @NonNull private final Provider provider;
 
   public ZapTorchModule(final @NonNull Context context) {
-    appContext = context.getApplicationContext();
-    preferences = new ZapTorchPreferencesImpl(context);
+    this.provider = new Provider(context);
   }
 
-  @Singleton @Provides Context provideContext() {
-    return appContext;
+  @CheckResult @NonNull
+  public SettingsPreferenceFragmentModule provideSettingsPreferenceFragmentModule() {
+    return new SettingsPreferenceFragmentModule(provider);
   }
 
-  @Singleton @Provides ZapTorchPreferences providePreferences() {
-    return preferences;
+  @CheckResult @NonNull public MainModule provideMainModule() {
+    return new MainModule(provider);
   }
 
-  @Singleton @Provides @Named("obs") Scheduler provideMainScheduler() {
-    return AndroidSchedulers.mainThread();
+  @CheckResult @NonNull public VolumeServiceModule provideVolumeServiceModule() {
+    return new VolumeServiceModule(provider);
   }
 
-  @Singleton @Provides @Named("sub") Scheduler provideIoScheduler() {
-    return Schedulers.io();
+  public static class Provider {
+
+    @NonNull private final Context appContext;
+    @NonNull private final ZapTorchPreferences preferences;
+
+    Provider(final @NonNull Context context) {
+      appContext = context.getApplicationContext();
+      preferences = new ZapTorchPreferencesImpl(context);
+    }
+
+    @CheckResult @NonNull public Context provideContext() {
+      return appContext;
+    }
+
+    @CheckResult @NonNull public ZapTorchPreferences providePreferences() {
+      return preferences;
+    }
   }
 }

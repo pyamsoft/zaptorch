@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.CheckResult;
 
-public interface MainInteractor {
+interface MainInteractor {
 
   @CheckResult boolean shouldHandleKeys();
 }

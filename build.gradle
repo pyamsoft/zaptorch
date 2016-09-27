@@ -95,18 +95,15 @@ dependencies {
 
   // Auto value
   provided "com.google.auto.value:auto-value:$autoValue"
-  annotationProcessor"com.google.auto.value:auto-value:$autoValue"
+  annotationProcessor "com.google.auto.value:auto-value:$autoValue"
 
   // Needs to compile support annotations into actual project
   compile "com.android.support:support-annotations:$supportLib"
 
-  // Dagger2
-  annotationProcessor"com.google.dagger:dagger-compiler:$dagger"
-
   // Butterknife
-  annotationProcessor"com.jakewharton:butterknife-compiler:$butterknife"
+  annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife"
 
-  // PYDroid 4.4.2
+  // PYDroid 4.5.0
   debugCompile project(path: ":PYDroid", configuration: "debug")
   releaseCompile project(path: ":PYDroid", configuration: "release")
 }

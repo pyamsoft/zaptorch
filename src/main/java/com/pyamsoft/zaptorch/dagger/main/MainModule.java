@@ -16,20 +16,22 @@
 
 package com.pyamsoft.zaptorch.dagger.main;
 
-import com.pyamsoft.pydroid.ActivityScope;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.app.main.MainPresenter;
-import dagger.Module;
-import dagger.Provides;
+import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-@Module public class MainModule {
+public class MainModule {
 
-  @Provides @ActivityScope MainPresenter provideMainActivityPresenter(
-      final MainInteractor interactor) {
-    return new MainPresenterImpl(interactor);
+  @NonNull private final MainInteractor interactor;
+  @NonNull private final MainPresenter presenter;
+
+  public MainModule(@NonNull ZapTorchModule.Provider provider) {
+    interactor = new MainInteractorImpl(provider.providePreferences());
+    presenter = new MainPresenterImpl(interactor);
   }
 
-  @Provides @ActivityScope MainInteractor provideMainActivityInteractor(
-      final MainInteractorImpl interactor) {
-    return interactor;
+  @CheckResult @NonNull public MainPresenter getPresenter() {
+    return presenter;
   }
 }

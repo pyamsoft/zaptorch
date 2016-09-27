@@ -25,14 +25,13 @@ import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.ZapTorch;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
   static VolumeMonitorService instance;
-  @Inject VolumeServicePresenter presenter;
+  private VolumeServicePresenter presenter;
 
   @CheckResult @NonNull static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
@@ -84,7 +83,7 @@ public class VolumeMonitorService extends AccessibilityService
     super.onServiceConnected();
 
     if (presenter == null) {
-      ZapTorch.get(this).provideComponent().plusVolumeServiceComponent().inject(this);
+      presenter = ZapTorch.get(this).provideComponent().provideVolumeServiceModule().getPresenter();
     }
 
     presenter.bindView(this);

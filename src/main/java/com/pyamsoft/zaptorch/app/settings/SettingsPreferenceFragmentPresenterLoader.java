@@ -20,20 +20,18 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.zaptorch.ZapTorch;
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class SettingsPreferenceFragmentPresenterLoader
     extends PersistLoader<SettingsPreferenceFragmentPresenter> {
-
-  @Inject Provider<SettingsPreferenceFragmentPresenter> presenterProvider;
 
   SettingsPreferenceFragmentPresenterLoader(@NonNull Context context) {
     super(context);
   }
 
   @NonNull @Override public SettingsPreferenceFragmentPresenter loadPersistent() {
-    ZapTorch.get(getContext()).provideComponent().plusSettingsComponent().inject(this);
-    return presenterProvider.get();
+    return ZapTorch.get(getContext())
+        .provideComponent()
+        .provideSettingsPreferenceFragmentModule()
+        .getPreferenceFragmentPresenter();
   }
 }

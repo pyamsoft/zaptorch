@@ -20,18 +20,17 @@ import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.IPYDroidApp;
 import com.pyamsoft.pydroid.PYDroidApplication;
-import com.pyamsoft.zaptorch.dagger.DaggerZapTorchComponent;
-import com.pyamsoft.zaptorch.dagger.ZapTorchComponent;
 import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorch extends PYDroidApplication implements IZapTorch<ZapTorchComponent> {
+public class ZapTorch extends PYDroidApplication implements IPYDroidApp<ZapTorchModule> {
 
-  private ZapTorchComponent component;
+  private ZapTorchModule module;
 
-  @NonNull @CheckResult public static IZapTorch get(@NonNull Context context) {
+  @NonNull @CheckResult public static IPYDroidApp<ZapTorchModule> get(@NonNull Context context) {
     final Context appContext = context.getApplicationContext();
-    if (appContext instanceof IZapTorch) {
+    if (appContext instanceof ZapTorch) {
       return ZapTorch.class.cast(appContext);
     } else {
       throw new ClassCastException("Cannot cast Application Context to IZapTorch");
@@ -40,16 +39,14 @@ public class ZapTorch extends PYDroidApplication implements IZapTorch<ZapTorchCo
 
   @Override protected void createApplicationComponents() {
     super.createApplicationComponents();
-    component = DaggerZapTorchComponent.builder()
-        .zapTorchModule(new ZapTorchModule(getApplicationContext()))
-        .build();
+    module = new ZapTorchModule(this);
   }
 
-  @NonNull @Override public ZapTorchComponent provideComponent() {
-    if (component == null) {
+  @NonNull @Override public ZapTorchModule provideComponent() {
+    if (module == null) {
       throw new NullPointerException("ZapTorchComponent is NULL");
     }
-    return component;
+    return module;
   }
 
   @Nullable @Override public String provideGoogleOpenSourceLicenses() {

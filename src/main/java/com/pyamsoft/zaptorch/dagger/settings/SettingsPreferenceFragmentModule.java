@@ -16,31 +16,31 @@
 
 package com.pyamsoft.zaptorch.dagger.settings;
 
-import com.pyamsoft.pydroid.ActivityScope;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragmentPresenter;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
-import dagger.Module;
-import dagger.Provides;
-import javax.inject.Named;
-import rx.Scheduler;
+import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-@Module public class SettingsPreferenceFragmentModule {
+public class SettingsPreferenceFragmentModule {
 
-  @ActivityScope @Provides SettingsFragmentPresenter provideSettingsFragmentPresenter(
-      @Named("obs") Scheduler obsScheduler, @Named("sub") Scheduler subScheduler) {
-    return new SettingsFragmentPresenterImpl(obsScheduler, subScheduler);
+  @NonNull private final SettingsPreferenceFragmentInteractor interactor;
+  @NonNull private final SettingsPreferenceFragmentPresenter preferenceFragmentPresenter;
+  @NonNull private final SettingsFragmentPresenter fragmentPresenter;
+
+  public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule.Provider provider) {
+    interactor = new SettingsPreferenceFragmentInteractorImpl(provider.provideContext(),
+        provider.providePreferences());
+    fragmentPresenter = new SettingsFragmentPresenterImpl();
+    preferenceFragmentPresenter = new SettingsPreferenceFragmentPresenterImpl(interactor);
   }
 
-  @ActivityScope @Provides
-  SettingsPreferenceFragmentPresenter provideSettingsPreferenceFragmentPresenter(
-      final SettingsPreferenceFragmentInteractor interactor, @Named("obs") Scheduler obsScheduler,
-      @Named("sub") Scheduler subScheduler) {
-    return new SettingsPreferenceFragmentPresenterImpl(interactor, obsScheduler, subScheduler);
+  @CheckResult @NonNull public SettingsFragmentPresenter getSettingsFragmentPresenter() {
+    return fragmentPresenter;
   }
 
-  @ActivityScope @Provides
-  SettingsPreferenceFragmentInteractor provideSettingsPreferenceFragmentInteractor(
-      final SettingsPreferenceFragmentInteractorImpl interactor) {
-    return interactor;
+  @CheckResult @NonNull
+  public SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
+    return preferenceFragmentPresenter;
   }
 }

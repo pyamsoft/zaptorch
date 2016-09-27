@@ -18,13 +18,12 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import javax.inject.Inject;
 
 class MainInteractorImpl implements MainInteractor {
 
   @NonNull private final ZapTorchPreferences preferences;
 
-  @Inject MainInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+  MainInteractorImpl(@NonNull ZapTorchPreferences preferences) {
     this.preferences = preferences;
   }
 

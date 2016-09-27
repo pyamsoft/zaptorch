@@ -21,7 +21,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
-import javax.inject.Inject;
 
 class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
@@ -33,8 +32,7 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   // KLUDGE holds onto context
   @NonNull private final Context appContext;
 
-  @Inject VolumeServiceInteractorImpl(@NonNull Context context,
-      @NonNull ZapTorchPreferences preferences) {
+  VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences) {
     this.appContext = context.getApplicationContext();
     this.preferences = preferences;
 
