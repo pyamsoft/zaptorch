@@ -100,7 +100,7 @@ import timber.log.Timber;
     unsubCameraSubscription();
     cameraSubscription =
         AsyncTaskCompat.executeParallel(new AsyncCallbackTask<Void, Camera>(item -> {
-          if (camera == null) {
+          if (item == null) {
             Timber.e("Camera is NULL");
             startErrorExplanationActivity();
           } else {
