@@ -17,12 +17,13 @@
 package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.ActionSingle;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
+import com.pyamsoft.pydroid.tool.AsyncCallbackTask;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
-import javax.inject.Inject;
-import rx.Observable;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFragmentInteractor {
@@ -30,18 +31,21 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
   @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
   @SuppressWarnings("WeakerAccess") @NonNull final String cameraApiKey;
 
-  @Inject SettingsPreferenceFragmentInteractorImpl(@NonNull Context context,
+  SettingsPreferenceFragmentInteractorImpl(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {
     this.preferences = preferences;
     this.cameraApiKey = context.getString(R.string.camera_api_key);
   }
 
-  @NonNull @Override public Observable<Boolean> clearAll() {
-    return Observable.defer(() -> {
-      Timber.d("Clear all preferences");
-      preferences.clearAll();
-      return Observable.just(true);
-    });
+  @NonNull @Override
+  public AsyncTask<Void, Void, Boolean> clearAll(@NonNull ActionSingle<Boolean> onLoaded) {
+    return new AsyncCallbackTask<Void, Boolean>(onLoaded) {
+      @Override protected Boolean doInBackground(Void... params) {
+        Timber.d("Clear all preferences");
+        preferences.clearAll();
+        return true;
+      }
+    };
   }
 
   @Override public void registerCameraApiListener(

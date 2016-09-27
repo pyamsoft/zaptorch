@@ -20,19 +20,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.zaptorch.ZapTorch;
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class MainPresenterLoader extends PersistLoader<MainPresenter> {
-
-  @Inject Provider<MainPresenter> presenterProvider;
 
   MainPresenterLoader(@NonNull Context context) {
     super(context);
   }
 
   @NonNull @Override public MainPresenter loadPersistent() {
-    ZapTorch.get(getContext()).provideComponent().plusMainComponent().inject(this);
-    return presenterProvider.get();
+    return ZapTorch.get(getContext()).provideComponent().provideMainModule().getPresenter();
   }
 }

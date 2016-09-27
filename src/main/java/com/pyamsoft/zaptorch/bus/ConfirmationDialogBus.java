@@ -18,10 +18,10 @@ package com.pyamsoft.zaptorch.bus;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.bus.RxBus;
+import com.pyamsoft.pydroid.Bus;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
-public class ConfirmationDialogBus extends RxBus<ConfirmationEvent> {
+public class ConfirmationDialogBus extends Bus<ConfirmationEvent> {
 
   @NonNull private static final ConfirmationDialogBus instance = new ConfirmationDialogBus();
 

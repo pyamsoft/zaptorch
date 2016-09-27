@@ -16,20 +16,23 @@
 
 package com.pyamsoft.zaptorch.dagger.service;
 
-import com.pyamsoft.pydroid.ActivityScope;
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
-import dagger.Module;
-import dagger.Provides;
+import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-@Module public class VolumeServiceModule {
+public class VolumeServiceModule {
 
-  @Provides @ActivityScope VolumeServicePresenter provideVolumeServicePresenter(
-      final VolumeServiceInteractor interactor) {
-    return new VolumeServicePresenterImpl(interactor);
+  @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private final VolumeServicePresenter presenter;
+
+  public VolumeServiceModule(@NonNull ZapTorchModule.Provider provider) {
+    interactor =
+        new VolumeServiceInteractorImpl(provider.provideContext(), provider.providePreferences());
+    presenter = new VolumeServicePresenterImpl(interactor);
   }
 
-  @Provides @ActivityScope VolumeServiceInteractor provideVolumeServiceInteractor(
-      final VolumeServiceInteractorImpl interactor) {
-    return interactor;
+  @NonNull @CheckResult public VolumeServicePresenter getPresenter() {
+    return presenter;
   }
 }

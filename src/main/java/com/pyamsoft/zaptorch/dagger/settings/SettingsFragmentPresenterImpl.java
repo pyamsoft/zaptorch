@@ -16,19 +16,14 @@
 
 package com.pyamsoft.zaptorch.dagger.settings;
 
-import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
+import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragmentPresenter;
-import javax.inject.Inject;
-import rx.Scheduler;
 
-class SettingsFragmentPresenterImpl extends SchedulerPresenter<SettingsFragmentPresenter.View>
+class SettingsFragmentPresenterImpl extends PresenterBase<SettingsFragmentPresenter.View>
     implements SettingsFragmentPresenter {
 
-  @Inject SettingsFragmentPresenterImpl(@NonNull Scheduler observeScheduler,
-      @NonNull Scheduler subscribeScheduler) {
-    super(observeScheduler, subscribeScheduler);
+  SettingsFragmentPresenterImpl() {
   }
 
   @Override public void clickFAB() {

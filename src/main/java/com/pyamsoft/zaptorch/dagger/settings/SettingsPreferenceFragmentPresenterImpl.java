@@ -17,43 +17,35 @@
 package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import com.pyamsoft.pydroid.Bus;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
 import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
-import javax.inject.Inject;
-import javax.inject.Named;
-import rx.Observable;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentPresenterImpl
     extends PresenterBase<SettingsPreferenceFragmentPresenter.MainFragmentView>
     implements SettingsPreferenceFragmentPresenter {
 
-  @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @NonNull final Scheduler obsScheduler;
-  @NonNull final Scheduler subScheduler;
+  @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
 
-  @NonNull Subscription confirmDialogBusSubscription = Subscriptions.empty();
-  @NonNull Subscription confirmDialogSubscription = Subscriptions.empty();
+  @SuppressWarnings("WeakerAccess") @Nullable Bus.Event<ConfirmationEvent>
+      confirmDialogBusSubscription;
+  @SuppressWarnings("WeakerAccess") @Nullable AsyncTask clearAllEvent;
 
-  @Nullable ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
+  @SuppressWarnings("WeakerAccess") @Nullable
+  ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
-  @Inject SettingsPreferenceFragmentPresenterImpl(
-      @NonNull SettingsPreferenceFragmentInteractor interactor,
-      @NonNull @Named("obs") Scheduler obsScheduler,
-      @NonNull @Named("io") Scheduler subScheduler) {
+  SettingsPreferenceFragmentPresenterImpl(
+      @NonNull SettingsPreferenceFragmentInteractor interactor) {
     this.interactor = interactor;
-    this.obsScheduler = obsScheduler;
-    this.subScheduler = subScheduler;
   }
 
   @Override protected void onBind() {
@@ -69,7 +61,7 @@ class SettingsPreferenceFragmentPresenterImpl
     unsubscribeConfirmDialog();
   }
 
-  @VisibleForTesting void registerCameraApiListener() {
+  @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerCameraApiListener() {
     unregisterCameraApiListener();
     cameraApiListener = new ApplicationPreferences.OnSharedPreferenceChangeListener() {
       @Override
@@ -92,43 +84,35 @@ class SettingsPreferenceFragmentPresenterImpl
     }
   }
 
-  void unsubscribeConfirmDialog() {
-    if (confirmDialogSubscription.isUnsubscribed()) {
-      confirmDialogSubscription.unsubscribe();
+  private void unsubscribeConfirmDialog() {
+    if (clearAllEvent != null) {
+      if (!clearAllEvent.isCancelled()) {
+        clearAllEvent.cancel(true);
+      }
     }
   }
 
-  Observable<Boolean> clearAll() {
-    return interactor.clearAll().subscribeOn(subScheduler).observeOn(obsScheduler);
+  @SuppressWarnings("WeakerAccess") void clearAll() {
+    unsubscribeConfirmDialog();
+    Timber.d("Received all cleared confirmation event, clear All");
+    clearAllEvent = interactor.clearAll(item -> {
+      Timber.d("ConfirmationDialogBus in clearAll onComplete");
+      ConfirmationDialogBus.get().post(ConfirmationEvent.create(true));
+    });
   }
 
   private void unregisterFromConfirmDialogBus() {
-    if (!confirmDialogBusSubscription.isUnsubscribed()) {
-      confirmDialogBusSubscription.unsubscribe();
-    }
+    ConfirmationDialogBus.get().unregister(confirmDialogBusSubscription);
   }
 
-  @VisibleForTesting void registerOnConfirmDialogBus() {
+  @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
-    confirmDialogBusSubscription =
-        ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
-          if (!confirmationEvent.complete()) {
-            Timber.d("Received confirmation event!");
-            // KLUDGE nested subscriptions are ugly
-            unsubscribeConfirmDialog();
-            Timber.d("Received all cleared confirmation event, clear All");
-            confirmDialogSubscription = clearAll().subscribe(aBoolean -> {
-                  // Do nothing
-                }, throwable -> Timber.e(throwable, "ConfirmationDialogBus in clearAll onError"),
-                () -> {
-                  Timber.d("ConfirmationDialogBus in clearAll onComplete");
-                  // TODO post completed event
-                  ConfirmationDialogBus.get().post(ConfirmationEvent.create(true));
-                });
-          }
-        }, throwable -> {
-          Timber.e(throwable, "ConfirmationDialogBus onError");
-        });
+    confirmDialogBusSubscription = ConfirmationDialogBus.get().register(item -> {
+      if (!item.complete()) {
+        Timber.d("Received confirmation event!");
+        clearAll();
+      }
+    }, throwable -> Timber.e(throwable, "ConfirmationDialogBus onError"));
   }
 
   @Override public void confirmSettingsClear() {

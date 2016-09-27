@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,13 +29,9 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import com.pyamsoft.pydroid.tool.AsyncCallbackTask;
 import java.io.IOException;
 import java.util.List;
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 @SuppressWarnings("deprecation") class OriginalCamera extends CameraCommon
@@ -43,11 +40,9 @@ import timber.log.Timber;
   @NonNull final WindowManager windowManager;
   @NonNull final SurfaceView surfaceView;
   @NonNull final WindowManager.LayoutParams params;
-
-  @NonNull Subscription cameraSubscription = Subscriptions.empty();
   @Nullable Camera camera;
-
   boolean opened;
+  @Nullable private AsyncTask cameraSubscription;
 
   OriginalCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -70,15 +65,17 @@ import timber.log.Timber;
         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
   }
 
-  SurfaceHolder getInitializedHolder() {
+  @SuppressWarnings("WeakerAccess") SurfaceHolder getInitializedHolder() {
     final SurfaceHolder holder = surfaceView.getHolder();
     holder.addCallback(this);
     return holder;
   }
 
-  void unsubCameraSubscription() {
-    if (!cameraSubscription.isUnsubscribed()) {
-      cameraSubscription.unsubscribe();
+  private void unsubCameraSubscription() {
+    if (cameraSubscription != null) {
+      if (!cameraSubscription.isCancelled()) {
+        cameraSubscription.cancel(true);
+      }
     }
   }
 
@@ -97,58 +94,69 @@ import timber.log.Timber;
     }
   }
 
-  void connectToCameraService() {
+  private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     unsubCameraSubscription();
-    cameraSubscription = Observable.defer(() -> Observable.just(Camera.open())).filter(camera1 -> {
-      final Camera.Parameters parameters = camera1.getParameters();
-      if (parameters.getFlashMode() == null) {
-        Timber.e("Null flash mode");
-        camera1.release();
-        return false;
+    cameraSubscription = new AsyncCallbackTask<Void, Camera>(item -> {
+      if (camera == null) {
+        Timber.e("Camera is NULL");
+        startErrorExplanationActivity();
+      } else {
+        try {
+          Timber.d("Camera has flash");
+
+          camera = item;
+          windowManager.addView(surfaceView, params);
+
+          assert camera != null;
+          Timber.d("set preview");
+          final SurfaceHolder holder = getInitializedHolder();
+          camera.setPreviewDisplay(holder);
+          final Camera.Parameters cameraParameters = camera.getParameters();
+          cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+          camera.setParameters(cameraParameters);
+
+          Timber.d("start camera");
+          camera.startPreview();
+          opened = true;
+        } catch (IOException e) {
+          clearCamera(e);
+          startErrorExplanationActivity();
+        }
       }
+    }) {
+      @Override protected Camera doInBackground(Void... params) {
+        final Camera oldCamera = Camera.open();
 
-      final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-      if (supportedFlashModes == null
-          || supportedFlashModes.isEmpty()
-          || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
-        Timber.e("Camera parameters do not include Torch");
-        camera1.release();
-        return false;
+        final Camera.Parameters parameters = oldCamera.getParameters();
+        if (parameters.getFlashMode() == null) {
+          Timber.e("Null flash mode");
+          oldCamera.release();
+          return null;
+        }
+
+        final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+        if (supportedFlashModes == null
+            || supportedFlashModes.isEmpty()
+            || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
+          Timber.e("Camera parameters do not include Torch");
+          oldCamera.release();
+          return null;
+        }
+
+        Timber.d("Camera should have torch mode");
+        return oldCamera;
       }
+    };
+  }
 
-      Timber.d("Camera should have torch mode");
-      return true;
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(camera1 -> {
-      try {
-        Timber.d("Camera has flash");
-
-        camera = camera1;
-        windowManager.addView(surfaceView, params);
-
-        assert camera != null;
-        Timber.d("set preview");
-        final SurfaceHolder holder = getInitializedHolder();
-        camera.setPreviewDisplay(holder);
-        final Camera.Parameters cameraParameters = camera.getParameters();
-        cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-        camera.setParameters(cameraParameters);
-
-        Timber.d("start camera");
-        camera.startPreview();
-        opened = true;
-      } catch (IOException e) {
-        throw new CameraSetupError();
-      }
-    }, throwable -> {
-      Timber.e(throwable, "Error opening camera");
-      if (camera != null) {
-        camera.release();
-        camera = null;
-        opened = false;
-      }
-      startErrorExplanationActivity();
-    });
+  @SuppressWarnings("WeakerAccess") void clearCamera(@NonNull Throwable throwable) {
+    Timber.e(throwable, "Error opening camera");
+    if (camera != null) {
+      camera.release();
+      camera = null;
+      opened = false;
+    }
   }
 
   @Override public void release() {
@@ -186,9 +194,5 @@ import timber.log.Timber;
       Timber.d("Surface destroyed");
       camera.stopPreview();
     }
-  }
-
-  static final class CameraSetupError extends RuntimeException {
-
   }
 }

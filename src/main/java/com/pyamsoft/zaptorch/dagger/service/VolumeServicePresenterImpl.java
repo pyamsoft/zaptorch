@@ -23,7 +23,6 @@ import android.view.KeyEvent;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.VolumeServiceView>
@@ -34,7 +33,7 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
   @SuppressWarnings("WeakerAccess") boolean pressed;
   @Nullable private CameraInterface cameraInterface;
 
-  @Inject VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
+  VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
     this.handler = new Handler();
     this.interactor = interactor;
     this.pressed = false;

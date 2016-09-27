@@ -16,14 +16,16 @@
 
 package com.pyamsoft.zaptorch.dagger.settings;
 
+import android.os.AsyncTask;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.ActionSingle;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
-import rx.Observable;
 
-public interface SettingsPreferenceFragmentInteractor {
+interface SettingsPreferenceFragmentInteractor {
 
-  @CheckResult @NonNull Observable<Boolean> clearAll();
+  @CheckResult @NonNull AsyncTask<Void, Void, Boolean> clearAll(
+      @NonNull ActionSingle<Boolean> onLoaded);
 
   void registerCameraApiListener(
       @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener);

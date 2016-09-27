@@ -18,22 +18,23 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
+import com.pyamsoft.pydroid.Bus;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.main.MainPresenter;
 import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import javax.inject.Inject;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
+import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import timber.log.Timber;
 
 class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     implements MainPresenter {
 
-  @NonNull final MainInteractor interactor;
-  @NonNull Subscription confirmDialogBusSubscription = Subscriptions.empty();
+  @NonNull private final MainInteractor interactor;
+  @Nullable private Bus.Event<ConfirmationEvent> confirmDialogEvent;
 
-  @Inject MainPresenterImpl(@NonNull MainInteractor interactor) {
+  MainPresenterImpl(@NonNull MainInteractor interactor) {
     this.interactor = interactor;
   }
 
@@ -64,21 +65,16 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     return interactor.shouldHandleKeys() && handled;
   }
 
-  void registerOnConfirmDialogBus() {
+  @VisibleForTesting @SuppressWarnings("WeakerAccess") void registerOnConfirmDialogBus() {
     unregisterFromConfirmDialogBus();
-    confirmDialogBusSubscription =
-        ConfirmationDialogBus.get().register().subscribe(confirmationEvent -> {
-          if (confirmationEvent.complete()) {
-            getView(MainActivityView::onClearAll);
-          }
-        }, throwable -> {
-          Timber.e(throwable, "ConfirmationDialogBus onError");
-        });
+    confirmDialogEvent = ConfirmationDialogBus.get().register(item -> {
+      if (item.complete()) {
+        getView(MainActivityView::onClearAll);
+      }
+    }, throwable -> Timber.e(throwable, "ConfirmationDialogBus onError"));
   }
 
-  void unregisterFromConfirmDialogBus() {
-    if (!confirmDialogBusSubscription.isUnsubscribed()) {
-      confirmDialogBusSubscription.unsubscribe();
-    }
+  private void unregisterFromConfirmDialogBus() {
+    ConfirmationDialogBus.get().unregister(confirmDialogEvent);
   }
 }
