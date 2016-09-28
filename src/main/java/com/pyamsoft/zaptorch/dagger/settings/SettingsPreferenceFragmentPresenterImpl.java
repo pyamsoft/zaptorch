@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.os.AsyncTaskCompat;
 import com.pyamsoft.pydroid.Bus;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
@@ -95,10 +96,10 @@ class SettingsPreferenceFragmentPresenterImpl
   @SuppressWarnings("WeakerAccess") void clearAll() {
     unsubscribeConfirmDialog();
     Timber.d("Received all cleared confirmation event, clear All");
-    clearAllEvent = interactor.clearAll(item -> {
+    clearAllEvent = AsyncTaskCompat.executeParallel(interactor.clearAll(item -> {
       Timber.d("ConfirmationDialogBus in clearAll onComplete");
       ConfirmationDialogBus.get().post(ConfirmationEvent.create(true));
-    });
+    }));
   }
 
   private void unregisterFromConfirmDialogBus() {

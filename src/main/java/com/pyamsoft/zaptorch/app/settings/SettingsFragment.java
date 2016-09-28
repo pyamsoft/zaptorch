@@ -16,17 +16,14 @@
 
 package com.pyamsoft.zaptorch.app.settings;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.tool.AsyncMap;
@@ -34,15 +31,15 @@ import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.AsyncDrawable;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
+import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
 
 public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
 
   @NonNull public static final String TAG = "MainSettingsFragment";
   @NonNull private static final String KEY_PRESENTER = "key_settings_presenter";
   @NonNull private final AsyncDrawable.Mapper drawableMap = new AsyncDrawable.Mapper();
-  @BindView(R.id.main_settings_fab) FloatingActionButton floatingActionButton;
   SettingsFragmentPresenter presenter;
-  private Unbinder unbinder;
+  private FragmentMainBinding binding;
   private long loadedKey;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,9 +61,8 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.fragment_main, container, false);
-    unbinder = ButterKnife.bind(this, view);
-    return view;
+    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
+    return binding.getRoot();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -75,13 +71,13 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   }
 
   private void setupFAB() {
-    floatingActionButton.setOnClickListener(view -> presenter.clickFAB());
+    binding.mainSettingsFab.setOnClickListener(view -> presenter.clickFAB());
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
     drawableMap.clear();
-    unbinder.unbind();
+    binding.unbind();
   }
 
   @Override public void onDestroy() {
@@ -125,15 +121,16 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   }
 
   @Override public void onFABEnabled() {
-    final AsyncMap.Entry task =
-        AsyncDrawable.with(getContext()).load(R.drawable.ic_help_24dp).into(floatingActionButton);
+    final AsyncMap.Entry task = AsyncDrawable.with(getContext())
+        .load(R.drawable.ic_help_24dp)
+        .into(binding.mainSettingsFab);
     drawableMap.put("fab", task);
   }
 
   @Override public void onFABDisabled() {
     final AsyncMap.Entry task = AsyncDrawable.with(getContext())
         .load(R.drawable.ic_service_start_24dp)
-        .into(floatingActionButton);
+        .into(binding.mainSettingsFab);
     drawableMap.put("fab", task);
   }
 
