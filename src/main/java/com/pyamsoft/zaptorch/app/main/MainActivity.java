@@ -18,17 +18,14 @@ package com.pyamsoft.zaptorch.app.main;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.support.DonationActivity;
@@ -40,22 +37,21 @@ import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragment;
+import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
 import timber.log.Timber;
 
 public class MainActivity extends DonationActivity
     implements MainPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
 
   @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
-  @BindView(R.id.toolbar) Toolbar toolbar;
   MainPresenter presenter;
-  private Unbinder unbinder;
+  private ActivityMainBinding binding;
   private long loadedKey;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(R.style.Theme_ZapTorch);
     super.onCreate(savedInstanceState);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
-    unbinder = ButterKnife.bind(this);
 
     loadedKey = PersistentCache.get()
         .load(KEY_PRESENTER, savedInstanceState, new PersistLoader.Callback<MainPresenter>() {
@@ -72,7 +68,7 @@ public class MainActivity extends DonationActivity
   }
 
   @Override protected int bindActivityToView() {
-    setContentView(R.layout.activity_main);
+    binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
     return R.id.ad_view;
   }
 
@@ -97,12 +93,12 @@ public class MainActivity extends DonationActivity
     if (!isChangingConfigurations()) {
       PersistentCache.get().unload(loadedKey);
     }
-    unbinder.unbind();
+    binding.unbind();
   }
 
   @Override protected void onResume() {
     super.onResume();
-    AnimUtil.animateActionBarToolbar(toolbar);
+    AnimUtil.animateActionBarToolbar(binding.toolbar);
   }
 
   @Override protected void onPostResume() {
@@ -153,8 +149,8 @@ public class MainActivity extends DonationActivity
   }
 
   void setupAppBar() {
-    setSupportActionBar(toolbar);
-    toolbar.setTitle(getString(R.string.app_name));
+    setSupportActionBar(binding.toolbar);
+    binding.toolbar.setTitle(getString(R.string.app_name));
   }
 
   @Override public void onClearAll() {
