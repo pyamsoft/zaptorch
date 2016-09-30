@@ -28,7 +28,7 @@ import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.util.AppUtil;
-import com.pyamsoft.pydroid.util.AsyncDrawable;
+import com.pyamsoft.pydroid.tool.AsyncDrawable;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;

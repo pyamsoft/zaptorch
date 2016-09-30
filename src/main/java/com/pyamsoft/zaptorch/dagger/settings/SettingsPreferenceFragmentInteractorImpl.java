@@ -20,8 +20,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.ActionSingle;
+import com.pyamsoft.pydroid.FuncNone;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
-import com.pyamsoft.pydroid.tool.AsyncCallbackTask;
+import com.pyamsoft.pydroid.tool.Offloader;
+import com.pyamsoft.pydroid.tool.OffloaderAsyncTask;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import timber.log.Timber;
@@ -37,15 +39,12 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
     this.cameraApiKey = context.getString(R.string.camera_api_key);
   }
 
-  @NonNull @Override
-  public AsyncTask<Void, Void, Boolean> clearAll(@NonNull ActionSingle<Boolean> onLoaded) {
-    return new AsyncCallbackTask<Void, Boolean>(onLoaded) {
-      @Override protected Boolean doInBackground(Void... params) {
-        Timber.d("Clear all preferences");
-        preferences.clearAll();
-        return true;
-      }
-    };
+  @NonNull @Override public Offloader<Boolean> clearAll() {
+    return new OffloaderAsyncTask<Boolean>().background(() -> {
+      Timber.d("Clear all preferences");
+      preferences.clearAll();
+      return true;
+    });
   }
 
   @Override public void registerCameraApiListener(
