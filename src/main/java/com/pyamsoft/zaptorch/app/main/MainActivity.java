@@ -155,11 +155,15 @@ public class MainActivity extends DonationActivity
 
   @Override public void onClearAll() {
     Timber.d("received completed clearAll event. Kill Process");
-    VolumeMonitorService.finish();
+    try {
+      VolumeMonitorService.finish();
+    } catch (NullPointerException e) {
+      Timber.e(e, "Expected exception when Service is NULL");
+    }
+
     final ActivityManager activityManager =
         (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
     activityManager.clearApplicationUserData();
-    android.os.Process.killProcess(android.os.Process.myPid());
   }
 
   @NonNull @Override public Spannable getChangeLogText() {
