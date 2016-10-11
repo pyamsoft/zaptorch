@@ -23,16 +23,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.preference.PreferenceManager;
-import android.text.Spannable;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.PersistLoader;
-import com.pyamsoft.pydroid.support.DonationActivity;
+import com.pyamsoft.pydroid.support.RatingActivity;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
-import com.pyamsoft.pydroid.util.StringUtil;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
@@ -40,8 +38,7 @@ import com.pyamsoft.zaptorch.app.settings.SettingsFragment;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
 import timber.log.Timber;
 
-public class MainActivity extends DonationActivity
-    implements MainPresenter.MainActivityView, RatingDialog.ChangeLogProvider {
+public class MainActivity extends RatingActivity implements MainPresenter.MainActivityView {
 
   @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
   MainPresenter presenter;
@@ -166,36 +163,13 @@ public class MainActivity extends DonationActivity
     activityManager.clearApplicationUserData();
   }
 
-  @NonNull @Override public Spannable getChangeLogText() {
-    // The changelog text
-    final String title = "What's New in Version " + BuildConfig.VERSION_NAME;
+  @NonNull @Override protected String[] getChangeLogLines() {
     final String line1 = "CHANGE: Removed Advertisements and Analytics tracking";
+    return new String[] { line1 };
+  }
 
-    // Turn it into a spannable
-    final Spannable spannable = StringUtil.createLineBreakBuilder(title, line1);
-
-    int start = 0;
-    int end = title.length();
-    final int largeSize =
-        StringUtil.getTextSizeFromAppearance(this, android.R.attr.textAppearanceLarge);
-    final int largeColor =
-        StringUtil.getTextColorFromAppearance(this, android.R.attr.textAppearanceLarge);
-    final int smallSize =
-        StringUtil.getTextSizeFromAppearance(this, android.R.attr.textAppearanceSmall);
-    final int smallColor =
-        StringUtil.getTextColorFromAppearance(this, android.R.attr.textAppearanceSmall);
-
-    StringUtil.boldSpan(spannable, start, end);
-    StringUtil.sizeSpan(spannable, start, end, largeSize);
-    StringUtil.colorSpan(spannable, start, end, largeColor);
-
-    start += end + 2;
-    end += 2 + line1.length();
-
-    StringUtil.sizeSpan(spannable, start, end, smallSize);
-    StringUtil.colorSpan(spannable, start, end, smallColor);
-
-    return spannable;
+  @NonNull @Override protected String getVersionName() {
+    return BuildConfig.VERSION_NAME;
   }
 
   @Override public int getApplicationIcon() {
