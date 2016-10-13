@@ -21,9 +21,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 
 public class ConfirmationDialog extends DialogFragment {
 
@@ -37,8 +37,20 @@ public class ConfirmationDialog extends DialogFragment {
   @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
     return new AlertDialog.Builder(getActivity()).setMessage(
         "Really clear all application settings?").setPositiveButton("Yes", (dialogInterface, i) -> {
+      sendConfirmationEvent();
       dialogInterface.dismiss();
-      ConfirmationDialogBus.get().post(ConfirmationEvent.create(false));
     }).setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss()).create();
+  }
+
+  void sendConfirmationEvent() {
+    final FragmentManager fragmentManager = getFragmentManager();
+    final Fragment settingsPreferenceFragment =
+        fragmentManager.findFragmentByTag(SettingsPreferenceFragment.TAG);
+    if (settingsPreferenceFragment instanceof SettingsPreferenceFragment) {
+      ((SettingsPreferenceFragment) settingsPreferenceFragment).getPresenter()
+          .processClearRequest();
+    } else {
+      throw new ClassCastException("Fragment is not SettingsPreferenceFragment");
+    }
   }
 }

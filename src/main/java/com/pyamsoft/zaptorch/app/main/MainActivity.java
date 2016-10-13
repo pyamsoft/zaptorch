@@ -16,8 +16,6 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,10 +31,8 @@ import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
-import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragment;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
-import timber.log.Timber;
 
 public class MainActivity extends RatingActivity implements MainPresenter.MainActivityView {
 
@@ -148,19 +144,6 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
   void setupAppBar() {
     setSupportActionBar(binding.toolbar);
     binding.toolbar.setTitle(getString(R.string.app_name));
-  }
-
-  @Override public void onClearAll() {
-    Timber.d("received completed clearAll event. Kill Process");
-    try {
-      VolumeMonitorService.finish();
-    } catch (NullPointerException e) {
-      Timber.e(e, "Expected exception when Service is NULL");
-    }
-
-    final ActivityManager activityManager =
-        (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-    activityManager.clearApplicationUserData();
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {

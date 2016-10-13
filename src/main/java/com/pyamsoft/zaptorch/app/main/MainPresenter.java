@@ -24,7 +24,5 @@ public interface MainPresenter extends Presenter<MainPresenter.MainActivityView>
   @CheckResult boolean shouldHandleKeycode(int keyCode);
 
   interface MainActivityView {
-
-    void onClearAll();
   }
 }

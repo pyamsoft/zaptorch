@@ -18,34 +18,18 @@ package com.pyamsoft.zaptorch.dagger.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.tool.Bus;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.zaptorch.app.main.MainPresenter;
-import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import timber.log.Timber;
 
 class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
     implements MainPresenter {
 
   @NonNull private final MainInteractor interactor;
-  @Nullable private Bus.Event<ConfirmationEvent> confirmDialogEvent;
 
   MainPresenterImpl(@NonNull MainInteractor interactor) {
     this.interactor = interactor;
-  }
-
-  @Override protected void onBind() {
-    super.onBind();
-    registerOnConfirmDialogBus();
-  }
-
-  @Override protected void onUnbind() {
-    super.onUnbind();
-    unregisterFromConfirmDialogBus();
   }
 
   @Override @CheckResult public boolean shouldHandleKeycode(int keyCode) {
@@ -63,18 +47,5 @@ class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
         handled = false;
     }
     return interactor.shouldHandleKeys() && handled;
-  }
-
-  @VisibleForTesting @SuppressWarnings("WeakerAccess") void registerOnConfirmDialogBus() {
-    unregisterFromConfirmDialogBus();
-    confirmDialogEvent = ConfirmationDialogBus.get().register(item -> {
-      if (item.complete()) {
-        getView(MainActivityView::onClearAll);
-      }
-    }, throwable -> Timber.e(throwable, "ConfirmationDialogBus onError"));
-  }
-
-  private void unregisterFromConfirmDialogBus() {
-    ConfirmationDialogBus.get().unregister(confirmDialogEvent);
   }
 }
