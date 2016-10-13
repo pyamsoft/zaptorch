@@ -22,12 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
-import com.pyamsoft.pydroid.tool.Bus;
 import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
-import com.pyamsoft.zaptorch.bus.ConfirmationDialogBus;
-import com.pyamsoft.zaptorch.model.event.ConfirmationEvent;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentPresenterImpl
@@ -35,11 +32,7 @@ class SettingsPreferenceFragmentPresenterImpl
     implements SettingsPreferenceFragmentPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
-
-  @SuppressWarnings("WeakerAccess") @Nullable Bus.Event<ConfirmationEvent>
-      confirmDialogBusSubscription;
-  @SuppressWarnings("WeakerAccess") @Nullable
-  ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
+  @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
   @NonNull private Offloader<Boolean> clearAllEvent = new Offloader.Empty<>();
 
   SettingsPreferenceFragmentPresenterImpl(
@@ -49,13 +42,11 @@ class SettingsPreferenceFragmentPresenterImpl
 
   @Override protected void onBind() {
     super.onBind();
-    registerOnConfirmDialogBus();
     registerCameraApiListener();
   }
 
   @Override protected void onUnbind() {
     super.onUnbind();
-    unregisterFromConfirmDialogBus();
     unregisterCameraApiListener();
     unsubscribeConfirmDialog();
   }
@@ -89,30 +80,16 @@ class SettingsPreferenceFragmentPresenterImpl
     }
   }
 
-  @SuppressWarnings("WeakerAccess") void clearAll() {
+  @Override public void confirmSettingsClear() {
+    getView(MainFragmentView::onConfirmAttempt);
+  }
+
+  @Override public void processClearRequest() {
     unsubscribeConfirmDialog();
     Timber.d("Received all cleared confirmation event, clear All");
     clearAllEvent = interactor.clearAll().result(item -> {
       Timber.d("ConfirmationDialogBus in clearAll onComplete");
-      ConfirmationDialogBus.get().post(ConfirmationEvent.create(true));
+      getView(MainFragmentView::onClearAll);
     }).error(throwable -> Timber.e(throwable, "onError clearAll")).execute();
-  }
-
-  private void unregisterFromConfirmDialogBus() {
-    ConfirmationDialogBus.get().unregister(confirmDialogBusSubscription);
-  }
-
-  @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerOnConfirmDialogBus() {
-    unregisterFromConfirmDialogBus();
-    confirmDialogBusSubscription = ConfirmationDialogBus.get().register(item -> {
-      if (!item.complete()) {
-        Timber.d("Received confirmation event!");
-        clearAll();
-      }
-    }, throwable -> Timber.e(throwable, "ConfirmationDialogBus onError"));
-  }
-
-  @Override public void confirmSettingsClear() {
-    getView(MainFragmentView::onConfirmAttempt);
   }
 }

@@ -16,7 +16,10 @@
 
 package com.pyamsoft.zaptorch.app.settings;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
@@ -28,6 +31,7 @@ import com.pyamsoft.pydroid.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import timber.log.Timber;
 
 public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
@@ -37,6 +41,14 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   SettingsPreferenceFragmentPresenter presenter;
   private long loadedKey;
+
+  @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
+    if (presenter == null) {
+      throw new NullPointerException("Presenter is NULL");
+    }
+
+    return presenter;
+  }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -116,5 +128,18 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @Override public void onConfirmAttempt() {
     AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), ConfirmationDialog.newInstance(),
         "confirm_dialog");
+  }
+
+  @Override public void onClearAll() {
+    Timber.d("received completed clearAll event. Kill Process");
+    try {
+      VolumeMonitorService.finish();
+    } catch (NullPointerException e) {
+      Timber.e(e, "Expected exception when Service is NULL");
+    }
+
+    final ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext()
+        .getSystemService(Context.ACTIVITY_SERVICE);
+    activityManager.clearApplicationUserData();
   }
 }

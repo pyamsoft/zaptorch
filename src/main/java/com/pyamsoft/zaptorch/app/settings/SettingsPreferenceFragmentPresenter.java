@@ -23,8 +23,12 @@ public interface SettingsPreferenceFragmentPresenter
 
   void confirmSettingsClear();
 
+  void processClearRequest();
+
   interface MainFragmentView {
 
     void onConfirmAttempt();
+
+    void onClearAll();
   }
 }
