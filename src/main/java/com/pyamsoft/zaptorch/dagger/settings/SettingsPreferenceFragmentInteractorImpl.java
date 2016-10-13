@@ -17,13 +17,10 @@
 package com.pyamsoft.zaptorch.dagger.settings;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.ActionSingle;
-import com.pyamsoft.pydroid.FuncNone;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.tool.Offloader;
-import com.pyamsoft.pydroid.tool.OffloaderAsyncTask;
+import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import timber.log.Timber;
@@ -40,7 +37,7 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
   }
 
   @NonNull @Override public Offloader<Boolean> clearAll() {
-    return new OffloaderAsyncTask<Boolean>().background(() -> {
+    return new AsyncOffloader<Boolean>().background(() -> {
       Timber.d("Clear all preferences");
       preferences.clearAll();
       return true;

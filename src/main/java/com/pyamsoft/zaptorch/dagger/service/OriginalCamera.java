@@ -29,7 +29,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import com.pyamsoft.pydroid.tool.Offloader;
-import com.pyamsoft.pydroid.tool.OffloaderAsyncTask;
+import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import java.io.IOException;
 import java.util.List;
 import timber.log.Timber;
@@ -95,7 +95,7 @@ import timber.log.Timber;
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     unsubCameraSubscription();
-    cameraSubscription = new OffloaderAsyncTask<Camera>().background(() -> {
+    cameraSubscription = new AsyncOffloader<Camera>().background(() -> {
       final Camera oldCamera = Camera.open();
 
       final Camera.Parameters parameters = oldCamera.getParameters();
