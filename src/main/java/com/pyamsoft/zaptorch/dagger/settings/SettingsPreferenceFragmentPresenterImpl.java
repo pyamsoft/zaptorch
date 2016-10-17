@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
-import com.pyamsoft.pydroid.tool.Offloader;
+import com.pyamsoft.pydroid.tool.ExecutedOffloader;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import timber.log.Timber;
@@ -33,7 +33,7 @@ class SettingsPreferenceFragmentPresenterImpl
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
   @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
-  @NonNull private Offloader<Boolean> clearAllEvent = new Offloader.Empty<>();
+  @NonNull private ExecutedOffloader clearAllEvent = new ExecutedOffloader.Empty();
 
   SettingsPreferenceFragmentPresenterImpl(
       @NonNull SettingsPreferenceFragmentInteractor interactor) {
@@ -87,9 +87,9 @@ class SettingsPreferenceFragmentPresenterImpl
   @Override public void processClearRequest() {
     unsubscribeConfirmDialog();
     Timber.d("Received all cleared confirmation event, clear All");
-    clearAllEvent = interactor.clearAll().result(item -> {
-      Timber.d("ConfirmationDialogBus in clearAll onComplete");
-      getView(MainFragmentView::onClearAll);
-    }).error(throwable -> Timber.e(throwable, "onError clearAll")).execute();
+    clearAllEvent = interactor.clearAll()
+        .onError(throwable -> Timber.e(throwable, "onError clearAll"))
+        .onResult(item -> getView(MainFragmentView::onClearAll))
+        .execute();
   }
 }
