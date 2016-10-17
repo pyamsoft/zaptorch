@@ -37,7 +37,7 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
   }
 
   @NonNull @Override public Offloader<Boolean> clearAll() {
-    return new AsyncOffloader<Boolean>().background(() -> {
+    return new AsyncOffloader<Boolean>().onProcess(() -> {
       Timber.d("Clear all preferences");
       preferences.clearAll();
       return true;

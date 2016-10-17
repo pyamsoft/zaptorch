@@ -28,8 +28,8 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.pydroid.tool.AsyncOffloader;
+import com.pyamsoft.pydroid.tool.ExecutedOffloader;
 import java.io.IOException;
 import java.util.List;
 import timber.log.Timber;
@@ -42,7 +42,7 @@ import timber.log.Timber;
   @SuppressWarnings("WeakerAccess") @NonNull final WindowManager.LayoutParams params;
   @SuppressWarnings("WeakerAccess") @Nullable Camera camera;
   @SuppressWarnings("WeakerAccess") boolean opened;
-  @NonNull private Offloader<Camera> cameraSubscription = new Offloader.Empty<>();
+  @NonNull private ExecutedOffloader cameraSubscription = new ExecutedOffloader.Empty();
 
   OriginalCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -95,14 +95,16 @@ import timber.log.Timber;
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     unsubCameraSubscription();
-    cameraSubscription = new AsyncOffloader<Camera>().background(() -> {
-      final Camera oldCamera = Camera.open();
-
-      final Camera.Parameters parameters = oldCamera.getParameters();
+    cameraSubscription = new AsyncOffloader<Camera>().onProcess(Camera::open).onError(throwable -> {
+      clearCamera(throwable);
+      startErrorExplanationActivity();
+    }).onResult(item -> {
+      final Camera.Parameters parameters = item.getParameters();
       if (parameters.getFlashMode() == null) {
         Timber.e("Null flash mode");
-        oldCamera.release();
-        return null;
+        item.release();
+        startErrorExplanationActivity();
+        return;
       }
 
       final List<String> supportedFlashModes = parameters.getSupportedFlashModes();
@@ -110,42 +112,31 @@ import timber.log.Timber;
           || supportedFlashModes.isEmpty()
           || !supportedFlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
         Timber.e("Camera parameters do not include Torch");
-        oldCamera.release();
-        return null;
+        item.release();
+        startErrorExplanationActivity();
+        return;
       }
 
       Timber.d("Camera should have torch mode");
-      return oldCamera;
-    }).result(item -> {
-      if (item == null) {
-        Timber.e("Camera is NULL");
+      try {
+        Timber.d("Camera has flash");
+        camera = item;
+        windowManager.addView(surfaceView, params);
+        assert camera != null;
+        Timber.d("set preview");
+        final SurfaceHolder holder = getInitializedHolder();
+        camera.setPreviewDisplay(holder);
+        final Camera.Parameters cameraParameters = camera.getParameters();
+        cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(cameraParameters);
+
+        Timber.d("start camera");
+        camera.startPreview();
+        opened = true;
+      } catch (IOException e) {
+        clearCamera(e);
         startErrorExplanationActivity();
-      } else {
-        try {
-          Timber.d("Camera has flash");
-
-          camera = item;
-          windowManager.addView(surfaceView, params);
-
-          assert camera != null;
-          Timber.d("set preview");
-          final SurfaceHolder holder = getInitializedHolder();
-          camera.setPreviewDisplay(holder);
-          final Camera.Parameters cameraParameters = camera.getParameters();
-          cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-          camera.setParameters(cameraParameters);
-
-          Timber.d("start camera");
-          camera.startPreview();
-          opened = true;
-        } catch (IOException e) {
-          clearCamera(e);
-          startErrorExplanationActivity();
-        }
       }
-    }).error(throwable -> {
-      clearCamera(throwable);
-      startErrorExplanationActivity();
     }).execute();
   }
 
