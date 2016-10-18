@@ -26,9 +26,7 @@ public class ServiceInfoDialog extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     return new AlertDialog.Builder(getActivity()).setMessage("ZapTorch service is On")
-        .setPositiveButton("Okay", (dialogInterface, i) -> {
-          dismiss();
-        })
+        .setPositiveButton("Okay", (dialogInterface, i) -> dismiss())
         .create();
   }
 }
