@@ -29,7 +29,6 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   private final int cameraApiLollipop;
   private final int cameraApiMarshmallow;
 
-  // KLUDGE holds onto context
   @NonNull private final Context appContext;
 
   VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences) {

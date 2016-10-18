@@ -29,9 +29,7 @@ public class HowToDialog extends DialogFragment {
     return new AlertDialog.Builder(getActivity()).setMessage(
         "Just double press the volume down key to turn the flashlight on and off")
         .setTitle("How to Use")
-        .setNeutralButton("Got It", (dialog, which) -> {
-          dialog.dismiss();
-        })
+        .setNeutralButton("Got It", (dialog, which) -> dialog.dismiss())
         .create();
   }
 }

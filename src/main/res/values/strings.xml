@@ -16,7 +16,6 @@
 
 <resources>
   <string name="app_name">ZapTorch</string>
-  <string name="enable_accessibility_service">Enable Accessibility Service</string>
   <string name="explain_accessibility_service">
     In order to run correctly, ZapTorch needs to enable a system Accessibility Service.
     This service will monitor when you press the Volume Down key on your device.
