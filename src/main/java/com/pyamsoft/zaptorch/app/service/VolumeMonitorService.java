@@ -58,8 +58,12 @@ public class VolumeMonitorService extends AccessibilityService
     final VolumeMonitorService currentInstance = getInstance();
     // Simulate the lifecycle for destroying and re-creating the presenter
     Timber.d("Change camera API");
-    currentInstance.presenter.unbindView();
-    currentInstance.presenter.bindView(currentInstance);
+    currentInstance.getPresenter().unbindView();
+    currentInstance.getPresenter().bindView(currentInstance);
+  }
+
+  @CheckResult @NonNull VolumeServicePresenter getPresenter() {
+    return presenter;
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {

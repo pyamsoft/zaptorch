@@ -29,9 +29,7 @@ public class CameraErrorDialog extends DialogFragment {
         "ZapTorch was unable to access your devices camera."
             + " Please make sure that your device has a camera with Flash functionality."
             + " Please make sure no other application is using the camera and try again.")
-        .setPositiveButton("Okay", (dialogInterface, i) -> {
-          dialogInterface.dismiss();
-        })
+        .setPositiveButton("Okay", (dialogInterface, i) -> dialogInterface.dismiss())
         .create();
   }
 
