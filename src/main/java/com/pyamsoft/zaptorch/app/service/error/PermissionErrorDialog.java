@@ -35,9 +35,7 @@ public class PermissionErrorDialog extends DialogFragment {
           ActivityCompat.requestPermissions(getActivity(),
               new String[] { Manifest.permission.CAMERA }, 5000);
         })
-        .setNegativeButton("No", (dialog, which) -> {
-          dialog.dismiss();
-        })
+        .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
         .create();
   }
 
