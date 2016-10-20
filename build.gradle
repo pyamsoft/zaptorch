@@ -98,7 +98,7 @@ dependencies {
   annotationProcessor "com.google.auto.value:auto-value:$autoValue"
 
   // Needs to compile support annotations into actual project
-  compile "com.android.support:support-annotations:$supportLib"
+  annotationProcessor "com.android.support:support-annotations:$supportLib"
 
   // PYDroid 4.7.2
   debugCompile project(path: ":PYDroid", configuration: "debug")
