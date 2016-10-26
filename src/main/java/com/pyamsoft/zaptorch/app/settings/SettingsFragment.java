@@ -27,9 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.app.fragment.ActionBarFragment;
+import com.pyamsoft.pydroid.tool.AsyncDrawable;
 import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.util.AppUtil;
-import com.pyamsoft.pydroid.tool.AsyncDrawable;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
@@ -50,7 +50,7 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
             new PersistLoader.Callback<SettingsFragmentPresenter>() {
 
               @NonNull @Override public PersistLoader<SettingsFragmentPresenter> createLoader() {
-                return new SettingsFragmentPresenterLoader(getContext());
+                return new SettingsFragmentPresenterLoader();
               }
 
               @Override public void onPersistentLoaded(@NonNull SettingsFragmentPresenter persist) {
