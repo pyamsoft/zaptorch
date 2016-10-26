@@ -16,44 +16,8 @@
 
 package com.pyamsoft.zaptorch;
 
-import android.content.Context;
-import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.IPYDroidApp;
 import com.pyamsoft.pydroid.PYDroidApplication;
-import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorch extends PYDroidApplication implements IPYDroidApp<ZapTorchModule> {
+public class ZapTorch extends PYDroidApplication {
 
-  private ZapTorchModule module;
-
-  @NonNull @CheckResult public static IPYDroidApp<ZapTorchModule> get(@NonNull Context context) {
-    final Context appContext = context.getApplicationContext();
-    if (appContext instanceof ZapTorch) {
-      return ZapTorch.class.cast(appContext);
-    } else {
-      throw new ClassCastException("Cannot cast Application Context to IZapTorch");
-    }
-  }
-
-  @Override protected void createApplicationComponents() {
-    super.createApplicationComponents();
-    module = new ZapTorchModule(this);
-  }
-
-  @NonNull @Override public ZapTorchModule provideComponent() {
-    if (module == null) {
-      throw new NullPointerException("ZapTorchComponent is NULL");
-    }
-    return module;
-  }
-
-  @Nullable @Override public String provideGoogleOpenSourceLicenses() {
-    return null;
-  }
-
-  @Override public void insertCustomLicensesIntoMap() {
-
-  }
 }
