@@ -57,7 +57,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
             new PersistLoader.Callback<SettingsPreferenceFragmentPresenter>() {
               @NonNull @Override
               public PersistLoader<SettingsPreferenceFragmentPresenter> createLoader() {
-                return new SettingsPreferenceFragmentPresenterLoader(getContext());
+                return new SettingsPreferenceFragmentPresenterLoader();
               }
 
               @Override

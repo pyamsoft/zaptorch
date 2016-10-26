@@ -16,18 +16,16 @@
 
 package com.pyamsoft.zaptorch.app.main;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.PersistLoader;
-import com.pyamsoft.zaptorch.ZapTorch;
+import com.pyamsoft.zaptorch.ZapTorchSingleInitProvider;
 
 public class MainPresenterLoader extends PersistLoader<MainPresenter> {
 
-  MainPresenterLoader(@NonNull Context context) {
-    super(context);
+  MainPresenterLoader() {
   }
 
   @NonNull @Override public MainPresenter loadPersistent() {
-    return ZapTorch.get(getContext()).provideComponent().provideMainModule().getPresenter();
+    return ZapTorchSingleInitProvider.get().provideComponent().provideMainModule().getPresenter();
   }
 }
