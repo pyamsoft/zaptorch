@@ -23,6 +23,7 @@ import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.pydroid.tool.ExecutedOffloader;
+import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.app.settings.SettingsPreferenceFragmentPresenter;
 import timber.log.Timber;
@@ -48,7 +49,7 @@ class SettingsPreferenceFragmentPresenterImpl
   @Override protected void onUnbind() {
     super.onUnbind();
     unregisterCameraApiListener();
-    unsubscribeConfirmDialog();
+    OffloaderHelper.cancel(clearAllEvent);
   }
 
   @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerCameraApiListener() {
@@ -74,18 +75,12 @@ class SettingsPreferenceFragmentPresenterImpl
     }
   }
 
-  private void unsubscribeConfirmDialog() {
-    if (!clearAllEvent.isCancelled()) {
-      clearAllEvent.cancel();
-    }
-  }
-
   @Override public void confirmSettingsClear() {
     getView(MainFragmentView::onConfirmAttempt);
   }
 
   @Override public void processClearRequest() {
-    unsubscribeConfirmDialog();
+    OffloaderHelper.cancel(clearAllEvent);
     Timber.d("Received all cleared confirmation event, clear All");
     clearAllEvent = interactor.clearAll()
         .onError(throwable -> Timber.e(throwable, "onError clearAll"))
