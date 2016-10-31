@@ -33,8 +33,8 @@ class SettingsPreferenceFragmentPresenterImpl
     implements SettingsPreferenceFragmentPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
+  @SuppressWarnings("WeakerAccess") @NonNull ExecutedOffloader clearAllEvent = new ExecutedOffloader.Empty();
   @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
-  @NonNull private ExecutedOffloader clearAllEvent = new ExecutedOffloader.Empty();
 
   SettingsPreferenceFragmentPresenterImpl(
       @NonNull SettingsPreferenceFragmentInteractor interactor) {
@@ -85,6 +85,7 @@ class SettingsPreferenceFragmentPresenterImpl
     clearAllEvent = interactor.clearAll()
         .onError(throwable -> Timber.e(throwable, "onError clearAll"))
         .onResult(item -> getView(MainFragmentView::onClearAll))
+        .onFinish(() -> OffloaderHelper.cancel(clearAllEvent))
         .execute();
   }
 }
