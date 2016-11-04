@@ -16,40 +16,38 @@
 
 package com.pyamsoft.zaptorch;
 
-import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.IPYDroidApp;
-import com.pyamsoft.pydroid.SingleInitContentProvider;
 import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
 
-public class ZapTorchSingleInitProvider extends SingleInitContentProvider
-    implements IPYDroidApp<ZapTorchModule> {
+public class Injector implements IPYDroidApp<ZapTorchModule> {
 
-  @Nullable private ZapTorchModule module;
+  @Nullable private static volatile Injector instance = null;
+  @NonNull private final ZapTorchModule component;
 
-  @Override protected void onInstanceCreated(@NonNull Context context) {
-    Injector.set(module);
+  private Injector(@NonNull ZapTorchModule component) {
+    this.component = component;
   }
 
-  @Override protected void onFirstCreate(@NonNull Context context) {
-    super.onFirstCreate(context);
-    module = new ZapTorchModule(context);
+  static void set(@Nullable ZapTorchModule component) {
+    if (component == null) {
+      throw new NullPointerException("Cannot set a NULL component");
+    }
+    instance = new Injector(component);
+  }
+
+  @NonNull @CheckResult public static Injector get() {
+    if (instance == null) {
+      throw new NullPointerException("Instance is NULL");
+    }
+
+    //noinspection ConstantConditions
+    return instance;
   }
 
   @NonNull @Override public ZapTorchModule provideComponent() {
-    if (module == null) {
-      throw new NullPointerException("ZapTorchComponent is NULL");
-    }
-    return module;
-  }
-
-  @Nullable @Override public String provideGoogleOpenSourceLicenses(@NonNull Context context) {
-    return null;
-  }
-
-  @Override public void insertCustomLicensesIntoMap() {
-
+    return component;
   }
 }
