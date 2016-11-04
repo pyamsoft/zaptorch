@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.app.settings;
 
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.PersistLoader;
-import com.pyamsoft.zaptorch.ZapTorchSingleInitProvider;
+import com.pyamsoft.zaptorch.Injector;
 
 class SettingsPreferenceFragmentPresenterLoader
     extends PersistLoader<SettingsPreferenceFragmentPresenter> {
@@ -27,7 +27,7 @@ class SettingsPreferenceFragmentPresenterLoader
   }
 
   @NonNull @Override public SettingsPreferenceFragmentPresenter loadPersistent() {
-    return ZapTorchSingleInitProvider.get()
+    return Injector.get()
         .provideComponent()
         .provideSettingsPreferenceFragmentModule()
         .getPreferenceFragmentPresenter();
