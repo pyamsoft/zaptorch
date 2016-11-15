@@ -20,6 +20,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.support.RatingActivity;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
+import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
@@ -143,7 +145,8 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
 
   void setupAppBar() {
     setSupportActionBar(binding.toolbar);
-    binding.toolbar.setTitle(getString(R.string.app_name));
+    binding.toolbar.setTitle(R.string.app_name);
+    ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4));
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {
