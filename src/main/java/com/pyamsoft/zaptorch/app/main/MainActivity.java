@@ -150,7 +150,7 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {
-    final String line1 = "CHANGE: Smaller APK size";
+    final String line1 = "FEATURE: Support latest Android 7.1 (API 25)";
     return new String[] { line1 };
   }
 
