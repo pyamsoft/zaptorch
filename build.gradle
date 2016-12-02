@@ -100,7 +100,7 @@ dependencies {
   // Needs to compile support annotations into actual project
   annotationProcessor "com.android.support:support-annotations:$supportLib"
 
-  // PYDroid 4.8.2
+  // PYDroid 4.8.3
   debugCompile project(path: ":PYDroid", configuration: "debug")
   releaseCompile project(path: ":PYDroid", configuration: "release")
 }
