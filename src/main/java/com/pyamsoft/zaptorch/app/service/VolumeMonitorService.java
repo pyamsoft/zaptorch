@@ -87,10 +87,7 @@ public class VolumeMonitorService extends AccessibilityService
     super.onServiceConnected();
 
     if (presenter == null) {
-      presenter = Injector.get()
-          .provideComponent()
-          .provideVolumeServiceModule()
-          .getPresenter();
+      presenter = Injector.get().provideComponent().provideVolumeServiceModule().getPresenter();
     }
 
     presenter.bindView(this);

@@ -33,7 +33,8 @@ class SettingsPreferenceFragmentPresenterImpl
     implements SettingsPreferenceFragmentPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @SuppressWarnings("WeakerAccess") @NonNull ExecutedOffloader clearAllEvent = new ExecutedOffloader.Empty();
+  @SuppressWarnings("WeakerAccess") @NonNull ExecutedOffloader clearAllEvent =
+      new ExecutedOffloader.Empty();
   @Nullable private ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenterImpl(
