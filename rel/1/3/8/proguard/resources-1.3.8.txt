@@ -1332,9 +1332,9 @@ Referenced Strings:
   wrapped_intent
   xx
   year
-Marking string:upgrade_info_key:2131165277 used because its prefix matches string pool constant upgrade
-Marking string:upgrade_info_summary:2131165278 used because its prefix matches string pool constant upgrade
-Marking string:upgrade_info_title:2131165279 used because its prefix matches string pool constant upgrade
+Marking string:upgrade_info_key:2131165278 used because its prefix matches string pool constant upgrade
+Marking string:upgrade_info_summary:2131165279 used because its prefix matches string pool constant upgrade
+Marking string:upgrade_info_title:2131165280 used because its prefix matches string pool constant upgrade
 Marking string:firebase_database_url:2131165247 used because its prefix matches string pool constant firebase_
 Marking attr:closeIcon:2130772214 used because its prefix matches string pool constant close
 Marking attr:closeItemLayout:2130771998 used because its prefix matches string pool constant close
@@ -1470,8 +1470,8 @@ Marking attr:android:windowTitleStyle:-1 used because its prefix matches string 
 Marking id:purchase_iap_description:2131558502 used because its prefix matches string pool constant purchase
 Marking id:purchase_iap_price:2131558503 used because its prefix matches string pool constant purchase
 Marking id:purchase_iap_title:2131558501 used because its prefix matches string pool constant purchase
-Marking string:purchase_error_msg:2131165273 used because its prefix matches string pool constant purchase
-Marking string:purchase_success_msg:2131165274 used because its prefix matches string pool constant purchase
+Marking string:purchase_error_msg:2131165274 used because its prefix matches string pool constant purchase
+Marking string:purchase_success_msg:2131165275 used because its prefix matches string pool constant purchase
 Marking attr:windowActionBar:2130772011 used because its prefix matches string pool constant window
 Marking attr:windowActionBarOverlay:2130772013 used because its prefix matches string pool constant window
 Marking attr:windowActionModeOverlay:2130772014 used because its prefix matches string pool constant window
@@ -1561,7 +1561,9 @@ Marking string:camera_api_default:2131165206 used because its prefix matches str
 Marking string:camera_api_key:2131165228 used because its prefix matches string pool constant camera
 Marking string:camera_api_summary:2131165229 used because its prefix matches string pool constant camera
 Marking string:camera_api_title:2131165230 used because its prefix matches string pool constant camera
+Marking id:menu_id_privacy_policy:2131558553 used because its prefix matches string pool constant menu
 Marking id:menu_support:2131558552 used because its prefix matches string pool constant menu
+Marking menu:menu:2131689473 used because its prefix matches string pool constant menu
 Marking attr:autoCompleteTextViewStyle:2130772110 used because its prefix matches string pool constant auto
 Marking color:secondary_text_default_material_dark:2131492949 used because its prefix matches string pool constant second
 Marking color:secondary_text_default_material_light:2131492950 used because its prefix matches string pool constant second
@@ -1604,9 +1606,9 @@ Marking color:teal500:2131492959 used because its prefix matches string pool con
 Marking color:teal700:2131492960 used because its prefix matches string pool constant te
 Marking id:textWatcher:2131558416 used because its prefix matches string pool constant te
 Marking id:up:2131558417 used because its prefix matches string pool constant up
-Marking string:upgrade_info_key:2131165277 used because its prefix matches string pool constant up
-Marking string:upgrade_info_summary:2131165278 used because its prefix matches string pool constant up
-Marking string:upgrade_info_title:2131165279 used because its prefix matches string pool constant up
+Marking string:upgrade_info_key:2131165278 used because its prefix matches string pool constant up
+Marking string:upgrade_info_summary:2131165279 used because its prefix matches string pool constant up
+Marking string:upgrade_info_title:2131165280 used because its prefix matches string pool constant up
 Marking attr:allowStacking:2130772124 used because its prefix matches string pool constant allow
 Marking declare-styleable:View:-1 used because its prefix matches string pool constant View
 Marking styleable:View:-1 used because its prefix matches string pool constant View
@@ -2086,15 +2088,16 @@ drawable:splash_screen:2130837617 => [color:material_dark_background:2131492913,
 layout:activity_main:2130968602 => [color:colorPrimary:2131492892, attr:actionBarSize:2130772031, style:ThemeOverlay_AppCompat_Dark_ActionBar:2131296564, style:ThemeOverlay_AppCompat:2131296561]
 layout:adapter_item_about:2130968603 => [string:blank:2131165227, drawable:ic_arrow_up_24dp:2130837598, id:expand_license_name:2131558497, string:homepage:2131165257, attr:progressBarStyle:2130771985]
 layout:adapter_item_iap:2130968604 => [drawable:ic_donate_24dp:2130837600]
-layout:dialog_rating:2130968605 => [string:no_thanks:2131165272, attr:buttonBarNegativeButtonStyle:2130772108, id:rating_btn_no_thanks:2131558506, string:rate_application:2131165275, style:Widget_AppCompat_Button_Colored:2131296583, id:rating_btn_go_rate:2131558507, string:liking_the_app:2131165271, id:rating_liking_the_app:2131558508, string:blank:2131165227]
-layout:dialog_support:2130968606 => [attr:colorPrimary:2130772092, attr:actionBarSize:2130772031, style:ThemeOverlay_AppCompat_Dark_ActionBar:2131296564, attr:homeAsUpIndicator:2130772058, string:rate_application:2131165275, string:donate:2131165241, style:Widget_AppCompat_ProgressBar:2131296624, color:red500:2131492944, string:blank:2131165227, drawable:google_play:2130837596, drawable:blogger_icon:2130837587, drawable:google_plus:2130837597, drawable:facebook_icon:2130837588]
+layout:dialog_rating:2130968605 => [string:no_thanks:2131165272, attr:buttonBarNegativeButtonStyle:2130772108, id:rating_btn_no_thanks:2131558506, string:rate_application:2131165276, style:Widget_AppCompat_Button_Colored:2131296583, id:rating_btn_go_rate:2131558507, string:liking_the_app:2131165271, id:rating_liking_the_app:2131558508, string:blank:2131165227]
+layout:dialog_support:2130968606 => [attr:colorPrimary:2130772092, attr:actionBarSize:2130772031, style:ThemeOverlay_AppCompat_Dark_ActionBar:2131296564, attr:homeAsUpIndicator:2130772058, string:rate_application:2131165276, string:donate:2131165241, style:Widget_AppCompat_ProgressBar:2131296624, color:red500:2131492944, string:blank:2131165227, drawable:google_play:2130837596, drawable:blogger_icon:2130837587, drawable:google_plus:2130837597, drawable:facebook_icon:2130837588]
 layout:fragment_main:2130968608 => [drawable:fake_fab:2130837589, string:blank:2131165227]
 layout:preference_category_material:2130968626 => [style:Preference_TextAppearanceMaterialBody2:2131296492, color:preference_fallback_accent_color:2131492932]
 layout:preference_dropdown_material:2130968629 => [style:Preference_TextAppearanceMaterialSubhead:2131296493]
 layout:preference_information_material:2130968631 => [style:Preference_TextAppearanceMaterialSubhead:2131296493]
 layout:preference_material:2130968633 => [style:Preference_TextAppearanceMaterialSubhead:2131296493]
 layout:preference_recyclerview:2130968634 => [attr:preferenceFragmentListStyle:2130772201]
-menu:main_support:2131689472 => [string:support:2131165276]
+menu:main_support:2131689472 => [string:support:2131165277]
+menu:menu:2131689473 => [string:pirvacy_policy:2131165273]
 style:Base_CardView:2131296420 => [dimen:cardview_default_radius:2131230799, dimen:cardview_default_elevation:2131230798, style:CardView:2131296409]
 style:Base_Theme_ZapTorch:2131296434 => [style:Theme_AppCompat_NoActionBar:2131296557, color:colorPrimary:2131492892, color:colorPrimaryDark:2131492893, color:colorAccent:2131492891, style:Theme_ZapTorch:2131296558, style:Theme_ZapTorch_Error:2131296559, style:Theme_ZapTorch_Splash:2131296560]
 style:CardView:2131296409 => [style:Base_CardView:2131296420, style:CardView_Dark:2131296466, style:CardView_Light:2131296467]
@@ -2116,9 +2119,9 @@ style:Preference_Information_Material:2131296480 => [style:Preference_Informatio
 style:Preference_Material:2131296481 => [style:Preference:2131296468, layout:preference_material:2130968633]
 style:Preference_PreferenceScreen:2131296482 => [style:Preference:2131296468, style:Preference_PreferenceScreen_Material:2131296483]
 style:Preference_PreferenceScreen_Material:2131296483 => [style:Preference_PreferenceScreen:2131296482, style:Preference:2131296468, layout:preference_material:2130968633]
-style:Preference_SwitchPreference:2131296484 => [style:Preference:2131296468, layout:preference_widget_switch:2130968636, string:v7_preference_on:2131165281, string:v7_preference_off:2131165280, style:Preference_SwitchPreference_Material:2131296485]
+style:Preference_SwitchPreference:2131296484 => [style:Preference:2131296468, layout:preference_widget_switch:2130968636, string:v7_preference_on:2131165282, string:v7_preference_off:2131165281, style:Preference_SwitchPreference_Material:2131296485]
 style:Preference_SwitchPreference_Material:2131296485 => [style:Preference_SwitchPreference:2131296484, style:Preference:2131296468, layout:preference_material:2130968633]
-style:Preference_SwitchPreferenceCompat:2131296486 => [style:Preference:2131296468, layout:preference_widget_switch_compat:2130968637, string:v7_preference_on:2131165281, string:v7_preference_off:2131165280, style:Preference_SwitchPreferenceCompat_Material:2131296487]
+style:Preference_SwitchPreferenceCompat:2131296486 => [style:Preference:2131296468, layout:preference_widget_switch_compat:2130968637, string:v7_preference_on:2131165282, string:v7_preference_off:2131165281, style:Preference_SwitchPreferenceCompat_Material:2131296487]
 style:Preference_SwitchPreferenceCompat_Material:2131296487 => [style:Preference_SwitchPreferenceCompat:2131296486, style:Preference:2131296468, layout:preference_material:2130968633]
 style:PreferenceFragment:2131296300 => [style:PreferenceFragment_Material:2131296488]
 style:PreferenceFragment_Material:2131296488 => [style:PreferenceFragment:2131296300, drawable:preference_list_divider_material:2130837613]
@@ -2132,7 +2135,7 @@ style:Preference_TextAppearanceMaterialSubhead:2131296493 => [style:Preference:2
 style:Theme_ZapTorch:2131296558 => [style:Base_Theme_ZapTorch:2131296434, style:PreferenceThemeOverlay_v14_Material:2131296491]
 style:Theme_ZapTorch_Error:2131296559 => [style:Base_Theme_ZapTorch:2131296434]
 style:Theme_ZapTorch_Splash:2131296560 => [style:Base_Theme_ZapTorch:2131296434, drawable:splash_screen:2130837617]
-xml:preferences:2131099648 => [string:zaptorch_explain_key:2131165282, string:zaptorch_explain_summary:2131165283, string:zaptorch_explain_title:2131165284, string:camera_api_default:2131165206, string:camera_api_title:2131165230, array:camera_api:2131427328, array:camera_api_entries:2131427329, string:camera_api_key:2131165228, string:camera_api_summary:2131165229, string:double_press_delay_default:2131165242, string:double_press_delay_title:2131165245, array:double_press_delay:2131427330, array:double_press_delay_entries:2131427331, string:double_press_delay_key:2131165243, string:double_press_delay_summary:2131165244, bool:display_camera_errors_default:2131361798, string:display_camera_errors_key:2131165238, string:display_camera_errors_summary:2131165239, string:display_camera_errors_title:2131165240, bool:handle_volume_keys_default:2131361799, string:handle_volume_keys_key:2131165253, string:handle_volume_keys_summary_unchecked:2131165255, string:handle_volume_keys_summary_checked:2131165254, string:handle_volume_keys_title:2131165256, bool:adview_default:2131361797, string:adview_key:2131165222, string:adview_summary_unchecked:2131165224, string:adview_summary_checked:2131165223, string:adview_title:2131165225, string:about_license_key:2131165219, string:about_license_title:2131165220, string:check_version_key:2131165231, string:check_version_title:2131165232, string:upgrade_info_key:2131165277, string:upgrade_info_summary:2131165278, string:upgrade_info_title:2131165279, string:clear_all_key:2131165233, string:clear_all_summary:2131165234, string:clear_all_title:2131165235]
+xml:preferences:2131099648 => [string:zaptorch_explain_key:2131165283, string:zaptorch_explain_summary:2131165284, string:zaptorch_explain_title:2131165285, string:camera_api_default:2131165206, string:camera_api_title:2131165230, array:camera_api:2131427328, array:camera_api_entries:2131427329, string:camera_api_key:2131165228, string:camera_api_summary:2131165229, string:double_press_delay_default:2131165242, string:double_press_delay_title:2131165245, array:double_press_delay:2131427330, array:double_press_delay_entries:2131427331, string:double_press_delay_key:2131165243, string:double_press_delay_summary:2131165244, bool:display_camera_errors_default:2131361798, string:display_camera_errors_key:2131165238, string:display_camera_errors_summary:2131165239, string:display_camera_errors_title:2131165240, bool:handle_volume_keys_default:2131361799, string:handle_volume_keys_key:2131165253, string:handle_volume_keys_summary_unchecked:2131165255, string:handle_volume_keys_summary_checked:2131165254, string:handle_volume_keys_title:2131165256, bool:adview_default:2131361797, string:adview_key:2131165222, string:adview_summary_unchecked:2131165224, string:adview_summary_checked:2131165223, string:adview_title:2131165225, string:about_license_key:2131165219, string:about_license_title:2131165220, string:check_version_key:2131165231, string:check_version_title:2131165232, string:upgrade_info_key:2131165278, string:upgrade_info_summary:2131165279, string:upgrade_info_title:2131165280, string:clear_all_key:2131165233, string:clear_all_summary:2131165234, string:clear_all_title:2131165235]
 xml:zaptorch:2131099649 => [string:accessibility_service_description:2131165221]
 style:TextAppearance:-1 => [style:TextAppearance_AppCompat_Notification_Info_Media:2131296393, style:TextAppearance_AppCompat_Notification_Media:2131296394, style:TextAppearance_AppCompat_Notification_Time_Media:2131296396, style:TextAppearance_AppCompat_Notification_Title_Media:2131296397, style:TextAppearance_AppCompat_Notification:2131296293, style:TextAppearance_AppCompat_Notification_Info:2131296392, style:TextAppearance_AppCompat_Notification_Time:2131296395, style:TextAppearance_AppCompat_Notification_Title:2131296294, style:TextAppearance_StatusBar_EventContent_Info:2131296296, style:TextAppearance_StatusBar_EventContent_Line2:2131296297, style:TextAppearance_StatusBar_EventContent_Time:2131296298]
 style:Base_TextAppearance:-1 => [style:Base_TextAppearance_AppCompat_Body1:2131296318, style:Base_TextAppearance_AppCompat_Body2:2131296319, style:Base_TextAppearance_AppCompat_Button:2131296290, style:Base_TextAppearance_AppCompat_Caption:2131296320, style:Base_TextAppearance_AppCompat_Display1:2131296321, style:Base_TextAppearance_AppCompat_Display2:2131296322, style:Base_TextAppearance_AppCompat_Display3:2131296323, style:Base_TextAppearance_AppCompat_Display4:2131296324, style:Base_TextAppearance_AppCompat_Headline:2131296325, style:Base_TextAppearance_AppCompat_Inverse:2131296267, style:Base_TextAppearance_AppCompat_Large:2131296326, style:Base_TextAppearance_AppCompat_Large_Inverse:2131296268, style:Base_TextAppearance_AppCompat_Medium:2131296329, style:Base_TextAppearance_AppCompat_Medium_Inverse:2131296269, style:Base_TextAppearance_AppCompat_Menu:2131296330, style:Base_TextAppearance_AppCompat_SearchResult_Subtitle:2131296331, style:Base_TextAppearance_AppCompat_SearchResult_Title:2131296332, style:Base_TextAppearance_AppCompat_Small:2131296333, style:Base_TextAppearance_AppCompat_Small_Inverse:2131296270, style:Base_TextAppearance_AppCompat_Subhead:2131296334, style:Base_TextAppearance_AppCompat_Subhead_Inverse:2131296271, style:Base_TextAppearance_AppCompat_Title:2131296335, style:Base_TextAppearance_AppCompat_Title_Inverse:2131296272]
@@ -2649,6 +2652,7 @@ attr:actionBarPopupTheme:2130772026,
    id:main_container:2131558523,
    id:main_settings_fab:2131558524,
    id:main_viewport:2131558494,
+   id:menu_id_privacy_policy:2131558553,
    id:menu_support:2131558552,
    id:purchase_iap_description:2131558502,
    id:purchase_iap_price:2131558503,
@@ -2684,6 +2688,7 @@ attr:actionBarPopupTheme:2130772026,
    layout:preference_list_fragment:2130968632,
    layout:preference_recyclerview:2130968634,
    menu:main_support:2131689472,
+   menu:menu:2131689473,
    mipmap:ic_launcher:2130903040,
    string:about_license_key:2131165219,
    string:about_license_title:2131165220,
@@ -2713,12 +2718,12 @@ attr:actionBarPopupTheme:2130772026,
    string:handle_volume_keys_key:2131165253,
    string:iap_empty:2131165258,
    string:iap_unsupported:2131165259,
-   string:purchase_error_msg:2131165273,
-   string:purchase_success_msg:2131165274,
-   string:upgrade_info_key:2131165277,
-   string:upgrade_info_summary:2131165278,
-   string:upgrade_info_title:2131165279,
-   string:zaptorch_explain_key:2131165282,
+   string:purchase_error_msg:2131165274,
+   string:purchase_success_msg:2131165275,
+   string:upgrade_info_key:2131165278,
+   string:upgrade_info_summary:2131165279,
+   string:upgrade_info_title:2131165280,
+   string:zaptorch_explain_key:2131165283,
    style:Base_CardView:2131296420,
    style:CardView:2131296409,
    style:Theme_ZapTorch:2131296558,
