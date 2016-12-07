@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.PersistLoader;
@@ -30,6 +31,7 @@ import com.pyamsoft.pydroid.support.RatingActivity;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.pydroid.util.NetworkUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
@@ -39,6 +41,8 @@ import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
 public class MainActivity extends RatingActivity implements MainPresenter.MainActivityView {
 
   @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
+  @NonNull private static final String PRIVACY_POLICY_URL =
+      "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html";
   MainPresenter presenter;
   private ActivityMainBinding binding;
   private long loadedKey;
@@ -137,6 +141,10 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
         onBackPressed();
         handled = true;
         break;
+      case R.id.menu_id_privacy_policy:
+        NetworkUtil.newLink(getApplicationContext(), PRIVACY_POLICY_URL);
+        handled = true;
+        break;
       default:
         handled = false;
     }
@@ -149,9 +157,15 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
     ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4));
   }
 
+  @Override public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+    getMenuInflater().inflate(R.menu.menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
   @NonNull @Override protected String[] getChangeLogLines() {
-    final String line1 = "FEATURE: Support latest Android 7.1 (API 25)";
-    return new String[] { line1 };
+    final String line1 = "BUGFIX: Fix crash on donation page";
+    final String line2 = "BUGFIX: Fix crash in image loading on KitKat";
+    return new String[] { line1, line2 };
   }
 
   @NonNull @Override protected String getVersionName() {
