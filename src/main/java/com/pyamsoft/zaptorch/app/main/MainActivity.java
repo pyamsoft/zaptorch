@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.sec.TamperActivity;
 import com.pyamsoft.pydroid.support.RatingActivity;
 import com.pyamsoft.pydroid.support.RatingDialog;
 import com.pyamsoft.pydroid.util.AnimUtil;
@@ -38,7 +39,7 @@ import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.app.settings.SettingsFragment;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
 
-public class MainActivity extends RatingActivity implements MainPresenter.MainActivityView {
+public class MainActivity extends TamperActivity implements MainPresenter.MainActivityView {
 
   @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
   @NonNull private static final String PRIVACY_POLICY_URL =
@@ -103,6 +104,10 @@ public class MainActivity extends RatingActivity implements MainPresenter.MainAc
   @Override protected void onPostResume() {
     super.onPostResume();
     RatingDialog.showRatingDialog(this, this);
+  }
+
+  @NonNull @Override protected String getSafePackageName() {
+    return "com.pyamsoft.zaptorch";
   }
 
   @Override public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
