@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.zaptorch.Injector;
 
-public class MainPresenterLoader extends PersistLoader<MainPresenter> {
+class MainPresenterLoader extends PersistLoader<MainPresenter> {
 
   MainPresenterLoader() {
   }

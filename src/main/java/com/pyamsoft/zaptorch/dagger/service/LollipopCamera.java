@@ -44,9 +44,9 @@ import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) class LollipopCamera extends CameraCommon {
 
-  @NonNull final CameraManager cameraManager;
-  @NonNull final CameraCallback cameraCallback;
-  @Nullable final String flashCameraId;
+  @NonNull private final CameraManager cameraManager;
+  @NonNull private final CameraCallback cameraCallback;
+  @Nullable private final String flashCameraId;
 
   LollipopCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -61,7 +61,7 @@ import timber.log.Timber;
     return (CameraManager) context.getApplicationContext().getSystemService(Context.CAMERA_SERVICE);
   }
 
-  @CheckResult @Nullable String setupCamera() {
+  @CheckResult @Nullable private String setupCamera() {
     try {
       final String[] cameraList = cameraManager.getCameraIdList();
       for (final String camera : cameraList) {
