@@ -20,7 +20,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 
-public interface VolumeServiceInteractor {
+interface VolumeServiceInteractor {
 
   @CheckResult long getButtonDelayTime();
 

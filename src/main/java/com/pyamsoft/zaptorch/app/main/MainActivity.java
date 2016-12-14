@@ -43,7 +43,7 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
   @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
   @NonNull private static final String PRIVACY_POLICY_URL =
       "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html";
-  MainPresenter presenter;
+  @SuppressWarnings("WeakerAccess") MainPresenter presenter;
   private ActivityMainBinding binding;
   private long loadedKey;
 
@@ -117,7 +117,7 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
     return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event);
   }
 
-  void showMainFragment() {
+  private void showMainFragment() {
     final FragmentManager fragmentManager = getSupportFragmentManager();
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null
         && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
@@ -155,7 +155,7 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
     return handled || super.onOptionsItemSelected(item);
   }
 
-  void setupAppBar() {
+  private void setupAppBar() {
     setSupportActionBar(binding.toolbar);
     binding.toolbar.setTitle(R.string.app_name);
     ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4));

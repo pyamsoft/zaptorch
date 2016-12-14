@@ -22,6 +22,7 @@ import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.Injector;
@@ -30,17 +31,19 @@ import timber.log.Timber;
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  static VolumeMonitorService instance;
+  private static volatile VolumeMonitorService instance;
   private VolumeServicePresenter presenter;
 
-  @CheckResult @NonNull static synchronized VolumeMonitorService getInstance() {
+  @SuppressWarnings("WeakerAccess") @VisibleForTesting @CheckResult @NonNull
+  static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
       throw new NullPointerException("VolumeMonitorService instance is NULL");
     }
     return instance;
   }
 
-  static synchronized void setInstance(@Nullable VolumeMonitorService i) {
+  @SuppressWarnings("WeakerAccess") @VisibleForTesting
+  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
     instance = i;
   }
 
@@ -62,7 +65,7 @@ public class VolumeMonitorService extends AccessibilityService
     currentInstance.getPresenter().bindView(currentInstance);
   }
 
-  @CheckResult @NonNull VolumeServicePresenter getPresenter() {
+  @CheckResult @NonNull private VolumeServicePresenter getPresenter() {
     return presenter;
   }
 

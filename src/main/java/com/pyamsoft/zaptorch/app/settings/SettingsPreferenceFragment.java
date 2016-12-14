@@ -39,7 +39,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
   @NonNull public static final String TAG = "MainFragment";
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
-  SettingsPreferenceFragmentPresenter presenter;
+  @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
   private long loadedKey;
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
