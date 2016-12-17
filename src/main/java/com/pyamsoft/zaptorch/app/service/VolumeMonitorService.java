@@ -31,14 +31,15 @@ import timber.log.Timber;
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  private static volatile VolumeMonitorService instance;
-  private VolumeServicePresenter presenter;
+  @Nullable private static volatile VolumeMonitorService instance;
+  @Nullable private VolumeServicePresenter presenter;
 
   @SuppressWarnings("WeakerAccess") @VisibleForTesting @CheckResult @NonNull
   static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
       throw new NullPointerException("VolumeMonitorService instance is NULL");
     }
+    //noinspection ConstantConditions
     return instance;
   }
 
@@ -66,13 +67,16 @@ public class VolumeMonitorService extends AccessibilityService
   }
 
   @CheckResult @NonNull private VolumeServicePresenter getPresenter() {
+    if (presenter == null) {
+      throw new IllegalStateException("Presenter is NULL");
+    }
     return presenter;
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
     final int action = event.getAction();
     final int keyCode = event.getKeyCode();
-    presenter.handleKeyEvent(action, keyCode);
+    getPresenter().handleKeyEvent(action, keyCode);
 
     // Never consume events
     return false;
@@ -93,18 +97,18 @@ public class VolumeMonitorService extends AccessibilityService
       presenter = Injector.get().provideComponent().provideVolumeServiceModule().getPresenter();
     }
 
-    presenter.bindView(this);
+    getPresenter().bindView(this);
     setInstance(this);
   }
 
   @Override public boolean onUnbind(Intent intent) {
-    presenter.unbindView();
+    getPresenter().unbindView();
     setInstance(null);
     return super.onUnbind(intent);
   }
 
   @Override public void onDestroy() {
     super.onDestroy();
-    presenter.destroy();
+    getPresenter().destroy();
   }
 }

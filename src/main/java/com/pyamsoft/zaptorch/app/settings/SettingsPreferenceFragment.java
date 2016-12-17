@@ -126,7 +126,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   }
 
   @Override public void onConfirmAttempt() {
-    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), ConfirmationDialog.newInstance(),
+    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), new ConfirmationDialog(),
         "confirm_dialog");
   }
 
