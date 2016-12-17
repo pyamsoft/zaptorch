@@ -19,10 +19,12 @@ package com.pyamsoft.zaptorch.dagger.service;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationManagerCompat;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 
-class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
+class VolumeServiceInteractorImpl
+    implements VolumeServiceInteractor, CameraInterface.OnStateChangedCallback {
 
   @NonNull private final ZapTorchPreferences preferences;
   private final int cameraApiOld;
@@ -30,10 +32,12 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   private final int cameraApiMarshmallow;
 
   @NonNull private final Context appContext;
+  @NonNull private final NotificationManagerCompat notificationManagerCompat;
 
   VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences) {
     this.appContext = context.getApplicationContext();
     this.preferences = preferences;
+    notificationManagerCompat = NotificationManagerCompat.from(appContext);
 
     // KLUDGE duplication of values between preferences and java code
     cameraApiOld = 0;
@@ -51,15 +55,27 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
   @NonNull @Override public CameraInterface camera() {
     final int cameraApi = preferences.getCameraApi();
+    final CameraInterface camera;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
-      return new MarshmallowCamera(appContext, this);
+      camera = new MarshmallowCamera(appContext, this);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
         && cameraApi == cameraApiLollipop) {
-      return new LollipopCamera(appContext, this);
+      camera = new LollipopCamera(appContext, this);
     } else if (cameraApi == cameraApiOld) {
-      return new OriginalCamera(appContext, this);
+      camera = new OriginalCamera(appContext, this);
     } else {
       throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
     }
+
+    camera.setOnStateChangedCallback(this);
+    return camera;
+  }
+
+  @Override public void onOpened() {
+
+  }
+
+  @Override public void onClosed() {
+
   }
 }
