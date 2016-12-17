@@ -22,16 +22,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
 
 abstract class CameraCommon implements CameraInterface {
 
-  @NonNull private final VolumeServiceInteractor interactor;
   @SuppressWarnings("WeakerAccess") @NonNull final Context appContext;
-  @NonNull private final Handler handler;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent errorExplain;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent permissionExplain;
+  @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private final Handler handler;
+  @Nullable private OnStateChangedCallback callback;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
     this.appContext = context.getApplicationContext();
@@ -60,5 +62,21 @@ abstract class CameraCommon implements CameraInterface {
 
   @CheckResult @NonNull Context getAppContext() {
     return appContext;
+  }
+
+  @Override public void setOnStateChangedCallback(@NonNull OnStateChangedCallback callback) {
+    this.callback = callback;
+  }
+
+  void notifyCallbackOnOpened() {
+    if (callback != null) {
+      callback.onOpened();
+    }
+  }
+
+  void notifyCallbackOnClosed() {
+    if (callback != null) {
+      callback.onClosed();
+    }
   }
 }

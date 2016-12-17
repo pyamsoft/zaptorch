@@ -36,16 +36,12 @@ import timber.log.Timber;
     super(context, interactor);
     Timber.d("MARSHMALLOW CAMERA API");
     cameraManager = LollipopCamera.setupCameraManager(context);
-    this.torchCallback = new TorchCallback();
+    this.torchCallback = new TorchCallback(this);
     setupCamera();
   }
 
   @Override public void toggleTorch() {
     setTorch(!torchCallback.isEnabled());
-  }
-
-  @Override public boolean isTorchOn() {
-    return torchCallback.isEnabled();
   }
 
   void setTorch(final boolean enable) {
@@ -81,8 +77,13 @@ import timber.log.Timber;
   @SuppressWarnings("WeakerAccess") static final class TorchCallback
       extends CameraManager.TorchCallback {
 
+    @NonNull private final CameraCommon cameraCommon;
     @Nullable String cameraId;
     boolean enabled;
+
+    TorchCallback(@NonNull CameraCommon cameraCommon) {
+      this.cameraCommon = cameraCommon;
+    }
 
     @Nullable @CheckResult String getCameraId() {
       return cameraId;
@@ -97,6 +98,12 @@ import timber.log.Timber;
       Timber.d("Torch changed: %s", enabled);
       this.cameraId = cameraId;
       this.enabled = enabled;
+
+      if (enabled) {
+        cameraCommon.notifyCallbackOnOpened();
+      } else {
+        cameraCommon.notifyCallbackOnClosed();
+      }
     }
 
     @Override public void onTorchModeUnavailable(@NonNull String cameraId) {
@@ -104,6 +111,8 @@ import timber.log.Timber;
       Timber.e("Torch unavailable");
       this.cameraId = null;
       this.enabled = false;
+
+      cameraCommon.notifyCallbackOnClosed();
     }
   }
 }

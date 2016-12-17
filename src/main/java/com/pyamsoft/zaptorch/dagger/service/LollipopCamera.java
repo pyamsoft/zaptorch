@@ -54,7 +54,7 @@ import timber.log.Timber;
     Timber.d("LOLLIPOP CAMERA API");
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();
-    this.cameraCallback = new CameraCallback(cameraManager);
+    this.cameraCallback = new CameraCallback(this, cameraManager);
   }
 
   @CheckResult @NonNull static CameraManager setupCameraManager(final @NonNull Context context) {
@@ -81,10 +81,6 @@ import timber.log.Timber;
     cameraCallback.close();
   }
 
-  @Override public boolean isTorchOn() {
-    return cameraCallback.isOpened();
-  }
-
   @Override public void toggleTorch() {
     if (flashCameraId == null) {
       Timber.e("No camera with Flash");
@@ -109,6 +105,7 @@ import timber.log.Timber;
       extends CameraDevice.StateCallback {
     @NonNull final CameraManager manager;
     @NonNull final List<Surface> list;
+    @NonNull private final CameraCommon cameraInterface;
 
     @Nullable CameraDevice cameraDevice;
     @Nullable SessionCallback session;
@@ -116,7 +113,8 @@ import timber.log.Timber;
     @Nullable Size size;
     boolean opened;
 
-    CameraCallback(final @NonNull CameraManager manager) {
+    CameraCallback(@NonNull CameraCommon cameraInterface, @NonNull CameraManager manager) {
+      this.cameraInterface = cameraInterface;
       this.manager = manager;
       opened = false;
       list = new ArrayList<>(1);
@@ -148,10 +146,6 @@ import timber.log.Timber;
       return chosen;
     }
 
-    @CheckResult boolean isOpened() {
-      return opened;
-    }
-
     void close() {
       // Surface texture is released by CameraManager so we don't have to
       if (opened) {
@@ -166,6 +160,8 @@ import timber.log.Timber;
           cameraDevice.close();
           cameraDevice = null;
         }
+
+        cameraInterface.notifyCallbackOnClosed();
       }
       opened = false;
     }
@@ -231,6 +227,8 @@ import timber.log.Timber;
 
         Timber.d("register capture session");
         camera.createCaptureSession(list, session, null);
+
+        cameraInterface.notifyCallbackOnOpened();
       } catch (CameraAccessException e) {
         Timber.e(e, "onOpened");
       }

@@ -128,6 +128,7 @@ import timber.log.Timber;
         Timber.d("start camera");
         camera.startPreview();
         opened = true;
+        notifyCallbackOnOpened();
       } catch (IOException e) {
         clearCamera(e);
         startErrorExplanationActivity();
@@ -137,10 +138,16 @@ import timber.log.Timber;
 
   @SuppressWarnings("WeakerAccess") void clearCamera(@NonNull Throwable throwable) {
     Timber.e(throwable, "Error opening camera");
+    releaseCamera();
+  }
+
+  private void releaseCamera() {
+    Timber.d("release camera");
     if (camera != null) {
       camera.release();
       camera = null;
       opened = false;
+      notifyCallbackOnClosed();
     }
   }
 
@@ -150,17 +157,10 @@ import timber.log.Timber;
       params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
       camera.setParameters(params);
       camera.stopPreview();
-      Timber.d("release camera");
-      camera.release();
-      camera = null;
-      opened = false;
+      releaseCamera();
       windowManager.removeView(surfaceView);
     }
     OffloaderHelper.cancel(cameraSubscription);
-  }
-
-  @Override public boolean isTorchOn() {
-    return opened;
   }
 
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {

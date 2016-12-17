@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.app.service.camera;
 
-import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
 
 public interface CameraInterface {
 
@@ -24,5 +24,12 @@ public interface CameraInterface {
 
   void release();
 
-  @CheckResult boolean isTorchOn();
+  void setOnStateChangedCallback(@NonNull OnStateChangedCallback callback);
+
+  interface OnStateChangedCallback {
+
+    void onOpened();
+
+    void onClosed();
+  }
 }
