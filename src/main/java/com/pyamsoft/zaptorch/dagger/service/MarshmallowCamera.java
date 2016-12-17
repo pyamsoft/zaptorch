@@ -28,8 +28,8 @@ import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) class MarshmallowCamera extends CameraCommon {
 
-  @NonNull final TorchCallback torchCallback;
-  @NonNull final CameraManager cameraManager;
+  @NonNull private final TorchCallback torchCallback;
+  @NonNull private final CameraManager cameraManager;
 
   MarshmallowCamera(final @NonNull Context context,
       final @NonNull VolumeServiceInteractor interactor) {
@@ -42,6 +42,10 @@ import timber.log.Timber;
 
   @Override public void toggleTorch() {
     setTorch(!torchCallback.isEnabled());
+  }
+
+  @Override public boolean isTorchOn() {
+    return torchCallback.isEnabled();
   }
 
   void setTorch(final boolean enable) {
@@ -69,17 +73,18 @@ import timber.log.Timber;
     cameraManager.unregisterTorchCallback(torchCallback);
   }
 
-  void setupCamera() {
+  private void setupCamera() {
     Timber.d("Register torch callback");
     cameraManager.registerTorchCallback(torchCallback, null);
   }
 
-  static final class TorchCallback extends CameraManager.TorchCallback {
+  @SuppressWarnings("WeakerAccess") static final class TorchCallback
+      extends CameraManager.TorchCallback {
 
     @Nullable String cameraId;
     boolean enabled;
 
-    @Nullable @CheckResult public String getCameraId() {
+    @Nullable @CheckResult String getCameraId() {
       return cameraId;
     }
 

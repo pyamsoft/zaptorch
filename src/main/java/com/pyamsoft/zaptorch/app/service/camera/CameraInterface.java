@@ -16,9 +16,13 @@
 
 package com.pyamsoft.zaptorch.app.service.camera;
 
+import android.support.annotation.CheckResult;
+
 public interface CameraInterface {
 
   void toggleTorch();
 
   void release();
+
+  @CheckResult boolean isTorchOn();
 }

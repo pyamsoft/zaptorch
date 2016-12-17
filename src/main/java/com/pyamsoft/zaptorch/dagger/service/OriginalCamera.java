@@ -30,6 +30,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import com.pyamsoft.pydroid.tool.ExecutedOffloader;
+import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import java.io.IOException;
 import java.util.List;
 import timber.log.Timber;
@@ -71,12 +72,6 @@ import timber.log.Timber;
     return holder;
   }
 
-  private void unsubCameraSubscription() {
-    if (!cameraSubscription.isCancelled()) {
-      cameraSubscription.cancel();
-    }
-  }
-
   @Override public void toggleTorch() {
     if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.CAMERA)
         == PackageManager.PERMISSION_GRANTED) {
@@ -94,7 +89,7 @@ import timber.log.Timber;
 
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
-    unsubCameraSubscription();
+    OffloaderHelper.cancel(cameraSubscription);
     cameraSubscription = new AsyncOffloader<Camera>().onProcess(Camera::open).onError(throwable -> {
       clearCamera(throwable);
       startErrorExplanationActivity();
@@ -161,7 +156,11 @@ import timber.log.Timber;
       opened = false;
       windowManager.removeView(surfaceView);
     }
-    unsubCameraSubscription();
+    OffloaderHelper.cancel(cameraSubscription);
+  }
+
+  @Override public boolean isTorchOn() {
+    return opened;
   }
 
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {

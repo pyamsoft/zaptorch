@@ -81,6 +81,10 @@ import timber.log.Timber;
     cameraCallback.close();
   }
 
+  @Override public boolean isTorchOn() {
+    return cameraCallback.isOpened();
+  }
+
   @Override public void toggleTorch() {
     if (flashCameraId == null) {
       Timber.e("No camera with Flash");
@@ -101,7 +105,8 @@ import timber.log.Timber;
     }
   }
 
-  static final class CameraCallback extends CameraDevice.StateCallback {
+  @SuppressWarnings("WeakerAccess") static final class CameraCallback
+      extends CameraDevice.StateCallback {
     @NonNull final CameraManager manager;
     @NonNull final List<Surface> list;
 
@@ -143,7 +148,11 @@ import timber.log.Timber;
       return chosen;
     }
 
-    public void close() {
+    @CheckResult boolean isOpened() {
+      return opened;
+    }
+
+    void close() {
       // Surface texture is released by CameraManager so we don't have to
       if (opened) {
         if (session != null) {
@@ -161,7 +170,7 @@ import timber.log.Timber;
       opened = false;
     }
 
-    @CheckResult public int accessCamera(final @NonNull Context context, final @NonNull String id) {
+    @CheckResult int accessCamera(final @NonNull Context context, final @NonNull String id) {
       if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
           == PackageManager.PERMISSION_GRANTED) {
         try {
@@ -240,7 +249,8 @@ import timber.log.Timber;
     }
   }
 
-  static final class SessionCallback extends CameraCaptureSession.StateCallback {
+  @SuppressWarnings("WeakerAccess") static final class SessionCallback
+      extends CameraCaptureSession.StateCallback {
 
     @NonNull final CaptureRequest request;
     @Nullable CameraCaptureSession session;
@@ -266,7 +276,7 @@ import timber.log.Timber;
       close();
     }
 
-    public void close() {
+    void close() {
       if (session != null) {
         Timber.d("close session");
         session.close();

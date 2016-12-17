@@ -28,6 +28,7 @@ import com.pyamsoft.pydroid.app.PersistLoader;
 import com.pyamsoft.pydroid.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.tool.AsyncDrawable;
 import com.pyamsoft.pydroid.tool.AsyncMap;
+import com.pyamsoft.pydroid.tool.AsyncMapHelper;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
@@ -37,10 +38,10 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @NonNull public static final String TAG = "MainSettingsFragment";
   @NonNull private static final String KEY_PRESENTER = "key_settings_presenter";
-  @NonNull private final AsyncDrawable.Mapper drawableMap = new AsyncDrawable.Mapper();
   @SuppressWarnings("WeakerAccess") SettingsFragmentPresenter presenter;
   private FragmentMainBinding binding;
   private long loadedKey;
+  @Nullable private AsyncMap.Entry fabTask;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -77,7 +78,7 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    drawableMap.clear();
+    AsyncMapHelper.unsubscribe(fabTask);
     binding.unbind();
   }
 
@@ -121,15 +122,13 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   }
 
   @Override public void onFABEnabled() {
-    final AsyncMap.Entry task =
-        AsyncDrawable.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
-    drawableMap.put("fab", task);
+    AsyncMapHelper.unsubscribe(fabTask);
+    fabTask = AsyncDrawable.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
   }
 
   @Override public void onFABDisabled() {
-    final AsyncMap.Entry task =
-        AsyncDrawable.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
-    drawableMap.put("fab", task);
+    AsyncMapHelper.unsubscribe(fabTask);
+    fabTask = AsyncDrawable.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
   }
 
   @Override public void onCreateAccessibilityDialog() {
