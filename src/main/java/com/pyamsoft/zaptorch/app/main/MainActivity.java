@@ -167,8 +167,9 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {
-    final String line1 = "BUGFIX: General stability improvements";
-    return new String[] { line1 };
+    final String line1 = "FEATURE: Notification to quickly turn of a lit torch";
+    final String line2 = "CHANGE: Some new settings to play with";
+    return new String[] { line1, line2 };
   }
 
   @NonNull @Override protected String getVersionName() {
