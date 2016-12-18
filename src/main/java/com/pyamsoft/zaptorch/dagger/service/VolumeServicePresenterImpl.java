@@ -44,9 +44,7 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     if (pressed) {
       Timber.d("Key has been double pressed");
       pressed = false;
-      if (cameraInterface != null) {
-        cameraInterface.toggleTorch();
-      }
+      toggleTorch();
     } else {
       pressed = true;
       final long delay = interactor.getButtonDelayTime();
@@ -55,6 +53,12 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
         Timber.d("Set pressed back to false");
         pressed = false;
       }, delay);
+    }
+  }
+
+  @Override public void toggleTorch() {
+    if (cameraInterface != null) {
+      cameraInterface.toggleTorch();
     }
   }
 
