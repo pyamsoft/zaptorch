@@ -36,7 +36,7 @@ class VolumeServiceInteractorImpl
 
   private static final int NOTIFICATION_ID = 1345;
   private static final int NOTIFICATION_RC = 1009;
-  @NonNull private final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
   private final int cameraApiOld;
   private final int cameraApiLollipop;
   private final int cameraApiMarshmallow;
@@ -68,11 +68,11 @@ class VolumeServiceInteractorImpl
   }
 
   @NonNull @Override public Offloader<Long> getButtonDelayTime() {
-    return new AsyncOffloader<>();
+    return AsyncOffloader.newInstance(preferences::getButtonDelayTime);
   }
 
   @NonNull @Override public Offloader<Boolean> shouldShowErrorDialog() {
-    return null;
+    return AsyncOffloader.newInstance(preferences::shouldShowErrorDialog);
   }
 
   @NonNull @Override public CameraInterface camera() {

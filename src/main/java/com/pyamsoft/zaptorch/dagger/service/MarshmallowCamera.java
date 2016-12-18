@@ -61,6 +61,7 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
+    super.release();
     if (torchCallback.isEnabled()) {
       setTorch(false);
     }

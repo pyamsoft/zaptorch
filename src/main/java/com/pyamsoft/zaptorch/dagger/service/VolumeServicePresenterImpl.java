@@ -21,6 +21,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
+import com.pyamsoft.pydroid.tool.ExecutedOffloader;
+import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import com.pyamsoft.zaptorch.app.service.VolumeServicePresenter;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import timber.log.Timber;
@@ -28,9 +30,10 @@ import timber.log.Timber;
 class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.VolumeServiceView>
     implements VolumeServicePresenter {
 
-  @NonNull private final Handler handler;
+  @SuppressWarnings("WeakerAccess") @NonNull final Handler handler;
   @NonNull private final VolumeServiceInteractor interactor;
   @SuppressWarnings("WeakerAccess") boolean pressed;
+  @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader delaySubscription;
   @Nullable private CameraInterface cameraInterface;
 
   VolumeServicePresenterImpl(@NonNull final VolumeServiceInteractor interactor) {
@@ -47,12 +50,18 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
       toggleTorch();
     } else {
       pressed = true;
-      final long delay = interactor.getButtonDelayTime();
-      Timber.d("Post back to false after delay: %d", delay);
-      handler.postDelayed(() -> {
-        Timber.d("Set pressed back to false");
-        pressed = false;
-      }, delay);
+      OffloaderHelper.cancel(delaySubscription);
+      delaySubscription = interactor.getButtonDelayTime()
+          .onResult(delay -> {
+            Timber.d("Post back to false after delay: %d", delay);
+            handler.postDelayed(() -> {
+              Timber.d("Set pressed back to false");
+              pressed = false;
+            }, delay);
+          })
+          .onError(throwable -> Timber.e(throwable, "onError handleKeyEvent"))
+          .onFinish(() -> OffloaderHelper.cancel(delaySubscription))
+          .execute();
     }
   }
 
@@ -87,6 +96,7 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
       cameraInterface.release();
       cameraInterface = null;
     }
+    OffloaderHelper.cancel(delaySubscription);
     handler.removeCallbacksAndMessages(null);
     pressed = false;
   }
