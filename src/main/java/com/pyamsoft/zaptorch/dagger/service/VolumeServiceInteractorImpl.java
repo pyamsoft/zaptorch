@@ -25,6 +25,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
+import com.pyamsoft.pydroid.tool.AsyncOffloader;
+import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorchPreferences;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
@@ -40,6 +42,7 @@ class VolumeServiceInteractorImpl
   private final int cameraApiMarshmallow;
   @NonNull private final Context appContext;
   @NonNull private final NotificationManagerCompat notificationManagerCompat;
+  @NonNull private final Notification notification;
 
   VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences) {
     this.appContext = context.getApplicationContext();
@@ -50,14 +53,26 @@ class VolumeServiceInteractorImpl
     cameraApiOld = 0;
     cameraApiLollipop = 1;
     cameraApiMarshmallow = 2;
+
+    final Intent intent = new Intent(appContext, TorchOffService.class);
+    notification = new NotificationCompat.Builder(appContext).setContentTitle("Torch is On")
+        .setContentText("Click to turn off")
+        .setContentIntent(PendingIntent.getService(appContext, NOTIFICATION_RC, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT))
+        .setSmallIcon(R.drawable.ic_light_notification)
+        .setAutoCancel(true)
+        .setColor(ContextCompat.getColor(appContext, R.color.purple500))
+        .setWhen(0)
+        .setOngoing(false)
+        .build();
   }
 
-  @Override public long getButtonDelayTime() {
-    return preferences.getButtonDelayTime();
+  @NonNull @Override public Offloader<Long> getButtonDelayTime() {
+    return new AsyncOffloader<>();
   }
 
-  @Override public boolean shouldShowErrorDialog() {
-    return preferences.shouldShowErrorDialog();
+  @NonNull @Override public Offloader<Boolean> shouldShowErrorDialog() {
+    return null;
   }
 
   @NonNull @Override public CameraInterface camera() {
@@ -79,18 +94,6 @@ class VolumeServiceInteractorImpl
   }
 
   @Override public void onOpened() {
-    final Intent intent = new Intent(appContext, TorchOffService.class);
-    final Notification notification =
-        new NotificationCompat.Builder(appContext).setContentTitle("Torch is On")
-            .setContentText("Click to turn off")
-            .setContentIntent(PendingIntent.getService(appContext, NOTIFICATION_RC, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT))
-            .setSmallIcon(R.drawable.ic_light_notification)
-            .setAutoCancel(true)
-            .setColor(ContextCompat.getColor(appContext, R.color.purple500))
-            .setWhen(0)
-            .setOngoing(false)
-            .build();
     notificationManagerCompat.notify(NOTIFICATION_ID, notification);
   }
 
