@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,8 @@ import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.tool.AsyncMapHelper;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
+import com.pyamsoft.pydroiddesign.fab.HideScrollFABBehavior;
+import com.pyamsoft.pydroiddesign.util.FABUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
 
@@ -72,8 +73,8 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   }
 
   private void setupFAB() {
-    ViewCompat.setElevation(binding.mainSettingsFab, AppUtil.convertToDP(getContext(), 6));
     binding.mainSettingsFab.setOnClickListener(view -> presenter.clickFAB());
+    FABUtil.setupFABBehavior(binding.mainSettingsFab, new HideScrollFABBehavior(10));
   }
 
   @Override public void onDestroyView() {
