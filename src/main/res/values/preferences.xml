@@ -62,12 +62,4 @@
   <string name="handle_volume_keys_summary_checked">Pressing volume keys while ZapTorch is open will not change the volume</string>
   <string name="handle_volume_keys_summary_unchecked">Pressing volume keys while ZapTorch is open will perform as normal</string>
 
-  <string name="clear_all_key">clear_all</string>
-  <string name="clear_all_title">Reset All Settings</string>
-  <string name="clear_all_summary">Reset all application settings to default</string>
-
-  <string name="upgrade_info_key">upgrade_info</string>
-  <string name="upgrade_info_title">Show Upgrade Information</string>
-  <string name="upgrade_info_summary">Show the most recent upgrade change log</string>
-
 </resources>
