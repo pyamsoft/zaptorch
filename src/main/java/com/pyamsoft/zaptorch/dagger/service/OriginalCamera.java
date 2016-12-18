@@ -90,7 +90,7 @@ import timber.log.Timber;
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     OffloaderHelper.cancel(cameraSubscription);
-    cameraSubscription = new AsyncOffloader<Camera>().onProcess(Camera::open).onError(throwable -> {
+    cameraSubscription = AsyncOffloader.newInstance(Camera::open).onError(throwable -> {
       clearCamera(throwable);
       startErrorExplanationActivity();
     }).onResult(item -> {
@@ -152,6 +152,7 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
+    super.release();
     if (camera != null && opened) {
       final Camera.Parameters params = camera.getParameters();
       params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);

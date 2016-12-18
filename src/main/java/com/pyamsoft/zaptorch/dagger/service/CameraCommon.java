@@ -20,19 +20,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.tool.ExecutedOffloader;
+import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import com.pyamsoft.zaptorch.app.service.camera.CameraInterface;
 import com.pyamsoft.zaptorch.app.service.error.CameraErrorExplanation;
+import timber.log.Timber;
 
 abstract class CameraCommon implements CameraInterface {
 
   @SuppressWarnings("WeakerAccess") @NonNull final Context appContext;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent errorExplain;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent permissionExplain;
+  @SuppressWarnings("WeakerAccess") @NonNull final Handler handler;
   @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private final Handler handler;
+  @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader errorSubscription;
   @Nullable private OnStateChangedCallback callback;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
@@ -50,10 +55,16 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   void startErrorExplanationActivity() {
-    final boolean show = interactor.shouldShowErrorDialog();
-    if (show) {
-      handler.post(() -> appContext.startActivity(errorExplain));
-    }
+    OffloaderHelper.cancel(errorSubscription);
+    errorSubscription = interactor.shouldShowErrorDialog()
+        .onResult(show -> {
+          if (show) {
+            handler.post(() -> appContext.startActivity(errorExplain));
+          }
+        })
+        .onError(throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"))
+        .onFinish(() -> OffloaderHelper.cancel(errorSubscription))
+        .execute();
   }
 
   void startPermissionExplanationActivity() {
@@ -78,5 +89,10 @@ abstract class CameraCommon implements CameraInterface {
     if (callback != null) {
       callback.onClosed();
     }
+  }
+
+  @CallSuper @Override public void release() {
+    OffloaderHelper.cancel(errorSubscription);
+    callback = null;
   }
 }
