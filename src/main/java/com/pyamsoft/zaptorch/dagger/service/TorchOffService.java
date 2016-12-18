@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.app.service;
+package com.pyamsoft.zaptorch.dagger.service;
 
-import com.pyamsoft.pydroid.presenter.Presenter;
+import android.app.IntentService;
+import android.content.Intent;
+import com.pyamsoft.zaptorch.app.service.VolumeMonitorService;
+import timber.log.Timber;
 
-public interface VolumeServicePresenter
-    extends Presenter<VolumeServicePresenter.VolumeServiceView> {
+public class TorchOffService extends IntentService {
 
-  void toggleTorch();
+  public TorchOffService() {
+    super(TorchOffService.class.getName());
+  }
 
-  void handleKeyEvent(int action, int keyCode);
-
-  interface VolumeServiceView {
+  @Override protected void onHandleIntent(Intent intent) {
+    try {
+      VolumeMonitorService.forceToggle();
+    } catch (IllegalStateException e) {
+      Timber.e(e, "onError");
+    }
   }
 }

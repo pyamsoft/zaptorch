@@ -37,7 +37,7 @@ public class VolumeMonitorService extends AccessibilityService
   @SuppressWarnings("WeakerAccess") @VisibleForTesting @CheckResult @NonNull
   static synchronized VolumeMonitorService getInstance() {
     if (instance == null) {
-      throw new NullPointerException("VolumeMonitorService instance is NULL");
+      throw new IllegalStateException("VolumeMonitorService instance is NULL");
     }
     //noinspection ConstantConditions
     return instance;
@@ -52,6 +52,10 @@ public class VolumeMonitorService extends AccessibilityService
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       getInstance().disableSelf();
     }
+  }
+
+  public static void forceToggle() {
+    getInstance().getPresenter().toggleTorch();
   }
 
   @CheckResult public static boolean isRunning() {
