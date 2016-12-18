@@ -100,9 +100,11 @@ dependencies {
   // Needs to compile support annotations into actual project
   annotationProcessor "com.android.support:support-annotations:$supportLib"
 
-  // PYDroid 4.13.0
+  // PYDroid 4.13.1
   debugCompile project(path: ":PYDroid", configuration: "debug")
   releaseCompile project(path: ":PYDroid", configuration: "release")
+  debugCompile project(path: ":PYDroidDesign", configuration: "debug")
+  releaseCompile project(path: ":PYDroidDesign", configuration: "release")
 }
 
 // AdView
