@@ -91,7 +91,8 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey);
+    PersistentCache.get()
+        .saveKey(outState, KEY_PRESENTER, loadedKey, SettingsFragmentPresenter.class);
     super.onSaveInstanceState(outState);
   }
 
