@@ -27,8 +27,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.pyamsoft.pydroid.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.app.PersistLoader;
-import com.pyamsoft.pydroid.sec.TamperActivity;
 import com.pyamsoft.pydroid.rating.RatingDialog;
+import com.pyamsoft.pydroid.sec.TamperActivity;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.NetworkUtil;
@@ -72,7 +72,7 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey);
+    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey, MainPresenter.class);
     super.onSaveInstanceState(outState);
   }
 

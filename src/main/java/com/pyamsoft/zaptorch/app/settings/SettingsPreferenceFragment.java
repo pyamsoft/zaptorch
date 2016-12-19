@@ -36,14 +36,14 @@ import timber.log.Timber;
 public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
     implements SettingsPreferenceFragmentPresenter.MainFragmentView {
 
-  @NonNull @Override protected AboutLibrariesFragment.Styling getAboutFragmentStyling() {
-    return AboutLibrariesFragment.Styling.DARK;
-  }
-
   @NonNull public static final String TAG = "MainFragment";
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
   private long loadedKey;
+
+  @NonNull @Override protected AboutLibrariesFragment.Styling getAboutFragmentStyling() {
+    return AboutLibrariesFragment.Styling.DARK;
+  }
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
     if (presenter == null) {
@@ -108,7 +108,8 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey);
+    PersistentCache.get()
+        .saveKey(outState, KEY_PRESENTER, loadedKey, SettingsPreferenceFragmentPresenter.class);
     super.onSaveInstanceState(outState);
   }
 
