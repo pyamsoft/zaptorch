@@ -27,7 +27,8 @@ public class VolumeServiceModule {
 
   public VolumeServiceModule(@NonNull ZapTorchModule.Provider provider) {
     interactor =
-        new VolumeServiceInteractorImpl(provider.provideContext(), provider.providePreferences());
+        new VolumeServiceInteractorImpl(provider.provideContext(), provider.providePreferences(),
+            provider.provideTorchOffServiceClass());
     presenter = new VolumeServicePresenterImpl(interactor);
   }
 

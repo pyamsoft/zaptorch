@@ -16,13 +16,13 @@
 
 package com.pyamsoft.zaptorchpresenter.service;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
@@ -30,7 +30,6 @@ import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorchpresenter.R;
 import com.pyamsoft.zaptorchpresenter.ZapTorchPreferences;
-import timber.log.Timber;
 
 class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
 
@@ -42,10 +41,10 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   private final int cameraApiMarshmallow;
   @NonNull private final Context appContext;
   @NonNull private final NotificationManagerCompat notificationManagerCompat;
-  @NonNull private final NotificationCompat.Builder builder;
-  @Nullable private Notification notification;
+  @NonNull private final Notification notification;
 
-  VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences) {
+  VolumeServiceInteractorImpl(@NonNull Context context, @NonNull ZapTorchPreferences preferences,
+      @NonNull Class<? extends IntentService> torchOffServiceClass) {
     this.appContext = context.getApplicationContext();
     this.preferences = preferences;
     notificationManagerCompat = NotificationManagerCompat.from(appContext);
@@ -55,12 +54,9 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
     cameraApiLollipop = 1;
     cameraApiMarshmallow = 2;
 
-    builder = new NotificationCompat.Builder(appContext);
-  }
-
-  @Override public void setTorchOffServiceClass(@NonNull Intent torchOff) {
-    notification = builder.setContentIntent(
-        PendingIntent.getService(appContext, NOTIFICATION_RC, torchOff,
+    final Intent intent = new Intent(appContext, torchOffServiceClass);
+    notification = new NotificationCompat.Builder(appContext).setContentIntent(
+        PendingIntent.getService(appContext, NOTIFICATION_RC, intent,
             PendingIntent.FLAG_UPDATE_CURRENT))
         .setContentTitle("Torch is On")
         .setContentText("Click to turn off")
@@ -97,11 +93,7 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
   }
 
   @Override public void onOpened() {
-    if (notification == null) {
-      Timber.e("Notification is NULL, cannot create");
-    } else {
-      notificationManagerCompat.notify(NOTIFICATION_ID, notification);
-    }
+    notificationManagerCompat.notify(NOTIFICATION_ID, notification);
   }
 
   @Override public void onClosed() {
