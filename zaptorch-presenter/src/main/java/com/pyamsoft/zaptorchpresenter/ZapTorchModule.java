@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorchpresenter;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
@@ -27,8 +28,9 @@ public class ZapTorchModule {
 
   @NonNull private final Provider provider;
 
-  public ZapTorchModule(final @NonNull Context context) {
-    this.provider = new Provider(context);
+  public ZapTorchModule(@NonNull Context context,
+      @NonNull Class<? extends IntentService> torchOffServiceClass) {
+    this.provider = new Provider(context, torchOffServiceClass);
   }
 
   @CheckResult @NonNull
@@ -48,10 +50,13 @@ public class ZapTorchModule {
 
     @NonNull private final Context appContext;
     @NonNull private final ZapTorchPreferences preferences;
+    @NonNull private final Class<? extends IntentService> torchOffServiceClass;
 
-    Provider(final @NonNull Context context) {
+    Provider(@NonNull Context context,
+        @NonNull Class<? extends IntentService> torchOffServiceClass) {
       appContext = context.getApplicationContext();
       preferences = new ZapTorchPreferencesImpl(context);
+      this.torchOffServiceClass = torchOffServiceClass;
     }
 
     @CheckResult @NonNull public Context provideContext() {
@@ -60,6 +65,10 @@ public class ZapTorchModule {
 
     @CheckResult @NonNull public ZapTorchPreferences providePreferences() {
       return preferences;
+    }
+
+    @CheckResult @NonNull public Class<? extends IntentService> provideTorchOffServiceClass() {
+      return torchOffServiceClass;
     }
   }
 }

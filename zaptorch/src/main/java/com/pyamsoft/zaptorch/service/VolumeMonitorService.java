@@ -104,8 +104,6 @@ public class VolumeMonitorService extends AccessibilityService
     }
 
     getPresenter().bindView(this);
-    getPresenter().setTorchOffServiceClass(
-        new Intent(getApplicationContext(), TorchOffService.class));
     setInstance(this);
   }
 

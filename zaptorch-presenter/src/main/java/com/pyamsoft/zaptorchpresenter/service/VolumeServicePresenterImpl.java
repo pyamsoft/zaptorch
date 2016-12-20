@@ -64,10 +64,6 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     }
   }
 
-  @Override public void setTorchOffServiceClass(@NonNull Intent torchOff) {
-    interactor.setTorchOffServiceClass(torchOff);
-  }
-
   @Override public void toggleTorch() {
     if (cameraInterface != null) {
       cameraInterface.toggleTorch();

@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.BuildConfigChecker;
 import com.pyamsoft.pydroid.IPYDroidApp;
 import com.pyamsoft.pydroid.SingleInitContentProvider;
+import com.pyamsoft.zaptorch.service.TorchOffService;
 import com.pyamsoft.zaptorchpresenter.Injector;
 import com.pyamsoft.zaptorchpresenter.ZapTorchModule;
 
@@ -44,7 +45,7 @@ public class ZapTorchSingleInitProvider extends SingleInitContentProvider
 
   @Override protected void onFirstCreate(@NonNull Context context) {
     super.onFirstCreate(context);
-    module = new ZapTorchModule(context);
+    module = new ZapTorchModule(context, TorchOffService.class);
   }
 
   @NonNull @Override public ZapTorchModule provideComponent() {

@@ -16,14 +16,11 @@
 
 package com.pyamsoft.zaptorchpresenter.service;
 
-import android.content.Intent;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.tool.Offloader;
 
 interface VolumeServiceInteractor extends CameraInterface.OnStateChangedCallback {
-
-  void setTorchOffServiceClass(@NonNull Intent torchOff);
 
   @CheckResult @NonNull Offloader<Long> getButtonDelayTime();
 

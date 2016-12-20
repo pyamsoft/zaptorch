@@ -23,8 +23,6 @@ import com.pyamsoft.pydroid.presenter.Presenter;
 public interface VolumeServicePresenter
     extends Presenter<VolumeServicePresenter.VolumeServiceView> {
 
-  void setTorchOffServiceClass(@NonNull Intent torchOff);
-
   void toggleTorch();
 
   void handleKeyEvent(int action, int keyCode);
