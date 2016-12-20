@@ -1,1 +1,1 @@
-include ':zaptorch'
+include ':zaptorch', ':zaptorch-presenter'

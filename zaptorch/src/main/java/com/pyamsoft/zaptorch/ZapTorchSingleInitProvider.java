@@ -22,7 +22,8 @@ import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.BuildConfigChecker;
 import com.pyamsoft.pydroid.IPYDroidApp;
 import com.pyamsoft.pydroid.SingleInitContentProvider;
-import com.pyamsoft.zaptorch.dagger.ZapTorchModule;
+import com.pyamsoft.zaptorchpresenter.Injector;
+import com.pyamsoft.zaptorchpresenter.ZapTorchModule;
 
 public class ZapTorchSingleInitProvider extends SingleInitContentProvider
     implements IPYDroidApp<ZapTorchModule> {

@@ -17,14 +17,16 @@
 
 <resources>
 
-  <string-array name="camera_api">
-    <item name="api_old">Old Camera API</item>
-    <item name="api_lollipop">Lollipop Camera API</item>
-  </string-array>
+  <string name="camera_api_default">0</string>
+  <string name="camera_api_key">camera_api</string>
 
-  <string-array name="camera_api_entries">
-    <item name="api_old">0</item>
-    <item name="api_lollipop">1</item>
-  </string-array>
+  <string name="double_press_delay_key">double_press_delay</string>
+  <string name="double_press_delay_default">500</string>
+
+  <bool name="display_camera_errors_default">true</bool>
+  <string name="display_camera_errors_key">display_camera_errors</string>
+
+  <bool name="handle_volume_keys_default">true</bool>
+  <string name="handle_volume_keys_key">handle_volume_keys</string>
 
 </resources>
