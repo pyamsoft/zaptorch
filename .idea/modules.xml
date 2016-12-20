@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ZapTorch.iml" filepath="$PROJECT_DIR$/ZapTorch.iml" />
       <module fileurl="file://$PROJECT_DIR$/zaptorch/zaptorch.iml" filepath="$PROJECT_DIR$/zaptorch/zaptorch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zaptorch-presenter/zaptorch-presenter.iml" filepath="$PROJECT_DIR$/zaptorch-presenter/zaptorch-presenter.iml" />
     </modules>
   </component>
 </project>

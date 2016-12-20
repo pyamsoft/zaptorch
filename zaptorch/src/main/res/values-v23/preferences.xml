@@ -29,6 +29,4 @@
     <item name="api_marshmallow">2</item>
   </string-array>
 
-  <string name="camera_api_default">2</string>
-
 </resources>

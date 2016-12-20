@@ -18,8 +18,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pyamsoft.zaptorch">
 
-  <uses-permission android:name="android.permission.CAMERA"/>
-
   <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
 
   <application
@@ -29,7 +27,7 @@
       android:theme="@style/Theme.ZapTorch">
 
     <activity
-        android:name=".app.main.MainActivity"
+        android:name=".main.MainActivity"
         android:launchMode="singleTask"
         android:theme="@style/Theme.ZapTorch.Splash"
         >
@@ -41,7 +39,7 @@
     </activity>
 
     <activity
-        android:name=".app.service.error.CameraErrorExplanation"
+        android:name=".service.error.CameraErrorExplanation"
         android:excludeFromRecents="true"
         android:exported="false"
         android:launchMode="singleInstance"
@@ -50,7 +48,7 @@
         android:windowSoftInputMode="stateHidden"/>
 
     <service
-        android:name=".app.service.VolumeMonitorService"
+        android:name=".service.VolumeMonitorService"
         android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
       <intent-filter>
         <action android:name="android.accessibilityservice.AccessibilityService"/>
@@ -61,7 +59,7 @@
     </service>
 
     <service
-        android:name=".dagger.service.TorchOffService"
+        android:name=".service.TorchOffService"
         android:exported="false"/>
 
     <provider

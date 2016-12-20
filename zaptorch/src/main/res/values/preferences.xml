@@ -41,23 +41,15 @@
     <item name="api_old">0</item>
   </string-array>
 
-  <string name="camera_api_default">0</string>
-  <string name="camera_api_key">camera_api</string>
   <string name="camera_api_title">Camera API</string>
   <string name="camera_api_summary">Select between available Camera APIs</string>
 
   <string name="double_press_delay_title">Double Press Duration</string>
   <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
-  <string name="double_press_delay_key">double_press_delay</string>
-  <string name="double_press_delay_default">500</string>
 
-  <bool name="display_camera_errors_default">true</bool>
-  <string name="display_camera_errors_key">display_camera_errors</string>
   <string name="display_camera_errors_title">Display Camera Errors</string>
   <string name="display_camera_errors_summary">Show a dialog when Camera errors occur</string>
 
-  <bool name="handle_volume_keys_default">true</bool>
-  <string name="handle_volume_keys_key">handle_volume_keys</string>
   <string name="handle_volume_keys_title">Handle Volume KeyPress</string>
   <string name="handle_volume_keys_summary_checked">Pressing volume keys while ZapTorch is open will not change the volume</string>
   <string name="handle_volume_keys_summary_unchecked">Pressing volume keys while ZapTorch is open will perform as normal</string>

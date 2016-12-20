@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/zaptorch" />
+            <option value="$PROJECT_DIR$/zaptorch-presenter" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
