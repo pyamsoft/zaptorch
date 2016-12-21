@@ -133,7 +133,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
     Timber.d("received completed clearAll event. Kill Process");
     try {
       VolumeMonitorService.finish();
-    } catch (NullPointerException e) {
+    } catch (IllegalStateException e) {
       Timber.e(e, "Expected exception when Service is NULL");
     }
 
