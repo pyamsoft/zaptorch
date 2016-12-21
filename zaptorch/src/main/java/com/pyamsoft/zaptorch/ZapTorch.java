@@ -32,7 +32,7 @@ public class ZapTorch extends PYDroidApplication {
   @CheckResult @NonNull public static RefWatcher getRefWatcher(@NonNull Fragment fragment) {
     final Application application = fragment.getActivity().getApplication();
     if (application instanceof ZapTorch) {
-      return ((ZapTorch) application).getRefWatcher();
+      return ((ZapTorch) application).getWatcher();
     } else {
       throw new IllegalStateException("Application is not ZapTorch");
     }
@@ -48,7 +48,7 @@ public class ZapTorch extends PYDroidApplication {
     refWatcher = RefWatcher.DISABLED;
   }
 
-  @NonNull @CheckResult RefWatcher getRefWatcher() {
+  @NonNull @CheckResult private RefWatcher getWatcher() {
     if (refWatcher == null) {
       throw new IllegalStateException("RefWatcher is NULL");
     }

@@ -64,7 +64,7 @@ abstract class CameraCommon implements CameraInterface {
 
   void startPermissionExplanationActivity() {
     OffloaderHelper.cancel(permissionSubscription);
-    permissionSubscription = AsyncOffloader.newInstance(() -> true)
+    permissionSubscription = AsyncOffloader.newInstance(() -> Boolean.TRUE)
         .onResult(show -> {
           if (show) {
             notifyCallbackOnError(permissionExplain);

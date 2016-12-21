@@ -40,7 +40,7 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
     return AsyncOffloader.newInstance(() -> {
       Timber.d("Clear all preferences");
       preferences.clearAll();
-      return true;
+      return Boolean.TRUE;
     });
   }
 
