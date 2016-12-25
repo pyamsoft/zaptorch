@@ -36,8 +36,8 @@ import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
-import com.pyamsoft.zaptorchpresenter.settings.SettingsFragmentPresenter;
-import com.pyamsoft.zaptorchpresenter.settings.SettingsFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenter;
+import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenterLoader;
 
 public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
 

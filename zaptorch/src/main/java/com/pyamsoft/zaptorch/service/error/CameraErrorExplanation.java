@@ -20,10 +20,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import com.pyamsoft.pydroid.util.AppUtil;
 
-import static com.pyamsoft.zaptorchpresenter.service.CameraInterface.DIALOG_WHICH;
-import static com.pyamsoft.zaptorchpresenter.service.CameraInterface.TYPE_ERROR;
-import static com.pyamsoft.zaptorchpresenter.service.CameraInterface.TYPE_NONE;
-import static com.pyamsoft.zaptorchpresenter.service.CameraInterface.TYPE_PERMISSION;
+import static com.pyamsoft.zaptorch.presenter.service.CameraInterface.DIALOG_WHICH;
+import static com.pyamsoft.zaptorch.presenter.service.CameraInterface.TYPE_ERROR;
+import static com.pyamsoft.zaptorch.presenter.service.CameraInterface.TYPE_NONE;
+import static com.pyamsoft.zaptorch.presenter.service.CameraInterface.TYPE_PERMISSION;
 
 public class CameraErrorExplanation extends AppCompatActivity {
 

@@ -37,8 +37,8 @@ import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
 import com.pyamsoft.zaptorch.settings.SettingsFragment;
-import com.pyamsoft.zaptorchpresenter.main.MainPresenter;
-import com.pyamsoft.zaptorchpresenter.main.MainPresenterLoader;
+import com.pyamsoft.zaptorch.presenter.main.MainPresenter;
+import com.pyamsoft.zaptorch.presenter.main.MainPresenterLoader;
 
 public class MainActivity extends TamperActivity implements MainPresenter.MainActivityView {
 
