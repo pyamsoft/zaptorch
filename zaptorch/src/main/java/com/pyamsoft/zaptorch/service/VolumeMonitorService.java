@@ -26,8 +26,8 @@ import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation;
-import com.pyamsoft.zaptorchpresenter.Injector;
-import com.pyamsoft.zaptorchpresenter.service.VolumeServicePresenter;
+import com.pyamsoft.zaptorch.presenter.Injector;
+import com.pyamsoft.zaptorch.presenter.service.VolumeServicePresenter;
 import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService

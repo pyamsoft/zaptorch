@@ -32,8 +32,8 @@ import com.pyamsoft.pydroidui.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
-import com.pyamsoft.zaptorchpresenter.settings.SettingsPreferenceFragmentPresenter;
-import com.pyamsoft.zaptorchpresenter.settings.SettingsPreferenceFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenter;
+import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenterLoader;
 import timber.log.Timber;
 
 public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
