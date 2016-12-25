@@ -39,6 +39,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/blank"
         app:elevation="6dp"
+        app:fabSize="auto"
         app:pressedTranslationZ="12dp"
         />
 
