@@ -34,8 +34,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion 19
     targetSdkVersion 25
-    versionCode 52
-    versionName "1.5.5"
+    versionCode 53
+    versionName "1.5.6pre1"
 
     // For vector drawables
     vectorDrawables.useSupportLibrary = true
@@ -96,10 +96,10 @@ dependencies {
   testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
 
   // PYDroid
-  compile("com.github.pyamsoft.pydroid:pydroiddesign:$pydroid@aar") {
+  compile("com.github.pyamsoft.pydroid:pydroid-design:$pydroid@aar") {
     transitive = true
   }
-  compile("com.github.pyamsoft.pydroid:pydroidui:$pydroid@aar") {
+  compile("com.github.pyamsoft.pydroid:pydroid-ui:$pydroid@aar") {
     transitive = true
   }
   compile project(":zaptorch-presenter")

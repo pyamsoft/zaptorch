@@ -62,7 +62,7 @@ class VolumeServiceInteractorImpl implements VolumeServiceInteractor {
         .setContentText("Click to turn off")
         .setSmallIcon(R.drawable.ic_light_notification)
         .setAutoCancel(true)
-        .setColor(ContextCompat.getColor(appContext, R.color.colorPrimary))
+        .setColor(ContextCompat.getColor(appContext, R.color.purple500))
         .setWhen(0)
         .setOngoing(false)
         .build();
