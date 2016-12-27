@@ -17,11 +17,12 @@
 package com.pyamsoft.zaptorch.presenter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.ApplicationPreferences;
 
-class ZapTorchPreferencesImpl extends ApplicationPreferences implements ZapTorchPreferences {
+class ZapTorchPreferencesImpl implements ZapTorchPreferences {
 
   @NonNull private final String doublePressDelayKey;
   @NonNull private final String displayCameraErrorsKey;
@@ -29,12 +30,13 @@ class ZapTorchPreferencesImpl extends ApplicationPreferences implements ZapTorch
   @NonNull private final String doublePressDelayDefault;
   @NonNull private final String cameraApiKey;
   @NonNull private final String cameraApiDefault;
+  @NonNull private final ApplicationPreferences preferences;
   private final boolean displayCameraErrorsDefault;
   private final boolean handleVolumeKeysDefault;
 
   ZapTorchPreferencesImpl(@NonNull Context context) {
-    super(context);
     final Context appContext = context.getApplicationContext();
+    preferences = ApplicationPreferences.getInstance(appContext);
     final Resources res = appContext.getResources();
     doublePressDelayKey = appContext.getString(R.string.double_press_delay_key);
     displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key);
@@ -47,22 +49,32 @@ class ZapTorchPreferencesImpl extends ApplicationPreferences implements ZapTorch
   }
 
   @Override public final long getButtonDelayTime() {
-    return Long.parseLong(get(doublePressDelayKey, doublePressDelayDefault));
+    return Long.parseLong(preferences.get(doublePressDelayKey, doublePressDelayDefault));
   }
 
   @Override public final boolean shouldShowErrorDialog() {
-    return get(displayCameraErrorsKey, displayCameraErrorsDefault);
+    return preferences.get(displayCameraErrorsKey, displayCameraErrorsDefault);
   }
 
   @Override public final boolean shouldHandleKeys() {
-    return get(handleVolumeKeysKey, handleVolumeKeysDefault);
+    return preferences.get(handleVolumeKeysKey, handleVolumeKeysDefault);
   }
 
   @Override public final int getCameraApi() {
-    return Integer.parseInt(get(cameraApiKey, cameraApiDefault));
+    return Integer.parseInt(preferences.get(cameraApiKey, cameraApiDefault));
   }
 
   @Override public void clearAll() {
-    clear(true);
+    preferences.clear(true);
+  }
+
+  @Override
+  public void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    preferences.register(listener);
+  }
+
+  @Override
+  public void unregister(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    preferences.unregister(listener);
   }
 }
