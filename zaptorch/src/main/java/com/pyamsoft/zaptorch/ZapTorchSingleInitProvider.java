@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.BuildConfigChecker;
 import com.pyamsoft.pydroid.IPYDroidApp;
 import com.pyamsoft.pydroid.SingleInitContentProvider;
+import com.pyamsoft.pydroid.ui.UiLicenses;
 import com.pyamsoft.zaptorch.service.TorchOffService;
 import com.pyamsoft.zaptorch.presenter.Injector;
 import com.pyamsoft.zaptorch.presenter.ZapTorchModule;
@@ -60,6 +61,6 @@ public class ZapTorchSingleInitProvider extends SingleInitContentProvider
   }
 
   @Override public void insertCustomLicensesIntoMap() {
-
+    UiLicenses.addLicenses();
   }
 }
