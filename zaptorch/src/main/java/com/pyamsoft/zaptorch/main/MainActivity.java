@@ -26,19 +26,19 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment;
+import com.pyamsoft.pydroid.ui.rating.RatingDialog;
+import com.pyamsoft.pydroid.ui.sec.TamperActivity;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.NetworkUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
-import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment;
-import com.pyamsoft.pydroid.ui.rating.RatingDialog;
-import com.pyamsoft.pydroid.ui.sec.TamperActivity;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
-import com.pyamsoft.zaptorch.settings.SettingsFragment;
 import com.pyamsoft.zaptorch.presenter.main.MainPresenter;
 import com.pyamsoft.zaptorch.presenter.main.MainPresenterLoader;
+import com.pyamsoft.zaptorch.settings.SettingsFragment;
 
 public class MainActivity extends TamperActivity implements MainPresenter.MainActivityView {
 
@@ -169,8 +169,8 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {
-    final String line1 = "FEATURE: Notification to quickly turn of a lit torch";
-    final String line2 = "CHANGE: Some new settings to play with";
+    final String line1 = "BUGFIX: Fix code related to in app billing";
+    final String line2 = "BUGFIX: Smaller memory footprint";
     return new String[] { line1, line2 };
   }
 
