@@ -74,6 +74,7 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     setupFAB();
+    displayPreferenceFragment();
   }
 
   private void setupFAB() {
@@ -111,7 +112,6 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
     super.onResume();
     setActionBarUpEnabled(false);
     presenter.loadFABFromState(VolumeMonitorService.isRunning());
-    displayPreferenceFragment();
   }
 
   @Override public void onStop() {
