@@ -24,20 +24,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
+import com.pyamsoft.pydroid.design.util.FABUtil;
 import com.pyamsoft.pydroid.tool.AsyncDrawable;
 import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.tool.AsyncMapHelper;
+import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
-import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
-import com.pyamsoft.pydroid.design.util.FABUtil;
-import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
-import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenter;
 import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 
 public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
 
