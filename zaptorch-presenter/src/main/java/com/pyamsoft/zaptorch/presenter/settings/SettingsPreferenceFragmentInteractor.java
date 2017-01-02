@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.presenter.settings;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.app.ApplicationPreferences;
+import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.tool.Offloader;
 
 interface SettingsPreferenceFragmentInteractor {
@@ -26,10 +26,10 @@ interface SettingsPreferenceFragmentInteractor {
   @CheckResult @NonNull Offloader<Boolean> clearAll();
 
   void registerCameraApiListener(
-      @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener);
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener);
 
   void unregisterCameraApiListener(
-      @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener);
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener);
 
   @CheckResult @NonNull String getCameraApiKey();
 }

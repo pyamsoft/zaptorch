@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.presenter.settings;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.app.ApplicationPreferences;
+import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorch.presenter.R;
@@ -45,13 +45,13 @@ class SettingsPreferenceFragmentInteractorImpl implements SettingsPreferenceFrag
   }
 
   @Override public void registerCameraApiListener(
-      @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
     unregisterCameraApiListener(cameraApiListener);
     preferences.register(cameraApiListener);
   }
 
   @Override public void unregisterCameraApiListener(
-      @NonNull ApplicationPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
     preferences.unregister(cameraApiListener);
   }
 

@@ -25,15 +25,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.view.View;
 import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
-import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment;
-import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
-import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenter;
 import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenterLoader;
+import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 import timber.log.Timber;
 
 public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
@@ -43,10 +42,6 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
   private long loadedKey;
-
-  @NonNull @Override protected AboutLibrariesFragment.Styling getAboutFragmentStyling() {
-    return AboutLibrariesFragment.Styling.DARK;
-  }
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
     if (presenter == null) {
@@ -99,7 +94,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   }
 
   @Override protected int getRootViewContainer() {
-    return R.id.main_container;
+    return R.id.main_viewport;
   }
 
   @NonNull @Override protected String getApplicationName() {
