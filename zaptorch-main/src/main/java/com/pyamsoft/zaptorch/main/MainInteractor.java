@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.main;
+
+import android.support.annotation.CheckResult;
+
+interface MainInteractor {
+
+  @CheckResult boolean shouldHandleKeys();
+}

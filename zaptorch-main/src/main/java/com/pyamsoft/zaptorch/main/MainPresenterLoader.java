@@ -14,5 +14,15 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.main;
+
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.zaptorch.base.Injector;
+
+class MainPresenterLoader extends PersistLoader<MainPresenter> {
+
+  @NonNull @Override public MainPresenter loadPersistent() {
+    return new MainModule(Injector.get().provideComponent().getProvider()).getPresenter();
+  }
+}

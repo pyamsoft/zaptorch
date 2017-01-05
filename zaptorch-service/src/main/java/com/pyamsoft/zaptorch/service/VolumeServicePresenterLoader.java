@@ -14,5 +14,15 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.service;
+
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.zaptorch.base.Injector;
+
+class VolumeServicePresenterLoader extends PersistLoader<VolumeServicePresenter> {
+
+  @NonNull @Override public VolumeServicePresenter loadPersistent() {
+    return new VolumeServiceModule(Injector.get().provideComponent().getProvider()).getPresenter();
+  }
+}

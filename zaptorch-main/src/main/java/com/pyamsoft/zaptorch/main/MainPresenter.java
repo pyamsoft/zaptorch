@@ -14,5 +14,15 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.main;
+
+import android.support.annotation.CheckResult;
+import com.pyamsoft.pydroid.presenter.Presenter;
+
+interface MainPresenter extends Presenter<MainPresenter.MainActivityView> {
+
+  @CheckResult boolean shouldHandleKeycode(int keyCode);
+
+  interface MainActivityView {
+  }
+}

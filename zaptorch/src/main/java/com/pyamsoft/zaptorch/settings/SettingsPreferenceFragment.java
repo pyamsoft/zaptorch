@@ -30,8 +30,6 @@ import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
-import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenter;
-import com.pyamsoft.zaptorch.presenter.settings.SettingsPreferenceFragmentPresenterLoader;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 import timber.log.Timber;
 

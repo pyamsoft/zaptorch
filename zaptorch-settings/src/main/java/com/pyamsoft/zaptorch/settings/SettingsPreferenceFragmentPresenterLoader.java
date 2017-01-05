@@ -14,5 +14,17 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.settings;
+
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.zaptorch.base.Injector;
+
+class SettingsPreferenceFragmentPresenterLoader
+    extends PersistLoader<SettingsPreferenceFragmentPresenter> {
+
+  @NonNull @Override public SettingsPreferenceFragmentPresenter loadPersistent() {
+    return new SettingsPreferenceFragmentModule(
+        Injector.get().provideComponent().getProvider()).getPreferenceFragmentPresenter();
+  }
+}

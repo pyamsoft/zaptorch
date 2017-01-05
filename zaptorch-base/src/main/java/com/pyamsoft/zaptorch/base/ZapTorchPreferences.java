@@ -14,5 +14,25 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.base;
+
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
+
+public interface ZapTorchPreferences {
+
+  @CheckResult long getButtonDelayTime();
+
+  @CheckResult boolean shouldShowErrorDialog();
+
+  @CheckResult boolean shouldHandleKeys();
+
+  @CheckResult int getCameraApi();
+
+  void clearAll();
+
+  void register(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
+
+  void unregister(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
+}

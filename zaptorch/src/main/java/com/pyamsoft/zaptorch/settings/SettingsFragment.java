@@ -35,8 +35,6 @@ import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
-import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenter;
-import com.pyamsoft.zaptorch.presenter.settings.SettingsFragmentPresenterLoader;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 
 public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
