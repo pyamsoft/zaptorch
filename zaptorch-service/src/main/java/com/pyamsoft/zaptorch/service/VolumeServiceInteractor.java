@@ -14,5 +14,17 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.service;
+
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.tool.Offloader;
+
+interface VolumeServiceInteractor extends CameraInterface.OnStateChangedCallback {
+
+  @CheckResult @NonNull Offloader<Long> getButtonDelayTime();
+
+  @CheckResult @NonNull Offloader<Boolean> shouldShowErrorDialog();
+
+  @CheckResult @NonNull CameraInterface camera();
+}

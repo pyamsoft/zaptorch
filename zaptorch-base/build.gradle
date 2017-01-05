@@ -52,6 +52,9 @@ dependencies {
 
   retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:2.3.0"
 
-  compile project(":zaptorch-base")
+  // PYDroid
+  compile("com.github.pyamsoft.pydroid:pydroid:$pydroid@aar") {
+    transitive = true
+  }
 }
 

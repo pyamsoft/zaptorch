@@ -14,5 +14,26 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.settings;
+
+import com.pyamsoft.pydroid.presenter.Presenter;
+
+interface SettingsFragmentPresenter extends Presenter<SettingsFragmentPresenter.View> {
+
+  void clickFABServiceRunning();
+
+  void clickFABServiceIdle();
+
+  void loadFABFromState(boolean serviceRunning);
+
+  interface View {
+
+    void onFABEnabled();
+
+    void onFABDisabled();
+
+    void onCreateAccessibilityDialog();
+
+    void onDisplayServiceInfo();
+  }
+}

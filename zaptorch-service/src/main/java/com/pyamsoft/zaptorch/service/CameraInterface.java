@@ -14,5 +14,30 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.service;
+
+import android.content.Intent;
+import android.support.annotation.NonNull;
+
+public interface CameraInterface {
+
+  @NonNull String DIALOG_WHICH = "dialog";
+  int TYPE_NONE = -1;
+  int TYPE_PERMISSION = 0;
+  int TYPE_ERROR = 1;
+
+  void toggleTorch();
+
+  void release();
+
+  void setOnStateChangedCallback(@NonNull OnStateChangedCallback callback);
+
+  interface OnStateChangedCallback {
+
+    void onOpened();
+
+    void onClosed();
+
+    void onError(@NonNull Intent errorIntent);
+  }
+}

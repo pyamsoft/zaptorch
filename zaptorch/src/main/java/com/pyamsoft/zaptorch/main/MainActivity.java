@@ -36,8 +36,6 @@ import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
-import com.pyamsoft.zaptorch.presenter.main.MainPresenter;
-import com.pyamsoft.zaptorch.presenter.main.MainPresenterLoader;
 import com.pyamsoft.zaptorch.settings.SettingsFragment;
 
 public class MainActivity extends TamperActivity implements MainPresenter.MainActivityView {

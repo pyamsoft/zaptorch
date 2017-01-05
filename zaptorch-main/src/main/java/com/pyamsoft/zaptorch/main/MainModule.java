@@ -14,5 +14,22 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.main;
+
+import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.base.ZapTorchModule;
+
+class MainModule {
+
+  @NonNull private final MainPresenter presenter;
+
+  public MainModule(@NonNull ZapTorchModule.Provider provider) {
+    final MainInteractor interactor = new MainInteractorImpl(provider.providePreferences());
+    presenter = new MainPresenterImpl(interactor);
+  }
+
+  @CheckResult @NonNull public MainPresenter getPresenter() {
+    return presenter;
+  }
+}

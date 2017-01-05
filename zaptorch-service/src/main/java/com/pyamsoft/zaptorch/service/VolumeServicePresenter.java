@@ -14,5 +14,20 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.service;
+
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.presenter.Presenter;
+
+interface VolumeServicePresenter extends Presenter<VolumeServicePresenter.VolumeServiceView> {
+
+  void toggleTorch();
+
+  void handleKeyEvent(int action, int keyCode);
+
+  interface VolumeServiceView {
+
+    void onCameraOpenError(@NonNull Intent errorIntent);
+  }
+}

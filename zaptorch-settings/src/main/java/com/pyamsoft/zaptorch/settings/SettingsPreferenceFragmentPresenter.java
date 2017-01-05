@@ -14,5 +14,23 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.settings;
+
+import com.pyamsoft.pydroid.presenter.Presenter;
+
+interface SettingsPreferenceFragmentPresenter
+    extends Presenter<SettingsPreferenceFragmentPresenter.MainFragmentView> {
+
+  void confirmSettingsClear();
+
+  void processClearRequest();
+
+  interface MainFragmentView {
+
+    void onConfirmAttempt();
+
+    void onClearAll();
+
+    void onCameraApiChanged();
+  }
+}

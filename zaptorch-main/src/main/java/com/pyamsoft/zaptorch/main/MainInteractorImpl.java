@@ -14,5 +14,20 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.main;
+
+import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+
+class MainInteractorImpl implements MainInteractor {
+
+  @NonNull private final ZapTorchPreferences preferences;
+
+  MainInteractorImpl(@NonNull ZapTorchPreferences preferences) {
+    this.preferences = preferences;
+  }
+
+  @Override public boolean shouldHandleKeys() {
+    return preferences.shouldHandleKeys();
+  }
+}

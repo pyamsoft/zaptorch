@@ -34,8 +34,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion 19
     targetSdkVersion 25
-    versionCode 56
-    versionName "1.5.7"
+    versionCode 57
+    versionName "1.5.8pre1"
 
     // For vector drawables
     vectorDrawables.useSupportLibrary = true
@@ -102,7 +102,9 @@ dependencies {
   compile("com.github.pyamsoft.pydroid:pydroid-ui:$pydroid@aar") {
     transitive = true
   }
-  compile project(":zaptorch-presenter")
+  compile project(":zaptorch-main")
+  compile project(":zaptorch-service")
+  compile project(":zaptorch-settings")
 }
 
 // AdView
