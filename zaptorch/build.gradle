@@ -26,14 +26,16 @@ apply plugin: "com.getkeepsafe.dexcount"
 apply plugin: "net.ltgt.errorprone"
 apply plugin: "me.tatarka.retrolambda"
 
+//noinspection GroovyMissingReturnStatement
 android {
-  compileSdkVersion 25
+  compileSdkVersion rootProject.ext.maxSdk
   buildToolsVersion "$buildTools"
 
+  //noinspection GroovyMissingReturnStatement
   defaultConfig {
     applicationId "com.pyamsoft.zaptorch"
-    minSdkVersion 19
-    targetSdkVersion 25
+    minSdkVersion rootProject.ext.minSdk
+    targetSdkVersion rootProject.ext.maxSdk
     versionCode 57
     versionName "1.5.8pre1"
 
@@ -85,7 +87,7 @@ android {
 dependencies {
   compile fileTree(dir: "libs", include: ["*.jar"])
 
-  retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:2.3.0"
+  retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:${rootProject.ext.retrolambda}"
 
   // Firebase Crash
   compile "com.google.firebase:firebase-crash:$firebase"
