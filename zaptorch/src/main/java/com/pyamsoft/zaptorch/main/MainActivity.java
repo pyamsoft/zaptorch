@@ -25,14 +25,13 @@ import android.support.v7.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.cache.PersistentCache;
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment;
 import com.pyamsoft.pydroid.ui.rating.RatingDialog;
 import com.pyamsoft.pydroid.ui.sec.TamperActivity;
 import com.pyamsoft.pydroid.util.AnimUtil;
 import com.pyamsoft.pydroid.util.AppUtil;
 import com.pyamsoft.pydroid.util.NetworkUtil;
-import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.BuildConfig;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding;
@@ -40,40 +39,25 @@ import com.pyamsoft.zaptorch.settings.SettingsFragment;
 
 public class MainActivity extends TamperActivity implements MainPresenter.MainActivityView {
 
-  @NonNull private static final String KEY_PRESENTER = "key_main_presenter";
+  @NonNull private static final String TAG = "MainActivity";
+  @NonNull private static final String KEY_PRESENTER = TAG + "key_main_presenter";
   @NonNull private static final String PRIVACY_POLICY_URL =
       "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html";
   @SuppressWarnings("WeakerAccess") MainPresenter presenter;
   private ActivityMainBinding binding;
-  private long loadedKey;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(R.style.Theme_ZapTorch);
     super.onCreate(savedInstanceState);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
 
-    loadedKey = PersistentCache.get()
-        .load(KEY_PRESENTER, savedInstanceState, new PersistLoader.Callback<MainPresenter>() {
-          @NonNull @Override public PersistLoader<MainPresenter> createLoader() {
-            return new MainPresenterLoader();
-          }
-
-          @Override public void onPersistentLoaded(@NonNull MainPresenter persist) {
-            presenter = persist;
-          }
-        });
-
+    presenter = PersistentCache.load(this, KEY_PRESENTER, new MainPresenterLoader());
     setupAppBar();
   }
 
   @Override protected int bindActivityToView() {
     binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
     return R.id.ad_view;
-  }
-
-  @Override protected void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get().saveKey(outState, KEY_PRESENTER, loadedKey, MainPresenter.class);
-    super.onSaveInstanceState(outState);
   }
 
   @Override protected void onStart() {
@@ -89,9 +73,6 @@ public class MainActivity extends TamperActivity implements MainPresenter.MainAc
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (!isChangingConfigurations()) {
-      PersistentCache.get().unload(loadedKey);
-    }
     binding.unbind();
   }
 

@@ -24,10 +24,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.view.View;
-import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.cache.PersistentCache;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
-import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
@@ -39,7 +38,6 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @NonNull public static final String TAG = "MainFragment";
   @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
   @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
-  private long loadedKey;
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
     if (presenter == null) {
@@ -51,19 +49,8 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    loadedKey = PersistentCache.get()
-        .load(KEY_PRESENTER, savedInstanceState,
-            new PersistLoader.Callback<SettingsPreferenceFragmentPresenter>() {
-              @NonNull @Override
-              public PersistLoader<SettingsPreferenceFragmentPresenter> createLoader() {
-                return new SettingsPreferenceFragmentPresenterLoader();
-              }
-
-              @Override
-              public void onPersistentLoaded(@NonNull SettingsPreferenceFragmentPresenter persist) {
-                presenter = persist;
-              }
-            });
+    presenter = PersistentCache.load(getActivity(), KEY_PRESENTER,
+        new SettingsPreferenceFragmentPresenterLoader());
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -103,17 +90,8 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
     return R.xml.preferences;
   }
 
-  @Override public void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get()
-        .saveKey(outState, KEY_PRESENTER, loadedKey, SettingsPreferenceFragmentPresenter.class);
-    super.onSaveInstanceState(outState);
-  }
-
   @Override public void onDestroy() {
     super.onDestroy();
-    if (!getActivity().isChangingConfigurations()) {
-      PersistentCache.get().unload(loadedKey);
-    }
     ZapTorch.getRefWatcher(this).watch(this);
   }
 

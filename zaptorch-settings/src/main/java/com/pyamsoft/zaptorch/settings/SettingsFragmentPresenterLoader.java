@@ -17,12 +17,12 @@
 package com.pyamsoft.zaptorch.settings;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.FuncNone;
 import com.pyamsoft.zaptorch.base.Injector;
 
-class SettingsFragmentPresenterLoader extends PersistLoader<SettingsFragmentPresenter> {
+class SettingsFragmentPresenterLoader implements FuncNone<SettingsFragmentPresenter> {
 
-  @NonNull @Override public SettingsFragmentPresenter loadPersistent() {
+  @NonNull @Override public SettingsFragmentPresenter call() {
     return new SettingsPreferenceFragmentModule(
         Injector.get().provideComponent().getProvider()).getSettingsFragmentPresenter();
   }

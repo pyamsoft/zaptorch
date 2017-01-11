@@ -98,7 +98,7 @@ public class VolumeMonitorService extends AccessibilityService
     super.onServiceConnected();
 
     if (presenter == null) {
-      presenter = new VolumeServicePresenterLoader().loadPersistent();
+      presenter = new VolumeServicePresenterLoader().call();
     }
 
     getPresenter().bindView(this);
