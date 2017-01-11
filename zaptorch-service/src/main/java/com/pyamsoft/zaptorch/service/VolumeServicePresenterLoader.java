@@ -17,12 +17,12 @@
 package com.pyamsoft.zaptorch.service;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.FuncNone;
 import com.pyamsoft.zaptorch.base.Injector;
 
-class VolumeServicePresenterLoader extends PersistLoader<VolumeServicePresenter> {
+class VolumeServicePresenterLoader implements FuncNone<VolumeServicePresenter> {
 
-  @NonNull @Override public VolumeServicePresenter loadPersistent() {
+  @NonNull @Override public VolumeServicePresenter call() {
     return new VolumeServiceModule(Injector.get().provideComponent().getProvider()).getPresenter();
   }
 }

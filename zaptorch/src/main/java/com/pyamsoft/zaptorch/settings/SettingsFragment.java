@@ -23,7 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.pyamsoft.pydroid.app.PersistLoader;
+import com.pyamsoft.pydroid.cache.PersistentCache;
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
 import com.pyamsoft.pydroid.design.util.FABUtil;
 import com.pyamsoft.pydroid.tool.AsyncDrawable;
@@ -31,7 +31,6 @@ import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.tool.AsyncMapHelper;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
-import com.pyamsoft.pydroid.util.PersistentCache;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
@@ -40,26 +39,15 @@ import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
 
   @NonNull public static final String TAG = "MainSettingsFragment";
-  @NonNull private static final String KEY_PRESENTER = "key_settings_presenter";
+  @NonNull private static final String KEY_PRESENTER = TAG + "key_settings_presenter";
   @SuppressWarnings("WeakerAccess") SettingsFragmentPresenter presenter;
   private FragmentMainBinding binding;
-  private long loadedKey;
   @Nullable private AsyncMap.Entry fabTask;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    loadedKey = PersistentCache.get()
-        .load(KEY_PRESENTER, savedInstanceState,
-            new PersistLoader.Callback<SettingsFragmentPresenter>() {
-
-              @NonNull @Override public PersistLoader<SettingsFragmentPresenter> createLoader() {
-                return new SettingsFragmentPresenterLoader();
-              }
-
-              @Override public void onPersistentLoaded(@NonNull SettingsFragmentPresenter persist) {
-                presenter = persist;
-              }
-            });
+    presenter =
+        PersistentCache.load(getActivity(), KEY_PRESENTER, new SettingsFragmentPresenterLoader());
   }
 
   @Nullable @Override
@@ -94,16 +82,7 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @Override public void onDestroy() {
     super.onDestroy();
-    if (!getActivity().isChangingConfigurations()) {
-      PersistentCache.get().unload(loadedKey);
-    }
     ZapTorch.getRefWatcher(this).watch(this);
-  }
-
-  @Override public void onSaveInstanceState(Bundle outState) {
-    PersistentCache.get()
-        .saveKey(outState, KEY_PRESENTER, loadedKey, SettingsFragmentPresenter.class);
-    super.onSaveInstanceState(outState);
   }
 
   @Override public void onResume() {
