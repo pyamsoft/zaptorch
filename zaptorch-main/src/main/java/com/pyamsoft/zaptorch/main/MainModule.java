@@ -20,16 +20,15 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
-class MainModule {
+public class MainModule {
 
-  @NonNull private final MainPresenter presenter;
+  @NonNull private final MainInteractor interactor;
 
-  public MainModule(@NonNull ZapTorchModule.Provider provider) {
-    final MainInteractor interactor = new MainInteractorImpl(provider.providePreferences());
-    presenter = new MainPresenterImpl(interactor);
+  MainModule(@NonNull ZapTorchModule module) {
+    interactor = new MainInteractorImpl(module.providePreferences());
   }
 
-  @CheckResult @NonNull public MainPresenter getPresenter() {
-    return presenter;
+  @CheckResult @NonNull MainPresenter getPresenter() {
+    return new MainPresenterImpl(interactor);
   }
 }

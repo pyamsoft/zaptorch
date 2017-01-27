@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings;
+package com.pyamsoft.zaptorch.main;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.FuncNone;
-import com.pyamsoft.zaptorch.base.Injector;
+import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
-class SettingsFragmentPresenterLoader implements FuncNone<SettingsFragmentPresenter> {
+public class MainComponent {
 
-  @NonNull @Override public SettingsFragmentPresenter call() {
-    return new SettingsPreferenceFragmentModule(
-        Injector.get().provideComponent().getProvider()).getSettingsFragmentPresenter();
+  @NonNull private final MainModule mainModule;
+
+  public MainComponent(@NonNull ZapTorchModule module) {
+    mainModule = new MainModule(module);
+  }
+
+  void inject(MainActivity activity) {
+    activity.presenter = mainModule.getPresenter();
   }
 }

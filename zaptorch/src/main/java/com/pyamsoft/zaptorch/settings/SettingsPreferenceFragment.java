@@ -19,38 +19,41 @@ package com.pyamsoft.zaptorch.settings;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.view.View;
-import com.pyamsoft.pydroid.cache.PersistentCache;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.zaptorch.Injector;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 import timber.log.Timber;
 
-public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment
-    implements SettingsPreferenceFragmentPresenter.MainFragmentView {
+public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragment {
 
-  @NonNull public static final String TAG = "MainFragment";
-  @NonNull private static final String KEY_PRESENTER = "key_main_fragment_presenter";
+  @NonNull public static final String TAG = "SettingsPreferenceFragment";
   @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
 
-  @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPresenter() {
-    if (presenter == null) {
-      throw new NullPointerException("Presenter is NULL");
-    }
+  void processClearRequest() {
+    presenter.processClearRequest(() -> {
+      Timber.d("received completed clearAll event. Kill Process");
+      try {
+        VolumeMonitorService.finish();
+      } catch (IllegalStateException e) {
+        Timber.e(e, "Expected exception when Service is NULL");
+      }
 
-    return presenter;
+      final ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext()
+          .getSystemService(Context.ACTIVITY_SERVICE);
+      activityManager.clearApplicationUserData();
+    });
   }
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    presenter = PersistentCache.load(getActivity(), KEY_PRESENTER,
-        new SettingsPreferenceFragmentPresenterLoader());
+    Injector.get().provideComponent().plusSettingsComponent().inject(this);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -58,14 +61,19 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
     final Preference zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key));
     zapTorchExplain.setOnPreferenceClickListener(preference -> {
-      AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), new HowToDialog(), "howto");
+      AppUtil.guaranteeSingleDialogFragment(getActivity(), new HowToDialog(), "howto");
       return true;
     });
   }
 
   @Override public void onStart() {
     super.onStart();
-    presenter.bindView(this);
+    presenter.bindView(null);
+    presenter.listenForCameraChanges(() -> {
+      if (VolumeMonitorService.isRunning()) {
+        VolumeMonitorService.changeCameraApi();
+      }
+    });
   }
 
   @Override public void onStop() {
@@ -74,7 +82,9 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   }
 
   @Override protected boolean onClearAllPreferenceClicked() {
-    presenter.confirmSettingsClear();
+    presenter.confirmSettingsClear(
+        () -> AppUtil.guaranteeSingleDialogFragment(getActivity(), new ConfirmationDialog(),
+            "confirm_dialog"));
     return super.onClearAllPreferenceClicked();
   }
 
@@ -93,29 +103,5 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @Override public void onDestroy() {
     super.onDestroy();
     ZapTorch.getRefWatcher(this).watch(this);
-  }
-
-  @Override public void onConfirmAttempt() {
-    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), new ConfirmationDialog(),
-        "confirm_dialog");
-  }
-
-  @Override public void onClearAll() {
-    Timber.d("received completed clearAll event. Kill Process");
-    try {
-      VolumeMonitorService.finish();
-    } catch (IllegalStateException e) {
-      Timber.e(e, "Expected exception when Service is NULL");
-    }
-
-    final ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext()
-        .getSystemService(Context.ACTIVITY_SERVICE);
-    activityManager.clearApplicationUserData();
-  }
-
-  @Override public void onCameraApiChanged() {
-    if (VolumeMonitorService.isRunning()) {
-      VolumeMonitorService.changeCameraApi();
-    }
   }
 }

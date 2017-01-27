@@ -42,7 +42,7 @@ public class CameraErrorExplanation extends ActivityBase {
         fragment = null;
     }
     if (fragment != null) {
-      AppUtil.guaranteeSingleDialogFragment(getSupportFragmentManager(), fragment, "error");
+      AppUtil.guaranteeSingleDialogFragment(this, fragment, "error");
     }
   }
 }

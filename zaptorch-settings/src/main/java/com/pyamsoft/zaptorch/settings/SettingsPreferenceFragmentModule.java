@@ -22,21 +22,18 @@ import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
 class SettingsPreferenceFragmentModule {
 
-  @NonNull private final SettingsPreferenceFragmentPresenter preferenceFragmentPresenter;
+  @NonNull private final SettingsPreferenceFragmentInteractor interactor;
 
-  public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule.Provider provider) {
-    final SettingsPreferenceFragmentInteractor interactor =
-        new SettingsPreferenceFragmentInteractorImpl(provider.provideContext(),
-            provider.providePreferences());
-    preferenceFragmentPresenter = new SettingsPreferenceFragmentPresenterImpl(interactor);
+  SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
+    interactor = new SettingsPreferenceFragmentInteractorImpl(module.provideContext(),
+        module.providePreferences());
   }
 
-  @CheckResult @NonNull public SettingsFragmentPresenter getSettingsFragmentPresenter() {
+  @CheckResult @NonNull SettingsFragmentPresenter getSettingsFragmentPresenter() {
     return new SettingsFragmentPresenterImpl();
   }
 
-  @CheckResult @NonNull
-  public SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
-    return preferenceFragmentPresenter;
+  @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
+    return new SettingsPreferenceFragmentPresenterImpl(interactor);
   }
 }

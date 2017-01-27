@@ -19,10 +19,7 @@ package com.pyamsoft.zaptorch.main;
 import android.support.annotation.CheckResult;
 import com.pyamsoft.pydroid.presenter.Presenter;
 
-interface MainPresenter extends Presenter<MainPresenter.MainActivityView> {
+interface MainPresenter extends Presenter<Presenter.Empty> {
 
   @CheckResult boolean shouldHandleKeycode(int keyCode);
-
-  interface MainActivityView {
-  }
 }

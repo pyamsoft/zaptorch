@@ -23,7 +23,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.pyamsoft.pydroid.cache.PersistentCache;
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
 import com.pyamsoft.pydroid.design.util.FABUtil;
 import com.pyamsoft.pydroid.tool.AsyncDrawable;
@@ -31,23 +30,22 @@ import com.pyamsoft.pydroid.tool.AsyncMap;
 import com.pyamsoft.pydroid.tool.AsyncMapHelper;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
 import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.zaptorch.Injector;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
 import com.pyamsoft.zaptorch.service.VolumeMonitorService;
 
-public class SettingsFragment extends ActionBarFragment implements SettingsFragmentPresenter.View {
+public class SettingsFragment extends ActionBarFragment {
 
   @NonNull public static final String TAG = "MainSettingsFragment";
-  @NonNull private static final String KEY_PRESENTER = TAG + "key_settings_presenter";
   @SuppressWarnings("WeakerAccess") SettingsFragmentPresenter presenter;
-  private FragmentMainBinding binding;
-  @Nullable private AsyncMap.Entry fabTask;
+  FragmentMainBinding binding;
+  @Nullable AsyncMap.Entry fabTask;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    presenter =
-        PersistentCache.load(getActivity(), KEY_PRESENTER, new SettingsFragmentPresenterLoader());
+    Injector.get().provideComponent().plusSettingsComponent().inject(this);
   }
 
   @Nullable @Override
@@ -66,9 +64,12 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   private void setupFAB() {
     binding.mainSettingsFab.setOnClickListener(v -> {
       if (VolumeMonitorService.isRunning()) {
-        presenter.clickFABServiceRunning();
+        presenter.clickFABServiceRunning(
+            () -> AppUtil.guaranteeSingleDialogFragment(getActivity(), new ServiceInfoDialog(),
+                "servce_info"));
       } else {
-        presenter.clickFABServiceIdle();
+        presenter.clickFABServiceIdle(() -> AppUtil.guaranteeSingleDialogFragment(getActivity(),
+            new AccessibilityRequestDialog(), "accessibility"));
       }
     });
     FABUtil.setupFABBehavior(binding.mainSettingsFab, new HideScrollFABBehavior(10));
@@ -88,7 +89,19 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
   @Override public void onResume() {
     super.onResume();
     setActionBarUpEnabled(false);
-    presenter.loadFABFromState(VolumeMonitorService.isRunning());
+    presenter.loadFABFromState(VolumeMonitorService.isRunning(),
+        new SettingsFragmentPresenter.FABStateCallback() {
+          @Override public void onFABEnabled() {
+            AsyncMapHelper.unsubscribe(fabTask);
+            fabTask = AsyncDrawable.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
+          }
+
+          @Override public void onFABDisabled() {
+            AsyncMapHelper.unsubscribe(fabTask);
+            fabTask =
+                AsyncDrawable.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
+          }
+        });
   }
 
   @Override public void onStop() {
@@ -98,7 +111,7 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
 
   @Override public void onStart() {
     super.onStart();
-    presenter.bindView(this);
+    presenter.bindView(null);
   }
 
   private void displayPreferenceFragment() {
@@ -109,25 +122,5 @@ public class SettingsFragment extends ActionBarFragment implements SettingsFragm
               SettingsPreferenceFragment.TAG)
           .commit();
     }
-  }
-
-  @Override public void onFABEnabled() {
-    AsyncMapHelper.unsubscribe(fabTask);
-    fabTask = AsyncDrawable.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
-  }
-
-  @Override public void onFABDisabled() {
-    AsyncMapHelper.unsubscribe(fabTask);
-    fabTask = AsyncDrawable.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
-  }
-
-  @Override public void onCreateAccessibilityDialog() {
-    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), new AccessibilityRequestDialog(),
-        "accessibility");
-  }
-
-  @Override public void onDisplayServiceInfo() {
-    AppUtil.guaranteeSingleDialogFragment(getFragmentManager(), new ServiceInfoDialog(),
-        "servce_info");
   }
 }

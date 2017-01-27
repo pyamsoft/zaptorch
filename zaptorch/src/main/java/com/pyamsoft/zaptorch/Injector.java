@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base;
+package com.pyamsoft.zaptorch;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.IPYDroidApp;
 
-public class Injector implements IPYDroidApp<ZapTorchModule> {
+public class Injector implements IPYDroidApp<ZapTorchComponent> {
 
   @Nullable private static volatile Injector instance = null;
-  @NonNull private final ZapTorchModule component;
+  @NonNull private final ZapTorchComponent component;
 
-  private Injector(@NonNull ZapTorchModule component) {
+  private Injector(@NonNull ZapTorchComponent component) {
     this.component = component;
   }
 
-  static void set(@Nullable ZapTorchModule component) {
+  static void set(@Nullable ZapTorchComponent component) {
     if (component == null) {
       throw new NullPointerException("Cannot set a NULL component");
     }
@@ -46,7 +46,7 @@ public class Injector implements IPYDroidApp<ZapTorchModule> {
     return instance;
   }
 
-  @NonNull @Override public ZapTorchModule provideComponent() {
+  @NonNull @Override public ZapTorchComponent provideComponent() {
     return component;
   }
 }

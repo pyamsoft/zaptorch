@@ -35,18 +35,18 @@ buildscript {
     // Gradle memory is set in gradle.properties to 2GB
     heapSize = "1g"
 
-    retrolambda = "2.4.0"
+    retrolambda = "2.5.0"
     supportLib = "25.1.0"
     firebase = "10.0.1"
-    leakCanary = "1.4-beta2"
-    pydroid = "5.7.0"
+    leakCanary = "1.5"
+    pydroid = "6.0.0"
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:2.2.3'
 
     // Retro lambda
-    classpath 'me.tatarka:gradle-retrolambda:3.3.1'
+    classpath 'me.tatarka:gradle-retrolambda:3.5.0'
 
     // Dex count
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.0'

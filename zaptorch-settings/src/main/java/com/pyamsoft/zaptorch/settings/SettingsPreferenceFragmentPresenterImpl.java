@@ -20,37 +20,23 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
+import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import com.pyamsoft.pydroid.tool.ExecutedOffloader;
 import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import timber.log.Timber;
 
-class SettingsPreferenceFragmentPresenterImpl
-    extends PresenterBase<SettingsPreferenceFragmentPresenter.MainFragmentView>
+class SettingsPreferenceFragmentPresenterImpl extends PresenterBase<Presenter.Empty>
     implements SettingsPreferenceFragmentPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @NonNull private final OnRegisteredSharedPreferenceChangeListener cameraApiListener;
   @SuppressWarnings("WeakerAccess") @NonNull ExecutedOffloader clearAllEvent =
       new ExecutedOffloader.Empty();
+  private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenterImpl(
       @NonNull SettingsPreferenceFragmentInteractor interactor) {
     this.interactor = interactor;
-    this.cameraApiListener = new OnRegisteredSharedPreferenceChangeListener() {
-      @Override
-      public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (interactor.getCameraApiKey().equals(key)) {
-          Timber.d("Camera API has changed");
-          getView(MainFragmentView::onCameraApiChanged);
-        }
-      }
-    };
-  }
-
-  @Override protected void onBind() {
-    super.onBind();
-    registerCameraApiListener();
   }
 
   @Override protected void onUnbind() {
@@ -68,17 +54,32 @@ class SettingsPreferenceFragmentPresenterImpl
     interactor.unregisterCameraApiListener(cameraApiListener);
   }
 
-  @Override public void confirmSettingsClear() {
-    getView(MainFragmentView::onConfirmAttempt);
+  @Override public void confirmSettingsClear(@NonNull ConfirmationCallback callback) {
+    callback.onConfirmAttempt();
   }
 
-  @Override public void processClearRequest() {
-    OffloaderHelper.cancel(clearAllEvent);
+  @Override public void processClearRequest(@NonNull ClearRequestCallback callback) {
     Timber.d("Received all cleared confirmation event, clear All");
+    OffloaderHelper.cancel(clearAllEvent);
     clearAllEvent = interactor.clearAll()
         .onError(throwable -> Timber.e(throwable, "onError clearAll"))
-        .onResult(item -> getView(MainFragmentView::onClearAll))
+        .onResult(aBoolean -> callback.onClearAll())
         .onFinish(() -> OffloaderHelper.cancel(clearAllEvent))
         .execute();
+  }
+
+  @Override public void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
+    if (cameraApiListener == null) {
+      this.cameraApiListener = new OnRegisteredSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+          if (interactor.getCameraApiKey().equals(key)) {
+            Timber.d("Camera API has changed");
+            callback.onCameraApiChanged();
+          }
+        }
+      };
+    }
+    registerCameraApiListener();
   }
 }

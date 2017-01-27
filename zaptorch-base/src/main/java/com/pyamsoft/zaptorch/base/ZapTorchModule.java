@@ -23,40 +23,26 @@ import android.support.annotation.NonNull;
 
 public class ZapTorchModule {
 
-  @NonNull private final Provider provider;
+  @NonNull private final Context appContext;
+  @NonNull private final ZapTorchPreferences preferences;
+  @NonNull private final Class<? extends IntentService> torchOffServiceClass;
 
   public ZapTorchModule(@NonNull Context context,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
-    this.provider = new Provider(context, torchOffServiceClass);
+    appContext = context.getApplicationContext();
+    preferences = new ZapTorchPreferencesImpl(context);
+    this.torchOffServiceClass = torchOffServiceClass;
   }
 
-  @NonNull @CheckResult public Provider getProvider() {
-    return provider;
+  @CheckResult @NonNull public Context provideContext() {
+    return appContext;
   }
 
-  public static class Provider {
+  @CheckResult @NonNull public ZapTorchPreferences providePreferences() {
+    return preferences;
+  }
 
-    @NonNull private final Context appContext;
-    @NonNull private final ZapTorchPreferences preferences;
-    @NonNull private final Class<? extends IntentService> torchOffServiceClass;
-
-    Provider(@NonNull Context context,
-        @NonNull Class<? extends IntentService> torchOffServiceClass) {
-      appContext = context.getApplicationContext();
-      preferences = new ZapTorchPreferencesImpl(context);
-      this.torchOffServiceClass = torchOffServiceClass;
-    }
-
-    @CheckResult @NonNull public Context provideContext() {
-      return appContext;
-    }
-
-    @CheckResult @NonNull public ZapTorchPreferences providePreferences() {
-      return preferences;
-    }
-
-    @CheckResult @NonNull public Class<? extends IntentService> provideTorchOffServiceClass() {
-      return torchOffServiceClass;
-    }
+  @CheckResult @NonNull public Class<? extends IntentService> provideTorchOffServiceClass() {
+    return torchOffServiceClass;
   }
 }
