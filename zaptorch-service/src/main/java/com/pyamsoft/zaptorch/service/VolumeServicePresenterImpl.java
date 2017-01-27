@@ -27,10 +27,10 @@ import com.pyamsoft.pydroid.tool.OffloaderHelper;
 import timber.log.Timber;
 
 class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.VolumeServiceView>
-    implements VolumeServicePresenter, CameraInterface.OnStateChangedCallback {
+    implements VolumeServicePresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final Handler handler;
-  @NonNull private final VolumeServiceInteractor interactor;
+  @SuppressWarnings("WeakerAccess") @NonNull final VolumeServiceInteractor interactor;
   @SuppressWarnings("WeakerAccess") boolean pressed;
   @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader delaySubscription;
   @Nullable private CameraInterface cameraInterface;
@@ -82,11 +82,23 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     }
   }
 
-  @Override protected void onBind() {
-    super.onBind();
+  @Override protected void onBind(@Nullable VolumeServiceView view) {
+    super.onBind(view);
     pressed = false;
     cameraInterface = interactor.camera();
-    cameraInterface.setOnStateChangedCallback(this);
+    cameraInterface.setOnStateChangedCallback(new CameraInterface.OnStateChangedCallback() {
+      @Override public void onOpened() {
+        interactor.onOpened();
+      }
+
+      @Override public void onClosed() {
+        interactor.onClosed();
+      }
+
+      @Override public void onError(@NonNull Intent errorIntent) {
+        ifViewExists(volumeServiceView -> volumeServiceView.onCameraOpenError(errorIntent));
+      }
+    });
   }
 
   @Override protected void onUnbind() {
@@ -99,17 +111,5 @@ class VolumeServicePresenterImpl extends PresenterBase<VolumeServicePresenter.Vo
     OffloaderHelper.cancel(delaySubscription);
     handler.removeCallbacksAndMessages(null);
     pressed = false;
-  }
-
-  @Override public void onOpened() {
-    interactor.onOpened();
-  }
-
-  @Override public void onClosed() {
-    interactor.onClosed();
-  }
-
-  @Override public void onError(@NonNull Intent errorIntent) {
-    getView(volumeServiceView -> volumeServiceView.onCameraOpenError(errorIntent));
   }
 }

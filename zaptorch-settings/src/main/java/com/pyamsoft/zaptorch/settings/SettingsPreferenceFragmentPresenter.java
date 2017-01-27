@@ -16,21 +16,29 @@
 
 package com.pyamsoft.zaptorch.settings;
 
+import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.presenter.Presenter;
 
-interface SettingsPreferenceFragmentPresenter
-    extends Presenter<SettingsPreferenceFragmentPresenter.MainFragmentView> {
+interface SettingsPreferenceFragmentPresenter extends Presenter<Presenter.Empty> {
 
-  void confirmSettingsClear();
+  void confirmSettingsClear(@NonNull ConfirmationCallback callback);
 
-  void processClearRequest();
+  void processClearRequest(@NonNull ClearRequestCallback callback);
 
-  interface MainFragmentView {
+  void listenForCameraChanges(@NonNull CameraChangeCallback callback);
 
-    void onConfirmAttempt();
-
-    void onClearAll();
+  interface CameraChangeCallback {
 
     void onCameraApiChanged();
+  }
+
+  interface ConfirmationCallback {
+
+    void onConfirmAttempt();
+  }
+
+  interface ClearRequestCallback {
+
+    void onClearAll();
   }
 }

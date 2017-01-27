@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
+import com.pyamsoft.zaptorch.Injector;
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation;
 import timber.log.Timber;
 
@@ -32,7 +33,7 @@ public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
   @Nullable private static volatile VolumeMonitorService instance;
-  @Nullable private VolumeServicePresenter presenter;
+  VolumeServicePresenter presenter;
 
   @SuppressWarnings("WeakerAccess") @VisibleForTesting @CheckResult @NonNull
   static synchronized VolumeMonitorService getInstance() {
@@ -96,11 +97,7 @@ public class VolumeMonitorService extends AccessibilityService
 
   @Override protected void onServiceConnected() {
     super.onServiceConnected();
-
-    if (presenter == null) {
-      presenter = new VolumeServicePresenterLoader().call();
-    }
-
+    Injector.get().provideComponent().plusVolumeServiceComponent().inject(this);
     getPresenter().bindView(this);
     setInstance(this);
   }
@@ -109,11 +106,6 @@ public class VolumeMonitorService extends AccessibilityService
     getPresenter().unbindView();
     setInstance(null);
     return super.onUnbind(intent);
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    getPresenter().destroy();
   }
 
   @Override public void onCameraOpenError(@NonNull Intent errorIntent) {

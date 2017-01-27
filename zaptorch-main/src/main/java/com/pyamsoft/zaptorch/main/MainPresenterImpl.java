@@ -19,11 +19,11 @@ package com.pyamsoft.zaptorch.main;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
+import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.PresenterBase;
 import timber.log.Timber;
 
-class MainPresenterImpl extends PresenterBase<MainPresenter.MainActivityView>
-    implements MainPresenter {
+class MainPresenterImpl extends PresenterBase<Presenter.Empty> implements MainPresenter {
 
   @NonNull private final MainInteractor interactor;
 

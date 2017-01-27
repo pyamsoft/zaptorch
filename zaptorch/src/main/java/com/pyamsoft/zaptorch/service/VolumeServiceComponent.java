@@ -17,12 +17,17 @@
 package com.pyamsoft.zaptorch.service;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.FuncNone;
-import com.pyamsoft.zaptorch.base.Injector;
+import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
-class VolumeServicePresenterLoader implements FuncNone<VolumeServicePresenter> {
+public class VolumeServiceComponent {
 
-  @NonNull @Override public VolumeServicePresenter call() {
-    return new VolumeServiceModule(Injector.get().provideComponent().getProvider()).getPresenter();
+  @NonNull private final VolumeServiceModule serviceModule;
+
+  public VolumeServiceComponent(@NonNull ZapTorchModule module) {
+    serviceModule = new VolumeServiceModule(module);
+  }
+
+  void inject(@NonNull VolumeMonitorService service) {
+    service.presenter = serviceModule.getPresenter();
   }
 }

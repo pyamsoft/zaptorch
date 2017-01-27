@@ -22,16 +22,15 @@ import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
 class VolumeServiceModule {
 
-  @NonNull private final VolumeServicePresenter presenter;
+  @NonNull private final VolumeServiceInteractor interactor;
 
-  public VolumeServiceModule(@NonNull ZapTorchModule.Provider provider) {
-    final VolumeServiceInteractor interactor =
-        new VolumeServiceInteractorImpl(provider.provideContext(), provider.providePreferences(),
-            provider.provideTorchOffServiceClass());
-    presenter = new VolumeServicePresenterImpl(interactor);
+  VolumeServiceModule(@NonNull ZapTorchModule module) {
+    interactor =
+        new VolumeServiceInteractorImpl(module.provideContext(), module.providePreferences(),
+            module.provideTorchOffServiceClass());
   }
 
-  @NonNull @CheckResult public VolumeServicePresenter getPresenter() {
-    return presenter;
+  @NonNull @CheckResult VolumeServicePresenter getPresenter() {
+    return new VolumeServicePresenterImpl(interactor);
   }
 }
