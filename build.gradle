@@ -30,16 +30,13 @@ buildscript {
     minSdk = 19
     maxSdk = 25
     buildTools = "25.0.2"
-
-    // https://medium.com/@skaliakoudas/decreasing-build-times-by-decreasing-gradle-memory-requirements-7fcafc6d98ea#.wblqdn1xf
-    // Gradle memory is set in gradle.properties to 2GB
     heapSize = "4g"
 
     retrolambda = "2.5.0"
-    supportLib = "25.1.0"
+    supportLib = "25.1.1"
     firebase = "10.0.1"
     leakCanary = "1.5"
-    pydroid = "6.0.0"
+    pydroid = "6.1.0"
   }
 
   dependencies {
