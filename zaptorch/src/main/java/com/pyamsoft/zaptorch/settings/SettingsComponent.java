@@ -23,8 +23,8 @@ public class SettingsComponent {
 
   @NonNull private final SettingsPreferenceFragmentModule serviceModule;
 
-  public SettingsComponent(@NonNull ZapTorchModule module) {
-    serviceModule = new SettingsPreferenceFragmentModule(module);
+  public SettingsComponent(@NonNull SettingsPreferenceFragmentModule serviceModule) {
+    this.serviceModule = serviceModule;
   }
 
   void inject(@NonNull SettingsFragment fragment) {

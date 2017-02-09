@@ -66,7 +66,7 @@ public class VolumeMonitorService extends AccessibilityService
   public static void changeCameraApi() {
     final VolumeMonitorService currentInstance = getInstance();
     // Simulate the lifecycle for destroying and re-creating the presenter
-    Timber.d("Change camera API");
+    Timber.d("Change setupCamera API");
     currentInstance.getPresenter().unbindView();
     currentInstance.getPresenter().bindView(currentInstance);
   }

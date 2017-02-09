@@ -83,10 +83,10 @@ import timber.log.Timber;
 
   @Override public void toggleTorch() {
     if (flashCameraId == null) {
-      Timber.e("No camera with Flash");
+      Timber.e("No setupCamera with Flash");
       startErrorExplanationActivity();
     } else {
-      Timber.d("Open camera");
+      Timber.d("Open setupCamera");
       final int result = cameraCallback.accessCamera(getAppContext(), flashCameraId);
       switch (result) {
         case TYPE_ERROR:
@@ -156,7 +156,7 @@ import timber.log.Timber;
         }
 
         if (cameraDevice != null) {
-          Timber.d("close camera device");
+          Timber.d("close setupCamera device");
           cameraDevice.close();
           cameraDevice = null;
         }
@@ -170,12 +170,12 @@ import timber.log.Timber;
       if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
           == PackageManager.PERMISSION_GRANTED) {
         try {
-          Timber.d("Has camera permission, attempt to access");
+          Timber.d("Has setupCamera permission, attempt to access");
           if (opened) {
-            Timber.d("Close opened camera");
+            Timber.d("Close opened setupCamera");
             close();
           } else {
-            Timber.d("Open closed camera");
+            Timber.d("Open closed setupCamera");
             manager.openCamera(id, this, null);
           }
           return TYPE_NONE;
@@ -184,7 +184,7 @@ import timber.log.Timber;
           return TYPE_ERROR;
         }
       } else {
-        Timber.e("Missing camera permission");
+        Timber.e("Missing setupCamera permission");
         return TYPE_PERMISSION;
       }
     }
@@ -207,7 +207,7 @@ import timber.log.Timber;
         } else {
           Timber.d("using cached smallest size");
         }
-        // The camera session recycles the surface texture, so we should not have to
+        // The setupCamera session recycles the surface texture, so we should not have to
         @SuppressLint("Recycle") final SurfaceTexture surfaceTexture = new SurfaceTexture(1);
         surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
 

@@ -23,8 +23,8 @@ public class MainComponent {
 
   @NonNull private final MainModule mainModule;
 
-  public MainComponent(@NonNull ZapTorchModule module) {
-    mainModule = new MainModule(module);
+  public MainComponent(@NonNull MainModule mainModule) {
+    this.mainModule = mainModule;
   }
 
   void inject(MainActivity activity) {

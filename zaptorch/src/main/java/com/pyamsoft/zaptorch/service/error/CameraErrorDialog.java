@@ -27,9 +27,9 @@ public class CameraErrorDialog extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     return new AlertDialog.Builder(getActivity()).setMessage(
-        "ZapTorch was unable to access your devices camera."
-            + " Please make sure that your device has a camera with Flash functionality."
-            + " Please make sure no other application is using the camera and try again.")
+        "ZapTorch was unable to access your devices setupCamera."
+            + " Please make sure that your device has a setupCamera with Flash functionality."
+            + " Please make sure no other application is using the setupCamera and try again.")
         .setPositiveButton("Okay", (dialogInterface, i) -> dialogInterface.dismiss())
         .create();
   }

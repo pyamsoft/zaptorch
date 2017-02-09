@@ -20,20 +20,20 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
-class SettingsPreferenceFragmentModule {
+public class SettingsPreferenceFragmentModule {
 
   @NonNull private final SettingsPreferenceFragmentInteractor interactor;
 
-  SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
-    interactor = new SettingsPreferenceFragmentInteractorImpl(module.provideContext(),
+  public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
+    interactor = new SettingsPreferenceFragmentInteractor(module.provideContext(),
         module.providePreferences());
   }
 
   @CheckResult @NonNull SettingsFragmentPresenter getSettingsFragmentPresenter() {
-    return new SettingsFragmentPresenterImpl();
+    return new SettingsFragmentPresenter();
   }
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
-    return new SettingsPreferenceFragmentPresenterImpl(interactor);
+    return new SettingsPreferenceFragmentPresenter(interactor);
   }
 }

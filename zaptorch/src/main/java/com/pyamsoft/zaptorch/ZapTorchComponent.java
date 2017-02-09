@@ -20,8 +20,11 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 import com.pyamsoft.zaptorch.main.MainComponent;
+import com.pyamsoft.zaptorch.main.MainModule;
 import com.pyamsoft.zaptorch.service.VolumeServiceComponent;
+import com.pyamsoft.zaptorch.service.VolumeServiceModule;
 import com.pyamsoft.zaptorch.settings.SettingsComponent;
+import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule;
 
 public class ZapTorchComponent {
 
@@ -29,14 +32,18 @@ public class ZapTorchComponent {
   @NonNull private final VolumeServiceComponent volumeComponent;
   @NonNull private final SettingsComponent settingsComponent;
 
-  ZapTorchComponent(@NonNull ZapTorchModule zapTorchModule) {
-    mainComponent = new MainComponent(zapTorchModule);
-    volumeComponent = new VolumeServiceComponent(zapTorchModule);
-    settingsComponent = new SettingsComponent(zapTorchModule);
+  private ZapTorchComponent(@NonNull ZapTorchModule zapTorchModule) {
+    MainModule mainModule = new MainModule(zapTorchModule);
+    VolumeServiceModule volumeServiceModule = new VolumeServiceModule(zapTorchModule);
+    SettingsPreferenceFragmentModule settingsPreferenceFragmentModule =
+        new SettingsPreferenceFragmentModule(zapTorchModule);
+    mainComponent = new MainComponent(mainModule);
+    volumeComponent = new VolumeServiceComponent(volumeServiceModule);
+    settingsComponent = new SettingsComponent(settingsPreferenceFragmentModule);
   }
 
-  @CheckResult @NonNull static Builder builder() {
-    return new Builder();
+  @CheckResult @NonNull static ZapTorchComponent withModule(@NonNull ZapTorchModule module) {
+    return new ZapTorchComponent(module);
   }
 
   @CheckResult @NonNull public MainComponent plusMainComponent() {
@@ -49,23 +56,5 @@ public class ZapTorchComponent {
 
   @CheckResult @NonNull public SettingsComponent plusSettingsComponent() {
     return settingsComponent;
-  }
-
-  public static class Builder {
-
-    private ZapTorchModule zapTorchModule;
-
-    @CheckResult @NonNull Builder zapTorchModule(@NonNull ZapTorchModule module) {
-      zapTorchModule = module;
-      return this;
-    }
-
-    @CheckResult @NonNull ZapTorchComponent build() {
-      if (zapTorchModule == null) {
-        throw new IllegalStateException("ZapTorchModule cannot be NULL");
-      }
-
-      return new ZapTorchComponent(zapTorchModule);
-    }
   }
 }

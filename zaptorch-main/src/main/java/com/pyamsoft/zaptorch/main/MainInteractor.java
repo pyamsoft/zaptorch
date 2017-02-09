@@ -16,9 +16,18 @@
 
 package com.pyamsoft.zaptorch.main;
 
-import android.support.annotation.CheckResult;
+import android.support.annotation.NonNull;
+import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 
-interface MainInteractor {
+class MainInteractor {
 
-  @CheckResult boolean shouldHandleKeys();
+  @NonNull private final ZapTorchPreferences preferences;
+
+  MainInteractor(@NonNull ZapTorchPreferences preferences) {
+    this.preferences = preferences;
+  }
+
+  public boolean shouldHandleKeys() {
+    return preferences.shouldHandleKeys();
+  }
 }

@@ -20,8 +20,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.BuildConfigChecker;
-import com.pyamsoft.pydroid.SingleInitContentProvider;
-import com.pyamsoft.pydroid.ui.UiLicenses;
+import com.pyamsoft.pydroid.ui.SingleInitContentProvider;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 import com.pyamsoft.zaptorch.service.TorchOffService;
 
@@ -36,17 +35,12 @@ public class ZapTorchSingleInitProvider extends SingleInitContentProvider {
   }
 
   @Override protected void onInstanceCreated(@NonNull Context context) {
-    final ZapTorchComponent component = ZapTorchComponent.builder()
-        .zapTorchModule(new ZapTorchModule(context, TorchOffService.class))
-        .build();
+    final ZapTorchComponent component =
+        ZapTorchComponent.withModule(new ZapTorchModule(context, TorchOffService.class));
     Injector.set(component);
   }
 
   @Nullable @Override public String provideGoogleOpenSourceLicenses(@NonNull Context context) {
     return null;
-  }
-
-  @Override public void insertCustomLicensesIntoMap() {
-    UiLicenses.addLicenses();
   }
 }

@@ -24,11 +24,11 @@ public class MainModule {
 
   @NonNull private final MainInteractor interactor;
 
-  MainModule(@NonNull ZapTorchModule module) {
-    interactor = new MainInteractorImpl(module.providePreferences());
+  public MainModule(@NonNull ZapTorchModule module) {
+    interactor = new MainInteractor(module.providePreferences());
   }
 
   @CheckResult @NonNull MainPresenter getPresenter() {
-    return new MainPresenterImpl(interactor);
+    return new MainPresenter(interactor);
   }
 }
