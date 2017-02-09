@@ -23,8 +23,8 @@ public class VolumeServiceComponent {
 
   @NonNull private final VolumeServiceModule serviceModule;
 
-  public VolumeServiceComponent(@NonNull ZapTorchModule module) {
-    serviceModule = new VolumeServiceModule(module);
+  public VolumeServiceComponent(@NonNull VolumeServiceModule serviceModule) {
+    this.serviceModule = serviceModule;
   }
 
   void inject(@NonNull VolumeMonitorService service) {

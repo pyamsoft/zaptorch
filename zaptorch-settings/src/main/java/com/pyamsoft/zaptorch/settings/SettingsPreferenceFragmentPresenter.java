@@ -16,16 +16,69 @@
 
 package com.pyamsoft.zaptorch.settings;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
+import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.presenter.Presenter;
+import com.pyamsoft.pydroid.tool.ExecutedOffloader;
+import com.pyamsoft.pydroid.tool.OffloaderHelper;
+import timber.log.Timber;
 
-interface SettingsPreferenceFragmentPresenter extends Presenter<Presenter.Empty> {
+class SettingsPreferenceFragmentPresenter extends Presenter<Presenter.Empty> {
 
-  void confirmSettingsClear(@NonNull ConfirmationCallback callback);
+  @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
+  @SuppressWarnings("WeakerAccess") @NonNull ExecutedOffloader clearAllEvent =
+      new ExecutedOffloader.Empty();
+  private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
 
-  void processClearRequest(@NonNull ClearRequestCallback callback);
+  SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor) {
+    this.interactor = interactor;
+  }
 
-  void listenForCameraChanges(@NonNull CameraChangeCallback callback);
+  @Override protected void onUnbind() {
+    super.onUnbind();
+    unregisterCameraApiListener();
+    OffloaderHelper.cancel(clearAllEvent);
+  }
+
+  @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerCameraApiListener() {
+    unregisterCameraApiListener();
+    interactor.registerCameraApiListener(cameraApiListener);
+  }
+
+  private void unregisterCameraApiListener() {
+    interactor.unregisterCameraApiListener(cameraApiListener);
+  }
+
+  public void confirmSettingsClear(@NonNull ConfirmationCallback callback) {
+    callback.onConfirmAttempt();
+  }
+
+  public void processClearRequest(@NonNull ClearRequestCallback callback) {
+    Timber.d("Received all cleared confirmation event, clear All");
+    OffloaderHelper.cancel(clearAllEvent);
+    clearAllEvent = interactor.clearAll()
+        .onError(throwable -> Timber.e(throwable, "onError clearAll"))
+        .onResult(aBoolean -> callback.onClearAll())
+        .onFinish(() -> OffloaderHelper.cancel(clearAllEvent))
+        .execute();
+  }
+
+  public void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
+    if (cameraApiListener == null) {
+      this.cameraApiListener = new OnRegisteredSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+          if (interactor.getCameraApiKey().equals(key)) {
+            Timber.d("Camera API has changed");
+            callback.onCameraApiChanged();
+          }
+        }
+      };
+    }
+    registerCameraApiListener();
+  }
 
   interface CameraChangeCallback {
 

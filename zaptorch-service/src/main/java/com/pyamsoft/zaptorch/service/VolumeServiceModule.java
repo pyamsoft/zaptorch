@@ -20,17 +20,17 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
-class VolumeServiceModule {
+public class VolumeServiceModule {
 
   @NonNull private final VolumeServiceInteractor interactor;
 
-  VolumeServiceModule(@NonNull ZapTorchModule module) {
+  public VolumeServiceModule(@NonNull ZapTorchModule module) {
     interactor =
-        new VolumeServiceInteractorImpl(module.provideContext(), module.providePreferences(),
+        new VolumeServiceInteractor(module.provideContext(), module.providePreferences(),
             module.provideTorchOffServiceClass());
   }
 
   @NonNull @CheckResult VolumeServicePresenter getPresenter() {
-    return new VolumeServicePresenterImpl(interactor);
+    return new VolumeServicePresenter(interactor);
   }
 }

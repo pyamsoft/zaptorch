@@ -29,7 +29,7 @@ public class PermissionErrorDialog extends DialogFragment {
 
   @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
     return new AlertDialog.Builder(getActivity()).setMessage(
-        "ZapTorch was unable to access your devices camera."
+        "ZapTorch was unable to access your devices setupCamera."
             + " Please grant ZapTorch the 'Camera' permission")
         .setPositiveButton("Okay", (dialogInterface, i) -> {
           dialogInterface.dismiss();

@@ -30,7 +30,7 @@ public class ZapTorchModule {
   public ZapTorchModule(@NonNull Context context,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
     appContext = context.getApplicationContext();
-    preferences = new ZapTorchPreferencesImpl(context);
+    preferences = new ZapTorchPreferences(context);
     this.torchOffServiceClass = torchOffServiceClass;
   }
 

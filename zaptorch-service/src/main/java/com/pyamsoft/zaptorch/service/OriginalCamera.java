@@ -82,7 +82,7 @@ import timber.log.Timber;
         connectToCameraService();
       }
     } else {
-      Timber.e("Missing camera permission");
+      Timber.e("Missing setupCamera permission");
       startPermissionExplanationActivity();
     }
   }
@@ -125,7 +125,7 @@ import timber.log.Timber;
         cameraParameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         camera.setParameters(cameraParameters);
 
-        Timber.d("start camera");
+        Timber.d("start setupCamera");
         camera.startPreview();
         opened = true;
         notifyCallbackOnOpened();
@@ -137,12 +137,12 @@ import timber.log.Timber;
   }
 
   @SuppressWarnings("WeakerAccess") void clearCamera(@NonNull Throwable throwable) {
-    Timber.e(throwable, "Error opening camera");
+    Timber.e(throwable, "Error opening setupCamera");
     releaseCamera();
   }
 
   private void releaseCamera() {
-    Timber.d("release camera");
+    Timber.d("release setupCamera");
     if (camera != null) {
       camera.release();
       camera = null;

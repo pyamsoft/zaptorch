@@ -16,20 +16,46 @@
 
 package com.pyamsoft.zaptorch.settings;
 
+import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
+import com.pyamsoft.pydroid.tool.AsyncOffloader;
 import com.pyamsoft.pydroid.tool.Offloader;
+import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import timber.log.Timber;
 
-interface SettingsPreferenceFragmentInteractor {
+class SettingsPreferenceFragmentInteractor {
 
-  @CheckResult @NonNull Offloader<Boolean> clearAll();
+  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final String cameraApiKey;
 
-  void registerCameraApiListener(
-      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener);
+  SettingsPreferenceFragmentInteractor(@NonNull Context context,
+      @NonNull ZapTorchPreferences preferences) {
+    this.preferences = preferences;
+    this.cameraApiKey = context.getString(R.string.camera_api_key);
+  }
 
-  void unregisterCameraApiListener(
-      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener);
+  @NonNull @CheckResult public Offloader<Boolean> clearAll() {
+    return AsyncOffloader.newInstance(() -> {
+      Timber.d("Clear all preferences");
+      preferences.clearAll();
+      return Boolean.TRUE;
+    });
+  }
 
-  @CheckResult @NonNull String getCameraApiKey();
+  public void registerCameraApiListener(
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
+    unregisterCameraApiListener(cameraApiListener);
+    preferences.register(cameraApiListener);
+  }
+
+  public void unregisterCameraApiListener(
+      @NonNull OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
+    preferences.unregister(cameraApiListener);
+  }
+
+  @NonNull @CheckResult public String getCameraApiKey() {
+    return cameraApiKey;
+  }
 }

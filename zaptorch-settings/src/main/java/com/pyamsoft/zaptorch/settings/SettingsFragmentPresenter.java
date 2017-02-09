@@ -19,13 +19,26 @@ package com.pyamsoft.zaptorch.settings;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.presenter.Presenter;
 
-interface SettingsFragmentPresenter extends Presenter<Presenter.Empty> {
+class SettingsFragmentPresenter extends Presenter<Presenter.Empty> {
 
-  void clickFABServiceRunning(@NonNull DisplayServiceCallback callback);
+  SettingsFragmentPresenter() {
+  }
 
-  void clickFABServiceIdle(@NonNull AccessibilityDialogCallback callback);
+  public void clickFABServiceRunning(@NonNull DisplayServiceCallback callback) {
+    callback.onDisplayServiceInfo();
+  }
 
-  void loadFABFromState(boolean serviceRunning, @NonNull FABStateCallback callback);
+  public void clickFABServiceIdle(@NonNull AccessibilityDialogCallback callback) {
+    callback.onCreateAccessibilityDialog();
+  }
+
+  public void loadFABFromState(boolean serviceRunning, @NonNull FABStateCallback callback) {
+    if (serviceRunning) {
+      callback.onFABEnabled();
+    } else {
+      callback.onFABDisabled();
+    }
+  }
 
   interface AccessibilityDialogCallback {
 
