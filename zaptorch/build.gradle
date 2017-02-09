@@ -104,9 +104,13 @@ dependencies {
   compile("com.github.pyamsoft.pydroid:pydroid-ui:$pydroid@aar") {
     transitive = true
   }
-  compile project(":zaptorch-main")
-  compile project(":zaptorch-service")
-  compile project(":zaptorch-settings")
+
+  debugCompile project(path: ":zaptorch-main", configuration: "debug")
+  releaseCompile project(path: ":zaptorch-main", configuration: "release")
+  debugCompile project(path: ":zaptorch-service", configuration: "debug")
+  releaseCompile project(path: ":zaptorch-service", configuration: "release")
+  debugCompile project(path: ":zaptorch-settings", configuration: "debug")
+  releaseCompile project(path: ":zaptorch-settings", configuration: "release")
 }
 
 // AdView

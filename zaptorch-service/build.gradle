@@ -35,6 +35,8 @@ android {
   defaultConfig {
     minSdkVersion rootProject.ext.minSdk
     targetSdkVersion rootProject.ext.maxSdk
+
+    publishNonDefault true
   }
 
   compileOptions {
@@ -58,6 +60,7 @@ dependencies {
 
   retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:${rootProject.ext.retrolambda}"
 
-  compile project(":zaptorch-base")
+  debugCompile project(path: ":zaptorch-base", configuration: "debug")
+  releaseCompile project(path: ":zaptorch-base", configuration: "release")
 }
 
