@@ -157,12 +157,10 @@ import timber.log.Timber;
     if (camera != null) {
       camera.release();
       camera = null;
-      opened = false;
     }
   }
 
   @Override public void release() {
-    super.release();
     if (opened) {
       if (camera != null) {
         final Camera.Parameters params = camera.getParameters();
@@ -172,9 +170,11 @@ import timber.log.Timber;
         releaseCamera();
         windowManager.removeView(surfaceView);
       }
+      opened = false;
       notifyCallbackOnClosed();
     }
     SubscriptionHelper.unsubscribe(cameraSubscription);
+    super.release();
   }
 
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {
