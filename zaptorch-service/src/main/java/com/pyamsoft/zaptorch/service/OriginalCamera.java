@@ -149,7 +149,7 @@ import timber.log.Timber;
 
   @SuppressWarnings("WeakerAccess") void clearCamera(@NonNull Throwable throwable) {
     Timber.e(throwable, "Error opening setupCamera");
-    releaseCamera();
+    release();
   }
 
   private void releaseCamera() {
@@ -158,19 +158,21 @@ import timber.log.Timber;
       camera.release();
       camera = null;
       opened = false;
-      notifyCallbackOnClosed();
     }
   }
 
   @Override public void release() {
     super.release();
-    if (camera != null && opened) {
-      final Camera.Parameters params = camera.getParameters();
-      params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-      camera.setParameters(params);
-      camera.stopPreview();
-      releaseCamera();
-      windowManager.removeView(surfaceView);
+    if (opened) {
+      if (camera != null) {
+        final Camera.Parameters params = camera.getParameters();
+        params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(params);
+        camera.stopPreview();
+        releaseCamera();
+        windowManager.removeView(surfaceView);
+      }
+      notifyCallbackOnClosed();
     }
     SubscriptionHelper.unsubscribe(cameraSubscription);
   }
