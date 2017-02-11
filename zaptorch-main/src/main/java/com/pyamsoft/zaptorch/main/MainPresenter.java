@@ -18,9 +18,7 @@ package com.pyamsoft.zaptorch.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.view.KeyEvent;
 import com.pyamsoft.pydroid.presenter.Presenter;
-import timber.log.Timber;
 
 class MainPresenter extends Presenter<Presenter.Empty> {
 
@@ -30,20 +28,14 @@ class MainPresenter extends Presenter<Presenter.Empty> {
     this.interactor = interactor;
   }
 
+  @Override protected void onUnbind() {
+    super.onUnbind();
+  }
+
+  /**
+   * TODO Blocking
+   */
   @CheckResult public boolean shouldHandleKeycode(int keyCode) {
-    boolean handled;
-    switch (keyCode) {
-      case KeyEvent.KEYCODE_VOLUME_DOWN:
-        Timber.d("Detected a Volume Down event.");
-        handled = true;
-        break;
-      case KeyEvent.KEYCODE_VOLUME_UP:
-        Timber.d("Detected a Volume Up event.");
-        handled = true;
-        break;
-      default:
-        handled = false;
-    }
-    return interactor.shouldHandleKeys() && handled;
+    return interactor.shouldHandleKeys(keyCode).toBlocking().firstOrDefault(false);
   }
 }

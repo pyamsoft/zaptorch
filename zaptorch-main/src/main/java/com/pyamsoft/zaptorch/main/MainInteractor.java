@@ -16,18 +16,37 @@
 
 package com.pyamsoft.zaptorch.main;
 
+import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import android.view.KeyEvent;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import rx.Observable;
+import timber.log.Timber;
 
 class MainInteractor {
 
-  @NonNull private final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
 
   MainInteractor(@NonNull ZapTorchPreferences preferences) {
     this.preferences = preferences;
   }
 
-  public boolean shouldHandleKeys() {
-    return preferences.shouldHandleKeys();
+  @CheckResult @NonNull public Observable<Boolean> shouldHandleKeys(int keyCode) {
+    return Observable.fromCallable(preferences::shouldHandleKeys).filter(shouldHandle -> {
+      boolean handled;
+      switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+          Timber.d("Detected a Volume Down event.");
+          handled = true;
+          break;
+        case KeyEvent.KEYCODE_VOLUME_UP:
+          Timber.d("Detected a Volume Up event.");
+          handled = true;
+          break;
+        default:
+          handled = false;
+      }
+      return shouldHandle && handled;
+    });
   }
 }

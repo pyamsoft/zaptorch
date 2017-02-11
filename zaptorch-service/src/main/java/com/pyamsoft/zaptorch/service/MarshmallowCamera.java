@@ -24,6 +24,7 @@ import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import rx.Scheduler;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) class MarshmallowCamera extends CameraCommon {
@@ -32,8 +33,9 @@ import timber.log.Timber;
   @NonNull private final CameraManager cameraManager;
 
   MarshmallowCamera(final @NonNull Context context,
-      final @NonNull VolumeServiceInteractor interactor) {
-    super(context, interactor);
+      final @NonNull VolumeServiceInteractor interactor, @NonNull Scheduler obsScheduler,
+      @NonNull Scheduler subScheduler) {
+    super(context, interactor, obsScheduler, subScheduler);
     Timber.d("MARSHMALLOW CAMERA API");
     cameraManager = LollipopCamera.setupCameraManager(context);
     this.torchCallback = new TorchCallback(this);

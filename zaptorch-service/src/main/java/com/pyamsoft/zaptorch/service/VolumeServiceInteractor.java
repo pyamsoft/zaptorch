@@ -28,10 +28,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
+import android.view.KeyEvent;
 import com.pyamsoft.pydroid.ActionSingle;
-import com.pyamsoft.pydroid.tool.AsyncOffloader;
-import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import java.util.concurrent.TimeUnit;
+import rx.Observable;
+import rx.Scheduler;
+import timber.log.Timber;
 
 class VolumeServiceInteractor {
 
@@ -47,6 +50,7 @@ class VolumeServiceInteractor {
   private final int cameraApiLollipop;
   private final int cameraApiMarshmallow;
   @NonNull private final Context appContext;
+  @SuppressWarnings("WeakerAccess") boolean pressed;
   @Nullable private CameraInterface cameraInterface;
 
   VolumeServiceInteractor(@NonNull Context context, @NonNull ZapTorchPreferences preferences,
@@ -86,26 +90,53 @@ class VolumeServiceInteractor {
         throw new RuntimeException("Not handled!");
       }
     };
+
+    pressed = false;
   }
 
-  @NonNull @CheckResult public Offloader<Long> getButtonDelayTime() {
-    return AsyncOffloader.newInstance(preferences::getButtonDelayTime);
+  @NonNull @CheckResult Observable<Long> handleKeyPress(int action, int keyCode) {
+    Observable<Long> keyPressObservable = Observable.empty();
+    if (action == KeyEvent.ACTION_UP) {
+      if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+        if (pressed) {
+          Timber.d("Key has been double pressed");
+          pressed = false;
+          toggleTorch();
+        } else {
+          pressed = true;
+          keyPressObservable =
+              getButtonDelayTime().delay(time -> Observable.timer(time, TimeUnit.MILLISECONDS))
+                  .map(time -> {
+                    Timber.d("Set pressed back to false");
+                    pressed = false;
+                    return time;
+                  });
+        }
+      }
+    }
+
+    return keyPressObservable;
   }
 
-  @NonNull @CheckResult public Offloader<Boolean> shouldShowErrorDialog() {
-    return AsyncOffloader.newInstance(preferences::shouldShowErrorDialog);
+  @NonNull @CheckResult private Observable<Long> getButtonDelayTime() {
+    return Observable.fromCallable(preferences::getButtonDelayTime);
   }
 
-  public void setupCamera(@NonNull ActionSingle<Intent> onCameraErrorRunnable) {
+  @NonNull @CheckResult public Observable<Boolean> shouldShowErrorDialog() {
+    return Observable.fromCallable(preferences::shouldShowErrorDialog);
+  }
+
+  public void setupCamera(@NonNull ActionSingle<Intent> onCameraErrorRunnable,
+      @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
     final int cameraApi = preferences.getCameraApi();
     final CameraInterface camera;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
-      camera = new MarshmallowCamera(appContext, this);
+      camera = new MarshmallowCamera(appContext, this, obsScheduler, subScheduler);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
         && cameraApi == cameraApiLollipop) {
-      camera = new LollipopCamera(appContext, this);
+      camera = new LollipopCamera(appContext, this, obsScheduler, subScheduler);
     } else if (cameraApi == cameraApiOld) {
-      camera = new OriginalCamera(appContext, this);
+      camera = new OriginalCamera(appContext, this, obsScheduler, subScheduler);
     } else {
       throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
     }

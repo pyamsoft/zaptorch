@@ -19,14 +19,19 @@ package com.pyamsoft.zaptorch.settings;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
+import rx.Scheduler;
 
 public class SettingsPreferenceFragmentModule {
 
   @NonNull private final SettingsPreferenceFragmentInteractor interactor;
+  @NonNull private final Scheduler obsScheduler;
+  @NonNull private final Scheduler subScheduler;
 
   public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
     interactor = new SettingsPreferenceFragmentInteractor(module.provideContext(),
         module.providePreferences());
+    obsScheduler = module.provideObsScheduler();
+    subScheduler = module.provideSubScheduler();
   }
 
   @CheckResult @NonNull SettingsFragmentPresenter getSettingsFragmentPresenter() {
@@ -34,6 +39,6 @@ public class SettingsPreferenceFragmentModule {
   }
 
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
-    return new SettingsPreferenceFragmentPresenter(interactor);
+    return new SettingsPreferenceFragmentPresenter(interactor, obsScheduler, subScheduler);
   }
 }
