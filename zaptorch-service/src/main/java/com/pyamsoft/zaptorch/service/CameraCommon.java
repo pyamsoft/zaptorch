@@ -78,7 +78,7 @@ abstract class CameraCommon implements CameraInterface {
     return appContext;
   }
 
-  @Override public void setOnStateChangedCallback(@NonNull OnStateChangedCallback callback) {
+  @Override public void setOnStateChangedCallback(@Nullable OnStateChangedCallback callback) {
     this.callback = callback;
   }
 
@@ -105,6 +105,5 @@ abstract class CameraCommon implements CameraInterface {
 
   @CallSuper @Override public void release() {
     SubscriptionHelper.unsubscribe(errorSubscription);
-    callback = null;
   }
 }

@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public interface CameraInterface {
 
@@ -30,7 +31,7 @@ public interface CameraInterface {
 
   void release();
 
-  void setOnStateChangedCallback(@NonNull OnStateChangedCallback callback);
+  void setOnStateChangedCallback(@Nullable OnStateChangedCallback callback);
 
   interface OnStateChangedCallback {
 
