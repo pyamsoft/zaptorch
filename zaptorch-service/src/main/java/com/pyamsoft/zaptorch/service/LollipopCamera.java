@@ -39,6 +39,7 @@ import android.util.Size;
 import android.view.Surface;
 import java.util.ArrayList;
 import java.util.List;
+import rx.Scheduler;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) class LollipopCamera extends CameraCommon {
@@ -47,9 +48,9 @@ import timber.log.Timber;
   @NonNull private final CameraCallback cameraCallback;
   @Nullable private final String flashCameraId;
 
-  LollipopCamera(final @NonNull Context context,
-      final @NonNull VolumeServiceInteractor interactor) {
-    super(context, interactor);
+  LollipopCamera(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
+      @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
+    super(context, interactor, obsScheduler, subScheduler);
     Timber.d("LOLLIPOP CAMERA API");
     this.cameraManager = setupCameraManager(getAppContext());
     this.flashCameraId = setupCamera();

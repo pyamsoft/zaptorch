@@ -20,9 +20,8 @@ import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
-import com.pyamsoft.pydroid.tool.AsyncOffloader;
-import com.pyamsoft.pydroid.tool.Offloader;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import rx.Observable;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentInteractor {
@@ -36,8 +35,8 @@ class SettingsPreferenceFragmentInteractor {
     this.cameraApiKey = context.getString(R.string.camera_api_key);
   }
 
-  @NonNull @CheckResult public Offloader<Boolean> clearAll() {
-    return AsyncOffloader.newInstance(() -> {
+  @NonNull @CheckResult public Observable<Boolean> clearAll() {
+    return Observable.fromCallable(() -> {
       Timber.d("Clear all preferences");
       preferences.clearAll();
       return Boolean.TRUE;

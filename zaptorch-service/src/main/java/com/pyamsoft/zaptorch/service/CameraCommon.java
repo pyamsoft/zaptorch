@@ -22,9 +22,10 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.tool.AsyncOffloader;
-import com.pyamsoft.pydroid.tool.ExecutedOffloader;
-import com.pyamsoft.pydroid.tool.OffloaderHelper;
+import com.pyamsoft.pydroid.helper.SchedulerHelper;
+import com.pyamsoft.pydroid.helper.SubscriptionHelper;
+import rx.Scheduler;
+import rx.Subscription;
 import timber.log.Timber;
 
 abstract class CameraCommon implements CameraInterface {
@@ -33,13 +34,17 @@ abstract class CameraCommon implements CameraInterface {
   @SuppressWarnings("WeakerAccess") @NonNull final Intent errorExplain;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent permissionExplain;
   @NonNull private final VolumeServiceInteractor interactor;
-  @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader errorSubscription;
-  @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader permissionSubscription;
+  @NonNull private final Scheduler obsScheduler;
+  @NonNull private final Scheduler subScheduler;
+  @SuppressWarnings("WeakerAccess") @Nullable Subscription errorSubscription;
   @Nullable private OnStateChangedCallback callback;
 
-  CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor) {
+  CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
+      @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
     this.appContext = context.getApplicationContext();
     this.interactor = interactor;
+    this.obsScheduler = obsScheduler;
+    this.subScheduler = subScheduler;
     errorExplain = new Intent();
     errorExplain.putExtra(DIALOG_WHICH, TYPE_ERROR);
     errorExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -47,32 +52,26 @@ abstract class CameraCommon implements CameraInterface {
     permissionExplain = new Intent();
     permissionExplain.putExtra(DIALOG_WHICH, TYPE_PERMISSION);
     permissionExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+    SchedulerHelper.enforceObserveScheduler(obsScheduler);
+    SchedulerHelper.enforceSubscribeScheduler(subScheduler);
   }
 
   void startErrorExplanationActivity() {
-    OffloaderHelper.cancel(errorSubscription);
+    SubscriptionHelper.unsubscribe(errorSubscription);
     errorSubscription = interactor.shouldShowErrorDialog()
-        .onResult(show -> {
-          if (show) {
-            notifyCallbackOnError(errorExplain);
-          }
-        })
-        .onError(throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"))
-        .onFinish(() -> OffloaderHelper.cancel(errorSubscription))
-        .execute();
+        .subscribeOn(subScheduler)
+        .observeOn(obsScheduler)
+        .subscribe(show -> {
+              if (show) {
+                notifyCallbackOnError(errorExplain);
+              }
+            }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"),
+            () -> SubscriptionHelper.unsubscribe(errorSubscription));
   }
 
   void startPermissionExplanationActivity() {
-    OffloaderHelper.cancel(permissionSubscription);
-    permissionSubscription = AsyncOffloader.newInstance(() -> Boolean.TRUE)
-        .onResult(show -> {
-          if (show) {
-            notifyCallbackOnError(permissionExplain);
-          }
-        })
-        .onError(throwable -> Timber.e(throwable, "onError startPermissionExplanationActivity"))
-        .onFinish(() -> OffloaderHelper.cancel(permissionSubscription))
-        .execute();
+    notifyCallbackOnError(permissionExplain);
   }
 
   @CheckResult @NonNull Context getAppContext() {
@@ -95,14 +94,14 @@ abstract class CameraCommon implements CameraInterface {
     }
   }
 
-  private void notifyCallbackOnError(@NonNull Intent errorIntent) {
+  void notifyCallbackOnError(@NonNull Intent errorIntent) {
     if (callback != null) {
       callback.onError(errorIntent);
     }
   }
 
   @CallSuper @Override public void release() {
-    OffloaderHelper.cancel(errorSubscription);
+    SubscriptionHelper.unsubscribe(errorSubscription);
     callback = null;
   }
 }

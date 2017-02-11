@@ -20,6 +20,9 @@ import android.app.IntentService;
 import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ZapTorchModule {
 
@@ -44,5 +47,13 @@ public class ZapTorchModule {
 
   @CheckResult @NonNull public Class<? extends IntentService> provideTorchOffServiceClass() {
     return torchOffServiceClass;
+  }
+
+  @CheckResult @NonNull public Scheduler provideObsScheduler() {
+    return AndroidSchedulers.mainThread();
+  }
+
+  @CheckResult @NonNull public Scheduler provideSubScheduler() {
+    return Schedulers.io();
   }
 }

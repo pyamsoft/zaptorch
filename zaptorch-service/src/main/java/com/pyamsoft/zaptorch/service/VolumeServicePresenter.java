@@ -17,49 +17,23 @@
 package com.pyamsoft.zaptorch.service;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.KeyEvent;
-import com.pyamsoft.pydroid.presenter.Presenter;
-import com.pyamsoft.pydroid.tool.ExecutedOffloader;
-import com.pyamsoft.pydroid.tool.OffloaderHelper;
+import com.pyamsoft.pydroid.helper.SubscriptionHelper;
+import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
+import rx.Scheduler;
+import rx.Subscription;
 import timber.log.Timber;
 
-class VolumeServicePresenter extends Presenter<VolumeServicePresenter.VolumeServiceView> {
+class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.VolumeServiceView> {
 
-  @SuppressWarnings("WeakerAccess") @NonNull final Handler handler;
   @SuppressWarnings("WeakerAccess") @NonNull final VolumeServiceInteractor interactor;
-  @SuppressWarnings("WeakerAccess") boolean pressed;
-  @SuppressWarnings("WeakerAccess") @Nullable ExecutedOffloader delaySubscription;
+  @SuppressWarnings("WeakerAccess") @Nullable Subscription keySubscription;
 
-  VolumeServicePresenter(@NonNull final VolumeServiceInteractor interactor) {
-    this.handler = new Handler();
+  VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
+      @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
+    super(observeScheduler, subscribeScheduler);
     this.interactor = interactor;
-    this.pressed = false;
-  }
-
-  @SuppressWarnings("WeakerAccess") void handleKeyEvent() {
-    handler.removeCallbacksAndMessages(null);
-    if (pressed) {
-      Timber.d("Key has been double pressed");
-      pressed = false;
-      toggleTorch();
-    } else {
-      pressed = true;
-      OffloaderHelper.cancel(delaySubscription);
-      delaySubscription = interactor.getButtonDelayTime()
-          .onResult(delay -> {
-            Timber.d("Post back to false after delay: %d", delay);
-            handler.postDelayed(() -> {
-              Timber.d("Set pressed back to false");
-              pressed = false;
-            }, delay);
-          })
-          .onError(throwable -> Timber.e(throwable, "onError handleKeyEvent"))
-          .onFinish(() -> OffloaderHelper.cancel(delaySubscription))
-          .execute();
-    }
   }
 
   public void toggleTorch() {
@@ -67,31 +41,27 @@ class VolumeServicePresenter extends Presenter<VolumeServicePresenter.VolumeServ
   }
 
   public void handleKeyEvent(int action, int keyCode) {
-    if (action == KeyEvent.ACTION_UP) {
-      switch (keyCode) {
-        case KeyEvent.KEYCODE_VOLUME_DOWN:
-          Timber.d("onKeyEvent: %s", KeyEvent.keyCodeToString(keyCode));
-          handleKeyEvent();
-          break;
-        default:
-      }
-    }
+    SubscriptionHelper.unsubscribe(keySubscription);
+    keySubscription = interactor.handleKeyPress(action, keyCode)
+        .subscribeOn(getSubscribeScheduler())
+        .observeOn(getObserveScheduler())
+        .subscribe(time -> Timber.d("Set back after %d delay", time),
+            throwable -> Timber.e(throwable, "onError handleKeyEvent"),
+            () -> SubscriptionHelper.unsubscribe(keySubscription));
   }
 
   @Override protected void onBind(@Nullable VolumeServiceView view) {
     super.onBind(view);
-    pressed = false;
     interactor.setupCamera(
-        intent -> ifViewExists(volumeServiceView -> volumeServiceView.onCameraOpenError(intent)));
+        intent -> ifViewExists(volumeServiceView -> volumeServiceView.onCameraOpenError(intent)),
+        getObserveScheduler(), getSubscribeScheduler());
   }
 
   @Override protected void onUnbind() {
     super.onUnbind();
     Timber.d("Unbind");
     interactor.releaseCamera();
-    OffloaderHelper.cancel(delaySubscription);
-    handler.removeCallbacksAndMessages(null);
-    pressed = false;
+    SubscriptionHelper.unsubscribe(keySubscription);
   }
 
   interface VolumeServiceView {

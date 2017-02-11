@@ -19,18 +19,22 @@ package com.pyamsoft.zaptorch.service;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
+import rx.Scheduler;
 
 public class VolumeServiceModule {
 
   @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private final Scheduler obsScheduler;
+  @NonNull private final Scheduler subScheduler;
 
   public VolumeServiceModule(@NonNull ZapTorchModule module) {
-    interactor =
-        new VolumeServiceInteractor(module.provideContext(), module.providePreferences(),
-            module.provideTorchOffServiceClass());
+    interactor = new VolumeServiceInteractor(module.provideContext(), module.providePreferences(),
+        module.provideTorchOffServiceClass());
+    obsScheduler = module.provideObsScheduler();
+    subScheduler = module.provideSubScheduler();
   }
 
   @NonNull @CheckResult VolumeServicePresenter getPresenter() {
-    return new VolumeServicePresenter(interactor);
+    return new VolumeServicePresenter(interactor, obsScheduler, subScheduler);
   }
 }
