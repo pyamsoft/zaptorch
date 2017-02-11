@@ -78,8 +78,8 @@ import timber.log.Timber;
   }
 
   @Override public void release() {
-    super.release();
     cameraCallback.close();
+    super.release();
   }
 
   @Override public void toggleTorch() {

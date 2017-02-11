@@ -84,18 +84,21 @@ abstract class CameraCommon implements CameraInterface {
 
   void notifyCallbackOnOpened() {
     if (callback != null) {
+      Timber.d("Notify callback: opened");
       callback.onOpened();
     }
   }
 
   void notifyCallbackOnClosed() {
     if (callback != null) {
+      Timber.d("Notify callback: closed");
       callback.onClosed();
     }
   }
 
-  void notifyCallbackOnError(@NonNull Intent errorIntent) {
+  @SuppressWarnings("WeakerAccess") void notifyCallbackOnError(@NonNull Intent errorIntent) {
     if (callback != null) {
+      Timber.w("Notify callback: error");
       callback.onError(errorIntent);
     }
   }
