@@ -16,67 +16,23 @@
 
 package com.pyamsoft.zaptorch.base;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.support.v7.preference.PreferenceManager;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 
-public class ZapTorchPreferences {
+public interface ZapTorchPreferences {
 
-  @NonNull private final String doublePressDelayKey;
-  @NonNull private final String displayCameraErrorsKey;
-  @NonNull private final String handleVolumeKeysKey;
-  @NonNull private final String doublePressDelayDefault;
-  @NonNull private final String cameraApiKey;
-  @NonNull private final String cameraApiDefault;
-  @NonNull private final SharedPreferences preferences;
-  private final boolean displayCameraErrorsDefault;
-  private final boolean handleVolumeKeysDefault;
+  @CheckResult long getButtonDelayTime();
 
-  ZapTorchPreferences(@NonNull Context context) {
-    final Context appContext = context.getApplicationContext();
-    preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-    final Resources res = appContext.getResources();
-    doublePressDelayKey = appContext.getString(R.string.double_press_delay_key);
-    displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key);
-    handleVolumeKeysKey = appContext.getString(R.string.handle_volume_keys_key);
-    doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default);
-    displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default);
-    handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default);
-    cameraApiKey = appContext.getString(R.string.camera_api_key);
-    cameraApiDefault = appContext.getString(R.string.camera_api_default);
-  }
+  @CheckResult boolean shouldShowErrorDialog();
 
-  @CheckResult public long getButtonDelayTime() {
-    return Long.parseLong(preferences.getString(doublePressDelayKey, doublePressDelayDefault));
-  }
+  @CheckResult boolean shouldHandleKeys();
 
-  @CheckResult public boolean shouldShowErrorDialog() {
-    return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault);
-  }
+  @CheckResult int getCameraApi();
 
-  @CheckResult public boolean shouldHandleKeys() {
-    return preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault);
-  }
+  void clearAll();
 
-  @CheckResult public int getCameraApi() {
-    return Integer.parseInt(preferences.getString(cameraApiKey, cameraApiDefault));
-  }
+  void register(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
 
-  @SuppressLint("CommitPrefEdits") public void clearAll() {
-    // Commit because we must be sure transaction takes place before we continue
-    preferences.edit().clear().commit();
-  }
-
-  public void register(@NonNull OnRegisteredSharedPreferenceChangeListener listener) {
-    listener.register(preferences);
-  }
-
-  public void unregister(@NonNull OnRegisteredSharedPreferenceChangeListener listener) {
-    listener.unregister(preferences);
-  }
+  void unregister(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
 }
