@@ -34,6 +34,7 @@ import java.util.List;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 @SuppressWarnings("deprecation") class OriginalCamera extends CameraCommon
@@ -46,7 +47,7 @@ import timber.log.Timber;
   @NonNull private final Scheduler subScheduler;
   @SuppressWarnings("WeakerAccess") @Nullable Camera camera;
   @SuppressWarnings("WeakerAccess") boolean opened;
-  @SuppressWarnings("WeakerAccess") @Nullable Subscription cameraSubscription;
+  @NonNull private Subscription cameraSubscription = Subscriptions.empty();
 
   OriginalCamera(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
@@ -94,7 +95,7 @@ import timber.log.Timber;
 
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
-    SubscriptionHelper.unsubscribe(cameraSubscription);
+    cameraSubscription = SubscriptionHelper.unsubscribe(cameraSubscription);
     cameraSubscription = Observable.fromCallable(Camera::open)
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
@@ -102,7 +103,7 @@ import timber.log.Timber;
           Timber.e(throwable, "onError connectToCameraService");
           clearCamera(throwable);
           startErrorExplanationActivity();
-        }, () -> SubscriptionHelper.unsubscribe(cameraSubscription));
+        });
   }
 
   @SuppressWarnings("WeakerAccess") void cameraOpened(@NonNull Camera camera) {
@@ -173,7 +174,7 @@ import timber.log.Timber;
       opened = false;
       notifyCallbackOnClosed();
     }
-    SubscriptionHelper.unsubscribe(cameraSubscription);
+    cameraSubscription = SubscriptionHelper.unsubscribe(cameraSubscription);
     super.release();
   }
 

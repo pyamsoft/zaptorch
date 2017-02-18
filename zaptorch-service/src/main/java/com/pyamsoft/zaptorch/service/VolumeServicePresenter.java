@@ -23,12 +23,13 @@ import com.pyamsoft.pydroid.helper.SubscriptionHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import rx.Scheduler;
 import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.VolumeServiceView> {
 
-  @SuppressWarnings("WeakerAccess") @NonNull final VolumeServiceInteractor interactor;
-  @SuppressWarnings("WeakerAccess") @Nullable Subscription keySubscription;
+  @NonNull private final VolumeServiceInteractor interactor;
+  @NonNull private Subscription keySubscription = Subscriptions.empty();
 
   VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
@@ -41,13 +42,12 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   }
 
   public void handleKeyEvent(int action, int keyCode) {
-    SubscriptionHelper.unsubscribe(keySubscription);
+    keySubscription = SubscriptionHelper.unsubscribe(keySubscription);
     keySubscription = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(time -> Timber.d("Set back after %d delay", time),
-            throwable -> Timber.e(throwable, "onError handleKeyEvent"),
-            () -> SubscriptionHelper.unsubscribe(keySubscription));
+            throwable -> Timber.e(throwable, "onError handleKeyEvent"));
   }
 
   @Override protected void onBind(@Nullable VolumeServiceView view) {
@@ -61,7 +61,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
     super.onUnbind();
     Timber.d("Unbind");
     interactor.releaseCamera();
-    SubscriptionHelper.unsubscribe(keySubscription);
+    keySubscription = SubscriptionHelper.unsubscribe(keySubscription);
   }
 
   interface VolumeServiceView {
