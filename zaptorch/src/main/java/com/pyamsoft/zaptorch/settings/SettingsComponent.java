@@ -17,7 +17,6 @@
 package com.pyamsoft.zaptorch.settings;
 
 import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
 public class SettingsComponent {
 
@@ -25,10 +24,6 @@ public class SettingsComponent {
 
   public SettingsComponent(@NonNull SettingsPreferenceFragmentModule serviceModule) {
     this.serviceModule = serviceModule;
-  }
-
-  void inject(@NonNull SettingsFragment fragment) {
-    fragment.presenter = serviceModule.getSettingsFragmentPresenter();
   }
 
   void inject(@NonNull SettingsPreferenceFragment fragment) {

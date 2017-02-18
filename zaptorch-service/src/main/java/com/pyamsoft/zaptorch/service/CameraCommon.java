@@ -26,6 +26,7 @@ import com.pyamsoft.pydroid.helper.SchedulerHelper;
 import com.pyamsoft.pydroid.helper.SubscriptionHelper;
 import rx.Scheduler;
 import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 abstract class CameraCommon implements CameraInterface {
@@ -36,7 +37,7 @@ abstract class CameraCommon implements CameraInterface {
   @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private final Scheduler obsScheduler;
   @NonNull private final Scheduler subScheduler;
-  @SuppressWarnings("WeakerAccess") @Nullable Subscription errorSubscription;
+  @NonNull private Subscription errorSubscription = Subscriptions.empty();
   @Nullable private OnStateChangedCallback callback;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
@@ -58,7 +59,7 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   void startErrorExplanationActivity() {
-    SubscriptionHelper.unsubscribe(errorSubscription);
+    errorSubscription = SubscriptionHelper.unsubscribe(errorSubscription);
     errorSubscription = interactor.shouldShowErrorDialog()
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
@@ -104,6 +105,6 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   @CallSuper @Override public void release() {
-    SubscriptionHelper.unsubscribe(errorSubscription);
+    errorSubscription = SubscriptionHelper.unsubscribe(errorSubscription);
   }
 }

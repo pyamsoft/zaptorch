@@ -34,10 +34,6 @@ public class SettingsPreferenceFragmentModule {
     subScheduler = module.provideSubScheduler();
   }
 
-  @CheckResult @NonNull SettingsFragmentPresenter getSettingsFragmentPresenter() {
-    return new SettingsFragmentPresenter();
-  }
-
   @CheckResult @NonNull SettingsPreferenceFragmentPresenter getPreferenceFragmentPresenter() {
     return new SettingsPreferenceFragmentPresenter(interactor, obsScheduler, subScheduler);
   }

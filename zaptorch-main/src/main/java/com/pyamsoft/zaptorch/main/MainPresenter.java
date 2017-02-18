@@ -28,10 +28,6 @@ class MainPresenter extends Presenter<Presenter.Empty> {
     this.interactor = interactor;
   }
 
-  @Override protected void onUnbind() {
-    super.onUnbind();
-  }
-
   /**
    * TODO Blocking
    */
