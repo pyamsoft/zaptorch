@@ -19,7 +19,7 @@
 
   <string name="zaptorch_explain_key">zaptorch_explain</string>
   <string name="zaptorch_explain_title">How to Use</string>
-  <string name="zaptorch_explain_summary">The simply way to use ZapTorch</string>
+  <string name="zaptorch_explain_summary">The simple way to use ZapTorch</string>
 
   <string-array name="double_press_delay">
     <item name="time_short">300 Milliseconds</item>
