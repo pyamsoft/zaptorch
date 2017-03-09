@@ -37,9 +37,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
+import io.reactivex.Scheduler;
 import java.util.ArrayList;
 import java.util.List;
-import rx.Scheduler;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) class LollipopCamera extends CameraCommon {

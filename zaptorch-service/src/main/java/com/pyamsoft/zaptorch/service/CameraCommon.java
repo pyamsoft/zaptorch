@@ -22,11 +22,11 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.helper.SchedulerHelper;
-import com.pyamsoft.pydroid.helper.SubscriptionHelper;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
 abstract class CameraCommon implements CameraInterface {
@@ -37,7 +37,7 @@ abstract class CameraCommon implements CameraInterface {
   @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private final Scheduler obsScheduler;
   @NonNull private final Scheduler subScheduler;
-  @NonNull private Subscription errorSubscription = Subscriptions.empty();
+  @NonNull private Disposable errorDisposable = Disposables.empty();
   @Nullable private OnStateChangedCallback callback;
 
   CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
@@ -59,8 +59,8 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   void startErrorExplanationActivity() {
-    errorSubscription = SubscriptionHelper.unsubscribe(errorSubscription);
-    errorSubscription = interactor.shouldShowErrorDialog()
+    errorDisposable = DisposableHelper.unsubscribe(errorDisposable);
+    errorDisposable = interactor.shouldShowErrorDialog()
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
         .subscribe(show -> {
@@ -68,7 +68,7 @@ abstract class CameraCommon implements CameraInterface {
                 notifyCallbackOnError(errorExplain);
               }
             }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"),
-            () -> SubscriptionHelper.unsubscribe(errorSubscription));
+            () -> DisposableHelper.unsubscribe(errorDisposable));
   }
 
   void startPermissionExplanationActivity() {
@@ -105,6 +105,6 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   @CallSuper @Override public void release() {
-    errorSubscription = SubscriptionHelper.unsubscribe(errorSubscription);
+    errorDisposable = DisposableHelper.unsubscribe(errorDisposable);
   }
 }

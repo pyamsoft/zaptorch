@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch.settings;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
-import rx.Scheduler;
+import io.reactivex.Scheduler;
 
 public class SettingsPreferenceFragmentModule {
 

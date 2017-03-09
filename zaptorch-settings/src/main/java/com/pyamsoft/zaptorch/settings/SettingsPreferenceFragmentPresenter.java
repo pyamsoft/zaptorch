@@ -20,18 +20,18 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
-import com.pyamsoft.pydroid.helper.SubscriptionHelper;
+import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.Empty> {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @NonNull private Subscription clearAllSubscription = Subscriptions.empty();
+  @NonNull private Disposable clearAllDisposable = Disposables.empty();
   private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor,
@@ -43,7 +43,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   @Override protected void onUnbind() {
     super.onUnbind();
     unregisterCameraApiListener();
-    clearAllSubscription = SubscriptionHelper.unsubscribe(clearAllSubscription);
+    clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
   }
 
   @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerCameraApiListener() {
@@ -61,8 +61,8 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
 
   public void processClearRequest(@NonNull ClearRequestCallback callback) {
     Timber.d("Received all cleared confirmation event, clear All");
-    clearAllSubscription = SubscriptionHelper.unsubscribe(clearAllSubscription);
-    clearAllSubscription = interactor.clearAll()
+    clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
+    clearAllDisposable = interactor.clearAll()
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(aBoolean -> callback.onClearAll(),

@@ -19,17 +19,17 @@ package com.pyamsoft.zaptorch.service;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.helper.SubscriptionHelper;
+import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
 class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.VolumeServiceView> {
 
   @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private Subscription keySubscription = Subscriptions.empty();
+  @NonNull private Disposable keyDisposable = Disposables.empty();
 
   VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
@@ -42,8 +42,8 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   }
 
   public void handleKeyEvent(int action, int keyCode) {
-    keySubscription = SubscriptionHelper.unsubscribe(keySubscription);
-    keySubscription = interactor.handleKeyPress(action, keyCode)
+    keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
+    keyDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(time -> Timber.d("Set back after %d delay", time),
@@ -61,7 +61,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
     super.onUnbind();
     Timber.d("Unbind");
     interactor.releaseCamera();
-    keySubscription = SubscriptionHelper.unsubscribe(keySubscription);
+    keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
   }
 
   interface VolumeServiceView {

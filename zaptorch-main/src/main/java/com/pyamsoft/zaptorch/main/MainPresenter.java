@@ -32,6 +32,6 @@ class MainPresenter extends Presenter<Presenter.Empty> {
    * TODO Blocking
    */
   @CheckResult public boolean shouldHandleKeycode(int keyCode) {
-    return interactor.shouldHandleKeys(keyCode).toBlocking().firstOrDefault(false);
+    return interactor.shouldHandleKeys(keyCode).blockingFirst(false);
   }
 }
