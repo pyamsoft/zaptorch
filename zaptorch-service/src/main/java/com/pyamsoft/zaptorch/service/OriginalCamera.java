@@ -28,13 +28,13 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import com.pyamsoft.pydroid.helper.SubscriptionHelper;
+import com.pyamsoft.pydroid.helper.DisposableHelper;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import java.io.IOException;
 import java.util.List;
-import rx.Observable;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 import timber.log.Timber;
 
 @SuppressWarnings("deprecation") class OriginalCamera extends CameraCommon
@@ -47,7 +47,7 @@ import timber.log.Timber;
   @NonNull private final Scheduler subScheduler;
   @SuppressWarnings("WeakerAccess") @Nullable Camera camera;
   @SuppressWarnings("WeakerAccess") boolean opened;
-  @NonNull private Subscription cameraSubscription = Subscriptions.empty();
+  @NonNull private Disposable cameraDisposable = Disposables.empty();
 
   OriginalCamera(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
@@ -95,8 +95,8 @@ import timber.log.Timber;
 
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
-    cameraSubscription = SubscriptionHelper.unsubscribe(cameraSubscription);
-    cameraSubscription = Observable.fromCallable(Camera::open)
+    cameraDisposable = DisposableHelper.unsubscribe(cameraDisposable);
+    cameraDisposable = Observable.fromCallable(Camera::open)
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
         .subscribe(this::cameraOpened, throwable -> {
@@ -174,7 +174,7 @@ import timber.log.Timber;
       opened = false;
       notifyCallbackOnClosed();
     }
-    cameraSubscription = SubscriptionHelper.unsubscribe(cameraSubscription);
+    cameraDisposable = DisposableHelper.unsubscribe(cameraDisposable);
     super.release();
   }
 

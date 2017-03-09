@@ -24,7 +24,7 @@ import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import rx.Scheduler;
+import io.reactivex.Scheduler;
 import timber.log.Timber;
 
 @TargetApi(Build.VERSION_CODES.M) class MarshmallowCamera extends CameraCommon {

@@ -31,9 +31,9 @@ import android.support.v7.app.NotificationCompat;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.ActionSingle;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import java.util.concurrent.TimeUnit;
-import rx.Observable;
-import rx.Scheduler;
 import timber.log.Timber;
 
 class VolumeServiceInteractor {
