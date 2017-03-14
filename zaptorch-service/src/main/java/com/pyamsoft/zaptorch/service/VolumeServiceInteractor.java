@@ -29,7 +29,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.view.KeyEvent;
-import com.pyamsoft.pydroid.ActionSingle;
+import com.pyamsoft.pydroid.function.ActionSingle;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;

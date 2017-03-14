@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/zaptorch/zaptorch.iml" filepath="$PROJECT_DIR$/zaptorch/zaptorch.iml" />
       <module fileurl="file://$PROJECT_DIR$/zaptorch-base/zaptorch-base.iml" filepath="$PROJECT_DIR$/zaptorch-base/zaptorch-base.iml" />
       <module fileurl="file://$PROJECT_DIR$/zaptorch-main/zaptorch-main.iml" filepath="$PROJECT_DIR$/zaptorch-main/zaptorch-main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zaptorch-model/zaptorch-model.iml" filepath="$PROJECT_DIR$/zaptorch-model/zaptorch-model.iml" />
       <module fileurl="file://$PROJECT_DIR$/zaptorch-service/zaptorch-service.iml" filepath="$PROJECT_DIR$/zaptorch-service/zaptorch-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/zaptorch-settings/zaptorch-settings.iml" filepath="$PROJECT_DIR$/zaptorch-settings/zaptorch-settings.iml" />
     </modules>

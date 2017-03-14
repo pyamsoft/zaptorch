@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main', ':zaptorch-model',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.model;
+
+public class ConfirmEvent {
+}

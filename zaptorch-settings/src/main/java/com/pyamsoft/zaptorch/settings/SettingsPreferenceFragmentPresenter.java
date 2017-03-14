@@ -18,11 +18,13 @@ package com.pyamsoft.zaptorch.settings;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
+import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
+import com.pyamsoft.zaptorch.model.ConfirmEvent;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
@@ -32,7 +34,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
   @NonNull private Disposable clearAllDisposable = Disposables.empty();
-  private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
+  @Nullable private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
@@ -46,7 +48,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
     clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
   }
 
-  @SuppressWarnings("WeakerAccess") @VisibleForTesting void registerCameraApiListener() {
+  private void registerCameraApiListener() {
     unregisterCameraApiListener();
     interactor.registerCameraApiListener(cameraApiListener);
   }
@@ -55,18 +57,15 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
     interactor.unregisterCameraApiListener(cameraApiListener);
   }
 
-  public void confirmSettingsClear(@NonNull ConfirmationCallback callback) {
-    callback.onConfirmAttempt();
-  }
-
-  public void processClearRequest(@NonNull ClearRequestCallback callback) {
-    Timber.d("Received all cleared confirmation event, clear All");
+  public void registerEventBus(@NonNull ClearRequestCallback callback) {
     clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
-    clearAllDisposable = interactor.clearAll()
+    clearAllDisposable = EventBus.get()
+        .listen(ConfirmEvent.class)
+        .flatMap(event -> interactor.clearAll())
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(aBoolean -> callback.onClearAll(),
-            throwable -> Timber.e(throwable, "onError clearAll"));
+            throwable -> Timber.e(throwable, "onError event bus"));
   }
 
   public void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
@@ -87,11 +86,6 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   interface CameraChangeCallback {
 
     void onCameraApiChanged();
-  }
-
-  interface ConfirmationCallback {
-
-    void onConfirmAttempt();
   }
 
   interface ClearRequestCallback {
