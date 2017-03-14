@@ -167,8 +167,8 @@ class VolumeServiceInteractor {
 
   public void releaseCamera() {
     if (cameraInterface != null) {
-      cameraInterface.setOnStateChangedCallback(null);
       cameraInterface.release();
+      cameraInterface.setOnStateChangedCallback(null);
       cameraInterface = null;
     }
   }

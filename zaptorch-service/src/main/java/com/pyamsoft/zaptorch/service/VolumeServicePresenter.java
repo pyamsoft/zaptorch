@@ -88,6 +88,10 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
     super.onUnbind();
     interactor.releaseCamera();
     keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
     serviceBus = DisposableHelper.unsubscribe(serviceBus);
   }
 
