@@ -21,67 +21,44 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
+import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.zaptorch.Injector;
+import com.pyamsoft.zaptorch.model.ServiceEvent;
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation;
 import timber.log.Timber;
 
 public class VolumeMonitorService extends AccessibilityService
     implements VolumeServicePresenter.VolumeServiceView {
 
-  @Nullable private static volatile VolumeMonitorService instance;
+  private static boolean running;
   VolumeServicePresenter presenter;
 
-  @SuppressWarnings("WeakerAccess") @VisibleForTesting @CheckResult @NonNull
-  static synchronized VolumeMonitorService getInstance() {
-    if (instance == null) {
-      throw new IllegalStateException("VolumeMonitorService instance is NULL");
-    }
-    //noinspection ConstantConditions
-    return instance;
+  @CheckResult public static boolean isRunning() {
+    return running;
   }
 
-  @SuppressWarnings("WeakerAccess") @VisibleForTesting
-  private static synchronized void setInstance(@Nullable VolumeMonitorService i) {
-    instance = i;
+  private static void setRunning(boolean running) {
+    VolumeMonitorService.running = running;
   }
 
   public static void finish() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      getInstance().disableSelf();
-    }
+    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.FINISH));
   }
 
   public static void forceToggle() {
-    getInstance().getPresenter().toggleTorch();
-  }
-
-  @CheckResult public static boolean isRunning() {
-    return instance != null;
+    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.TORCH));
   }
 
   public static void changeCameraApi() {
-    final VolumeMonitorService currentInstance = getInstance();
-    // Simulate the lifecycle for destroying and re-creating the presenter
-    Timber.d("Change setupCamera API");
-    currentInstance.getPresenter().unbindView();
-    currentInstance.getPresenter().bindView(currentInstance);
-  }
-
-  @CheckResult @NonNull private VolumeServicePresenter getPresenter() {
-    if (presenter == null) {
-      throw new IllegalStateException("Presenter is NULL");
-    }
-    return presenter;
+    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.CHANGE_CAMERA));
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {
     final int action = event.getAction();
     final int keyCode = event.getKeyCode();
-    getPresenter().handleKeyEvent(action, keyCode);
+    presenter.handleKeyEvent(action, keyCode);
 
     // Never consume events
     return false;
@@ -97,15 +74,44 @@ public class VolumeMonitorService extends AccessibilityService
 
   @Override protected void onServiceConnected() {
     super.onServiceConnected();
-    Injector.get().provideComponent().plusVolumeServiceComponent().inject(this);
-    getPresenter().bindView(this);
-    setInstance(this);
+    if (presenter == null) {
+      Injector.get().provideComponent().plusVolumeServiceComponent().inject(this);
+    }
+
+    VolumeServicePresenter.VolumeServiceView view = this;
+    presenter.bindView(view);
+
+    presenter.registerOnBus(new VolumeServicePresenter.ServiceCallback() {
+      @Override public void onToggleTorch() {
+        Timber.d("Toggle Torch");
+        presenter.toggleTorch();
+      }
+
+      @Override public void onFinishService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          disableSelf();
+        }
+      }
+
+      @Override public void onChangeCameraApi() {
+        // Simulate the lifecycle for destroying and re-creating the presenter
+        Timber.d("Change setupCamera API");
+        presenter.unbindView();
+        presenter.bindView(view);
+      }
+    });
+    setRunning(true);
   }
 
   @Override public boolean onUnbind(Intent intent) {
-    getPresenter().unbindView();
-    setInstance(null);
+    presenter.unbindView();
+    setRunning(false);
     return super.onUnbind(intent);
+  }
+
+  @Override public void onDestroy() {
+    super.onDestroy();
+    presenter.destroy();
   }
 
   @Override public void onCameraOpenError(@NonNull Intent errorIntent) {

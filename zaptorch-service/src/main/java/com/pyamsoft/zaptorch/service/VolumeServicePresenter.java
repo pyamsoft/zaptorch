@@ -19,8 +19,10 @@ package com.pyamsoft.zaptorch.service;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
+import com.pyamsoft.zaptorch.model.ServiceEvent;
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
@@ -30,6 +32,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
 
   @NonNull private final VolumeServiceInteractor interactor;
   @NonNull private Disposable keyDisposable = Disposables.empty();
+  @NonNull private Disposable serviceBus = Disposables.empty();
 
   VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
@@ -57,11 +60,44 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
         getObserveScheduler(), getSubscribeScheduler());
   }
 
+  public void registerOnBus(@NonNull ServiceCallback callback) {
+    serviceBus = DisposableHelper.unsubscribe(serviceBus);
+    serviceBus = EventBus.get()
+        .listen(ServiceEvent.class)
+        .subscribeOn(getSubscribeScheduler())
+        .observeOn(getObserveScheduler())
+        .subscribe(serviceEvent -> {
+          switch (serviceEvent.type()) {
+            case FINISH:
+              callback.onFinishService();
+              break;
+            case TORCH:
+              callback.onToggleTorch();
+              break;
+            case CHANGE_CAMERA:
+              callback.onChangeCameraApi();
+              break;
+            default:
+              throw new IllegalArgumentException(
+                  "Invalid ServiceEvent.Type: " + serviceEvent.type());
+          }
+        }, throwable -> Timber.e(throwable, "onError event bus"));
+  }
+
   @Override protected void onUnbind() {
     super.onUnbind();
-    Timber.d("Unbind");
     interactor.releaseCamera();
     keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
+    serviceBus = DisposableHelper.unsubscribe(serviceBus);
+  }
+
+  interface ServiceCallback {
+
+    void onToggleTorch();
+
+    void onFinishService();
+
+    void onChangeCameraApi();
   }
 
   interface VolumeServiceView {

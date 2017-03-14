@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/zaptorch" />
             <option value="$PROJECT_DIR$/zaptorch-base" />
             <option value="$PROJECT_DIR$/zaptorch-main" />
+            <option value="$PROJECT_DIR$/zaptorch-model" />
             <option value="$PROJECT_DIR$/zaptorch-service" />
             <option value="$PROJECT_DIR$/zaptorch-settings" />
           </set>

@@ -36,21 +36,6 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   @NonNull public static final String TAG = "SettingsPreferenceFragment";
   @SuppressWarnings("WeakerAccess") SettingsPreferenceFragmentPresenter presenter;
 
-  void processClearRequest() {
-    presenter.processClearRequest(() -> {
-      Timber.d("received completed clearAll event. Kill Process");
-      try {
-        VolumeMonitorService.finish();
-      } catch (IllegalStateException e) {
-        Timber.e(e, "Expected exception when Service is NULL");
-      }
-
-      final ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext()
-          .getSystemService(Context.ACTIVITY_SERVICE);
-      activityManager.clearApplicationUserData();
-    });
-  }
-
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Injector.get().provideComponent().plusSettingsComponent().inject(this);
@@ -74,6 +59,19 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
         VolumeMonitorService.changeCameraApi();
       }
     });
+
+    presenter.registerEventBus(() -> {
+      Timber.d("received completed clearAll event. Kill Process");
+      try {
+        VolumeMonitorService.finish();
+      } catch (IllegalStateException e) {
+        Timber.e(e, "Expected exception when Service is NULL");
+      }
+
+      final ActivityManager activityManager = (ActivityManager) getContext().getApplicationContext()
+          .getSystemService(Context.ACTIVITY_SERVICE);
+      activityManager.clearApplicationUserData();
+    });
   }
 
   @Override public void onStop() {
@@ -82,9 +80,8 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
   }
 
   @Override protected boolean onClearAllPreferenceClicked() {
-    presenter.confirmSettingsClear(
-        () -> AppUtil.guaranteeSingleDialogFragment(getActivity(), new ConfirmationDialog(),
-            "confirm_dialog"));
+    AppUtil.guaranteeSingleDialogFragment(getActivity(), new ConfirmationDialog(),
+        "confirm_dialog");
     return super.onClearAllPreferenceClicked();
   }
 

@@ -61,13 +61,5 @@ dependencies {
   compile fileTree(dir: "libs", include: ["*.jar"])
 
   retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:${rootProject.ext.retrolambda}"
-
-  // PYDroid
-  compile("com.github.pyamsoft.pydroid:pydroid:$pydroid@aar") {
-    transitive = true
-  }
-
-  debugCompile project(path: ":zaptorch-model", configuration: "debug")
-  releaseCompile project(path: ":zaptorch-model", configuration: "release")
 }
 
