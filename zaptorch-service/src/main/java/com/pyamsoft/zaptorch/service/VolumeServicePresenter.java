@@ -45,7 +45,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   }
 
   public void handleKeyEvent(int action, int keyCode) {
-    keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
+    keyDisposable = DisposableHelper.dispose(keyDisposable);
     keyDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
@@ -61,7 +61,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   }
 
   public void registerOnBus(@NonNull ServiceCallback callback) {
-    serviceBus = DisposableHelper.unsubscribe(serviceBus);
+    serviceBus = DisposableHelper.dispose(serviceBus);
     serviceBus = EventBus.get()
         .listen(ServiceEvent.class)
         .subscribeOn(getSubscribeScheduler())
@@ -87,12 +87,12 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   @Override protected void onUnbind() {
     super.onUnbind();
     interactor.releaseCamera();
-    keyDisposable = DisposableHelper.unsubscribe(keyDisposable);
+    keyDisposable = DisposableHelper.dispose(keyDisposable);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    serviceBus = DisposableHelper.unsubscribe(serviceBus);
+    serviceBus = DisposableHelper.dispose(serviceBus);
   }
 
   interface ServiceCallback {

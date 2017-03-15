@@ -59,7 +59,7 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   void startErrorExplanationActivity() {
-    errorDisposable = DisposableHelper.unsubscribe(errorDisposable);
+    errorDisposable = DisposableHelper.dispose(errorDisposable);
     errorDisposable = interactor.shouldShowErrorDialog()
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
@@ -68,7 +68,7 @@ abstract class CameraCommon implements CameraInterface {
                 notifyCallbackOnError(errorExplain);
               }
             }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"),
-            () -> DisposableHelper.unsubscribe(errorDisposable));
+            () -> DisposableHelper.dispose(errorDisposable));
   }
 
   void startPermissionExplanationActivity() {
@@ -105,6 +105,6 @@ abstract class CameraCommon implements CameraInterface {
   }
 
   @CallSuper @Override public void release() {
-    errorDisposable = DisposableHelper.unsubscribe(errorDisposable);
+    errorDisposable = DisposableHelper.dispose(errorDisposable);
   }
 }

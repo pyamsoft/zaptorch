@@ -33,10 +33,10 @@ buildscript {
     heapSize = "2g"
 
     retrolambda = "2.5.1"
-    supportLib = "25.2.0"
+    supportLib = "25.3.0"
     firebase = "10.2.0"
     leakCanary = "1.5"
-    pydroid = "8.2.1"
+    pydroid = "8.2.2"
   }
 
   dependencies {
@@ -46,7 +46,7 @@ buildscript {
     classpath 'me.tatarka:gradle-retrolambda:3.6.0'
 
     // Dex count
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.2'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
 
     // Gradle version checker
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'

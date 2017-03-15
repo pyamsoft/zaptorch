@@ -95,7 +95,7 @@ import timber.log.Timber;
 
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
-    cameraDisposable = DisposableHelper.unsubscribe(cameraDisposable);
+    cameraDisposable = DisposableHelper.dispose(cameraDisposable);
     cameraDisposable = Observable.fromCallable(Camera::open)
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
@@ -174,7 +174,7 @@ import timber.log.Timber;
       opened = false;
       notifyCallbackOnClosed();
     }
-    cameraDisposable = DisposableHelper.unsubscribe(cameraDisposable);
+    cameraDisposable = DisposableHelper.dispose(cameraDisposable);
     super.release();
   }
 
