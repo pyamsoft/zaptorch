@@ -45,7 +45,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   @Override protected void onUnbind() {
     super.onUnbind();
     unregisterCameraApiListener();
-    clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
+    clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
   }
 
   private void registerCameraApiListener() {
@@ -58,7 +58,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   }
 
   public void registerEventBus(@NonNull ClearRequestCallback callback) {
-    clearAllDisposable = DisposableHelper.unsubscribe(clearAllDisposable);
+    clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
     clearAllDisposable = EventBus.get()
         .listen(ConfirmEvent.class)
         .flatMap(event -> interactor.clearAll())

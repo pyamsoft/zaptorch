@@ -60,6 +60,8 @@ android {
 dependencies {
   compile fileTree(dir: "libs", include: ["*.jar"])
 
+  compile "com.android.support:support-annotations:$supportLib"
+
   retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:${rootProject.ext.retrolambda}"
 }
 
