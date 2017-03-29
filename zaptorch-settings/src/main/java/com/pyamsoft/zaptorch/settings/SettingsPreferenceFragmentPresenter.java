@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.bus.EventBus;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
@@ -39,7 +40,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
     super(observeScheduler, subscribeScheduler);
-    this.interactor = interactor;
+    this.interactor = Checker.checkNonNull(interactor);
   }
 
   @Override protected void onUnbind() {
@@ -58,13 +59,14 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
   }
 
   public void registerEventBus(@NonNull ClearRequestCallback callback) {
+    ClearRequestCallback requestCallback = Checker.checkNonNull(callback);
     clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
     clearAllDisposable = EventBus.get()
         .listen(ConfirmEvent.class)
         .flatMap(event -> interactor.clearAll())
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
-        .subscribe(aBoolean -> callback.onClearAll(),
+        .subscribe(aBoolean -> requestCallback.onClearAll(),
             throwable -> Timber.e(throwable, "onError event bus"));
   }
 
@@ -75,7 +77,7 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
           if (interactor.getCameraApiKey().equals(key)) {
             Timber.d("Camera API has changed");
-            callback.onCameraApiChanged();
+            Checker.checkNonNull(callback).onCameraApiChanged();
           }
         }
       };

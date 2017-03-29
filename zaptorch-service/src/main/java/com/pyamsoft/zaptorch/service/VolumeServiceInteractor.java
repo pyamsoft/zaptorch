@@ -30,6 +30,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.function.ActionSingle;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
@@ -55,8 +56,8 @@ class VolumeServiceInteractor {
 
   VolumeServiceInteractor(@NonNull Context context, @NonNull ZapTorchPreferences preferences,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
-    this.appContext = context.getApplicationContext();
-    this.preferences = preferences;
+    this.appContext = Checker.checkNonNull(context).getApplicationContext();
+    this.preferences = Checker.checkNonNull(preferences);
     notificationManagerCompat = NotificationManagerCompat.from(appContext);
 
     // KLUDGE duplication of values between preferences and java code

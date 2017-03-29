@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.settings;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 import io.reactivex.Scheduler;
 
@@ -28,6 +29,7 @@ public class SettingsPreferenceFragmentModule {
   @NonNull private final Scheduler subScheduler;
 
   public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
+    module = Checker.checkNonNull(module);
     interactor = new SettingsPreferenceFragmentInteractor(module.provideContext(),
         module.providePreferences());
     obsScheduler = module.provideObsScheduler();

@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.bus.EventBus;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import com.pyamsoft.zaptorch.model.ServiceEvent;
@@ -37,7 +38,7 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
   VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
     super(observeScheduler, subscribeScheduler);
-    this.interactor = interactor;
+    this.interactor = Checker.checkNonNull(interactor);
   }
 
   public void toggleTorch() {
@@ -55,12 +56,14 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
 
   @Override protected void onBind(@Nullable VolumeServiceView view) {
     super.onBind(view);
-    interactor.setupCamera(
-        intent -> ifViewExists(volumeServiceView -> volumeServiceView.onCameraOpenError(intent)),
-        getObserveScheduler(), getSubscribeScheduler());
+    interactor.setupCamera(intent -> {
+      VolumeServiceView cameraView = Checker.checkNonNull(view);
+      cameraView.onCameraOpenError(intent);
+    }, getObserveScheduler(), getSubscribeScheduler());
   }
 
   public void registerOnBus(@NonNull ServiceCallback callback) {
+    ServiceCallback serviceCallback = Checker.checkNonNull(callback);
     serviceBus = DisposableHelper.dispose(serviceBus);
     serviceBus = EventBus.get()
         .listen(ServiceEvent.class)
@@ -69,13 +72,13 @@ class VolumeServicePresenter extends SchedulerPresenter<VolumeServicePresenter.V
         .subscribe(serviceEvent -> {
           switch (serviceEvent.type()) {
             case FINISH:
-              callback.onFinishService();
+              serviceCallback.onFinishService();
               break;
             case TORCH:
-              callback.onToggleTorch();
+              serviceCallback.onToggleTorch();
               break;
             case CHANGE_CAMERA:
-              callback.onChangeCameraApi();
+              serviceCallback.onChangeCameraApi();
               break;
             default:
               throw new IllegalArgumentException(

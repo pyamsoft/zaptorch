@@ -21,6 +21,7 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 import io.reactivex.Observable;
 import timber.log.Timber;
@@ -32,8 +33,8 @@ class SettingsPreferenceFragmentInteractor {
 
   SettingsPreferenceFragmentInteractor(@NonNull Context context,
       @NonNull ZapTorchPreferences preferences) {
-    this.preferences = preferences;
-    this.cameraApiKey = context.getString(R.string.camera_api_key);
+    this.preferences = Checker.checkNonNull(preferences);
+    this.cameraApiKey = Checker.checkNonNull(context).getString(R.string.camera_api_key);
   }
 
   @NonNull @CheckResult public Observable<Boolean> clearAll() {

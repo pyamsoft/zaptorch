@@ -37,6 +37,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Size;
 import android.view.Surface;
+import com.pyamsoft.pydroid.helper.Checker;
 import io.reactivex.Scheduler;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,8 +116,8 @@ import timber.log.Timber;
     boolean opened;
 
     CameraCallback(@NonNull CameraCommon cameraInterface, @NonNull CameraManager manager) {
-      this.cameraInterface = cameraInterface;
-      this.manager = manager;
+      this.cameraInterface = Checker.checkNonNull(cameraInterface);
+      this.manager = Checker.checkNonNull(manager);
       opened = false;
       list = new ArrayList<>(1);
     }
@@ -255,7 +256,7 @@ import timber.log.Timber;
     @Nullable CameraCaptureSession session;
 
     SessionCallback(@NonNull CaptureRequest request) {
-      this.request = request;
+      this.request = Checker.checkNonNull(request);
     }
 
     @Override public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {

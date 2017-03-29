@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 
 public class MainModule {
@@ -25,6 +26,7 @@ public class MainModule {
   @NonNull private final MainInteractor interactor;
 
   public MainModule(@NonNull ZapTorchModule module) {
+    module = Checker.checkNonNull(module);
     interactor = new MainInteractor(module.providePreferences());
   }
 

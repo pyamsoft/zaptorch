@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.BuildConfigChecker;
+import com.pyamsoft.pydroid.helper.BuildConfigChecker;
 import com.pyamsoft.pydroid.ui.SingleInitContentProvider;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 import com.pyamsoft.zaptorch.service.TorchOffService;

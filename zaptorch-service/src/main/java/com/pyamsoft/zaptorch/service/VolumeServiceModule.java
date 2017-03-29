@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
 import io.reactivex.Scheduler;
 
@@ -28,6 +29,7 @@ public class VolumeServiceModule {
   @NonNull private final Scheduler subScheduler;
 
   public VolumeServiceModule(@NonNull ZapTorchModule module) {
+    module = Checker.checkNonNull(module);
     interactor = new VolumeServiceInteractor(module.provideContext(), module.providePreferences(),
         module.provideTorchOffServiceClass());
     obsScheduler = module.provideObsScheduler();

@@ -24,6 +24,7 @@ import android.os.Build;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.helper.Checker;
 import io.reactivex.Scheduler;
 import timber.log.Timber;
 
@@ -85,7 +86,7 @@ import timber.log.Timber;
     boolean enabled;
 
     TorchCallback(@NonNull CameraCommon cameraCommon) {
-      this.cameraCommon = cameraCommon;
+      this.cameraCommon = Checker.checkNonNull(cameraCommon);
     }
 
     @Nullable @CheckResult String getCameraId() {
