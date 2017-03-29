@@ -20,6 +20,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.helper.Checker;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -32,9 +33,10 @@ public class ZapTorchModule {
 
   public ZapTorchModule(@NonNull Context context,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
+    context = Checker.checkNonNull(context);
     appContext = context.getApplicationContext();
     preferences = new ZapTorchPreferencesImpl(context);
-    this.torchOffServiceClass = torchOffServiceClass;
+    this.torchOffServiceClass = Checker.checkNonNull(torchOffServiceClass);
   }
 
   @CheckResult @NonNull public Context provideContext() {

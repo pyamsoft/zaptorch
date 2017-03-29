@@ -22,6 +22,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.helper.SchedulerHelper;
 import io.reactivex.Scheduler;
@@ -40,10 +41,10 @@ abstract class CameraCommon implements CameraInterface {
   @NonNull private Disposable errorDisposable = Disposables.empty();
   @Nullable private OnStateChangedCallback callback;
 
-  CameraCommon(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
+  CameraCommon(final @NonNull Context context, @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
-    this.appContext = context.getApplicationContext();
-    this.interactor = interactor;
+    this.appContext = Checker.checkNonNull(context).getApplicationContext();
+    this.interactor = Checker.checkNonNull(interactor);
     this.obsScheduler = obsScheduler;
     this.subScheduler = subScheduler;
     errorExplain = new Intent();
@@ -56,6 +57,14 @@ abstract class CameraCommon implements CameraInterface {
 
     SchedulerHelper.enforceObserveScheduler(obsScheduler);
     SchedulerHelper.enforceSubscribeScheduler(subScheduler);
+  }
+
+  @NonNull @CheckResult Scheduler getSubScheduler() {
+    return subScheduler;
+  }
+
+  @NonNull @CheckResult Scheduler getObsScheduler() {
+    return obsScheduler;
   }
 
   void startErrorExplanationActivity() {

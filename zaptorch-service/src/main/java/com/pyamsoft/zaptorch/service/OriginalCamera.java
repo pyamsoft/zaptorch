@@ -28,6 +28,7 @@ import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import com.pyamsoft.pydroid.function.OptionalWrapper;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
@@ -43,8 +44,6 @@ import timber.log.Timber;
   @SuppressWarnings("WeakerAccess") @NonNull final WindowManager windowManager;
   @SuppressWarnings("WeakerAccess") @NonNull final SurfaceView surfaceView;
   @SuppressWarnings("WeakerAccess") @NonNull final WindowManager.LayoutParams params;
-  @NonNull private final Scheduler obsScheduler;
-  @NonNull private final Scheduler subScheduler;
   @SuppressWarnings("WeakerAccess") @Nullable Camera camera;
   @SuppressWarnings("WeakerAccess") boolean opened;
   @NonNull private Disposable cameraDisposable = Disposables.empty();
@@ -52,8 +51,6 @@ import timber.log.Timber;
   OriginalCamera(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
     super(context, interactor, obsScheduler, subScheduler);
-    this.obsScheduler = obsScheduler;
-    this.subScheduler = subScheduler;
     Timber.d("OLD CAMERA API");
     opened = false;
 
@@ -96,9 +93,16 @@ import timber.log.Timber;
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     cameraDisposable = DisposableHelper.dispose(cameraDisposable);
-    cameraDisposable = Observable.fromCallable(Camera::open)
-        .subscribeOn(subScheduler)
-        .observeOn(obsScheduler)
+    cameraDisposable = Observable.fromCallable(() -> OptionalWrapper.ofNullable(Camera.open()))
+        .map(cameraOptionalWrapper -> {
+          if (cameraOptionalWrapper.isPresent()) {
+            return cameraOptionalWrapper.item();
+          }
+
+          throw new IllegalStateException("Camera failed to open");
+        })
+        .subscribeOn(getSubScheduler())
+        .observeOn(getObsScheduler())
         .subscribe(this::cameraOpened, throwable -> {
           Timber.e(throwable, "onError connectToCameraService");
           clearCamera(throwable);

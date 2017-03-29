@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.pydroid.presenter.Presenter;
 
 class MainPresenter extends Presenter<Presenter.Empty> {
@@ -25,7 +26,7 @@ class MainPresenter extends Presenter<Presenter.Empty> {
   @NonNull private final MainInteractor interactor;
 
   MainPresenter(@NonNull MainInteractor interactor) {
-    this.interactor = interactor;
+    this.interactor = Checker.checkNonNull(interactor);
   }
 
   /**

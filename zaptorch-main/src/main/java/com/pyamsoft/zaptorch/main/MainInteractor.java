@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.main;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
+import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 import io.reactivex.Observable;
 import timber.log.Timber;
@@ -28,7 +29,7 @@ class MainInteractor {
   @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
 
   MainInteractor(@NonNull ZapTorchPreferences preferences) {
-    this.preferences = preferences;
+    this.preferences = Checker.checkNonNull(preferences);
   }
 
   @CheckResult @NonNull public Observable<Boolean> shouldHandleKeys(int keyCode) {
