@@ -47,7 +47,7 @@ import timber.log.Timber;
     setTorch(!torchCallback.isEnabled());
   }
 
-  private void setTorch(final boolean enable) {
+  private void setTorch(boolean enable) {
     final String cameraId = torchCallback.getCameraId();
     if (cameraId != null) {
       try {

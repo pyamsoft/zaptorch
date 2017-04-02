@@ -19,11 +19,9 @@ package com.pyamsoft.zaptorch.settings;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
-import com.pyamsoft.pydroid.presenter.Presenter;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import com.pyamsoft.zaptorch.model.ConfirmEvent;
 import io.reactivex.Scheduler;
@@ -31,11 +29,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
-class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.Empty> {
+class SettingsPreferenceFragmentPresenter extends SchedulerPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
   @NonNull private Disposable clearAllDisposable = Disposables.empty();
-  @Nullable private OnRegisteredSharedPreferenceChangeListener cameraApiListener;
+  @Nullable private SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
@@ -43,8 +41,8 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
     this.interactor = Checker.checkNonNull(interactor);
   }
 
-  @Override protected void onUnbind() {
-    super.onUnbind();
+  @Override protected void onStop() {
+    super.onStop();
     unregisterCameraApiListener();
     clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
   }
@@ -72,13 +70,10 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter<Presenter.E
 
   public void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
     if (cameraApiListener == null) {
-      this.cameraApiListener = new OnRegisteredSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-          if (interactor.getCameraApiKey().equals(key)) {
-            Timber.d("Camera API has changed");
-            Checker.checkNonNull(callback).onCameraApiChanged();
-          }
+      cameraApiListener = (sharedPreferences, key) -> {
+        if (interactor.getCameraApiKey().equals(key)) {
+          Timber.d("Camera API has changed");
+          Checker.checkNonNull(callback).onCameraApiChanged();
         }
       };
     }

@@ -163,6 +163,11 @@ import timber.log.Timber;
           cameraDevice = null;
         }
 
+        Timber.d("Release surfaces");
+        for (Surface surface : list) {
+          surface.release();
+        }
+        list.clear();
         cameraInterface.notifyCallbackOnClosed();
       }
       opened = false;

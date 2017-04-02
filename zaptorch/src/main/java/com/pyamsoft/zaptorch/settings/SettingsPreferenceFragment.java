@@ -53,7 +53,6 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
   @Override public void onStart() {
     super.onStart();
-    presenter.bindView(null);
     presenter.listenForCameraChanges(() -> {
       if (VolumeMonitorService.isRunning()) {
         VolumeMonitorService.changeCameraApi();
@@ -76,7 +75,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
   @Override public void onStop() {
     super.onStop();
-    presenter.unbindView();
+    presenter.stop();
   }
 
   @Override protected boolean onClearAllPreferenceClicked() {
@@ -99,6 +98,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
   @Override public void onDestroy() {
     super.onDestroy();
+    presenter.destroy();
     ZapTorch.getRefWatcher(this).watch(this);
   }
 }

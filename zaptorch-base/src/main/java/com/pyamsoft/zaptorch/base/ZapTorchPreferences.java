@@ -16,9 +16,9 @@
 
 package com.pyamsoft.zaptorch.base;
 
+import android.content.SharedPreferences;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 
 public interface ZapTorchPreferences {
 
@@ -32,7 +32,7 @@ public interface ZapTorchPreferences {
 
   void clearAll();
 
-  void register(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
+  void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
 
-  void unregister(@NonNull OnRegisteredSharedPreferenceChangeListener listener);
+  void unregister(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
 }

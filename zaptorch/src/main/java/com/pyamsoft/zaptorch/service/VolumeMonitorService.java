@@ -20,7 +20,6 @@ import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import com.pyamsoft.pydroid.bus.EventBus;
@@ -29,8 +28,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent;
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation;
 import timber.log.Timber;
 
-public class VolumeMonitorService extends AccessibilityService
-    implements VolumeServicePresenter.VolumeServiceView {
+public class VolumeMonitorService extends AccessibilityService {
 
   private static boolean running;
   VolumeServicePresenter presenter;
@@ -78,9 +76,7 @@ public class VolumeMonitorService extends AccessibilityService
       Injector.get().provideComponent().plusVolumeServiceComponent().inject(this);
     }
 
-    VolumeServicePresenter.VolumeServiceView view = this;
-    presenter.bindView(view);
-
+    setupCamera();
     presenter.registerOnBus(new VolumeServicePresenter.ServiceCallback() {
       @Override public void onToggleTorch() {
         Timber.d("Toggle Torch");
@@ -96,15 +92,28 @@ public class VolumeMonitorService extends AccessibilityService
       @Override public void onChangeCameraApi() {
         // Simulate the lifecycle for destroying and re-creating the presenter
         Timber.d("Change setupCamera API");
-        presenter.unbindView();
-        presenter.bindView(view);
+        presenter.stop();
+
+        try {
+          Thread.sleep(200);
+        } catch (InterruptedException e) {
+          Timber.e(e, "Sleep interrupt");
+        }
+        setupCamera();
       }
     });
     setRunning(true);
   }
 
+  void setupCamera() {
+    presenter.setupCamera(errorIntent -> {
+      errorIntent.setClass(getApplicationContext(), CameraErrorExplanation.class);
+      getApplication().startActivity(errorIntent);
+    });
+  }
+
   @Override public boolean onUnbind(Intent intent) {
-    presenter.unbindView();
+    presenter.stop();
     setRunning(false);
     return super.onUnbind(intent);
   }
@@ -112,10 +121,5 @@ public class VolumeMonitorService extends AccessibilityService
   @Override public void onDestroy() {
     super.onDestroy();
     presenter.destroy();
-  }
-
-  @Override public void onCameraOpenError(@NonNull Intent errorIntent) {
-    errorIntent.setClass(getApplicationContext(), CameraErrorExplanation.class);
-    getApplication().startActivity(errorIntent);
   }
 }
