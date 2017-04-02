@@ -18,15 +18,17 @@ package com.pyamsoft.zaptorch.main;
 
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
-import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.pydroid.presenter.Presenter;
+import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
+import io.reactivex.Scheduler;
 
-class MainPresenter extends Presenter<Presenter.Empty> {
+class MainPresenter extends SchedulerPresenter {
 
   @NonNull private final MainInteractor interactor;
 
-  MainPresenter(@NonNull MainInteractor interactor) {
-    this.interactor = Checker.checkNonNull(interactor);
+  MainPresenter(@NonNull MainInteractor interactor, @NonNull Scheduler observeScheduler,
+      @NonNull Scheduler subscribeScheduler) {
+    super(observeScheduler, subscribeScheduler);
+    this.interactor = interactor;
   }
 
   /**

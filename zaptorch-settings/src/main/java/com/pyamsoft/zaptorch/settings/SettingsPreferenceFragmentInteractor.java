@@ -17,10 +17,10 @@
 package com.pyamsoft.zaptorch.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
 import io.reactivex.Observable;
@@ -46,7 +46,7 @@ class SettingsPreferenceFragmentInteractor {
   }
 
   public void registerCameraApiListener(
-      @Nullable OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
+      @Nullable SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
     unregisterCameraApiListener(cameraApiListener);
     if (cameraApiListener != null) {
       preferences.register(cameraApiListener);
@@ -54,7 +54,7 @@ class SettingsPreferenceFragmentInteractor {
   }
 
   public void unregisterCameraApiListener(
-      @Nullable OnRegisteredSharedPreferenceChangeListener cameraApiListener) {
+      @Nullable SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
     if (cameraApiListener != null) {
       preferences.unregister(cameraApiListener);
     }

@@ -20,17 +20,22 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.helper.Checker;
 import com.pyamsoft.zaptorch.base.ZapTorchModule;
+import io.reactivex.Scheduler;
 
 public class MainModule {
 
   @NonNull private final MainInteractor interactor;
+  @NonNull private final Scheduler obsScheduler;
+  @NonNull private final Scheduler subScheduler;
 
   public MainModule(@NonNull ZapTorchModule module) {
     module = Checker.checkNonNull(module);
     interactor = new MainInteractor(module.providePreferences());
+    obsScheduler = module.provideObsScheduler();
+    subScheduler = module.provideSubScheduler();
   }
 
   @CheckResult @NonNull MainPresenter getPresenter() {
-    return new MainPresenter(interactor);
+    return new MainPresenter(interactor, obsScheduler, subScheduler);
   }
 }

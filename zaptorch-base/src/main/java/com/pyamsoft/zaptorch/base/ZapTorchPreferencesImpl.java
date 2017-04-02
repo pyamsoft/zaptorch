@@ -23,7 +23,6 @@ import android.content.res.Resources;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.PreferenceManager;
-import com.pyamsoft.pydroid.app.OnRegisteredSharedPreferenceChangeListener;
 
 class ZapTorchPreferencesImpl implements ZapTorchPreferences {
 
@@ -67,16 +66,18 @@ class ZapTorchPreferencesImpl implements ZapTorchPreferences {
     return Integer.parseInt(preferences.getString(cameraApiKey, cameraApiDefault));
   }
 
-  @Override @SuppressLint("CommitPrefEdits") public void clearAll() {
+  @SuppressLint("ApplySharedPref") @Override public void clearAll() {
     // Commit because we must be sure transaction takes place before we continue
     preferences.edit().clear().commit();
   }
 
-  @Override public void register(@NonNull OnRegisteredSharedPreferenceChangeListener listener) {
-    listener.register(preferences);
+  @Override
+  public void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    preferences.registerOnSharedPreferenceChangeListener(listener);
   }
 
-  @Override public void unregister(@NonNull OnRegisteredSharedPreferenceChangeListener listener) {
-    listener.unregister(preferences);
+  @Override
+  public void unregister(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    preferences.unregisterOnSharedPreferenceChangeListener(listener);
   }
 }
