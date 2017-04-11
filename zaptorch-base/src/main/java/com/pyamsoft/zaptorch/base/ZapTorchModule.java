@@ -21,6 +21,9 @@ import android.content.Context;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.helper.Checker;
+import com.pyamsoft.zaptorch.base.preference.CameraPreferences;
+import com.pyamsoft.zaptorch.base.preference.ClearPreferences;
+import com.pyamsoft.zaptorch.base.preference.UIPreferences;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -28,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 public class ZapTorchModule {
 
   @NonNull private final Context appContext;
-  @NonNull private final ZapTorchPreferences preferences;
+  @NonNull private final ZapTorchPreferencesImpl preferences;
   @NonNull private final Class<? extends IntentService> torchOffServiceClass;
 
   public ZapTorchModule(@NonNull Context context,
@@ -43,7 +46,15 @@ public class ZapTorchModule {
     return appContext;
   }
 
-  @CheckResult @NonNull public ZapTorchPreferences providePreferences() {
+  @CheckResult @NonNull public CameraPreferences provideCameraPreferences() {
+    return preferences;
+  }
+
+  @CheckResult @NonNull public ClearPreferences provideClearPreferences() {
+    return preferences;
+  }
+
+  @CheckResult @NonNull public UIPreferences provideUiPreferences() {
     return preferences;
   }
 

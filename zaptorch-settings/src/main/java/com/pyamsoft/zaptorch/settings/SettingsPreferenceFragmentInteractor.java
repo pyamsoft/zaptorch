@@ -22,30 +22,37 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
-import io.reactivex.Observable;
-import timber.log.Timber;
+import com.pyamsoft.zaptorch.base.preference.ClearPreferences;
+import com.pyamsoft.zaptorch.base.preference.UIPreferences;
+import io.reactivex.Single;
 
 class SettingsPreferenceFragmentInteractor {
 
-  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final ClearPreferences clearPreferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final UIPreferences preferences;
   @SuppressWarnings("WeakerAccess") @NonNull final String cameraApiKey;
 
-  SettingsPreferenceFragmentInteractor(@NonNull Context context,
-      @NonNull ZapTorchPreferences preferences) {
+  SettingsPreferenceFragmentInteractor(@NonNull Context context, @NonNull UIPreferences preferences,
+      @NonNull ClearPreferences clearPreferences) {
     this.preferences = Checker.checkNonNull(preferences);
+    this.clearPreferences = Checker.checkNonNull(clearPreferences);
     this.cameraApiKey = Checker.checkNonNull(context).getString(R.string.camera_api_key);
   }
 
-  @NonNull @CheckResult public Observable<Boolean> clearAll() {
-    return Observable.fromCallable(() -> {
-      Timber.d("Clear all preferences");
-      preferences.clearAll();
+  /**
+   * public
+   */
+  @NonNull @CheckResult Single<Boolean> clearAll() {
+    return Single.fromCallable(() -> {
+      clearPreferences.clearAll();
       return Boolean.TRUE;
     });
   }
 
-  public void registerCameraApiListener(
+  /**
+   * public
+   */
+  void registerCameraApiListener(
       @Nullable SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
     unregisterCameraApiListener(cameraApiListener);
     if (cameraApiListener != null) {
@@ -53,14 +60,20 @@ class SettingsPreferenceFragmentInteractor {
     }
   }
 
-  public void unregisterCameraApiListener(
+  /**
+   * public
+   */
+  void unregisterCameraApiListener(
       @Nullable SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener) {
     if (cameraApiListener != null) {
       preferences.unregister(cameraApiListener);
     }
   }
 
-  @NonNull @CheckResult public String getCameraApiKey() {
+  /**
+   * public
+   */
+  @NonNull @CheckResult String getCameraApiKey() {
     return cameraApiKey;
   }
 }

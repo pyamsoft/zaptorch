@@ -73,11 +73,10 @@ abstract class CameraCommon implements CameraInterface {
         .subscribeOn(subScheduler)
         .observeOn(obsScheduler)
         .subscribe(show -> {
-              if (show) {
-                notifyCallbackOnError(errorExplain);
-              }
-            }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"),
-            () -> DisposableHelper.dispose(errorDisposable));
+          if (show) {
+            notifyCallbackOnError(errorExplain);
+          }
+        }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"));
   }
 
   void startPermissionExplanationActivity() {

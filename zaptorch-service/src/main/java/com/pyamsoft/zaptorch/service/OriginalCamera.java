@@ -30,8 +30,8 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import com.pyamsoft.pydroid.function.OptionalWrapper;
 import com.pyamsoft.pydroid.helper.DisposableHelper;
-import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import java.io.IOException;
@@ -93,7 +93,7 @@ import timber.log.Timber;
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
     cameraDisposable = DisposableHelper.dispose(cameraDisposable);
-    cameraDisposable = Observable.fromCallable(() -> OptionalWrapper.ofNullable(Camera.open()))
+    cameraDisposable = Single.fromCallable(() -> OptionalWrapper.ofNullable(Camera.open()))
         .map(cameraOptionalWrapper -> {
           if (cameraOptionalWrapper.isPresent()) {
             return cameraOptionalWrapper.item();

@@ -30,7 +30,7 @@ public class MainModule {
 
   public MainModule(@NonNull ZapTorchModule module) {
     module = Checker.checkNonNull(module);
-    interactor = new MainInteractor(module.providePreferences());
+    interactor = new MainInteractor(module.provideUiPreferences());
     obsScheduler = module.provideObsScheduler();
     subScheduler = module.provideSubScheduler();
   }

@@ -32,9 +32,9 @@ class MainPresenter extends SchedulerPresenter {
   }
 
   /**
-   * TODO Blocking
+   * public
    */
-  @CheckResult public boolean shouldHandleKeycode(int keyCode) {
-    return interactor.shouldHandleKeys(keyCode).blockingFirst(false);
+  @CheckResult boolean shouldHandleKeycode(int keyCode) {
+    return interactor.shouldHandleKeys(keyCode).blockingGet();
   }
 }
