@@ -31,7 +31,7 @@ public class SettingsPreferenceFragmentModule {
   public SettingsPreferenceFragmentModule(@NonNull ZapTorchModule module) {
     module = Checker.checkNonNull(module);
     interactor = new SettingsPreferenceFragmentInteractor(module.provideContext(),
-        module.providePreferences());
+        module.provideUiPreferences(), module.provideClearPreferences());
     obsScheduler = module.provideObsScheduler();
     subScheduler = module.provideSubScheduler();
   }

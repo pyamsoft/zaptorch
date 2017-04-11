@@ -30,8 +30,9 @@ public class VolumeServiceModule {
 
   public VolumeServiceModule(@NonNull ZapTorchModule module) {
     module = Checker.checkNonNull(module);
-    interactor = new VolumeServiceInteractor(module.provideContext(), module.providePreferences(),
-        module.provideTorchOffServiceClass());
+    interactor =
+        new VolumeServiceInteractor(module.provideContext(), module.provideCameraPreferences(),
+            module.provideTorchOffServiceClass());
     obsScheduler = module.provideObsScheduler();
     subScheduler = module.provideSubScheduler();
   }

@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base;
+package com.pyamsoft.zaptorch.base.preference;
 
 import android.content.SharedPreferences;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
-public interface ZapTorchPreferences {
-
-  @CheckResult long getButtonDelayTime();
-
-  @CheckResult boolean shouldShowErrorDialog();
+public interface UIPreferences {
 
   @CheckResult boolean shouldHandleKeys();
-
-  @CheckResult int getCameraApi();
-
-  void clearAll();
 
   void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
 

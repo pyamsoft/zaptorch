@@ -31,9 +31,10 @@ import android.support.v7.app.NotificationCompat;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.function.ActionSingle;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
+import com.pyamsoft.zaptorch.base.preference.CameraPreferences;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.Single;
 import java.util.concurrent.TimeUnit;
 import timber.log.Timber;
 
@@ -41,7 +42,7 @@ class VolumeServiceInteractor {
 
   private static final int NOTIFICATION_ID = 1345;
   private static final int NOTIFICATION_RC = 1009;
-  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final CameraPreferences preferences;
   @SuppressWarnings("WeakerAccess") @NonNull final NotificationManagerCompat
       notificationManagerCompat;
   @SuppressWarnings("WeakerAccess") @NonNull final Notification notification;
@@ -54,7 +55,7 @@ class VolumeServiceInteractor {
   @SuppressWarnings("WeakerAccess") boolean pressed;
   @Nullable private CameraInterface cameraInterface;
 
-  VolumeServiceInteractor(@NonNull Context context, @NonNull ZapTorchPreferences preferences,
+  VolumeServiceInteractor(@NonNull Context context, @NonNull CameraPreferences preferences,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
     this.appContext = Checker.checkNonNull(context).getApplicationContext();
     this.preferences = Checker.checkNonNull(preferences);
@@ -95,8 +96,11 @@ class VolumeServiceInteractor {
     pressed = false;
   }
 
-  @NonNull @CheckResult Observable<Long> handleKeyPress(int action, int keyCode) {
-    Observable<Long> keyPressObservable = Observable.empty();
+  /**
+   * public
+   */
+  @NonNull @CheckResult Single<Long> handleKeyPress(int action, int keyCode) {
+    Single<Long> keyPressSingle = Single.never();
     if (action == KeyEvent.ACTION_UP) {
       if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
         if (pressed) {
@@ -105,29 +109,36 @@ class VolumeServiceInteractor {
           toggleTorch();
         } else {
           pressed = true;
-          keyPressObservable =
-              getButtonDelayTime().delay(time -> Observable.timer(time, TimeUnit.MILLISECONDS))
-                  .map(time -> {
-                    Timber.d("Set pressed back to false");
-                    pressed = false;
-                    return time;
-                  });
+          keyPressSingle = getButtonDelayTime().toObservable()
+              .delay(time -> Observable.timer(time, TimeUnit.MILLISECONDS))
+              .singleOrError()
+              .map(time -> {
+                Timber.d("Set pressed back to false");
+                pressed = false;
+                return time;
+              });
         }
       }
     }
 
-    return keyPressObservable;
+    return keyPressSingle;
   }
 
-  @NonNull @CheckResult private Observable<Long> getButtonDelayTime() {
-    return Observable.fromCallable(preferences::getButtonDelayTime);
+  @NonNull @CheckResult private Single<Long> getButtonDelayTime() {
+    return Single.fromCallable(preferences::getButtonDelayTime);
   }
 
-  @NonNull @CheckResult public Observable<Boolean> shouldShowErrorDialog() {
-    return Observable.fromCallable(preferences::shouldShowErrorDialog);
+  /**
+   * public
+   */
+  @NonNull @CheckResult Single<Boolean> shouldShowErrorDialog() {
+    return Single.fromCallable(preferences::shouldShowErrorDialog);
   }
 
-  public void setupCamera(@NonNull ActionSingle<Intent> onCameraErrorRunnable,
+  /**
+   * public
+   */
+  void setupCamera(@NonNull ActionSingle<Intent> onCameraErrorRunnable,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
     final int cameraApi = preferences.getCameraApi();
     final CameraInterface camera;
@@ -160,13 +171,19 @@ class VolumeServiceInteractor {
     cameraInterface = camera;
   }
 
-  public void toggleTorch() {
+  /**
+   * public
+   */
+  void toggleTorch() {
     if (cameraInterface != null) {
       cameraInterface.toggleTorch();
     }
   }
 
-  public void releaseCamera() {
+  /**
+   * public
+   */
+  void releaseCamera() {
     if (cameraInterface != null) {
       cameraInterface.release();
       cameraInterface.setOnStateChangedCallback(null);

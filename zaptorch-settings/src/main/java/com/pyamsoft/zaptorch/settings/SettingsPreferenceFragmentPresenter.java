@@ -56,19 +56,25 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter {
     interactor.unregisterCameraApiListener(cameraApiListener);
   }
 
-  public void registerEventBus(@NonNull ClearRequestCallback callback) {
+  /**
+   * public
+   */
+  void registerEventBus(@NonNull ClearRequestCallback callback) {
     ClearRequestCallback requestCallback = Checker.checkNonNull(callback);
     clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
     clearAllDisposable = EventBus.get()
         .listen(ConfirmEvent.class)
-        .flatMap(event -> interactor.clearAll())
+        .flatMapSingle(event -> interactor.clearAll())
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(aBoolean -> requestCallback.onClearAll(),
             throwable -> Timber.e(throwable, "onError event bus"));
   }
 
-  public void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
+  /**
+   * public
+   */
+  void listenForCameraChanges(@NonNull CameraChangeCallback callback) {
     if (cameraApiListener == null) {
       cameraApiListener = (sharedPreferences, key) -> {
         if (interactor.getCameraApiKey().equals(key)) {

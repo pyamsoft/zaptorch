@@ -23,8 +23,11 @@ import android.content.res.Resources;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.PreferenceManager;
+import com.pyamsoft.zaptorch.base.preference.CameraPreferences;
+import com.pyamsoft.zaptorch.base.preference.ClearPreferences;
+import com.pyamsoft.zaptorch.base.preference.UIPreferences;
 
-class ZapTorchPreferencesImpl implements ZapTorchPreferences {
+class ZapTorchPreferencesImpl implements CameraPreferences, ClearPreferences, UIPreferences {
 
   @NonNull private final String doublePressDelayKey;
   @NonNull private final String displayCameraErrorsKey;

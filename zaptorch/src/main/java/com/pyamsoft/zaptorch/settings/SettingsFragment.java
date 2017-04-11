@@ -25,12 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
 import com.pyamsoft.pydroid.design.util.FABUtil;
-import com.pyamsoft.pydroid.drawable.AsyncDrawable;
-import com.pyamsoft.pydroid.drawable.AsyncMap;
-import com.pyamsoft.pydroid.drawable.AsyncMapEntry;
-import com.pyamsoft.pydroid.helper.AsyncMapHelper;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
-import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.pydroid.ui.loader.DrawableHelper;
+import com.pyamsoft.pydroid.ui.loader.DrawableLoader;
+import com.pyamsoft.pydroid.util.DialogUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding;
@@ -40,7 +38,7 @@ public class SettingsFragment extends ActionBarFragment {
 
   @NonNull public static final String TAG = "MainSettingsFragment";
   private FragmentMainBinding binding;
-  @NonNull private AsyncMapEntry fabTask = AsyncMap.emptyEntry();
+  @NonNull private DrawableLoader.Loaded fabTask = DrawableLoader.empty();
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -58,10 +56,10 @@ public class SettingsFragment extends ActionBarFragment {
   private void setupFAB() {
     binding.mainSettingsFab.setOnClickListener(v -> {
       if (VolumeMonitorService.isRunning()) {
-        AppUtil.guaranteeSingleDialogFragment(getActivity(), new ServiceInfoDialog(),
+        DialogUtil.guaranteeSingleDialogFragment(getActivity(), new ServiceInfoDialog(),
             "servce_info");
       } else {
-        AppUtil.guaranteeSingleDialogFragment(getActivity(), new AccessibilityRequestDialog(),
+        DialogUtil.guaranteeSingleDialogFragment(getActivity(), new AccessibilityRequestDialog(),
             "accessibility");
       }
     });
@@ -70,7 +68,7 @@ public class SettingsFragment extends ActionBarFragment {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    fabTask = AsyncMapHelper.unsubscribe(fabTask);
+    fabTask = DrawableHelper.unload(fabTask);
     binding.unbind();
   }
 
@@ -83,11 +81,11 @@ public class SettingsFragment extends ActionBarFragment {
     super.onResume();
     setActionBarUpEnabled(false);
     if (VolumeMonitorService.isRunning()) {
-      fabTask = AsyncMapHelper.unsubscribe(fabTask);
-      fabTask = AsyncDrawable.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
+      fabTask = DrawableHelper.unload(fabTask);
+      fabTask = DrawableLoader.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
     } else {
-      fabTask = AsyncMapHelper.unsubscribe(fabTask);
-      fabTask = AsyncDrawable.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
+      fabTask = DrawableHelper.unload(fabTask);
+      fabTask = DrawableLoader.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
     }
   }
 

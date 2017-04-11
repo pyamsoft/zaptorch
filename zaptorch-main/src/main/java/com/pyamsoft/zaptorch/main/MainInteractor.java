@@ -20,20 +20,23 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.zaptorch.base.ZapTorchPreferences;
-import io.reactivex.Observable;
+import com.pyamsoft.zaptorch.base.preference.UIPreferences;
+import io.reactivex.Single;
 import timber.log.Timber;
 
 class MainInteractor {
 
-  @SuppressWarnings("WeakerAccess") @NonNull final ZapTorchPreferences preferences;
+  @SuppressWarnings("WeakerAccess") @NonNull final UIPreferences preferences;
 
-  MainInteractor(@NonNull ZapTorchPreferences preferences) {
+  MainInteractor(@NonNull UIPreferences preferences) {
     this.preferences = Checker.checkNonNull(preferences);
   }
 
-  @CheckResult @NonNull public Observable<Boolean> shouldHandleKeys(int keyCode) {
-    return Observable.fromCallable(preferences::shouldHandleKeys).filter(shouldHandle -> {
+  /**
+   * public
+   */
+  @CheckResult @NonNull Single<Boolean> shouldHandleKeys(int keyCode) {
+    return Single.fromCallable(preferences::shouldHandleKeys).filter(shouldHandle -> {
       boolean handled;
       switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -48,6 +51,6 @@ class MainInteractor {
           handled = false;
       }
       return shouldHandle && handled;
-    });
+    }).toSingle(false);
   }
 }

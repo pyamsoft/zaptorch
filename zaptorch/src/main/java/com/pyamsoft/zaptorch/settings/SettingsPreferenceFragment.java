@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.view.View;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment;
-import com.pyamsoft.pydroid.util.AppUtil;
+import com.pyamsoft.pydroid.util.DialogUtil;
 import com.pyamsoft.zaptorch.Injector;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -46,7 +46,7 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
 
     final Preference zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key));
     zapTorchExplain.setOnPreferenceClickListener(preference -> {
-      AppUtil.guaranteeSingleDialogFragment(getActivity(), new HowToDialog(), "howto");
+      DialogUtil.guaranteeSingleDialogFragment(getActivity(), new HowToDialog(), "howto");
       return true;
     });
   }
@@ -78,10 +78,9 @@ public class SettingsPreferenceFragment extends ActionBarSettingsPreferenceFragm
     presenter.stop();
   }
 
-  @Override protected boolean onClearAllPreferenceClicked() {
-    AppUtil.guaranteeSingleDialogFragment(getActivity(), new ConfirmationDialog(),
+  @Override protected void onClearAllClicked() {
+    DialogUtil.guaranteeSingleDialogFragment(getActivity(), new ConfirmationDialog(),
         "confirm_dialog");
-    return super.onClearAllPreferenceClicked();
   }
 
   @Override protected int getRootViewContainer() {

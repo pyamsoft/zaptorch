@@ -40,11 +40,17 @@ class VolumeServicePresenter extends SchedulerPresenter {
     this.interactor = Checker.checkNonNull(interactor);
   }
 
-  public void toggleTorch() {
+  /**
+   * public
+   */
+  void toggleTorch() {
     interactor.toggleTorch();
   }
 
-  public void handleKeyEvent(int action, int keyCode) {
+  /**
+   * public
+   */
+  void handleKeyEvent(int action, int keyCode) {
     keyDisposable = DisposableHelper.dispose(keyDisposable);
     keyDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(getSubscribeScheduler())
@@ -53,14 +59,20 @@ class VolumeServicePresenter extends SchedulerPresenter {
             throwable -> Timber.e(throwable, "onError handleKeyEvent"));
   }
 
-  public void setupCamera(@NonNull VolumeServiceView view) {
+  /**
+   * public
+   */
+  void setupCamera(@NonNull VolumeServiceView view) {
     interactor.setupCamera(intent -> {
       VolumeServiceView cameraView = Checker.checkNonNull(view);
       cameraView.onCameraOpenError(intent);
     }, getObserveScheduler(), getSubscribeScheduler());
   }
 
-  public void registerOnBus(@NonNull ServiceCallback callback) {
+  /**
+   * public
+   */
+  void registerOnBus(@NonNull ServiceCallback callback) {
     ServiceCallback serviceCallback = Checker.checkNonNull(callback);
     serviceBus = DisposableHelper.dispose(serviceBus);
     serviceBus = EventBus.get()
