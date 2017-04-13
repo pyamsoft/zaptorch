@@ -26,8 +26,9 @@ import android.view.ViewGroup;
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
 import com.pyamsoft.pydroid.design.util.FABUtil;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
-import com.pyamsoft.pydroid.ui.loader.DrawableHelper;
-import com.pyamsoft.pydroid.ui.loader.DrawableLoader;
+import com.pyamsoft.pydroid.ui.loader.ImageLoader;
+import com.pyamsoft.pydroid.ui.loader.LoaderHelper;
+import com.pyamsoft.pydroid.ui.loader.loaded.Loaded;
 import com.pyamsoft.pydroid.util.DialogUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -38,7 +39,7 @@ public class SettingsFragment extends ActionBarFragment {
 
   @NonNull public static final String TAG = "MainSettingsFragment";
   private FragmentMainBinding binding;
-  @NonNull private DrawableLoader.Loaded fabTask = DrawableLoader.empty();
+  @NonNull private Loaded fabTask = LoaderHelper.empty();
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -68,7 +69,7 @@ public class SettingsFragment extends ActionBarFragment {
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    fabTask = DrawableHelper.unload(fabTask);
+    fabTask = LoaderHelper.unload(fabTask);
     binding.unbind();
   }
 
@@ -81,11 +82,12 @@ public class SettingsFragment extends ActionBarFragment {
     super.onResume();
     setActionBarUpEnabled(false);
     if (VolumeMonitorService.isRunning()) {
-      fabTask = DrawableHelper.unload(fabTask);
-      fabTask = DrawableLoader.load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
+      fabTask = LoaderHelper.unload(fabTask);
+      fabTask = ImageLoader.fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
     } else {
-      fabTask = DrawableHelper.unload(fabTask);
-      fabTask = DrawableLoader.load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
+      fabTask = LoaderHelper.unload(fabTask);
+      fabTask =
+          ImageLoader.fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
     }
   }
 
