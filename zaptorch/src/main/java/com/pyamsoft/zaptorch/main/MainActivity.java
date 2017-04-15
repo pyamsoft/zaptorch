@@ -19,16 +19,13 @@ package com.pyamsoft.zaptorch.main;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.pyamsoft.pydroid.ads.AdSource;
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment;
-import com.pyamsoft.pydroid.ui.ads.OnlineAdSource;
 import com.pyamsoft.pydroid.ui.rating.RatingDialog;
 import com.pyamsoft.pydroid.ui.sec.TamperActivity;
 import com.pyamsoft.pydroid.util.AnimUtil;
@@ -50,15 +47,11 @@ public class MainActivity extends TamperActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(R.style.Theme_ZapTorch);
     super.onCreate(savedInstanceState);
+    binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
     PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
 
     Injector.get().provideComponent().plusMainComponent().inject(this);
     setupAppBar();
-  }
-
-  @Override protected int bindActivityToView() {
-    binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-    return R.id.ad_view;
   }
 
   @Override protected void onStart() {
@@ -168,11 +161,5 @@ public class MainActivity extends TamperActivity {
 
   @Override public int getCurrentApplicationVersion() {
     return BuildConfig.VERSION_CODE;
-  }
-
-  @Nullable @Override protected AdSource provideOnlineAdSource() {
-    OnlineAdSource source = new OnlineAdSource(R.string.banner_main_ad_id);
-    source.addTestAdIds("E1241303FDC266381AD6C9FF6FAD056B");
-    return source;
   }
 }
