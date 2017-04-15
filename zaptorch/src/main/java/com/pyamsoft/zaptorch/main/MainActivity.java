@@ -142,9 +142,10 @@ public class MainActivity extends TamperActivity {
   }
 
   @NonNull @Override protected String[] getChangeLogLines() {
-    final String line1 = "BUGFIX: Fix issue with notification on older Android versions";
-    final String line2 = "BUGFIX: Smaller memory footprint";
-    return new String[] { line1, line2 };
+    final String line1 = "BUGFIX: Bugfixes and improvements";
+    final String line2 = "BUGFIX: Removed all Advertisements";
+    final String line3 = "BUGFIX: Faster loading of Open Source Licenses page";
+    return new String[] { line1, line2, line3 };
   }
 
   @NonNull @Override protected String getVersionName() {

@@ -26,6 +26,11 @@
       android:label="@string/app_name"
       android:theme="@style/Theme.ZapTorch">
 
+    <!-- Support super wide screen -->
+    <meta-data
+        android:name="android.max_aspect"
+        android:value="2.1"/>
+
     <activity
         android:name=".main.MainActivity"
         android:launchMode="singleTask"
