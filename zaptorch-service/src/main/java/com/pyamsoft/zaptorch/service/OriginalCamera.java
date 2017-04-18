@@ -29,11 +29,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import com.pyamsoft.pydroid.function.OptionalWrapper;
-import com.pyamsoft.pydroid.helper.DisposableHelper;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
 import java.io.IOException;
 import java.util.List;
 import timber.log.Timber;
@@ -46,7 +43,6 @@ import timber.log.Timber;
   @SuppressWarnings("WeakerAccess") @NonNull final WindowManager.LayoutParams params;
   @SuppressWarnings("WeakerAccess") @Nullable Camera camera;
   @SuppressWarnings("WeakerAccess") boolean opened;
-  @NonNull private Disposable cameraDisposable = Disposables.empty();
 
   OriginalCamera(final @NonNull Context context, final @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
@@ -75,7 +71,7 @@ import timber.log.Timber;
     return holder;
   }
 
-  @Override public void toggleTorch() {
+  @Override void toggleTorch() {
     if (ActivityCompat.checkSelfPermission(getAppContext(), Manifest.permission.CAMERA)
         == PackageManager.PERMISSION_GRANTED) {
       if (opened) {
@@ -92,8 +88,7 @@ import timber.log.Timber;
 
   private void connectToCameraService() {
     Timber.d("Camera is closed, open it");
-    cameraDisposable = DisposableHelper.dispose(cameraDisposable);
-    cameraDisposable = Single.fromCallable(() -> OptionalWrapper.ofNullable(Camera.open()))
+    disposeOnStop(Single.fromCallable(() -> OptionalWrapper.ofNullable(Camera.open()))
         .map(cameraOptionalWrapper -> {
           if (cameraOptionalWrapper.isPresent()) {
             return cameraOptionalWrapper.item();
@@ -101,13 +96,13 @@ import timber.log.Timber;
 
           throw new IllegalStateException("Camera failed to open");
         })
-        .subscribeOn(getSubScheduler())
-        .observeOn(getObsScheduler())
+        .subscribeOn(getSubscribeScheduler())
+        .observeOn(getObserveScheduler())
         .subscribe(this::cameraOpened, throwable -> {
           Timber.e(throwable, "onError connectToCameraService");
           clearCamera(throwable);
           startErrorExplanationActivity();
-        });
+        }));
   }
 
   @SuppressWarnings("WeakerAccess") void cameraOpened(@NonNull Camera camera) {
@@ -165,6 +160,10 @@ import timber.log.Timber;
     }
   }
 
+  @Override protected void onStop() {
+    release();
+  }
+
   @Override public void release() {
     if (opened) {
       if (camera != null) {
@@ -178,8 +177,6 @@ import timber.log.Timber;
       opened = false;
       notifyCallbackOnClosed();
     }
-    cameraDisposable = DisposableHelper.dispose(cameraDisposable);
-    super.release();
   }
 
   @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {

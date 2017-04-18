@@ -43,7 +43,7 @@ import timber.log.Timber;
     setupCamera();
   }
 
-  @Override public void toggleTorch() {
+  @Override void toggleTorch() {
     setTorch(!torchCallback.isEnabled());
   }
 
@@ -63,14 +63,17 @@ import timber.log.Timber;
     }
   }
 
-  @Override public void release() {
+  @Override void release() {
     if (torchCallback.isEnabled()) {
       setTorch(false);
     }
 
     Timber.d("Unregister torch callback");
     cameraManager.unregisterTorchCallback(torchCallback);
-    super.release();
+  }
+
+  @Override protected void onStop() {
+    release();
   }
 
   private void setupCamera() {

@@ -78,12 +78,15 @@ import timber.log.Timber;
     return null;
   }
 
-  @Override public void release() {
-    cameraCallback.close();
-    super.release();
+  @Override protected void onStop() {
+    release();
   }
 
-  @Override public void toggleTorch() {
+  @Override void release() {
+    cameraCallback.close();
+  }
+
+  @Override void toggleTorch() {
     if (flashCameraId == null) {
       Timber.e("No setupCamera with Flash");
       startErrorExplanationActivity();

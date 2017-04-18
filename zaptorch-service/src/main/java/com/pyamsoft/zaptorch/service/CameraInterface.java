@@ -16,29 +16,12 @@
 
 package com.pyamsoft.zaptorch.service;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 public interface CameraInterface {
 
-  @NonNull String DIALOG_WHICH = "dialog";
   int TYPE_NONE = -1;
   int TYPE_PERMISSION = 0;
   int TYPE_ERROR = 1;
-
-  void toggleTorch();
-
-  void release();
-
-  void setOnStateChangedCallback(@Nullable OnStateChangedCallback callback);
-
-  interface OnStateChangedCallback {
-
-    void onOpened();
-
-    void onClosed();
-
-    void onError(@NonNull Intent errorIntent);
-  }
+  @NonNull String DIALOG_WHICH = "dialog";
 }
