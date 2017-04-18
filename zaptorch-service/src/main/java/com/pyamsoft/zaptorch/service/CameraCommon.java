@@ -18,35 +18,27 @@ package com.pyamsoft.zaptorch.service;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.pydroid.helper.DisposableHelper;
-import com.pyamsoft.pydroid.helper.SchedulerHelper;
+import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
-abstract class CameraCommon implements CameraInterface {
+abstract class CameraCommon extends SchedulerPresenter implements CameraInterface {
 
   @SuppressWarnings("WeakerAccess") @NonNull final Context appContext;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent errorExplain;
   @SuppressWarnings("WeakerAccess") @NonNull final Intent permissionExplain;
   @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private final Scheduler obsScheduler;
-  @NonNull private final Scheduler subScheduler;
-  @NonNull private Disposable errorDisposable = Disposables.empty();
   @Nullable private OnStateChangedCallback callback;
 
   CameraCommon(final @NonNull Context context, @NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
+    super(obsScheduler, subScheduler);
     this.appContext = Checker.checkNonNull(context).getApplicationContext();
     this.interactor = Checker.checkNonNull(interactor);
-    this.obsScheduler = obsScheduler;
-    this.subScheduler = subScheduler;
     errorExplain = new Intent();
     errorExplain.putExtra(DIALOG_WHICH, TYPE_ERROR);
     errorExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -54,29 +46,17 @@ abstract class CameraCommon implements CameraInterface {
     permissionExplain = new Intent();
     permissionExplain.putExtra(DIALOG_WHICH, TYPE_PERMISSION);
     permissionExplain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-    SchedulerHelper.enforceObserveScheduler(obsScheduler);
-    SchedulerHelper.enforceSubscribeScheduler(subScheduler);
-  }
-
-  @NonNull @CheckResult Scheduler getSubScheduler() {
-    return subScheduler;
-  }
-
-  @NonNull @CheckResult Scheduler getObsScheduler() {
-    return obsScheduler;
   }
 
   void startErrorExplanationActivity() {
-    errorDisposable = DisposableHelper.dispose(errorDisposable);
-    errorDisposable = interactor.shouldShowErrorDialog()
-        .subscribeOn(subScheduler)
-        .observeOn(obsScheduler)
+    disposeOnStop(interactor.shouldShowErrorDialog()
+        .subscribeOn(getSubscribeScheduler())
+        .observeOn(getObserveScheduler())
         .subscribe(show -> {
           if (show) {
             notifyCallbackOnError(errorExplain);
           }
-        }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity"));
+        }, throwable -> Timber.e(throwable, "onError startErrorExplanationActivity")));
   }
 
   void startPermissionExplanationActivity() {
@@ -87,7 +67,7 @@ abstract class CameraCommon implements CameraInterface {
     return appContext;
   }
 
-  @Override public void setOnStateChangedCallback(@Nullable OnStateChangedCallback callback) {
+  void setOnStateChangedCallback(@Nullable OnStateChangedCallback callback) {
     this.callback = callback;
   }
 
@@ -112,7 +92,16 @@ abstract class CameraCommon implements CameraInterface {
     }
   }
 
-  @CallSuper @Override public void release() {
-    errorDisposable = DisposableHelper.dispose(errorDisposable);
+  abstract void release();
+
+  abstract void toggleTorch();
+
+  interface OnStateChangedCallback {
+
+    void onOpened();
+
+    void onClosed();
+
+    void onError(@NonNull Intent errorIntent);
   }
 }

@@ -21,18 +21,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import com.pyamsoft.zaptorch.model.ConfirmEvent;
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
 class SettingsPreferenceFragmentPresenter extends SchedulerPresenter {
 
   @SuppressWarnings("WeakerAccess") @NonNull final SettingsPreferenceFragmentInteractor interactor;
-  @NonNull private Disposable clearAllDisposable = Disposables.empty();
   @Nullable private SharedPreferences.OnSharedPreferenceChangeListener cameraApiListener;
 
   SettingsPreferenceFragmentPresenter(@NonNull SettingsPreferenceFragmentInteractor interactor,
@@ -44,7 +40,6 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter {
   @Override protected void onStop() {
     super.onStop();
     unregisterCameraApiListener();
-    clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
   }
 
   private void registerCameraApiListener() {
@@ -61,14 +56,13 @@ class SettingsPreferenceFragmentPresenter extends SchedulerPresenter {
    */
   void registerEventBus(@NonNull ClearRequestCallback callback) {
     ClearRequestCallback requestCallback = Checker.checkNonNull(callback);
-    clearAllDisposable = DisposableHelper.dispose(clearAllDisposable);
-    clearAllDisposable = EventBus.get()
+    disposeOnStop(EventBus.get()
         .listen(ConfirmEvent.class)
         .flatMapSingle(event -> interactor.clearAll())
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(aBoolean -> requestCallback.onClearAll(),
-            throwable -> Timber.e(throwable, "onError event bus"));
+            throwable -> Timber.e(throwable, "onError event bus")));
   }
 
   /**

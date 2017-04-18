@@ -20,24 +20,24 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import com.pyamsoft.pydroid.bus.EventBus;
 import com.pyamsoft.pydroid.helper.Checker;
-import com.pyamsoft.pydroid.helper.DisposableHelper;
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter;
 import com.pyamsoft.zaptorch.model.ServiceEvent;
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.disposables.Disposables;
 import timber.log.Timber;
 
 class VolumeServicePresenter extends SchedulerPresenter {
 
   @NonNull private final VolumeServiceInteractor interactor;
-  @NonNull private Disposable keyDisposable = Disposables.empty();
-  @NonNull private Disposable serviceBus = Disposables.empty();
 
   VolumeServicePresenter(@NonNull VolumeServiceInteractor interactor,
       @NonNull Scheduler observeScheduler, @NonNull Scheduler subscribeScheduler) {
     super(observeScheduler, subscribeScheduler);
     this.interactor = Checker.checkNonNull(interactor);
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    interactor.releaseCamera();
   }
 
   /**
@@ -51,12 +51,11 @@ class VolumeServicePresenter extends SchedulerPresenter {
    * public
    */
   void handleKeyEvent(int action, int keyCode) {
-    keyDisposable = DisposableHelper.dispose(keyDisposable);
-    keyDisposable = interactor.handleKeyPress(action, keyCode)
+    disposeOnStop(interactor.handleKeyPress(action, keyCode)
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
         .subscribe(time -> Timber.d("Set back after %d delay", time),
-            throwable -> Timber.e(throwable, "onError handleKeyEvent"));
+            throwable -> Timber.e(throwable, "onError handleKeyEvent")));
   }
 
   /**
@@ -74,8 +73,7 @@ class VolumeServicePresenter extends SchedulerPresenter {
    */
   void registerOnBus(@NonNull ServiceCallback callback) {
     ServiceCallback serviceCallback = Checker.checkNonNull(callback);
-    serviceBus = DisposableHelper.dispose(serviceBus);
-    serviceBus = EventBus.get()
+    disposeOnDestroy(EventBus.get()
         .listen(ServiceEvent.class)
         .subscribeOn(getSubscribeScheduler())
         .observeOn(getObserveScheduler())
@@ -94,18 +92,7 @@ class VolumeServicePresenter extends SchedulerPresenter {
               throw new IllegalArgumentException(
                   "Invalid ServiceEvent.Type: " + serviceEvent.type());
           }
-        }, throwable -> Timber.e(throwable, "onError event bus"));
-  }
-
-  @Override protected void onStop() {
-    super.onStop();
-    interactor.releaseCamera();
-    keyDisposable = DisposableHelper.dispose(keyDisposable);
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    serviceBus = DisposableHelper.dispose(serviceBus);
+        }, throwable -> Timber.e(throwable, "onError event bus")));
   }
 
   interface ServiceCallback {

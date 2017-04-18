@@ -46,14 +46,14 @@ class VolumeServiceInteractor {
   @SuppressWarnings("WeakerAccess") @NonNull final NotificationManagerCompat
       notificationManagerCompat;
   @SuppressWarnings("WeakerAccess") @NonNull final Notification notification;
-  @SuppressWarnings("WeakerAccess") @NonNull final CameraInterface.OnStateChangedCallback
+  @SuppressWarnings("WeakerAccess") @NonNull final CameraCommon.OnStateChangedCallback
       onStateChangedCallback;
   private final int cameraApiOld;
   private final int cameraApiLollipop;
   private final int cameraApiMarshmallow;
   @NonNull private final Context appContext;
   @SuppressWarnings("WeakerAccess") boolean pressed;
-  @Nullable private CameraInterface cameraInterface;
+  @Nullable private CameraCommon cameraInterface;
 
   VolumeServiceInteractor(@NonNull Context context, @NonNull CameraPreferences preferences,
       @NonNull Class<? extends IntentService> torchOffServiceClass) {
@@ -79,7 +79,7 @@ class VolumeServiceInteractor {
         .setOngoing(false)
         .build();
 
-    onStateChangedCallback = new CameraInterface.OnStateChangedCallback() {
+    onStateChangedCallback = new CameraCommon.OnStateChangedCallback() {
       @Override public void onOpened() {
         notificationManagerCompat.notify(NOTIFICATION_ID, notification);
       }
@@ -141,7 +141,7 @@ class VolumeServiceInteractor {
   void setupCamera(@NonNull ActionSingle<Intent> onCameraErrorRunnable,
       @NonNull Scheduler obsScheduler, @NonNull Scheduler subScheduler) {
     final int cameraApi = preferences.getCameraApi();
-    final CameraInterface camera;
+    final CameraCommon camera;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
       camera = new MarshmallowCamera(appContext, this, obsScheduler, subScheduler);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
@@ -153,7 +153,7 @@ class VolumeServiceInteractor {
       throw new RuntimeException("Invalid Camera API selected: " + cameraApi);
     }
 
-    camera.setOnStateChangedCallback(new CameraInterface.OnStateChangedCallback() {
+    camera.setOnStateChangedCallback(new CameraCommon.OnStateChangedCallback() {
       @Override public void onOpened() {
         onStateChangedCallback.onOpened();
       }
@@ -185,7 +185,8 @@ class VolumeServiceInteractor {
    */
   void releaseCamera() {
     if (cameraInterface != null) {
-      cameraInterface.release();
+      cameraInterface.stop();
+      cameraInterface.destroy();
       cameraInterface.setOnStateChangedCallback(null);
       cameraInterface = null;
     }
