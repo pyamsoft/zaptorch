@@ -25,10 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior;
 import com.pyamsoft.pydroid.design.util.FABUtil;
+import com.pyamsoft.pydroid.loader.ImageLoader;
+import com.pyamsoft.pydroid.loader.LoaderHelper;
+import com.pyamsoft.pydroid.loader.loaded.Loaded;
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment;
-import com.pyamsoft.pydroid.ui.loader.ImageLoader;
-import com.pyamsoft.pydroid.ui.loader.LoaderHelper;
-import com.pyamsoft.pydroid.ui.loader.loaded.Loaded;
 import com.pyamsoft.pydroid.util.DialogUtil;
 import com.pyamsoft.zaptorch.R;
 import com.pyamsoft.zaptorch.ZapTorch;
@@ -83,11 +83,12 @@ public class SettingsFragment extends ActionBarFragment {
     setActionBarUpEnabled(false);
     if (VolumeMonitorService.isRunning()) {
       fabTask = LoaderHelper.unload(fabTask);
-      fabTask = ImageLoader.fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab);
+      fabTask = ImageLoader.fromResource(getActivity(), R.drawable.ic_help_24dp)
+          .into(binding.mainSettingsFab);
     } else {
       fabTask = LoaderHelper.unload(fabTask);
-      fabTask =
-          ImageLoader.fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab);
+      fabTask = ImageLoader.fromResource(getActivity(), R.drawable.ic_service_start_24dp)
+          .into(binding.mainSettingsFab);
     }
   }
 
