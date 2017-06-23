@@ -21,6 +21,8 @@ tasks.whenTaskAdded { task ->
 }
 
 apply plugin: "com.android.library"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "com.getkeepsafe.dexcount"
 apply plugin: "net.ltgt.errorprone"
@@ -65,5 +67,7 @@ dependencies {
 
   debugCompile project(path: ":zaptorch-model", configuration: "debug")
   releaseCompile project(path: ":zaptorch-model", configuration: "release")
+
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 

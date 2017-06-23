@@ -17,6 +17,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+  ext {
+    kotlin_version = '1.1.2-5'
+    plugin_version = '2.3.3'
+  }
   repositories {
     jcenter()
 
@@ -44,7 +48,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.3'
+    classpath "com.android.tools.build:gradle:$plugin_version"
 
     // Retro lambda
     classpath 'me.tatarka:gradle-retrolambda:3.6.0'
@@ -60,6 +64,8 @@ buildscript {
 
     // Error prone compiler
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.10"
+
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
