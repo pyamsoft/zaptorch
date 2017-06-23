@@ -51,10 +51,6 @@ android {
       minifyEnabled false
     }
   }
-
-  dexOptions {
-    javaMaxHeapSize "${rootProject.ext.heapSize}"
-  }
 }
 
 dependencies {

@@ -84,10 +84,6 @@ android {
       versionNameSuffix "-dev"
     }
   }
-
-  dexOptions {
-    javaMaxHeapSize "${rootProject.ext.heapSize}"
-  }
 }
 
 dependencies {
