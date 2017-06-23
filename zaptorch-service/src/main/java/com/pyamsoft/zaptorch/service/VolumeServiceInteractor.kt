@@ -33,7 +33,8 @@ import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-internal class VolumeServiceInteractor(context: Context, val preferences: CameraPreferences,
+internal class VolumeServiceInteractor internal constructor(context: Context,
+    val preferences: CameraPreferences,
     torchOffServiceClass: Class<out IntentService>) {
   private val appContext: Context = context.applicationContext
   val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(

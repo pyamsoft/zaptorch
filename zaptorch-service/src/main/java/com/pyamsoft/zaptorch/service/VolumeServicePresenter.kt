@@ -26,7 +26,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import io.reactivex.Scheduler
 import timber.log.Timber
 
-class VolumeServicePresenter(private val interactor: VolumeServiceInteractor,
+class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
     private val bus: EventBus<ServiceEvent>,
     observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPresenter(
     observeScheduler, subscribeScheduler) {
@@ -36,16 +36,10 @@ class VolumeServicePresenter(private val interactor: VolumeServiceInteractor,
     interactor.releaseCamera()
   }
 
-  /**
-   * public
-   */
   fun toggleTorch() {
     interactor.toggleTorch()
   }
 
-  /**
-   * public
-   */
   fun handleKeyEvent(action: Int, keyCode: Int) {
     disposeOnStop(interactor.handleKeyPress(action, keyCode)
         .subscribeOn(backgroundScheduler)
