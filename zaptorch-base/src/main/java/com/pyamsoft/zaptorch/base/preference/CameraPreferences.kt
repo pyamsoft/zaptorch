@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.preference;
+package com.pyamsoft.zaptorch.base.preference
 
-import android.support.annotation.CheckResult;
+import android.support.annotation.CheckResult
 
-public interface CameraPreferences {
+interface CameraPreferences {
 
-  @CheckResult boolean shouldShowErrorDialog();
+  @CheckResult fun shouldShowErrorDialog(): Boolean
 
-  @CheckResult int getCameraApi();
+  @get:CheckResult val cameraApi: Int
 
-  @CheckResult long getButtonDelayTime();
+  @get:CheckResult val buttonDelayTime: Long
 }

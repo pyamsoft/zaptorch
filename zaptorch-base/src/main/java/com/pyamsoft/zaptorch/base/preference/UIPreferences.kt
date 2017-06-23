@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.preference;
+package com.pyamsoft.zaptorch.base.preference
 
-import android.content.SharedPreferences;
-import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
+import android.content.SharedPreferences
+import android.support.annotation.CheckResult
 
-public interface UIPreferences {
+interface UIPreferences {
 
-  @CheckResult boolean shouldHandleKeys();
+  @CheckResult fun shouldHandleKeys(): Boolean
 
-  void register(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
+  fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 
-  void unregister(@NonNull SharedPreferences.OnSharedPreferenceChangeListener listener);
+  fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 }
