@@ -29,13 +29,13 @@ public class CameraErrorExplanation extends ActivityBase {
 
   @Override protected void onPostResume() {
     super.onPostResume();
-    final int type = getIntent().getIntExtra(DIALOG_WHICH, TYPE_NONE);
+    final int type = getIntent().getIntExtra(Companion.getDIALOG_WHICH(), Companion.getTYPE_NONE());
     DialogFragment fragment;
     switch (type) {
-      case TYPE_PERMISSION:
+      case Companion.getTYPE_PERMISSION():
         fragment = new PermissionErrorDialog();
         break;
-      case TYPE_ERROR:
+      case Companion.getTYPE_ERROR():
         fragment = new CameraErrorDialog();
         break;
       default:

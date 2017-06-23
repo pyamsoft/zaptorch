@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.bus.RxBus
-import com.pyamsoft.zaptorch.model.ConfirmEvent
+import com.pyamsoft.zaptorch.model.ServiceEvent
 import io.reactivex.Observable
 
-internal class SettingsBus internal constructor() : EventBus<ConfirmEvent> {
+internal class ServiceBus internal constructor() : EventBus<ServiceEvent> {
 
-  private val bus = RxBus.create<ConfirmEvent>()
+  private val bus = RxBus.create<ServiceEvent>()
 
-  override fun listen(): Observable<ConfirmEvent> {
+  override fun listen(): Observable<ServiceEvent> {
     return bus.listen()
   }
 
-  override fun publish(event: ConfirmEvent) {
+  override fun publish(event: ServiceEvent) {
     bus.publish(event)
   }
 
