@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.preference;
+package com.pyamsoft.zaptorch.base.preference
 
-public interface ClearPreferences {
+interface ClearPreferences {
 
-  void clearAll();
+  fun clearAll()
 }
