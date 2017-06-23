@@ -24,33 +24,33 @@ import com.pyamsoft.zaptorch.base.preference.UIPreferences
 import io.reactivex.Single
 
 internal class SettingsPreferenceFragmentInteractor internal constructor(
-        context: Context, private val preferences: UIPreferences,
-        private val clearPreferences: ClearPreferences) {
-    private val cameraApiKey = context.getString(R.string.camera_api_key)
+    context: Context, private val preferences: UIPreferences,
+    private val clearPreferences: ClearPreferences) {
+  private val cameraApiKey = context.getString(R.string.camera_api_key)
 
-    @CheckResult fun getCameraApiKey(): String {
-        return cameraApiKey
-    }
+  @CheckResult fun getCameraApiKey(): String {
+    return cameraApiKey
+  }
 
-    @CheckResult fun clearAll(): Single<Boolean> {
-        return Single.fromCallable {
-            clearPreferences.clearAll()
-            return@fromCallable true
-        }
+  @CheckResult fun clearAll(): Single<Boolean> {
+    return Single.fromCallable {
+      clearPreferences.clearAll()
+      return@fromCallable true
     }
+  }
 
-    fun registerCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
-        unregisterCameraApiListener(cameraApiListener)
-        if (cameraApiListener != null) {
-            preferences.register(cameraApiListener)
-        }
+  fun registerCameraApiListener(
+      cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
+    unregisterCameraApiListener(cameraApiListener)
+    if (cameraApiListener != null) {
+      preferences.register(cameraApiListener)
     }
+  }
 
-    fun unregisterCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
-        if (cameraApiListener != null) {
-            preferences.unregister(cameraApiListener)
-        }
+  fun unregisterCameraApiListener(
+      cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
+    if (cameraApiListener != null) {
+      preferences.unregister(cameraApiListener)
     }
+  }
 }

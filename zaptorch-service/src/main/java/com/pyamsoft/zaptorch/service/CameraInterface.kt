@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service;
+package com.pyamsoft.zaptorch.service
 
-import android.support.annotation.NonNull;
+interface CameraInterface {
 
-public interface CameraInterface {
+  companion object {
 
-  int TYPE_NONE = -1;
-  int TYPE_PERMISSION = 0;
-  int TYPE_ERROR = 1;
-  @NonNull String DIALOG_WHICH = "dialog";
+    const val TYPE_NONE = -1
+    const val TYPE_PERMISSION = 0
+    const val TYPE_ERROR = 1
+    const val DIALOG_WHICH = "dialog"
+  }
 }
