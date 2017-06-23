@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings;
+package com.pyamsoft.zaptorch.settings
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import com.pyamsoft.zaptorch.ZapTorch;
+import android.app.Dialog
+import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
-public class HowToDialog extends DialogFragment {
+class HowToDialog : WatchedDialog() {
 
-  @NonNull @Override public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-    return new AlertDialog.Builder(getActivity()).setMessage(
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    return AlertDialog.Builder(activity).setMessage(
         "Just double press the volume down key to turn the flashlight on and off")
         .setTitle("How to Use")
-        .setNeutralButton("Got It", (dialog, which) -> dialog.dismiss())
-        .create();
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    ZapTorch.getRefWatcher(this).watch(this);
+        .setNeutralButton("Got It") { _, _ -> dismiss() }
+        .create()
   }
 }

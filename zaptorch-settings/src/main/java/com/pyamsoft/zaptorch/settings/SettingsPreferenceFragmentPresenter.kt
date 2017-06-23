@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.settings
 
 import android.content.SharedPreferences
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.pydroid.presenter.SchedulerPreferencePresenter
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import io.reactivex.Scheduler
 import timber.log.Timber
@@ -26,7 +26,7 @@ import timber.log.Timber
 class SettingsPreferenceFragmentPresenter internal constructor(
     private val bus: EventBus<ConfirmEvent>,
     private val interactor: SettingsPreferenceFragmentInteractor,
-    observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPresenter(
+    observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPreferencePresenter(
     observeScheduler, subscribeScheduler) {
 
   private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null

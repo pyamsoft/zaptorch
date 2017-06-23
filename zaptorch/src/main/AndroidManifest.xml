@@ -23,8 +23,8 @@
   <application
       android:name=".ZapTorch"
       android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher"
       android:label="@string/app_name"
+      android:roundIcon="@mipmap/ic_launcher"
       android:theme="@style/Theme.ZapTorch">
 
     <!-- Support super wide screen -->
@@ -67,12 +67,6 @@
     <service
         android:name=".service.TorchOffService"
         android:exported="false"/>
-
-    <provider
-        android:name=".ZapTorchSingleInitProvider"
-        android:authorities="com.pyamsoft.zaptorch.ZapTorchSingleInitProvider"
-        android:exported="false"
-        android:syncable="false"/>
 
   </application>
 
