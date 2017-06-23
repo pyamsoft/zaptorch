@@ -42,15 +42,15 @@ public class VolumeMonitorService extends AccessibilityService {
   }
 
   public static void finish() {
-    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.FINISH));
+    EventBus.get().publish(new ServiceEvent(ServiceEvent.Type.FINISH));
   }
 
   public static void forceToggle() {
-    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.TORCH));
+    EventBus.get().publish(new ServiceEvent(ServiceEvent.Type.TORCH));
   }
 
   public static void changeCameraApi() {
-    EventBus.get().publish(ServiceEvent.create(ServiceEvent.Type.CHANGE_CAMERA));
+    EventBus.get().publish(new ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA));
   }
 
   @Override protected boolean onKeyEvent(KeyEvent event) {

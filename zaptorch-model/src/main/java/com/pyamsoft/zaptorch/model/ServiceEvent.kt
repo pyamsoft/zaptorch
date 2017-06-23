@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.model;
+package com.pyamsoft.zaptorch.model
 
-public class ConfirmEvent {
+data class ServiceEvent(val type: Type) {
+
+    enum class Type {
+        FINISH, TORCH, CHANGE_CAMERA
+    }
 }

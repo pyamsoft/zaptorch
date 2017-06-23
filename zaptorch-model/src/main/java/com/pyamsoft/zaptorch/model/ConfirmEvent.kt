@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.model;
+package com.pyamsoft.zaptorch.model
 
-import android.support.annotation.CheckResult;
-import android.support.annotation.NonNull;
-import com.google.auto.value.AutoValue;
-
-@AutoValue public abstract class ServiceEvent {
-
-  @CheckResult @NonNull public static ServiceEvent create(@NonNull Type type) {
-    return new AutoValue_ServiceEvent(type);
-  }
-
-  @CheckResult public abstract Type type();
-
-  public enum Type {
-    FINISH, TORCH, CHANGE_CAMERA
-  }
-}
+object ConfirmEvent
