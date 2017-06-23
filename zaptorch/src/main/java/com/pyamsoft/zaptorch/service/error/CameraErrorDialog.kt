@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service.error;
+package com.pyamsoft.zaptorch.service.error
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import com.pyamsoft.zaptorch.ZapTorch;
+import android.app.Dialog
+import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
-public class CameraErrorDialog extends DialogFragment {
+class CameraErrorDialog : WatchedDialog() {
 
-  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-    return new AlertDialog.Builder(getActivity()).setMessage(
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    return AlertDialog.Builder(activity).setMessage(
         "ZapTorch was unable to access your devices setupCamera."
             + " Please make sure that your device has a setupCamera with Flash functionality."
             + " Please make sure no other application is using the setupCamera and try again.")
-        .setPositiveButton("Okay", (dialogInterface, i) -> dialogInterface.dismiss())
-        .create();
+        .setPositiveButton("Okay") { _, _ -> dismiss() }
+        .create()
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
-    getActivity().finish();
-    ZapTorch.getRefWatcher(this).watch(this);
+  override fun onDestroyView() {
+    super.onDestroyView()
+    activity.finish()
   }
 }

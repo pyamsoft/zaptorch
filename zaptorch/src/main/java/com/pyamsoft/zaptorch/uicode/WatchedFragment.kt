@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service;
+package com.pyamsoft.zaptorch.uicode
 
-import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.base.ZapTorchModule;
+import android.support.annotation.CallSuper
+import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment
+import com.pyamsoft.zaptorch.ZapTorch
 
-public class VolumeServiceComponent {
+abstract class WatchedFragment : ActionBarFragment() {
 
-  @NonNull private final VolumeServiceModule serviceModule;
-
-  public VolumeServiceComponent(@NonNull VolumeServiceModule serviceModule) {
-    this.serviceModule = serviceModule;
-  }
-
-  void inject(@NonNull VolumeMonitorService service) {
-    service.presenter = serviceModule.getPresenter();
+  @CallSuper override fun onDestroy() {
+    super.onDestroy()
+    ZapTorch.getRefWatcher(this).watch(this)
   }
 }
+

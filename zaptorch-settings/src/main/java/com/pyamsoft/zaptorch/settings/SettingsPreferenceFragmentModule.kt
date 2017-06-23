@@ -32,4 +32,8 @@ class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
   @CheckResult fun getPreferenceFragmentPresenter(): SettingsPreferenceFragmentPresenter {
     return SettingsPreferenceFragmentPresenter(bus, interactor, obsScheduler, subScheduler)
   }
+
+  @CheckResult fun getPresenter(): SettingPresenter {
+    return SettingPresenter(bus)
+  }
 }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.main;
+package com.pyamsoft.zaptorch.settings
 
-import android.support.annotation.NonNull;
-import com.pyamsoft.zaptorch.base.ZapTorchModule;
+import android.app.Dialog
+import android.os.Bundle
+import android.support.v7.app.AlertDialog
+import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
-public class MainComponent {
+class ServiceInfoDialog : WatchedDialog() {
 
-  @NonNull private final MainModule mainModule;
-
-  public MainComponent(@NonNull MainModule mainModule) {
-    this.mainModule = mainModule;
-  }
-
-  void inject(MainActivity activity) {
-    activity.presenter = mainModule.getPresenter();
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    return AlertDialog.Builder(activity).setMessage("ZapTorch service is On")
+        .setPositiveButton("Okay") { _, _ -> dismiss() }
+        .create()
   }
 }

@@ -29,7 +29,11 @@ class VolumeServiceModule(module: ZapTorchModule) {
   private val obsScheduler: Scheduler = module.provideObsScheduler()
   private val subScheduler: Scheduler = module.provideSubScheduler()
 
-  @CheckResult fun getPresenter(): VolumeServicePresenter {
+  @CheckResult fun getServicePresenter(): VolumeServicePresenter {
     return VolumeServicePresenter(interactor, bus, obsScheduler, subScheduler)
+  }
+
+  @CheckResult fun getPresenter(): ServicePresenter {
+    return ServicePresenter(bus)
   }
 }

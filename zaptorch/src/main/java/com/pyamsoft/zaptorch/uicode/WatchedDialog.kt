@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings;
+package com.pyamsoft.zaptorch.uicode
 
-import android.support.annotation.NonNull;
+import android.support.annotation.CallSuper
+import com.pyamsoft.pydroid.ui.app.fragment.DialogFragmentBase
+import com.pyamsoft.zaptorch.ZapTorch
 
-public class SettingsComponent {
+abstract class WatchedDialog : DialogFragmentBase() {
 
-  @NonNull private final SettingsPreferenceFragmentModule serviceModule;
-
-  public SettingsComponent(@NonNull SettingsPreferenceFragmentModule serviceModule) {
-    this.serviceModule = serviceModule;
-  }
-
-  void inject(@NonNull SettingsPreferenceFragment fragment) {
-    fragment.presenter = serviceModule.getPreferenceFragmentPresenter();
+  @CallSuper override fun onDestroy() {
+    super.onDestroy()
+    ZapTorch.getRefWatcher(this).watch(this)
   }
 }
+

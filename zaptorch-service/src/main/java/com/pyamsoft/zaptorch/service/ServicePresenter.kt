@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service;
+package com.pyamsoft.zaptorch.service
 
-import android.app.IntentService;
-import android.content.Intent;
-import timber.log.Timber;
+import com.pyamsoft.pydroid.bus.EventBus
+import com.pyamsoft.pydroid.presenter.ViewPresenter
+import com.pyamsoft.zaptorch.model.ServiceEvent
 
-public class TorchOffService extends IntentService {
+class ServicePresenter internal constructor(
+    private val bus: EventBus<ServiceEvent>) : ViewPresenter() {
 
-  public TorchOffService() {
-    super(TorchOffService.class.getName());
-  }
-
-  @Override protected void onHandleIntent(Intent intent) {
-    try {
-      VolumeMonitorService.forceToggle();
-    } catch (IllegalStateException e) {
-      Timber.e(e, "onError");
-    }
+  fun publish(event: ServiceEvent) {
+    bus.publish(event)
   }
 }
+
+
+
