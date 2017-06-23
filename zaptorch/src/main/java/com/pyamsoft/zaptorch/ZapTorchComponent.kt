@@ -36,10 +36,11 @@ class ZapTorchComponent internal constructor(zapTorchModule: ZapTorchModule) {
 
   fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
     settingsPreferenceFragment.presenter = settingsPreferenceFragmentModule.getPreferenceFragmentPresenter()
+    settingsPreferenceFragment.servicePresenter = volumeServiceModule.getPresenter()
   }
 
-  fun inject(settingsPreferenceFragment: SettingsFragment) {
-    settingsPreferenceFragment.presenter = settingsPreferenceFragmentModule.getPresenter()
+  fun inject(settingsFragment: SettingsFragment) {
+    settingsFragment.presenter = settingsPreferenceFragmentModule.getPresenter()
   }
 
   fun inject(confirmationDialog: ConfirmationDialog) {
