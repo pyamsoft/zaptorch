@@ -63,7 +63,7 @@ class SettingsFragment : WatchedFragment() {
   override fun onStart() {
     super.onStart()
 
-    presenter.clickEvent(binding.mainSettingsFab) {
+    presenter.clickEvent(binding.mainSettingsFab, {
       if (VolumeMonitorService.isRunning) {
         DialogUtil.guaranteeSingleDialogFragment(activity, ServiceInfoDialog(),
             "servce_info")
@@ -71,7 +71,7 @@ class SettingsFragment : WatchedFragment() {
         DialogUtil.guaranteeSingleDialogFragment(activity, AccessibilityRequestDialog(),
             "accessibility")
       }
-    }
+    })
   }
 
   override fun onStop() {
