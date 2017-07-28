@@ -18,14 +18,18 @@ package com.pyamsoft.zaptorch.service
 
 import android.app.IntentService
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.support.annotation.CheckResult
+import android.support.annotation.RequiresApi
+import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.NotificationCompat
 import android.view.KeyEvent
 import com.pyamsoft.zaptorch.base.preference.CameraPreferences
 import io.reactivex.Scheduler
@@ -49,7 +53,13 @@ internal class VolumeServiceInteractor internal constructor(context: Context,
 
   init {
     val intent = Intent(appContext, torchOffServiceClass)
-    notification = NotificationCompat.Builder(appContext).setContentIntent(
+
+    val notificationChannelId: String = "zaptorch_foreground"
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      setupNotificationChannel(notificationChannelId)
+    }
+
+    notification = NotificationCompat.Builder(appContext, notificationChannelId).setContentIntent(
         PendingIntent.getService(appContext, NOTIFICATION_RC, intent,
             PendingIntent.FLAG_UPDATE_CURRENT))
         .setContentTitle("Torch is On")
@@ -76,6 +86,23 @@ internal class VolumeServiceInteractor internal constructor(context: Context,
     }
 
     pressed = false
+  }
+
+  @RequiresApi(VERSION_CODES.O) private fun setupNotificationChannel(
+      notificationChannelId: String) {
+    val name = "Torch Service"
+    val description = "Notification related to the ZapTorch service"
+    val importance = NotificationManagerCompat.IMPORTANCE_MIN
+    val notificationChannel = NotificationChannel(notificationChannelId, name, importance)
+    notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+    notificationChannel.description = description
+    notificationChannel.enableLights(false)
+    notificationChannel.enableVibration(false)
+
+    Timber.d("Create notification channel with id: %s", notificationChannelId)
+    val notificationManager: NotificationManager = appContext.getSystemService(
+        Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.createNotificationChannel(notificationChannel)
   }
 
   /**
