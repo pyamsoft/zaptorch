@@ -180,7 +180,6 @@ internal class VolumeServiceInteractor internal constructor(context: Context,
     val obj = cameraInterface
     if (obj != null) {
       obj.stop()
-      obj.destroy()
       obj.setOnStateChangedCallback(null)
       cameraInterface = null
     }

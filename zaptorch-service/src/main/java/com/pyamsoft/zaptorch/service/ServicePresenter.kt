@@ -17,11 +17,11 @@
 package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.presenter.ViewPresenter
+import com.pyamsoft.pydroid.util.presenter.ViewPresenter
 import com.pyamsoft.zaptorch.model.ServiceEvent
 
 class ServicePresenter internal constructor(
-    private val bus: EventBus<ServiceEvent>) : ViewPresenter() {
+    private val bus: EventBus<ServiceEvent>) : ViewPresenter<Unit>() {
 
   fun publish(event: ServiceEvent) {
     bus.publish(event)

@@ -25,7 +25,7 @@ import timber.log.Timber
 
 internal abstract class CameraCommon(context: Context,
     private val interactor: VolumeServiceInteractor,
-    obsScheduler: Scheduler, subScheduler: Scheduler) : SchedulerPresenter(obsScheduler,
+    obsScheduler: Scheduler, subScheduler: Scheduler) : SchedulerPresenter<Unit>(obsScheduler,
     subScheduler), CameraInterface {
 
   @get:CheckResult val appContext: Context = context.applicationContext

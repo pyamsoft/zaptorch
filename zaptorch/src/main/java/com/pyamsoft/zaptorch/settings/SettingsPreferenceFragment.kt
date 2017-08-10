@@ -29,6 +29,7 @@ import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePresenter
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
+import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.Callback
 import timber.log.Timber
 
 class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment() {
@@ -53,32 +54,37 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment() {
 
   override fun onStart() {
     super.onStart()
-    presenter.listenForCameraChanges {
-      if (VolumeMonitorService.isRunning) {
-        servicePresenter.publish(ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA))
+    servicePresenter.start(Unit)
+    presenter.start(object : Callback {
+      override fun onApiChanged() {
+        if (VolumeMonitorService.isRunning) {
+          servicePresenter.publish(ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA))
+        }
       }
-    }
+
+      override fun onClearAll() {
+        Timber.d("received completed clearAll event. Kill Process")
+        try {
+          servicePresenter.publish(ServiceEvent(ServiceEvent.Type.FINISH))
+        } catch (e: IllegalStateException) {
+          Timber.e(e, "Expected exception when Service is NULL")
+        }
+
+        val activityManager = context.applicationContext
+            .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        activityManager.clearApplicationUserData()
+      }
+
+    })
 
     presenter.clickEvent(zapTorchExplain, {
       DialogUtil.guaranteeSingleDialogFragment(activity, HowToDialog(), "howto")
     })
-
-    presenter.registerEventBus {
-      Timber.d("received completed clearAll event. Kill Process")
-      try {
-        servicePresenter.publish(ServiceEvent(ServiceEvent.Type.FINISH))
-      } catch (e: IllegalStateException) {
-        Timber.e(e, "Expected exception when Service is NULL")
-      }
-
-      val activityManager = context.applicationContext
-          .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-      activityManager.clearApplicationUserData()
-    }
   }
 
   override fun onStop() {
     super.onStop()
+    servicePresenter.stop()
     presenter.stop()
   }
 
@@ -98,7 +104,6 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment() {
 
   override fun onDestroy() {
     super.onDestroy()
-    presenter.destroy()
     ZapTorch.getRefWatcher(this).watch(this)
   }
 
