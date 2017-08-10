@@ -42,14 +42,13 @@ class ConfirmationDialog : WatchedDialog() {
     }.setNegativeButton("No") { _, _ -> dismiss() }.create()
   }
 
+  override fun onStart() {
+    super.onStart()
+    presenter.start(Unit)
+  }
 
   override fun onStop() {
     super.onStop()
     presenter.stop()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    presenter.destroy()
   }
 }

@@ -17,11 +17,11 @@
 package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.presenter.ViewPresenter
+import com.pyamsoft.pydroid.util.presenter.ViewPresenter
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class SettingPresenter internal constructor(
-    private val bus: EventBus<ConfirmEvent>) : ViewPresenter() {
+    private val bus: EventBus<ConfirmEvent>) : ViewPresenter<Unit>() {
 
   fun publish(event: ConfirmEvent) {
     bus.publish(event)

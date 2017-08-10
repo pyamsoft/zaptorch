@@ -23,6 +23,7 @@ import android.support.annotation.CheckResult
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
@@ -52,27 +53,34 @@ class VolumeMonitorService : AccessibilityService() {
       it.inject(this)
     }
 
-    setupCamera()
-    presenter.registerOnBus(onToggleTorch = {
-      Timber.d("Toggle Torch")
-      presenter.toggleTorch()
-    }, onChangeCameraApi = {
-      // Simulate the lifecycle for destroying and re-creating the presenter
-      Timber.d("Change setupCamera API")
-      presenter.stop()
-
-      try {
-        Thread.sleep(200)
-      } catch (e: InterruptedException) {
-        Timber.e(e, "Sleep interrupt")
+    presenter.start(object : Callback {
+      override fun onToggleTorch() {
+        Timber.d("Toggle Torch")
+        presenter.toggleTorch()
       }
 
-      setupCamera()
-    }, onFinishService = {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        disableSelf()
+      override fun onChangeCameraApi() {
+        // Simulate the lifecycle for destroying and re-creating the presenter
+        Timber.d("Change setupCamera API")
+        presenter.stop()
+
+        try {
+          Thread.sleep(200)
+        } catch (e: InterruptedException) {
+          Timber.e(e, "Sleep interrupt")
+        }
+
+        setupCamera()
+      }
+
+      override fun onFinishService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          disableSelf()
+        }
       }
     })
+
+    setupCamera()
     isRunning = true
   }
 
@@ -87,11 +95,6 @@ class VolumeMonitorService : AccessibilityService() {
     presenter.stop()
     isRunning = false
     return super.onUnbind(intent)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    presenter.destroy()
   }
 
   companion object {

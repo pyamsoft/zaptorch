@@ -63,6 +63,7 @@ class SettingsFragment : WatchedFragment() {
   override fun onStart() {
     super.onStart()
 
+    presenter.start(Unit)
     presenter.clickEvent(binding.mainSettingsFab, {
       if (VolumeMonitorService.isRunning) {
         DialogUtil.guaranteeSingleDialogFragment(activity, ServiceInfoDialog(),
@@ -77,11 +78,6 @@ class SettingsFragment : WatchedFragment() {
   override fun onStop() {
     super.onStop()
     presenter.stop()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    presenter.destroy()
   }
 
   override fun onDestroyView() {

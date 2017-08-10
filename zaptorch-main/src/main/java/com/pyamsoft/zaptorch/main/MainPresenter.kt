@@ -22,7 +22,8 @@ import io.reactivex.Scheduler
 
 class MainPresenter internal constructor(private val interactor: MainInteractor,
     observeScheduler: Scheduler,
-    subscribeScheduler: Scheduler) : SchedulerPresenter(observeScheduler, subscribeScheduler) {
+    subscribeScheduler: Scheduler) : SchedulerPresenter<Unit>(observeScheduler,
+    subscribeScheduler) {
 
   @CheckResult fun shouldHandleKeycode(keyCode: Int): Boolean {
     return interactor.shouldHandleKeys(keyCode).blockingGet()

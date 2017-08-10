@@ -23,17 +23,23 @@ import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.CHANGE_CAMERA
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
+import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import io.reactivex.Scheduler
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
     private val bus: EventBus<ServiceEvent>,
-    observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPresenter(
+    observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPresenter<Callback>(
     observeScheduler, subscribeScheduler) {
 
   override fun onStop() {
     super.onStop()
     interactor.releaseCamera()
+  }
+
+  override fun onStart(bound: Callback) {
+    super.onStart(bound)
+    registerOnBus(bound::onToggleTorch, bound::onChangeCameraApi, bound::onFinishService)
   }
 
   fun toggleTorch() {
@@ -57,12 +63,9 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     }, foregroundScheduler, backgroundScheduler)
   }
 
-  /**
-   * public
-   */
-  fun registerOnBus(onToggleTorch: () -> Unit, onChangeCameraApi: () -> Unit,
+  private fun registerOnBus(onToggleTorch: () -> Unit, onChangeCameraApi: () -> Unit,
       onFinishService: () -> Unit) {
-    disposeOnDestroy {
+    disposeOnStop {
       bus.listen()
           .subscribeOn(backgroundScheduler)
           .observeOn(foregroundScheduler)
@@ -76,5 +79,14 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
             }
           }, { Timber.e(it, "onError event bus") })
     }
+  }
+
+  interface Callback {
+
+    fun onToggleTorch()
+
+    fun onChangeCameraApi()
+
+    fun onFinishService()
   }
 }

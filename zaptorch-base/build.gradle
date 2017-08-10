@@ -51,7 +51,7 @@ dependencies {
   compile fileTree(dir: "libs", include: ["*.jar"])
 
   // PYDroid
-  compile("com.github.pyamsoft.pydroid:pydroid:$pydroid@aar") {
+  compile("com.github.pyamsoft.pydroid:pydroid-util:$pydroid@aar") {
     transitive = true
   }
 

@@ -31,6 +31,8 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
     Injector.with(this) {
       it.inject(this)
     }
+
+    servicePresenter.start(Unit)
   }
 
   override fun onHandleIntent(intent: Intent?) {
@@ -39,5 +41,10 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
     } catch (e: IllegalStateException) {
       Timber.e(e, "onError")
     }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    servicePresenter.stop()
   }
 }

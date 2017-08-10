@@ -24,7 +24,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
-import com.pyamsoft.pydroid.ui.rating.RatingDialog
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.AnimUtil
 import com.pyamsoft.pydroid.util.AppUtil
@@ -53,6 +52,7 @@ class MainActivity : TamperActivity() {
 
   override fun onStart() {
     super.onStart()
+    presenter.start(Unit)
     showMainFragment()
   }
 
@@ -63,18 +63,12 @@ class MainActivity : TamperActivity() {
 
   override fun onDestroy() {
     super.onDestroy()
-    presenter.destroy()
     binding.unbind()
   }
 
   override fun onResume() {
     super.onResume()
     AnimUtil.animateActionBarToolbar(binding.toolbar)
-  }
-
-  override fun onPostResume() {
-    super.onPostResume()
-    RatingDialog.showRatingDialog(this, this, false)
   }
 
   override val safePackageName: String

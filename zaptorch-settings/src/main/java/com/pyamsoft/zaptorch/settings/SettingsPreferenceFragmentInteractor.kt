@@ -26,11 +26,8 @@ import io.reactivex.Single
 internal class SettingsPreferenceFragmentInteractor internal constructor(
     context: Context, private val preferences: UIPreferences,
     private val clearPreferences: ClearPreferences) {
-  private val cameraApiKey = context.getString(R.string.camera_api_key)
 
-  @CheckResult fun getCameraApiKey(): String {
-    return cameraApiKey
-  }
+  internal val cameraApiKey = context.getString(R.string.camera_api_key)
 
   @CheckResult fun clearAll(): Single<Boolean> {
     return Single.fromCallable {
