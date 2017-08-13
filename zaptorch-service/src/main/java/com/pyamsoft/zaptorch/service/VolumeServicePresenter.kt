@@ -29,8 +29,9 @@ import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
     private val bus: EventBus<ServiceEvent>,
-    observeScheduler: Scheduler, subscribeScheduler: Scheduler) : SchedulerPresenter<Callback>(
-    observeScheduler, subscribeScheduler) {
+    computationScheduler: Scheduler, ioScheduler: Scheduler,
+    mainThreadScheduler: Scheduler) : SchedulerPresenter<Callback>(
+    computationScheduler, ioScheduler, mainThreadScheduler) {
 
   override fun onStop() {
     super.onStop()
@@ -48,27 +49,24 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
 
   fun handleKeyEvent(action: Int, keyCode: Int) {
     disposeOnStop(interactor.handleKeyPress(action, keyCode)
-        .subscribeOn(backgroundScheduler)
-        .observeOn(foregroundScheduler)
+        .subscribeOn(ioScheduler)
+        .observeOn(mainThreadScheduler)
         .subscribe({ time -> Timber.d("Set back after %d delay", time) }
         ) { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
   }
 
-  /**
-   * public
-   */
   fun setupCamera(errorHandler: (Intent) -> Unit) {
     interactor.setupCamera({
       errorHandler(it)
-    }, foregroundScheduler, backgroundScheduler)
+    }, computationScheduler, ioScheduler, mainThreadScheduler)
   }
 
   private fun registerOnBus(onToggleTorch: () -> Unit, onChangeCameraApi: () -> Unit,
       onFinishService: () -> Unit) {
     disposeOnStop {
       bus.listen()
-          .subscribeOn(backgroundScheduler)
-          .observeOn(foregroundScheduler)
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
           .subscribe({ (type) ->
             when (type) {
               TORCH -> onToggleTorch()

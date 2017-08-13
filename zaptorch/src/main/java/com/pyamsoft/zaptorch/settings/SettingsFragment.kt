@@ -33,7 +33,7 @@ import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class SettingsFragment : WatchedFragment() {
 
-  internal lateinit var presenter: SettingPresenter
+  internal lateinit var publisher: SettingPublisher
   private lateinit var binding: FragmentMainBinding
   private var fabTask = LoaderHelper.empty()
 
@@ -58,13 +58,7 @@ class SettingsFragment : WatchedFragment() {
 
   private fun setupFAB() {
     FABUtil.setupFABBehavior(binding.mainSettingsFab, HideScrollFABBehavior(10))
-  }
-
-  override fun onStart() {
-    super.onStart()
-
-    presenter.start(Unit)
-    presenter.clickEvent(binding.mainSettingsFab, {
+    binding.mainSettingsFab.setOnClickListener {
       if (VolumeMonitorService.isRunning) {
         DialogUtil.guaranteeSingleDialogFragment(activity, ServiceInfoDialog(),
             "servce_info")
@@ -72,12 +66,7 @@ class SettingsFragment : WatchedFragment() {
         DialogUtil.guaranteeSingleDialogFragment(activity, AccessibilityRequestDialog(),
             "accessibility")
       }
-    })
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.stop()
+    }
   }
 
   override fun onDestroyView() {

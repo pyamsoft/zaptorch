@@ -17,28 +17,14 @@
 package com.pyamsoft.zaptorch.main
 
 import android.support.annotation.CheckResult
-import android.view.KeyEvent
-import com.pyamsoft.zaptorch.base.preference.UIPreferences
 import io.reactivex.Single
-import timber.log.Timber
 
-internal class MainInteractor internal constructor(private val preferences: UIPreferences) {
+internal interface MainInteractor {
 
-  @CheckResult fun shouldHandleKeys(keyCode: Int): Single<Boolean> {
-    return Single.fromCallable { preferences.shouldHandleKeys() }.filter {
-      val handled: Boolean
-      when (keyCode) {
-        KeyEvent.KEYCODE_VOLUME_DOWN -> {
-          Timber.d("Detected a Volume Down event.")
-          handled = true
-        }
-        KeyEvent.KEYCODE_VOLUME_UP -> {
-          Timber.d("Detected a Volume Up event.")
-          handled = true
-        }
-        else -> handled = false
-      }
-      return@filter it && handled
-    }.toSingle(false)
-  }
+  fun register(handleKeyPressKey: String, onHandleChanged: (Boolean) -> Unit)
+
+  fun unregister()
+
+  @CheckResult fun shouldHandleKeys(): Single<Boolean>
+
 }

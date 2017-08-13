@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.util.presenter.ViewPresenter
-import com.pyamsoft.zaptorch.model.ConfirmEvent
+import com.pyamsoft.zaptorch.model.ServiceEvent
 
-class SettingPresenter internal constructor(
-    private val bus: EventBus<ConfirmEvent>) : ViewPresenter<Unit>() {
+class ServicePublisher internal constructor(private val bus: EventBus<ServiceEvent>) {
 
-  fun publish(event: ConfirmEvent) {
+  fun publish(event: ServiceEvent) {
     bus.publish(event)
   }
 }

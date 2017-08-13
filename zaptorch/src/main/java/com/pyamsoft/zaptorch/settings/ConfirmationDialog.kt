@@ -25,7 +25,7 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class ConfirmationDialog : WatchedDialog() {
 
-  internal lateinit var presenter: SettingPresenter
+  internal lateinit var publisher: SettingPublisher
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -37,18 +37,8 @@ class ConfirmationDialog : WatchedDialog() {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(activity).setMessage(
         "Really clear all application settings?").setPositiveButton("Yes") { _, _ ->
-      presenter.publish(ConfirmEvent)
+      publisher.publish(ConfirmEvent)
       dismiss()
     }.setNegativeButton("No") { _, _ -> dismiss() }.create()
-  }
-
-  override fun onStart() {
-    super.onStart()
-    presenter.start(Unit)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.stop()
   }
 }

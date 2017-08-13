@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.settings
 
-import android.content.Intent
-import android.support.annotation.CheckResult
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import com.pyamsoft.zaptorch.service.VolumeServiceModule
 
-internal interface VolumeServiceInteractor {
+internal class SettingsComponentImpl(private val settingsModule: SettingsPreferenceFragmentModule,
+    private val serviceModule: VolumeServiceModule,
+    private val cameraApiKey: String) : SettingsComponent {
 
-  @CheckResult fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
-
-  @CheckResult fun shouldShowErrorDialog(): Single<Boolean>
-
-  fun setupCamera(onCameraError: (Intent) -> Unit, computationScheduler: Scheduler,
-      ioScheduler: Scheduler, mainThreadScheduler: Scheduler)
-
-  fun toggleTorch()
-
-  fun releaseCamera()
+  override fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
+    settingsPreferenceFragment.presenter = settingsModule.getPreferenceFragmentPresenter(
+        cameraApiKey)
+    settingsPreferenceFragment.servicePublisher = serviceModule.getPresenter()
+  }
 }
+

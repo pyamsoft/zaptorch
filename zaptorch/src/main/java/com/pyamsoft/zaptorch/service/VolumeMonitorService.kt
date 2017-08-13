@@ -27,7 +27,8 @@ import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService() {
+class VolumeMonitorService : AccessibilityService(), Callback {
+
   internal lateinit var presenter: VolumeServicePresenter
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
@@ -47,41 +48,43 @@ class VolumeMonitorService : AccessibilityService() {
     Timber.e("onInterrupt")
   }
 
-  override fun onServiceConnected() {
-    super.onServiceConnected()
+  override fun onCreate() {
+    super.onCreate()
     Injector.with(this) {
       it.inject(this)
     }
+  }
 
-    presenter.start(object : Callback {
-      override fun onToggleTorch() {
-        Timber.d("Toggle Torch")
-        presenter.toggleTorch()
-      }
-
-      override fun onChangeCameraApi() {
-        // Simulate the lifecycle for destroying and re-creating the presenter
-        Timber.d("Change setupCamera API")
-        presenter.stop()
-
-        try {
-          Thread.sleep(200)
-        } catch (e: InterruptedException) {
-          Timber.e(e, "Sleep interrupt")
-        }
-
-        setupCamera()
-      }
-
-      override fun onFinishService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          disableSelf()
-        }
-      }
-    })
-
+  override fun onServiceConnected() {
+    super.onServiceConnected()
+    presenter.start(this)
     setupCamera()
     isRunning = true
+  }
+
+  override fun onToggleTorch() {
+    Timber.d("Toggle Torch")
+    presenter.toggleTorch()
+  }
+
+  override fun onChangeCameraApi() {
+    // Simulate the lifecycle for destroying and re-creating the publisher
+    Timber.d("Change setupCamera API")
+    presenter.stop()
+
+    try {
+      Thread.sleep(200)
+    } catch (e: InterruptedException) {
+      Timber.e(e, "Sleep interrupt")
+    }
+
+    setupCamera()
+  }
+
+  override fun onFinishService() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      disableSelf()
+    }
   }
 
   internal fun setupCamera() {

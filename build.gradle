@@ -39,10 +39,10 @@ buildscript {
     maxSdk = 26
     buildTools = "26.0.1"
 
-    supportLib = "26.0.0"
+    supportLib = "26.0.1"
     firebase = "11.0.4"
     leakCanary = "1.5.1"
-    pydroid = "11.0.1"
+    pydroid = "12.0.1"
   }
 
   dependencies {

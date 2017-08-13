@@ -22,12 +22,16 @@ import io.reactivex.Scheduler
 
 class MainModule(module: ZapTorchModule) {
 
-  private val interactor: MainInteractor = MainInteractor(module.provideUiPreferences())
-  private val obsScheduler: Scheduler = module.provideObsScheduler()
-  private val subScheduler: Scheduler = module.provideSubScheduler()
+  private val interactor: MainInteractor
+  private val computationScheduler: Scheduler = module.provideComputationScheduler()
+  private val ioScheduler: Scheduler = module.provideIoScheduler()
+  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
+  init {
+    interactor = MainInteractorImpl(module.provideUiPreferences())
+  }
 
-  @CheckResult fun getPresenter(): MainPresenter {
-    return MainPresenter(interactor, obsScheduler, subScheduler)
+  @CheckResult fun getPresenter(keyPressKey: String): MainPresenter {
+    return MainPresenter(keyPressKey, interactor, computationScheduler, ioScheduler, mainScheduler)
   }
 }

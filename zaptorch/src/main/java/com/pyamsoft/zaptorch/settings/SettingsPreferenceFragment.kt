@@ -19,7 +19,6 @@ package com.pyamsoft.zaptorch.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.preference.Preference
 import android.view.View
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
@@ -27,64 +26,59 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.model.ServiceEvent
-import com.pyamsoft.zaptorch.service.ServicePresenter
+import com.pyamsoft.zaptorch.service.ServicePublisher
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.Callback
 import timber.log.Timber
 
-class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment() {
+class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callback {
 
-  private lateinit var zapTorchExplain: Preference
-  internal lateinit var servicePresenter: ServicePresenter
+  internal lateinit var servicePublisher: ServicePublisher
   internal lateinit var presenter: SettingsPreferenceFragmentPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     Injector.with(context) {
-      it.inject(this)
+      it.plusSettingsComponent(context.getString(R.string.camera_api_key)).inject(this)
     }
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
-    zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
+    val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
+    zapTorchExplain.setOnPreferenceClickListener {
+      DialogUtil.guaranteeSingleDialogFragment(activity, HowToDialog(), "howto")
+      return@setOnPreferenceClickListener true
+    }
   }
 
   override fun onStart() {
     super.onStart()
-    servicePresenter.start(Unit)
-    presenter.start(object : Callback {
-      override fun onApiChanged() {
-        if (VolumeMonitorService.isRunning) {
-          servicePresenter.publish(ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA))
-        }
-      }
+    presenter.start(this)
+  }
 
-      override fun onClearAll() {
-        Timber.d("received completed clearAll event. Kill Process")
-        try {
-          servicePresenter.publish(ServiceEvent(ServiceEvent.Type.FINISH))
-        } catch (e: IllegalStateException) {
-          Timber.e(e, "Expected exception when Service is NULL")
-        }
+  override fun onApiChanged() {
+    if (VolumeMonitorService.isRunning) {
+      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA))
+    }
+  }
 
-        val activityManager = context.applicationContext
-            .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        activityManager.clearApplicationUserData()
-      }
+  override fun onClearAll() {
+    Timber.d("received completed clearAll event. Kill Process")
+    try {
+      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
+    } catch (e: IllegalStateException) {
+      Timber.e(e, "Expected exception when Service is NULL")
+    }
 
-    })
-
-    presenter.clickEvent(zapTorchExplain, {
-      DialogUtil.guaranteeSingleDialogFragment(activity, HowToDialog(), "howto")
-    })
+    val activityManager = context.applicationContext
+        .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    activityManager.clearApplicationUserData()
   }
 
   override fun onStop() {
     super.onStop()
-    servicePresenter.stop()
     presenter.stop()
   }
 

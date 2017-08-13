@@ -52,7 +52,7 @@ class ZapTorch : Application(), ComponentProvider {
 
     PYDroid.initialize(this, BuildConfig.DEBUG)
     Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
-    component = ZapTorchComponent(ZapTorchModule(this, TorchOffService::class.java))
+    component = ZapTorchComponentImpl(ZapTorchModule(this, TorchOffService::class.java))
 
     if (BuildConfig.DEBUG) {
       refWatcher = LeakCanary.install(this)
