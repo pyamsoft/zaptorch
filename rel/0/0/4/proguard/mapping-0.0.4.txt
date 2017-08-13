@@ -12420,7 +12420,7 @@ com.pyamsoft.pydroid.support.SupportDialog -> com.pyamsoft.pydroid.c.f:
     java.lang.String APP_SKU_DONATE_TEN -> ao
     java.lang.String packageName -> ai
     com.anjlab.android.iab.v3.BillingProcessor billingProcessor -> aj
-    com.pyamsoft.pydroid.social.SocialMediaPresenter presenter -> ap
+    com.pyamsoft.pydroid.social.SocialMediaPresenter publisher -> ap
     void <init>() -> <init>
     void onCreate(android.os.Bundle) -> a
     android.app.Dialog onCreateDialog$5709b310() -> d
@@ -12706,7 +12706,7 @@ com.pyamsoft.zaptorch.app.main.MainFragmentView -> com.pyamsoft.zaptorch.app.mai
 com.pyamsoft.zaptorch.app.service.VolumeMonitorService -> com.pyamsoft.zaptorch.app.service.VolumeMonitorService:
     java.lang.String TAG -> a
     com.pyamsoft.zaptorch.app.service.VolumeMonitorService instance -> b
-    com.pyamsoft.zaptorch.app.service.VolumeServicePresenter servicePresenter -> c
+    com.pyamsoft.zaptorch.app.service.VolumeServicePresenter servicePublisher -> c
     void <init>() -> <init>
     boolean isRunning() -> a
     boolean onKeyEvent(android.view.KeyEvent) -> onKeyEvent
@@ -12765,7 +12765,7 @@ com.pyamsoft.zaptorch.app.service.camera.CameraCommon -> com.pyamsoft.zaptorch.a
     android.content.Context appContext -> a
     android.os.Handler handler -> c
     android.content.Intent errorExplain -> b
-    com.pyamsoft.zaptorch.app.service.VolumeServicePresenter presenter -> d
+    com.pyamsoft.zaptorch.app.service.VolumeServicePresenter publisher -> d
     void <init>(android.content.Context) -> <init>
     void startErrorExplanationActivity() -> a
     android.content.Context getAppContext() -> b

@@ -22,18 +22,24 @@ import io.reactivex.Scheduler
 
 class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
 
+  private val interactor: SettingsPreferenceFragmentInteractor
   private val bus = SettingsBus()
-  private val interactor: SettingsPreferenceFragmentInteractor = SettingsPreferenceFragmentInteractor(
-      module.provideContext(),
-      module.provideUiPreferences(), module.provideClearPreferences())
-  private val obsScheduler: Scheduler = module.provideObsScheduler()
-  private val subScheduler: Scheduler = module.provideSubScheduler()
+  private val computationScheduler: Scheduler = module.provideComputationScheduler()
+  private val ioScheduler: Scheduler = module.provideIoScheduler()
+  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
-  @CheckResult fun getPreferenceFragmentPresenter(): SettingsPreferenceFragmentPresenter {
-    return SettingsPreferenceFragmentPresenter(bus, interactor, obsScheduler, subScheduler)
+  init {
+    interactor = SettingsPreferenceFragmentInteractorImpl(module.provideUiPreferences(),
+        module.provideClearPreferences())
   }
 
-  @CheckResult fun getPresenter(): SettingPresenter {
-    return SettingPresenter(bus)
+  @CheckResult fun getPreferenceFragmentPresenter(
+      cameraApiKey: String): SettingsPreferenceFragmentPresenter {
+    return SettingsPreferenceFragmentPresenter(cameraApiKey, bus, interactor, computationScheduler,
+        ioScheduler, mainScheduler)
+  }
+
+  @CheckResult fun getPresenter(): SettingPublisher {
+    return SettingPublisher(bus)
   }
 }

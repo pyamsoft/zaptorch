@@ -37,10 +37,10 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 import java.util.ArrayList
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP) internal class LollipopCamera(context: Context,
-    interactor: VolumeServiceInteractor,
-    obsScheduler: Scheduler, subScheduler: Scheduler) : CameraCommon(context, interactor,
-    obsScheduler, subScheduler) {
+@TargetApi(Build.VERSION_CODES.LOLLIPOP) internal class LollipopCamera internal constructor(
+    context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
+    ioScheduler: Scheduler, mainScheduler: Scheduler) : CameraCommon(context, interactor,
+    computationScheduler, ioScheduler, mainScheduler) {
 
   private val cameraManager: CameraManager = appContext.getSystemService(
       Context.CAMERA_SERVICE) as CameraManager
@@ -87,7 +87,7 @@ import java.util.ArrayList
     }
   }
 
-  internal class CameraCallback(private val cameraInterface: CameraCommon,
+  internal class CameraCallback internal constructor(private val cameraInterface: CameraCommon,
       private val manager: CameraManager) : CameraDevice.StateCallback() {
     private val list: MutableList<Surface>
 
@@ -215,9 +215,8 @@ import java.util.ArrayList
 
     companion object {
 
-      @CheckResult
-      @Throws(CameraAccessException::class)
-      fun getSmallestSize(manager: CameraManager, id: String): Size {
+      @CheckResult @JvmStatic @Throws(CameraAccessException::class) fun getSmallestSize(
+          manager: CameraManager, id: String): Size {
         Timber.d("Get stream config map")
         val map = manager.getCameraCharacteristics(id)
             .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?:
@@ -240,7 +239,7 @@ import java.util.ArrayList
     }
   }
 
-  internal class SessionCallback(
+  internal class SessionCallback internal constructor(
       private val request: CaptureRequest) : CameraCaptureSession.StateCallback() {
 
     private var session: CameraCaptureSession? = null

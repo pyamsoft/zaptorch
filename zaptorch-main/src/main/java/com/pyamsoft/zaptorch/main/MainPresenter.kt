@@ -16,16 +16,52 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.zaptorch.main.MainPresenter.Callback
 import io.reactivex.Scheduler
+import timber.log.Timber
 
-class MainPresenter internal constructor(private val interactor: MainInteractor,
-    observeScheduler: Scheduler,
-    subscribeScheduler: Scheduler) : SchedulerPresenter<Unit>(observeScheduler,
-    subscribeScheduler) {
+class MainPresenter internal constructor(
+    private val handleKeyPressKey: String,
+    private val interactor: MainInteractor,
+    computationScheduler: Scheduler, ioScheduler: Scheduler,
+    mainScheduler: Scheduler) : SchedulerPresenter<Callback>(computationScheduler, ioScheduler,
+    mainScheduler) {
 
-  @CheckResult fun shouldHandleKeycode(keyCode: Int): Boolean {
-    return interactor.shouldHandleKeys(keyCode).blockingGet()
+  override fun onStart(bound: Callback) {
+    super.onStart(bound)
+    shouldHandleKeycode(bound::onHandleKeyPress, bound::onError)
+    interactor.register(handleKeyPressKey, bound::onHandleKeyPress)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    interactor.unregister()
+  }
+
+  private fun shouldHandleKeycode(onHandleKeyPress: (Boolean) -> Unit,
+      onError: (Throwable) -> Unit) {
+    disposeOnStop {
+      interactor.shouldHandleKeys()
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
+          .subscribe({
+            onHandleKeyPress(it)
+          }, {
+            Timber.e(it, "Error while handling keycode")
+            onError(it)
+          })
+    }
+  }
+
+  interface Callback : OnHandleKeyPressChangedCallback {
+
+    fun onError(throwable: Throwable)
+
+  }
+
+  interface OnHandleKeyPressChangedCallback {
+
+    fun onHandleKeyPress(handle: Boolean)
   }
 }

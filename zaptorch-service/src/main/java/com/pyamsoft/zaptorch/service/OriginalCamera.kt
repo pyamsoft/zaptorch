@@ -36,9 +36,9 @@ import timber.log.Timber
 import java.io.IOException
 
 internal class OriginalCamera internal constructor(context: Context,
-    interactor: VolumeServiceInteractor,
-    obsScheduler: Scheduler, subScheduler: Scheduler) : CameraCommon(context, interactor,
-    obsScheduler, subScheduler), SurfaceHolder.Callback {
+    interactor: VolumeServiceInteractor, computationScheduler: Scheduler, ioScheduler: Scheduler,
+    mainScheduler: Scheduler) : CameraCommon(context, interactor, computationScheduler, ioScheduler,
+    mainScheduler), SurfaceHolder.Callback {
 
   val windowManager = context.applicationContext.getSystemService(
       Context.WINDOW_SERVICE) as WindowManager
@@ -91,8 +91,8 @@ internal class OriginalCamera internal constructor(context: Context,
               throw IllegalStateException("Camera failed to open")
             }
           }
-          .subscribeOn(backgroundScheduler)
-          .observeOn(foregroundScheduler)
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
           .subscribe({ cameraOpened(it) }, {
             Timber.e(it, "onError connectToCameraService")
             clearCamera(it)

@@ -23,10 +23,10 @@ import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import io.reactivex.Scheduler
 import timber.log.Timber
 
-internal abstract class CameraCommon(context: Context,
-    private val interactor: VolumeServiceInteractor,
-    obsScheduler: Scheduler, subScheduler: Scheduler) : SchedulerPresenter<Unit>(obsScheduler,
-    subScheduler), CameraInterface {
+internal abstract class CameraCommon protected constructor(context: Context,
+    private val interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
+    ioScheduler: Scheduler, mainScheduler: Scheduler) : SchedulerPresenter<Unit>(
+    computationScheduler, ioScheduler, mainScheduler), CameraInterface {
 
   @get:CheckResult val appContext: Context = context.applicationContext
   val errorExplain = Intent()
@@ -44,8 +44,8 @@ internal abstract class CameraCommon(context: Context,
   fun startErrorExplanationActivity() {
     disposeOnStop {
       interactor.shouldShowErrorDialog()
-          .subscribeOn(backgroundScheduler)
-          .observeOn(foregroundScheduler)
+          .subscribeOn(computationScheduler)
+          .observeOn(mainThreadScheduler)
           .subscribe({
             if (it) {
               notifyCallbackOnError(errorExplain)
@@ -63,23 +63,26 @@ internal abstract class CameraCommon(context: Context,
   }
 
   fun notifyCallbackOnOpened() {
-    if (callback != null) {
+    val obj = callback
+    if (obj != null) {
       Timber.d("Notify callback: opened")
-      callback!!.onOpened()
+      obj.onOpened()
     }
   }
 
   fun notifyCallbackOnClosed() {
-    if (callback != null) {
+    val obj = callback
+    if (obj != null) {
       Timber.d("Notify callback: closed")
-      callback!!.onClosed()
+      obj.onClosed()
     }
   }
 
   fun notifyCallbackOnError(errorIntent: Intent) {
-    if (callback != null) {
+    val obj = callback
+    if (obj != null) {
       Timber.w("Notify callback: error")
-      callback!!.onError(errorIntent)
+      obj.onError(errorIntent)
     }
   }
 

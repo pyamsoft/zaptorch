@@ -24,6 +24,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
+import com.pyamsoft.pydroid.ui.helper.Toasty
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.AnimUtil
 import com.pyamsoft.pydroid.util.AppUtil
@@ -32,11 +33,15 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
+import com.pyamsoft.zaptorch.main.MainPresenter.Callback
 import com.pyamsoft.zaptorch.settings.SettingsFragment
+import timber.log.Timber
 
-class MainActivity : TamperActivity() {
+class MainActivity : TamperActivity(), Callback {
+
   internal lateinit var presenter: MainPresenter
   private lateinit var binding: ActivityMainBinding
+  private var handleKeyPress: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
@@ -45,15 +50,25 @@ class MainActivity : TamperActivity() {
     PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
     Injector.with(this) {
-      it.inject(this)
+      it.plusMainComponent(getString(R.string.handle_volume_keys_key)).inject(this)
     }
     setupAppBar()
   }
 
   override fun onStart() {
     super.onStart()
-    presenter.start(Unit)
+    presenter.start(this)
     showMainFragment()
+  }
+
+  override fun onHandleKeyPress(handle: Boolean) {
+    handleKeyPress = handle
+    Timber.d("Handle keypress: %s", handle)
+  }
+
+  override fun onError(throwable: Throwable) {
+    Toasty.makeText(this, "Failed to handle volume keypress, please try again",
+        Toasty.LENGTH_SHORT).show()
   }
 
   override fun onStop() {
@@ -75,11 +90,11 @@ class MainActivity : TamperActivity() {
     get() = "com.pyamsoft.zaptorch"
 
   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-    return presenter.shouldHandleKeycode(keyCode) || super.onKeyUp(keyCode, event)
+    return handleKeyPress || super.onKeyUp(keyCode, event)
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-    return presenter.shouldHandleKeycode(keyCode) || super.onKeyDown(keyCode, event)
+    return handleKeyPress || super.onKeyDown(keyCode, event)
   }
 
   private fun showMainFragment() {
@@ -145,9 +160,8 @@ class MainActivity : TamperActivity() {
   override val applicationIcon: Int
     get() = R.mipmap.ic_launcher
 
-  override fun provideApplicationName(): String {
-    return "ZapTorch"
-  }
+  override val applicationName: String
+    get() = getString(R.string.app_name)
 
   override val currentApplicationVersion: Int
     get() = BuildConfig.VERSION_CODE

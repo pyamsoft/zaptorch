@@ -16,47 +16,26 @@
 
 package com.pyamsoft.zaptorch
 
-import com.pyamsoft.zaptorch.base.ZapTorchModule
 import com.pyamsoft.zaptorch.main.MainActivity
-import com.pyamsoft.zaptorch.main.MainModule
+import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
-import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
+import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsFragment
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragment
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule
 
-class ZapTorchComponent internal constructor(zapTorchModule: ZapTorchModule) {
+interface ZapTorchComponent {
 
-  private val mainModule: MainModule = MainModule(zapTorchModule)
-  private val volumeServiceModule: VolumeServiceModule = VolumeServiceModule(zapTorchModule)
-  private val settingsPreferenceFragmentModule: SettingsPreferenceFragmentModule = SettingsPreferenceFragmentModule(
-      zapTorchModule)
+  fun inject(settingsFragment: SettingsFragment)
 
-  fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
-    settingsPreferenceFragment.presenter = settingsPreferenceFragmentModule.getPreferenceFragmentPresenter()
-    settingsPreferenceFragment.servicePresenter = volumeServiceModule.getPresenter()
-  }
+  fun inject(confirmationDialog: ConfirmationDialog)
 
-  fun inject(settingsFragment: SettingsFragment) {
-    settingsFragment.presenter = settingsPreferenceFragmentModule.getPresenter()
-  }
+  fun inject(volumeMonitorService: VolumeMonitorService)
 
-  fun inject(confirmationDialog: ConfirmationDialog) {
-    confirmationDialog.presenter = settingsPreferenceFragmentModule.getPresenter()
-  }
+  fun inject(torchOffService: TorchOffService)
 
-  fun inject(volumeMonitorService: VolumeMonitorService) {
-    volumeMonitorService.presenter = volumeServiceModule.getServicePresenter()
-  }
+  fun plusSettingsComponent(cameraApiKey: String): SettingsComponent
 
-  fun inject(mainActivity: MainActivity) {
-    mainActivity.presenter = mainModule.getPresenter()
-  }
-
-  fun inject(torchOffService: TorchOffService) {
-    torchOffService.servicePresenter = volumeServiceModule.getPresenter()
-  }
+  fun plusMainComponent(key: String): MainComponent
 
 }

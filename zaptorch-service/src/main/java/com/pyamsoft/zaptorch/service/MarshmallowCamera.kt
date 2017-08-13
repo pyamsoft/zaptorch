@@ -26,9 +26,9 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 
 @TargetApi(Build.VERSION_CODES.M) internal class MarshmallowCamera internal constructor(
-    context: Context,
-    interactor: VolumeServiceInteractor, obsScheduler: Scheduler,
-    subScheduler: Scheduler) : CameraCommon(context, interactor, obsScheduler, subScheduler) {
+    context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
+    ioScheduler: Scheduler, mainThreadScheduler: Scheduler) : CameraCommon(context, interactor,
+    computationScheduler, ioScheduler, mainThreadScheduler) {
 
   private val cameraManager: CameraManager = context.applicationContext.getSystemService(
       Context.CAMERA_SERVICE) as CameraManager
@@ -39,7 +39,7 @@ import timber.log.Timber
   }
 
   override fun toggleTorch() {
-    setTorch(!torchCallback.isEnabled)
+    setTorch(torchCallback.isEnabled.not())
   }
 
   private fun setTorch(enable: Boolean) {
@@ -77,8 +77,9 @@ import timber.log.Timber
     cameraManager.registerTorchCallback(torchCallback, null)
   }
 
-  internal class TorchCallback(
+  internal class TorchCallback internal constructor(
       private val cameraCommon: CameraCommon) : CameraManager.TorchCallback() {
+
     var cameraId: String? = null
       @CheckResult get
     var isEnabled: Boolean = false

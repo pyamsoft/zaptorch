@@ -52,11 +52,15 @@ class ZapTorchModule(context: Context,
     return torchOffServiceClass
   }
 
-  @CheckResult fun provideObsScheduler(): Scheduler {
+  @CheckResult fun provideMainThreadScheduler(): Scheduler {
     return AndroidSchedulers.mainThread()
   }
 
-  @CheckResult fun provideSubScheduler(): Scheduler {
+  @CheckResult fun provideIoScheduler(): Scheduler {
     return Schedulers.io()
+  }
+
+  @CheckResult fun provideComputationScheduler(): Scheduler {
+    return Schedulers.computation()
   }
 }
