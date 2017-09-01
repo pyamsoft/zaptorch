@@ -28,7 +28,8 @@ internal abstract class CameraCommon protected constructor(context: Context,
     ioScheduler: Scheduler, mainScheduler: Scheduler) : SchedulerPresenter<Unit>(
     computationScheduler, ioScheduler, mainScheduler), CameraInterface {
 
-  @get:CheckResult val appContext: Context = context.applicationContext
+  @get:CheckResult
+  val appContext: Context = context.applicationContext
   private val errorExplain = Intent()
   private val permissionExplain = Intent()
   private var callback: OnStateChangedCallback? = null

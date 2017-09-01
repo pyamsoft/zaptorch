@@ -131,7 +131,8 @@ import java.util.ArrayList
       opened = false
     }
 
-    @CheckResult fun accessCamera(context: Context, id: String): Int {
+    @CheckResult
+    fun accessCamera(context: Context, id: String): Int {
       if (ContextCompat.checkSelfPermission(context,
           Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
         return try {
@@ -222,7 +223,10 @@ import java.util.ArrayList
 
     companion object {
 
-      @CheckResult @JvmStatic @Throws(CameraAccessException::class) fun getSmallestSize(
+      @CheckResult
+      @JvmStatic
+      @Throws(CameraAccessException::class)
+      fun getSmallestSize(
           manager: CameraManager, id: String): Size {
         Timber.d("Get stream config map")
         val map = manager.getCameraCharacteristics(id)

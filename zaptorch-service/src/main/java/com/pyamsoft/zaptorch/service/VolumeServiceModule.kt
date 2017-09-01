@@ -33,8 +33,10 @@ class VolumeServiceModule(module: ZapTorchModule) {
         module.provideCameraPreferences(), module.provideTorchOffServiceClass())
   }
 
-  @CheckResult fun getServicePresenter(): VolumeServicePresenter =
+  @CheckResult
+  fun getServicePresenter(): VolumeServicePresenter =
       VolumeServicePresenter(interactor, bus, computationScheduler, ioScheduler, mainScheduler)
 
-  @CheckResult fun getPresenter(): ServicePublisher = ServicePublisher(bus)
+  @CheckResult
+  fun getPresenter(): ServicePublisher = ServicePublisher(bus)
 }
