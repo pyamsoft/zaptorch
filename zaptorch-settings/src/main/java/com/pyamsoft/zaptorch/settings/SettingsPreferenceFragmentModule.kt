@@ -39,7 +39,5 @@ class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
         ioScheduler, mainScheduler)
   }
 
-  @CheckResult fun getPresenter(): SettingPublisher {
-    return SettingPublisher(bus)
-  }
+  @CheckResult fun getPresenter(): SettingPublisher = SettingPublisher(bus)
 }

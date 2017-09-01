@@ -25,9 +25,7 @@ internal class SettingsBus internal constructor() : EventBus<ConfirmEvent> {
 
   private val bus = RxBus.create<ConfirmEvent>()
 
-  override fun listen(): Observable<ConfirmEvent> {
-    return bus.listen()
-  }
+  override fun listen(): Observable<ConfirmEvent> = bus.listen()
 
   override fun publish(event: ConfirmEvent) {
     bus.publish(event)

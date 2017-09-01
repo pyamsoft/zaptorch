@@ -56,13 +56,11 @@ internal class ZapTorchPreferencesImpl(
     @CheckResult get() = java.lang.Long.parseLong(
         preferences.getString(doublePressDelayKey, doublePressDelayDefault))
 
-  @CheckResult override fun shouldShowErrorDialog(): Boolean {
-    return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
-  }
+  @CheckResult override fun shouldShowErrorDialog(): Boolean =
+      preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
 
-  @CheckResult override fun shouldHandleKeys(): Boolean {
-    return preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
-  }
+  @CheckResult override fun shouldHandleKeys(): Boolean =
+      preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
 
   override val cameraApi: Int
     @CheckResult get() = Integer.parseInt(preferences.getString(cameraApiKey, cameraApiDefault))

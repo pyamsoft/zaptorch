@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch
 
-import com.pyamsoft.zaptorch.main.MainActivity
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService

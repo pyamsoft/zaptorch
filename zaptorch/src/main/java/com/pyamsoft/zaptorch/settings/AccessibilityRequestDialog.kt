@@ -21,10 +21,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v7.app.AlertDialog
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class AccessibilityRequestDialog : WatchedDialog() {
+
+  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   private val accessibilityServiceIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 

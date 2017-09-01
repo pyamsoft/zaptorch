@@ -53,11 +53,12 @@ class VolumeMonitorService : AccessibilityService(), Callback {
     Injector.with(this) {
       it.inject(this)
     }
+
+    presenter.bind(this)
   }
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    presenter.start(this)
     setupCamera()
     isRunning = true
   }
@@ -70,7 +71,8 @@ class VolumeMonitorService : AccessibilityService(), Callback {
   override fun onChangeCameraApi() {
     // Simulate the lifecycle for destroying and re-creating the publisher
     Timber.d("Change setupCamera API")
-    presenter.stop()
+    presenter.unbind()
+    presenter.bind(this)
 
     try {
       Thread.sleep(200)
@@ -87,7 +89,7 @@ class VolumeMonitorService : AccessibilityService(), Callback {
     }
   }
 
-  internal fun setupCamera() {
+  private fun setupCamera() {
     presenter.setupCamera { errorIntent ->
       errorIntent.setClass(applicationContext, CameraErrorExplanation::class.java)
       application.startActivity(errorIntent)
@@ -95,9 +97,13 @@ class VolumeMonitorService : AccessibilityService(), Callback {
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    presenter.stop()
     isRunning = false
     return super.onUnbind(intent)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    presenter.unbind()
   }
 
   companion object {

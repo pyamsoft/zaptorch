@@ -68,7 +68,7 @@ import timber.log.Timber
     cameraManager.unregisterTorchCallback(torchCallback)
   }
 
-  override fun onStop() {
+  override fun onUnbind() {
     release()
   }
 

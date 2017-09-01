@@ -19,9 +19,12 @@ package com.pyamsoft.zaptorch.settings
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class ServiceInfoDialog : WatchedDialog() {
+
+  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(activity).setMessage("ZapTorch service is On")

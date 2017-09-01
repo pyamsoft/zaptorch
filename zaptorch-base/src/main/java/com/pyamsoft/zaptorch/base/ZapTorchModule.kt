@@ -32,35 +32,19 @@ class ZapTorchModule(context: Context,
   private val appContext: Context = context.applicationContext
   private val preferences: ZapTorchPreferencesImpl = ZapTorchPreferencesImpl(context)
 
-  @CheckResult fun provideContext(): Context {
-    return appContext
-  }
+  @CheckResult fun provideContext(): Context = appContext
 
-  @CheckResult fun provideCameraPreferences(): CameraPreferences {
-    return preferences
-  }
+  @CheckResult fun provideCameraPreferences(): CameraPreferences = preferences
 
-  @CheckResult fun provideClearPreferences(): ClearPreferences {
-    return preferences
-  }
+  @CheckResult fun provideClearPreferences(): ClearPreferences = preferences
 
-  @CheckResult fun provideUiPreferences(): UIPreferences {
-    return preferences
-  }
+  @CheckResult fun provideUiPreferences(): UIPreferences = preferences
 
-  @CheckResult fun provideTorchOffServiceClass(): Class<out IntentService> {
-    return torchOffServiceClass
-  }
+  @CheckResult fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
 
-  @CheckResult fun provideMainThreadScheduler(): Scheduler {
-    return AndroidSchedulers.mainThread()
-  }
+  @CheckResult fun provideMainThreadScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
-  @CheckResult fun provideIoScheduler(): Scheduler {
-    return Schedulers.io()
-  }
+  @CheckResult fun provideIoScheduler(): Scheduler = Schedulers.io()
 
-  @CheckResult fun provideComputationScheduler(): Scheduler {
-    return Schedulers.computation()
-  }
+  @CheckResult fun provideComputationScheduler(): Scheduler = Schedulers.computation()
 }

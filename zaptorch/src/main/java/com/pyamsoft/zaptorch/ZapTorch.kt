@@ -54,37 +54,41 @@ class ZapTorch : Application(), ComponentProvider {
     Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
     component = ZapTorchComponentImpl(ZapTorchModule(this, TorchOffService::class.java))
 
-    if (BuildConfig.DEBUG) {
-      refWatcher = LeakCanary.install(this)
+    refWatcher = if (BuildConfig.DEBUG) {
+      // Assign
+      LeakCanary.install(this)
     } else {
-      refWatcher = RefWatcher.DISABLED
+      // Assign
+      RefWatcher.DISABLED
     }
   }
 
   private val watcher: RefWatcher
-    @CheckResult get() {
-      return refWatcher
-    }
+    @CheckResult get() = refWatcher
 
   companion object {
-    @JvmStatic @CheckResult fun getRefWatcher(fragment: WatchedDialog): RefWatcher {
-      return getRefWatcherInternal(fragment)
-    }
+    @JvmStatic
+    @CheckResult
+    fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
+        getRefWatcherInternal(fragment)
 
-    @JvmStatic @CheckResult fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher {
-      return getRefWatcherInternal(fragment)
-    }
+    @JvmStatic
+    @CheckResult
+    fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
+        getRefWatcherInternal(fragment)
 
-    @JvmStatic @CheckResult fun getRefWatcher(fragment: WatchedFragment): RefWatcher {
-      return getRefWatcherInternal(fragment)
-    }
+    @JvmStatic
+    @CheckResult
+    fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
+        getRefWatcherInternal(fragment)
 
-    @JvmStatic @CheckResult fun getRefWatcher(
-        fragment: ActionBarSettingsPreferenceFragment): RefWatcher {
-      return getRefWatcherInternal(fragment)
-    }
+    @JvmStatic
+    @CheckResult
+    fun getRefWatcher(
+        fragment: ActionBarSettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(fragment)
 
-    @JvmStatic @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
+    @JvmStatic
+    @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
       val application = fragment.activity.application
       if (application is ZapTorch) {
         return application.watcher

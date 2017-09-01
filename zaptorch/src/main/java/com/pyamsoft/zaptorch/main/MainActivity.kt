@@ -23,6 +23,7 @@ import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.Toasty
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
@@ -43,6 +44,9 @@ class MainActivity : TamperActivity(), Callback {
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
+  override fun provideBoundPresenters(): List<Presenter<*>> =
+      super.provideBoundPresenters() + listOf(presenter)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
@@ -53,11 +57,12 @@ class MainActivity : TamperActivity(), Callback {
       it.plusMainComponent(getString(R.string.handle_volume_keys_key)).inject(this)
     }
     setupAppBar()
+
+    presenter.bind(this)
   }
 
   override fun onStart() {
     super.onStart()
-    presenter.start(this)
     showMainFragment()
   }
 
@@ -69,11 +74,6 @@ class MainActivity : TamperActivity(), Callback {
   override fun onError(throwable: Throwable) {
     Toasty.makeText(this, "Failed to handle volume keypress, please try again",
         Toasty.LENGTH_SHORT).show()
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.stop()
   }
 
   override fun onDestroy() {
@@ -89,13 +89,11 @@ class MainActivity : TamperActivity(), Callback {
   override val safePackageName: String
     get() = "com.pyamsoft.zaptorch"
 
-  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-    return handleKeyPress || super.onKeyUp(keyCode, event)
-  }
+  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean =
+      handleKeyPress || super.onKeyUp(keyCode, event)
 
-  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-    return handleKeyPress || super.onKeyDown(keyCode, event)
-  }
+  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean =
+      handleKeyPress || super.onKeyDown(keyCode, event)
 
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
@@ -120,17 +118,16 @@ class MainActivity : TamperActivity(), Callback {
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
-    val handled: Boolean
-    when (itemId) {
+    val handled: Boolean = when (itemId) {
       android.R.id.home -> {
         onBackPressed()
-        handled = true
+        true
       }
       R.id.menu_id_privacy_policy -> {
         NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
-        handled = true
+        true
       }
-      else -> handled = false
+      else -> false
     }
     return handled || super.onOptionsItemSelected(item)
   }

@@ -49,7 +49,6 @@ internal class MainInteractorImpl internal constructor(
     listener = null
   }
 
-  override fun shouldHandleKeys(): Single<Boolean> {
-    return Single.fromCallable { preferences.shouldHandleKeys() }
-  }
+  override fun shouldHandleKeys(): Single<Boolean> =
+      Single.fromCallable { preferences.shouldHandleKeys() }
 }

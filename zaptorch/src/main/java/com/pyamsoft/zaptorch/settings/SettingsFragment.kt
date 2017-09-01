@@ -24,6 +24,7 @@ import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
 import com.pyamsoft.pydroid.design.util.FABUtil
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderHelper
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
@@ -36,6 +37,8 @@ class SettingsFragment : WatchedFragment() {
   internal lateinit var publisher: SettingPublisher
   private lateinit var binding: FragmentMainBinding
   private var fabTask = LoaderHelper.empty()
+
+  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
