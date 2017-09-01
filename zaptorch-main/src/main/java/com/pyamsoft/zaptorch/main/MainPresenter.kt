@@ -28,20 +28,20 @@ class MainPresenter internal constructor(
     mainScheduler: Scheduler) : SchedulerPresenter<Callback>(computationScheduler, ioScheduler,
     mainScheduler) {
 
-  override fun onStart(bound: Callback) {
-    super.onStart(bound)
-    shouldHandleKeycode(bound::onHandleKeyPress, bound::onError)
-    interactor.register(handleKeyPressKey, bound::onHandleKeyPress)
+  override fun onBind(v: Callback) {
+    super.onBind(v)
+    shouldHandleKeycode(v::onHandleKeyPress, v::onError)
+    interactor.register(handleKeyPressKey, v::onHandleKeyPress)
   }
 
-  override fun onStop() {
-    super.onStop()
+  override fun onUnbind() {
+    super.onUnbind()
     interactor.unregister()
   }
 
   private fun shouldHandleKeycode(onHandleKeyPress: (Boolean) -> Unit,
       onError: (Throwable) -> Unit) {
-    disposeOnStop {
+    dispose {
       interactor.shouldHandleKeys()
           .subscribeOn(ioScheduler)
           .observeOn(mainThreadScheduler)

@@ -29,11 +29,10 @@ class CameraErrorExplanation : ActivityBase() {
   override fun onPostResume() {
     super.onPostResume()
     val type = intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)
-    val fragment: DialogFragment?
-    when (type) {
-      TYPE_PERMISSION -> fragment = PermissionErrorDialog()
-      TYPE_ERROR -> fragment = CameraErrorDialog()
-      else -> fragment = null
+    val fragment: DialogFragment? = when (type) {
+      TYPE_PERMISSION -> PermissionErrorDialog()
+      TYPE_ERROR -> CameraErrorDialog()
+      else -> null
     }
     if (fragment != null) {
       DialogUtil.guaranteeSingleDialogFragment(this, fragment, "error")

@@ -58,8 +58,6 @@ internal class ZapTorchComponentImpl internal constructor(
         cameraApiKey)
   }
 
-  override fun plusMainComponent(key: String): MainComponent {
-    return MainComponentImpl(mainModule, key)
-  }
+  override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
 
 }

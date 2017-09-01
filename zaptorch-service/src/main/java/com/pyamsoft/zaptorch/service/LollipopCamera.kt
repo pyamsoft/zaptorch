@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.pm.PackageManager
@@ -64,7 +65,8 @@ import java.util.ArrayList
     return null
   }
 
-  override fun onStop() {
+  override fun onUnbind() {
+    super.onUnbind()
     release()
   }
 
@@ -99,7 +101,7 @@ import java.util.ArrayList
 
     init {
       opened = false
-      list = ArrayList<Surface>(1)
+      list = ArrayList(1)
     }
 
     fun close() {
@@ -132,7 +134,7 @@ import java.util.ArrayList
     @CheckResult fun accessCamera(context: Context, id: String): Int {
       if (ContextCompat.checkSelfPermission(context,
           Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-        try {
+        return try {
           Timber.d("Has setupCamera permission, attempt to access")
           if (opened) {
             Timber.d("Close opened setupCamera")
@@ -141,10 +143,14 @@ import java.util.ArrayList
             Timber.d("Open closed setupCamera")
             manager.openCamera(id, this, null)
           }
-          return CameraInterface.TYPE_NONE
+
+          // Return
+          CameraInterface.TYPE_NONE
         } catch (e: CameraAccessException) {
           Timber.e(e, "toggleTorch ERROR")
-          return CameraInterface.TYPE_ERROR
+
+          // Return
+          CameraInterface.TYPE_ERROR
         }
 
       } else {
@@ -153,6 +159,7 @@ import java.util.ArrayList
       }
     }
 
+    @SuppressLint("Recycle")
     override fun onOpened(camera: CameraDevice) {
       Timber.d("onOpened")
       opened = true

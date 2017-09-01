@@ -35,14 +35,14 @@ class SettingsPreferenceFragmentPresenter internal constructor(
 
   private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-  override fun onStart(bound: Callback) {
-    super.onStart(bound)
-    listenForCameraChanges(bound::onApiChanged)
-    registerEventBus(bound::onClearAll)
+  override fun onBind(v: Callback) {
+    super.onBind(v)
+    listenForCameraChanges(v::onApiChanged)
+    registerEventBus(v::onClearAll)
   }
 
-  override fun onStop() {
-    super.onStop()
+  override fun onUnbind() {
+    super.onUnbind()
     unregisterCameraApiListener()
   }
 
@@ -56,7 +56,7 @@ class SettingsPreferenceFragmentPresenter internal constructor(
   }
 
   private fun registerEventBus(onClearAll: () -> Unit) {
-    disposeOnStop {
+    dispose {
       bus.listen().flatMapSingle { interactor.clearAll() }
           .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
           .subscribe({ onClearAll() }, { Timber.e(it, "onError event bus") })

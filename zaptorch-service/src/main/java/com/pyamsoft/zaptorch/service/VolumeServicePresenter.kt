@@ -33,14 +33,14 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     mainThreadScheduler: Scheduler) : SchedulerPresenter<Callback>(
     computationScheduler, ioScheduler, mainThreadScheduler) {
 
-  override fun onStop() {
-    super.onStop()
-    interactor.releaseCamera()
+  override fun onBind(v: Callback) {
+    super.onBind(v)
+    registerOnBus(v::onToggleTorch, v::onChangeCameraApi, v::onFinishService)
   }
 
-  override fun onStart(bound: Callback) {
-    super.onStart(bound)
-    registerOnBus(bound::onToggleTorch, bound::onChangeCameraApi, bound::onFinishService)
+  override fun onUnbind() {
+    super.onUnbind()
+    interactor.releaseCamera()
   }
 
   fun toggleTorch() {
@@ -48,7 +48,7 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
   }
 
   fun handleKeyEvent(action: Int, keyCode: Int) {
-    disposeOnStop(interactor.handleKeyPress(action, keyCode)
+    dispose(interactor.handleKeyPress(action, keyCode)
         .subscribeOn(ioScheduler)
         .observeOn(mainThreadScheduler)
         .subscribe({ time -> Timber.d("Set back after %d delay", time) }
@@ -63,7 +63,7 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
 
   private fun registerOnBus(onToggleTorch: () -> Unit, onChangeCameraApi: () -> Unit,
       onFinishService: () -> Unit) {
-    disposeOnStop {
+    dispose {
       bus.listen()
           .subscribeOn(ioScheduler)
           .observeOn(mainThreadScheduler)

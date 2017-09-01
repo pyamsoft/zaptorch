@@ -20,6 +20,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.zaptorch.Injector
@@ -36,6 +37,9 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callba
   internal lateinit var servicePublisher: ServicePublisher
   internal lateinit var presenter: SettingsPreferenceFragmentPresenter
 
+  override fun provideBoundPresenters(): List<Presenter<*>> =
+      super.provideBoundPresenters() + listOf(presenter)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -51,11 +55,8 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callba
       DialogUtil.guaranteeSingleDialogFragment(activity, HowToDialog(), "howto")
       return@setOnPreferenceClickListener true
     }
-  }
 
-  override fun onStart() {
-    super.onStart()
-    presenter.start(this)
+    presenter.bind(this)
   }
 
   override fun onApiChanged() {
@@ -75,11 +76,6 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callba
     val activityManager = context.applicationContext
         .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     activityManager.clearApplicationUserData()
-  }
-
-  override fun onStop() {
-    super.onStop()
-    presenter.stop()
   }
 
   override fun onClearAllClicked() {

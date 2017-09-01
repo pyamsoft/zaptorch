@@ -18,7 +18,7 @@
 
 buildscript {
   ext {
-    kotlin_version = '1.1.3-2'
+    kotlin_version = '1.1.4-3'
     plugin_version = '2.3.3'
   }
   repositories {
@@ -39,10 +39,10 @@ buildscript {
     maxSdk = 26
     buildTools = "26.0.1"
 
-    supportLib = "26.0.1"
-    firebase = "11.0.4"
+    supportLib = "26.0.2"
+    firebase = "11.2.0"
     leakCanary = "1.5.1"
-    pydroid = "12.0.1"
+    pydroid = "13.0.0"
   }
 
   dependencies {

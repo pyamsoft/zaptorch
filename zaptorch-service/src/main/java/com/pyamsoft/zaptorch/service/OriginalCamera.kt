@@ -40,12 +40,12 @@ internal class OriginalCamera internal constructor(context: Context,
     mainScheduler: Scheduler) : CameraCommon(context, interactor, computationScheduler, ioScheduler,
     mainScheduler), SurfaceHolder.Callback {
 
-  val windowManager = context.applicationContext.getSystemService(
+  private val windowManager = context.applicationContext.getSystemService(
       Context.WINDOW_SERVICE) as WindowManager
-  val surfaceView = SurfaceView(context.applicationContext)
-  val params = WindowManager.LayoutParams()
-  var camera: Camera? = null
-  var opened: Boolean = false
+  private val surfaceView = SurfaceView(context.applicationContext)
+  private val params = WindowManager.LayoutParams()
+  private var camera: Camera? = null
+  private var opened: Boolean = false
 
   init {
     params.width = 1
@@ -59,7 +59,7 @@ internal class OriginalCamera internal constructor(context: Context,
         or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
   }
 
-  @CheckResult fun getInitializedHolder(): SurfaceHolder {
+  @CheckResult private fun getInitializedHolder(): SurfaceHolder {
     val holder = surfaceView.holder
     holder.addCallback(this)
     return holder
@@ -82,7 +82,7 @@ internal class OriginalCamera internal constructor(context: Context,
 
   private fun connectToCameraService() {
     Timber.d("Camera is closed, open it")
-    disposeOnStop {
+    dispose {
       Single.fromCallable { Optional.ofNullable(Camera.open()) }
           .map {
             if (it.isPresent()) {
@@ -101,7 +101,7 @@ internal class OriginalCamera internal constructor(context: Context,
     }
   }
 
-  fun cameraOpened(camera: Camera) {
+  private fun cameraOpened(camera: Camera) {
     val parameters = camera.parameters
     if (parameters.flashMode == null) {
       Timber.e("Null flash mode")
@@ -143,7 +143,7 @@ internal class OriginalCamera internal constructor(context: Context,
     }
   }
 
-  fun clearCamera(throwable: Throwable) {
+  private fun clearCamera(throwable: Throwable) {
     Timber.e(throwable, "Error opening setupCamera")
     release()
   }
@@ -157,7 +157,7 @@ internal class OriginalCamera internal constructor(context: Context,
     }
   }
 
-  override fun onStop() {
+  override fun onUnbind() {
     release()
   }
 

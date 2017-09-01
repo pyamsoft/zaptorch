@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.settings
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
@@ -26,6 +27,8 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 class ConfirmationDialog : WatchedDialog() {
 
   internal lateinit var publisher: SettingPublisher
+
+  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

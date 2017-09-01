@@ -18,9 +18,10 @@ package com.pyamsoft.zaptorch.uicode
 
 import android.support.annotation.CallSuper
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarFragment
+import com.pyamsoft.pydroid.ui.app.fragment.DisposableFragment
 import com.pyamsoft.zaptorch.ZapTorch
 
-abstract class WatchedFragment : ActionBarFragment() {
+abstract class WatchedFragment : DisposableFragment() {
 
   @CallSuper override fun onDestroy() {
     super.onDestroy()

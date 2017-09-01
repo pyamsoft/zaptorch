@@ -29,8 +29,8 @@ internal abstract class CameraCommon protected constructor(context: Context,
     computationScheduler, ioScheduler, mainScheduler), CameraInterface {
 
   @get:CheckResult val appContext: Context = context.applicationContext
-  val errorExplain = Intent()
-  val permissionExplain = Intent()
+  private val errorExplain = Intent()
+  private val permissionExplain = Intent()
   private var callback: OnStateChangedCallback? = null
 
   init {
@@ -42,7 +42,7 @@ internal abstract class CameraCommon protected constructor(context: Context,
   }
 
   fun startErrorExplanationActivity() {
-    disposeOnStop {
+    dispose {
       interactor.shouldShowErrorDialog()
           .subscribeOn(computationScheduler)
           .observeOn(mainThreadScheduler)
@@ -78,7 +78,7 @@ internal abstract class CameraCommon protected constructor(context: Context,
     }
   }
 
-  fun notifyCallbackOnError(errorIntent: Intent) {
+  private fun notifyCallbackOnError(errorIntent: Intent) {
     val obj = callback
     if (obj != null) {
       Timber.w("Notify callback: error")

@@ -18,9 +18,10 @@ package com.pyamsoft.zaptorch.uicode
 
 import android.support.annotation.CallSuper
 import com.pyamsoft.pydroid.ui.app.fragment.DialogFragmentBase
+import com.pyamsoft.pydroid.ui.app.fragment.DisposableDialogFragment
 import com.pyamsoft.zaptorch.ZapTorch
 
-abstract class WatchedDialog : DialogFragmentBase() {
+abstract class WatchedDialog : DisposableDialogFragment() {
 
   @CallSuper override fun onDestroy() {
     super.onDestroy()

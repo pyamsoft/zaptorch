@@ -31,7 +31,6 @@ class MainModule(module: ZapTorchModule) {
     interactor = MainInteractorImpl(module.provideUiPreferences())
   }
 
-  @CheckResult fun getPresenter(keyPressKey: String): MainPresenter {
-    return MainPresenter(keyPressKey, interactor, computationScheduler, ioScheduler, mainScheduler)
-  }
+  @CheckResult fun getPresenter(keyPressKey: String): MainPresenter =
+      MainPresenter(keyPressKey, interactor, computationScheduler, ioScheduler, mainScheduler)
 }
