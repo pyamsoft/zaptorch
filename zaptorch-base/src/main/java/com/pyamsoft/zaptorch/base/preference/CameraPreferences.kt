@@ -20,9 +20,12 @@ import android.support.annotation.CheckResult
 
 interface CameraPreferences {
 
-  @CheckResult fun shouldShowErrorDialog(): Boolean
+  @CheckResult
+  fun shouldShowErrorDialog(): Boolean
 
-  @get:CheckResult val cameraApi: Int
+  @get:CheckResult
+  val cameraApi: Int
 
-  @get:CheckResult val buttonDelayTime: Long
+  @get:CheckResult
+  val buttonDelayTime: Long
 }

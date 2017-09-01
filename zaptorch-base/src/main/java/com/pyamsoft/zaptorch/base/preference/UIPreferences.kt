@@ -21,7 +21,8 @@ import android.support.annotation.CheckResult
 
 interface UIPreferences {
 
-  @CheckResult fun shouldHandleKeys(): Boolean
+  @CheckResult
+  fun shouldHandleKeys(): Boolean
 
   fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 
