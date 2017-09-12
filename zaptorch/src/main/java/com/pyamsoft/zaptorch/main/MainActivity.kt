@@ -89,11 +89,21 @@ class MainActivity : TamperActivity(), Callback {
   override val safePackageName: String
     get() = "com.pyamsoft.zaptorch"
 
-  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean =
-      handleKeyPress || super.onKeyUp(keyCode, event)
+  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+      handleKeyPress
+    } else {
+      super.onKeyUp(keyCode, event)
+    }
+  }
 
-  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean =
-      handleKeyPress || super.onKeyDown(keyCode, event)
+  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+      handleKeyPress
+    } else {
+      super.onKeyDown(keyCode, event)
+    }
+  }
 
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
@@ -110,7 +120,7 @@ class MainActivity : TamperActivity(), Callback {
     val fragmentManager = supportFragmentManager
     val backStackCount = fragmentManager.backStackEntryCount
     if (backStackCount > 0) {
-      fragmentManager.popBackStack()
+      fragmentManager.popBackStackImmediate()
     } else {
       super.onBackPressed()
     }
