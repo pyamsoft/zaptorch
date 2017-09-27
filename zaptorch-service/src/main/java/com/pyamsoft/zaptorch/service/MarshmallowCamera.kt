@@ -69,6 +69,7 @@ import timber.log.Timber
   }
 
   override fun onUnbind() {
+    super.onUnbind()
     release()
   }
 
