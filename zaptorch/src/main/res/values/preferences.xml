@@ -33,12 +33,13 @@
     <item name="time_long">1000</item>
   </string-array>
 
+
   <string-array name="camera_api">
-    <item name="api_old">Old Camera API</item>
+    <item name="api_lollipop">Lollipop Camera API</item>
   </string-array>
 
   <string-array name="camera_api_entries">
-    <item name="api_old">0</item>
+    <item name="api_lollipop">0</item>
   </string-array>
 
   <string name="camera_api_title">Camera API</string>
