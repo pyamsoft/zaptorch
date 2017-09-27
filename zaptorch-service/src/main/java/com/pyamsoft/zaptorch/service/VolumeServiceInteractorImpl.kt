@@ -44,9 +44,6 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
       context.applicationContext)
   val notification: Notification
   val onStateChangedCallback: CameraCommon.OnStateChangedCallback
-  private val cameraApiOld = 0
-  private val cameraApiLollipop = 1
-  private val cameraApiMarshmallow = 2
   private var pressed: Boolean = false
   private var cameraInterface: CameraCommon? = null
 
@@ -133,17 +130,13 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
       computationScheduler: Scheduler, ioScheduler: Scheduler, mainThreadScheduler: Scheduler) {
     val cameraApi = preferences.cameraApi
     val camera: CameraCommon
-    camera = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == cameraApiMarshmallow) {
+    camera = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == CAMERA_API_MARSHMALLOW) {
       // Assign
       MarshmallowCamera(appContext, this, computationScheduler, ioScheduler,
           mainThreadScheduler)
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && cameraApi == cameraApiLollipop) {
+    } else if (cameraApi == CAMERA_API_LOLLIPOP) {
       // Assign
       LollipopCamera(appContext, this, computationScheduler, ioScheduler,
-          mainThreadScheduler)
-    } else if (cameraApi == cameraApiOld) {
-      // Assign
-      OriginalCamera(appContext, this, computationScheduler, ioScheduler,
           mainThreadScheduler)
     } else {
       throw RuntimeException("Invalid Camera API selected: " + cameraApi)
@@ -182,6 +175,8 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
 
   companion object {
 
+    private const val CAMERA_API_LOLLIPOP = 0
+    private const val CAMERA_API_MARSHMALLOW = 1
     private const val NOTIFICATION_ID = 1345
     private const val NOTIFICATION_RC = 1009
   }

@@ -16,9 +16,7 @@
   -->
 
 <resources>
-
-  <string name="camera_api_default">0</string>
-  <string name="camera_api_key">camera_api</string>
+  <string name="camera_api_key">camera_api_key</string>
 
   <string name="double_press_delay_key">double_press_delay</string>
   <string name="double_press_delay_default">500</string>
@@ -28,5 +26,7 @@
 
   <bool name="handle_volume_keys_default">true</bool>
   <string name="handle_volume_keys_key">handle_volume_keys</string>
+
+  <string name="camera_api_default">1</string>
 
 </resources>
