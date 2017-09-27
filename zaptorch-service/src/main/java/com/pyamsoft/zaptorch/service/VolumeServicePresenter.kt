@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
 import com.pyamsoft.pydroid.bus.EventBus
+import com.pyamsoft.pydroid.helper.clear
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.CHANGE_CAMERA
@@ -25,6 +26,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import io.reactivex.Scheduler
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
@@ -32,6 +34,8 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     computationScheduler: Scheduler, ioScheduler: Scheduler,
     mainThreadScheduler: Scheduler) : SchedulerPresenter<Callback>(
     computationScheduler, ioScheduler, mainThreadScheduler) {
+
+  private var keyDisposable: Disposable = null.clear()
 
   override fun onBind(v: Callback) {
     super.onBind(v)
@@ -41,6 +45,7 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
   override fun onUnbind() {
     super.onUnbind()
     interactor.releaseCamera()
+    keyDisposable = keyDisposable.clear()
   }
 
   fun toggleTorch() {
@@ -48,11 +53,12 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
   }
 
   fun handleKeyEvent(action: Int, keyCode: Int) {
-    dispose(interactor.handleKeyPress(action, keyCode)
+    keyDisposable = keyDisposable.clear()
+    keyDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(ioScheduler)
         .observeOn(mainThreadScheduler)
         .subscribe({ time -> Timber.d("Set back after %d delay", time) }
-        ) { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
+            , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
   }
 
   fun setupCamera(errorHandler: (Intent) -> Unit) {

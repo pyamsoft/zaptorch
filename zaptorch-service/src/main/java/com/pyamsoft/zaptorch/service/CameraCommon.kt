@@ -18,9 +18,12 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.content.Intent
+import android.support.annotation.CallSuper
 import android.support.annotation.CheckResult
+import com.pyamsoft.pydroid.helper.clear
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import io.reactivex.Scheduler
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(context: Context,
@@ -34,6 +37,8 @@ internal abstract class CameraCommon protected constructor(context: Context,
   private val permissionExplain = Intent()
   private var callback: OnStateChangedCallback? = null
 
+  private var errorDisposable: Disposable = null.clear()
+
   init {
     errorExplain.putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
     errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -43,16 +48,15 @@ internal abstract class CameraCommon protected constructor(context: Context,
   }
 
   fun startErrorExplanationActivity() {
-    dispose {
-      interactor.shouldShowErrorDialog()
-          .subscribeOn(computationScheduler)
-          .observeOn(mainThreadScheduler)
-          .subscribe({
-            if (it) {
-              notifyCallbackOnError(errorExplain)
-            }
-          }, { Timber.e(it, "onError startErrorExplanationActivity") })
-    }
+    errorDisposable = errorDisposable.clear()
+    errorDisposable = interactor.shouldShowErrorDialog()
+        .subscribeOn(computationScheduler)
+        .observeOn(mainThreadScheduler)
+        .subscribe({
+          if (it) {
+            notifyCallbackOnError(errorExplain)
+          }
+        }, { Timber.e(it, "onError startErrorExplanationActivity") })
   }
 
   fun startPermissionExplanationActivity() {
@@ -85,6 +89,11 @@ internal abstract class CameraCommon protected constructor(context: Context,
       Timber.w("Notify callback: error")
       obj.onError(errorIntent)
     }
+  }
+
+  @CallSuper override fun onUnbind() {
+    super.onUnbind()
+    errorDisposable = errorDisposable.clear()
   }
 
   abstract fun release()

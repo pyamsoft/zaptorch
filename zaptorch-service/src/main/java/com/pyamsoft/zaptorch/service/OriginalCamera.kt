@@ -30,8 +30,11 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.WindowManager
 import com.pyamsoft.pydroid.helper.Optional
+import com.pyamsoft.pydroid.helper.asOptional
+import com.pyamsoft.pydroid.helper.clear
 import io.reactivex.Scheduler
 import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import java.io.IOException
 
@@ -46,6 +49,8 @@ internal class OriginalCamera internal constructor(context: Context,
   private val params = WindowManager.LayoutParams()
   private var camera: Camera? = null
   private var opened: Boolean = false
+
+  private var cameraDisposable: Disposable = null.clear()
 
   init {
     params.width = 1
@@ -82,23 +87,23 @@ internal class OriginalCamera internal constructor(context: Context,
 
   private fun connectToCameraService() {
     Timber.d("Camera is closed, open it")
-    dispose {
-      Single.fromCallable { Optional.ofNullable(Camera.open()) }
-          .map {
-            if (it.isPresent()) {
-              return@map it.item()
-            } else {
-              throw IllegalStateException("Camera failed to open")
-            }
+    cameraDisposable = cameraDisposable.clear()
+    cameraDisposable = Single.fromCallable { Camera.open().asOptional() }
+        .map<Camera> {
+          val value = it.get()
+          if (value == null) {
+            throw IllegalStateException("Camera failed to open")
+          } else {
+            return@map value
           }
-          .subscribeOn(ioScheduler)
-          .observeOn(mainThreadScheduler)
-          .subscribe({ cameraOpened(it) }, {
-            Timber.e(it, "onError connectToCameraService")
-            clearCamera(it)
-            startErrorExplanationActivity()
-          })
-    }
+        }
+        .subscribeOn(ioScheduler)
+        .observeOn(mainThreadScheduler)
+        .subscribe({ cameraOpened(it) }, {
+          Timber.e(it, "onError connectToCameraService")
+          clearCamera(it)
+          startErrorExplanationActivity()
+        })
   }
 
   private fun cameraOpened(camera: Camera) {
@@ -158,7 +163,9 @@ internal class OriginalCamera internal constructor(context: Context,
   }
 
   override fun onUnbind() {
+    super.onUnbind()
     release()
+    cameraDisposable = cameraDisposable.clear()
   }
 
   override fun release() {
