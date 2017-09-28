@@ -27,6 +27,6 @@
   <bool name="handle_volume_keys_default">true</bool>
   <string name="handle_volume_keys_key">handle_volume_keys</string>
 
-  <string name="camera_api_default">1</string>
+  <string name="camera_api_default">0</string>
 
 </resources>
