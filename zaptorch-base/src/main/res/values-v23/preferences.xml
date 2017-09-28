@@ -17,6 +17,6 @@
 
 <resources>
 
-  <string name="camera_api_default">2</string>
+  <string name="camera_api_default">1</string>
 
 </resources>
