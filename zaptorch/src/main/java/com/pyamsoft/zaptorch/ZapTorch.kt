@@ -32,19 +32,10 @@ import com.pyamsoft.zaptorch.uicode.WatchedPreferenceFragment
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 
-class ZapTorch : Application(), ComponentProvider {
+class ZapTorch : Application() {
 
   private lateinit var refWatcher: RefWatcher
   private var component: ZapTorchComponent? = null
-
-  @CheckResult override fun getComponent(): ZapTorchComponent {
-    val obj = component
-    if (obj == null) {
-      throw IllegalStateException("ZapTorchComponent must be initialized before use")
-    } else {
-      return obj
-    }
-  }
 
   override fun onCreate() {
     super.onCreate()
@@ -65,8 +56,13 @@ class ZapTorch : Application(), ComponentProvider {
     }
   }
 
-  private val watcher: RefWatcher
-    @CheckResult get() = refWatcher
+  override fun getSystemService(name: String?): Any {
+    return if (Injector.name == name) {
+      component ?: throw IllegalStateException("ZapTorchComponent is NULL")
+    } else {
+      super.getSystemService(name)
+    }
+  }
 
   companion object {
     @JvmStatic
@@ -93,7 +89,7 @@ class ZapTorch : Application(), ComponentProvider {
     @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
       val application = fragment.activity.application
       if (application is ZapTorch) {
-        return application.watcher
+        return application.refWatcher
       } else {
         throw IllegalStateException("Application is not ZapTorch")
       }

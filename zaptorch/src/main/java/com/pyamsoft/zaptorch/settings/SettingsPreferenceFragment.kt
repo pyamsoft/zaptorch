@@ -28,6 +28,7 @@ import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePublisher
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
@@ -45,9 +46,8 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callba
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    Injector.with(context) {
-      it.plusSettingsComponent(context.getString(R.string.camera_api_key)).inject(this)
-    }
+    (Injector.obtain(context.applicationContext) as ZapTorchComponent).plusSettingsComponent(
+        context.getString(R.string.camera_api_key)).inject(this)
   }
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

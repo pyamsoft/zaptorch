@@ -25,6 +25,7 @@ import android.support.annotation.CheckResult
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
@@ -52,10 +53,7 @@ class VolumeMonitorService : AccessibilityService(), Callback {
 
   override fun onCreate() {
     super.onCreate()
-    Injector.with(this) {
-      it.inject(this)
-    }
-
+    (Injector.obtain(applicationContext) as ZapTorchComponent).inject(this)
     presenter.bind(this)
   }
 

@@ -19,15 +19,20 @@
 package com.pyamsoft.zaptorch
 
 import android.content.Context
+import com.pyamsoft.pydroid.SimpleInjector
 
-object Injector {
+object Injector : SimpleInjector {
 
-  fun with(context: Context, func: (ZapTorchComponent) -> Unit) {
-    val app = context.applicationContext
-    if (app is ComponentProvider) {
-      func(app.getComponent())
+  override val name: String = "com.pyamsoft.zaptorch.INJECTOR"
+
+  override fun obtain(context: Context): Any {
+    val service: Any? = context.getSystemService(name)
+    if (service == null) {
+      throw IllegalStateException("Injector component was NULL")
     } else {
-      throw ClassCastException("Application is not ZapTorch")
+      return service
     }
   }
+
 }
+

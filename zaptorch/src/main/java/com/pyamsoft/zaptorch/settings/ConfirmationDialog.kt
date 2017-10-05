@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
@@ -34,9 +35,7 @@ class ConfirmationDialog : WatchedDialog() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Injector.with(context) {
-      it.inject(this)
-    }
+    (Injector.obtain(context.applicationContext) as ZapTorchComponent).inject(this)
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
