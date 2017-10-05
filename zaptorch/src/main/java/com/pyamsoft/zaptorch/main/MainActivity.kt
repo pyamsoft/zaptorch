@@ -35,6 +35,7 @@ import com.pyamsoft.pydroid.util.NetworkUtil
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
 import com.pyamsoft.zaptorch.main.MainPresenter.Callback
 import com.pyamsoft.zaptorch.settings.SettingsFragment
@@ -46,6 +47,8 @@ class MainActivity : TamperActivity(), Callback {
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
+  override val safePackageName: String = "com.pyamsoft.zaptorch"
+
   override fun provideBoundPresenters(): List<Presenter<*>> =
       super.provideBoundPresenters() + listOf(presenter)
 
@@ -55,9 +58,7 @@ class MainActivity : TamperActivity(), Callback {
     binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
-    Injector.with(this) {
-      it.plusMainComponent(getString(R.string.handle_volume_keys_key)).inject(this)
-    }
+    (Injector.obtain(applicationContext) as ZapTorchComponent).plusMainComponent(getString(R.string.handle_volume_keys_key)).inject(this)
     setupAppBar()
 
     presenter.bind(this)
@@ -87,9 +88,6 @@ class MainActivity : TamperActivity(), Callback {
     super.onResume()
     AnimUtil.animateActionBarToolbar(binding.toolbar)
   }
-
-  override val safePackageName: String
-    get() = "com.pyamsoft.zaptorch"
 
   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
     return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
