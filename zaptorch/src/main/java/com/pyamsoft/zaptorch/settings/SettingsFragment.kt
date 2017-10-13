@@ -45,7 +45,7 @@ class SettingsFragment : WatchedFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    (Injector.obtain(context.applicationContext) as ZapTorchComponent).inject(this)
+    Injector.obtain<ZapTorchComponent>(context.applicationContext).inject(this)
   }
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,

@@ -55,10 +55,11 @@ class MainActivity : TamperActivity(), Callback {
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
-    binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
     PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
-    (Injector.obtain(applicationContext) as ZapTorchComponent).plusMainComponent(getString(R.string.handle_volume_keys_key)).inject(this)
+    Injector.obtain<ZapTorchComponent>(applicationContext).plusMainComponent(
+        getString(R.string.handle_volume_keys_key)).inject(this)
     setupAppBar()
 
     presenter.bind(this)

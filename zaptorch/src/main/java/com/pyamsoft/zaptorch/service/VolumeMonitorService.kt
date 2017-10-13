@@ -53,7 +53,7 @@ class VolumeMonitorService : AccessibilityService(), Callback {
 
   override fun onCreate() {
     super.onCreate()
-    (Injector.obtain(applicationContext) as ZapTorchComponent).inject(this)
+    Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
     presenter.bind(this)
   }
 

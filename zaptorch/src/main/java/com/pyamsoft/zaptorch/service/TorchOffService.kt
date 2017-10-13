@@ -31,7 +31,7 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
   override fun onCreate() {
     super.onCreate()
-    (Injector.obtain(applicationContext) as ZapTorchComponent).inject(this)
+    Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
   }
 
   override fun onHandleIntent(intent: Intent?) {
