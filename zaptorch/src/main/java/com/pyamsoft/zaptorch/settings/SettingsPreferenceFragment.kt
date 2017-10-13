@@ -46,7 +46,7 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callba
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    (Injector.obtain(context.applicationContext) as ZapTorchComponent).plusSettingsComponent(
+    Injector.obtain<ZapTorchComponent>(context.applicationContext).plusSettingsComponent(
         context.getString(R.string.camera_api_key)).inject(this)
   }
 

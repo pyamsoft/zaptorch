@@ -35,7 +35,7 @@ class ConfirmationDialog : WatchedDialog() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    (Injector.obtain(context.applicationContext) as ZapTorchComponent).inject(this)
+    Injector.obtain<ZapTorchComponent>(context.applicationContext).inject(this)
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
