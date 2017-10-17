@@ -43,9 +43,8 @@ class ZapTorch : Application() {
       return
     }
 
-    PYDroid.initialize(this, BuildConfig.DEBUG)
+    PYDroid.init(this, BuildConfig.DEBUG)
     Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
-    component = ZapTorchComponentImpl(ZapTorchModule(this, TorchOffService::class.java))
 
     refWatcher = if (BuildConfig.DEBUG) {
       // Assign
@@ -56,10 +55,24 @@ class ZapTorch : Application() {
     }
   }
 
+  private fun buildComponent(): ZapTorchComponent =
+      ZapTorchComponentImpl(ZapTorchModule(applicationContext, TorchOffService::class.java))
+
   override fun getSystemService(name: String?): Any {
     return if (Injector.name == name) {
-      component ?: throw IllegalStateException("ZapTorchComponent is NULL")
+      val zaptorch: ZapTorchComponent
+      val obj = component
+      if (obj == null) {
+        zaptorch = buildComponent()
+        component = zaptorch
+      } else {
+        zaptorch = obj
+      }
+
+      // Return
+      zaptorch
     } else {
+      // Return
       super.getSystemService(name)
     }
   }
