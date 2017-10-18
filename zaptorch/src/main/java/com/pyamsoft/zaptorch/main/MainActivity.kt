@@ -155,12 +155,10 @@ class MainActivity : TamperActivity(), Callback {
   }
 
   override val changeLogLines: Array<String>
-    get() {
-      val line1 = "BUGFIX: Bugfixes and improvements"
-      val line2 = "BUGFIX: Removed all Advertisements"
-      val line3 = "BUGFIX: Faster loading of Open Source Licenses page"
-      return arrayOf(line1, line2, line3)
-    }
+    get() = arrayOf(
+        "BUGFIX: Faster application startup",
+        "BUGFIX: Better camera support"
+    )
 
   override val versionName: String
     get() = BuildConfig.VERSION_NAME
