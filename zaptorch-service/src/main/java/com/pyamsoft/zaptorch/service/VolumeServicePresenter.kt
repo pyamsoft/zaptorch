@@ -63,9 +63,9 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
             , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
   }
 
-  fun setupCamera(errorHandler: (Intent) -> Unit) {
+  fun setupCamera() {
     interactor.setupCamera({
-      errorHandler(it)
+      view?.onError(it)
     }, computationScheduler, ioScheduler, mainThreadScheduler)
   }
 
@@ -87,7 +87,12 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     }
   }
 
-  interface View : TorchCallback, ApiCallback, ServiceCallback
+  interface View : TorchCallback, ApiCallback, ServiceCallback, ErrorHandlerCallback
+
+  interface ErrorHandlerCallback {
+
+    fun onError(intent: Intent)
+  }
 
   interface TorchCallback {
 
