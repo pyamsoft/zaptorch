@@ -58,7 +58,7 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    setupCamera()
+    presenter.setupCamera()
     isRunning = true
   }
 
@@ -79,7 +79,7 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
       Timber.e(e, "Sleep interrupt")
     }
 
-    setupCamera()
+    presenter.setupCamera()
   }
 
   override fun onFinishService() {
@@ -88,11 +88,9 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     }
   }
 
-  private fun setupCamera() {
-    presenter.setupCamera { errorIntent ->
-      errorIntent.setClass(applicationContext, CameraErrorExplanation::class.java)
-      application.startActivity(errorIntent)
-    }
+  override fun onError(intent: Intent) {
+    intent.setClass(applicationContext, CameraErrorExplanation::class.java)
+    application.startActivity(intent)
   }
 
   override fun onUnbind(intent: Intent): Boolean {
