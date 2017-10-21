@@ -32,10 +32,9 @@ import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePublisher
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.Callback
 import timber.log.Timber
 
-class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Callback {
+class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), SettingsPreferenceFragmentPresenter.View {
 
   internal lateinit var servicePublisher: ServicePublisher
   internal lateinit var presenter: SettingsPreferenceFragmentPresenter
