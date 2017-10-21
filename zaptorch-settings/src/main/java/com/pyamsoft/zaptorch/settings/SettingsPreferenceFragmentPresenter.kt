@@ -22,7 +22,7 @@ import android.content.SharedPreferences
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.Callback
+import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.View
 import io.reactivex.Scheduler
 import timber.log.Timber
 
@@ -32,15 +32,15 @@ class SettingsPreferenceFragmentPresenter internal constructor(
     private val interactor: SettingsPreferenceFragmentInteractor,
     computationScheduler: Scheduler,
     ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler) : SchedulerPresenter<Callback>(
+    mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
     computationScheduler, ioScheduler, mainThreadScheduler) {
 
   private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-  override fun onBind(v: Callback) {
+  override fun onBind(v: View) {
     super.onBind(v)
-    listenForCameraChanges(v::onApiChanged)
-    registerEventBus(v::onClearAll)
+    listenForCameraChanges(v)
+    registerEventBus(v)
   }
 
   override fun onUnbind() {
@@ -57,29 +57,34 @@ class SettingsPreferenceFragmentPresenter internal constructor(
     interactor.unregisterCameraApiListener(cameraApiListener)
   }
 
-  private fun registerEventBus(onClearAll: () -> Unit) {
+  private fun registerEventBus(v: ClearCallback) {
     dispose {
       bus.listen().flatMapSingle { interactor.clearAll() }
           .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
-          .subscribe({ onClearAll() }, { Timber.e(it, "onError event bus") })
+          .subscribe({ v.onClearAll() }, { Timber.e(it, "onError event bus") })
     }
   }
 
-  private fun listenForCameraChanges(onApiChanged: () -> Unit) {
+  private fun listenForCameraChanges(v: ApiCallback) {
     if (cameraApiListener == null) {
       cameraApiListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == cameraApiKey) {
           Timber.d("Camera API has changed")
-          onApiChanged()
+          v.onApiChanged()
         }
       }
     }
     registerCameraApiListener()
   }
 
-  interface Callback {
+  interface View : ApiCallback, ClearCallback
+
+  interface ApiCallback {
 
     fun onApiChanged()
+  }
+
+  interface ClearCallback {
 
     fun onClearAll()
   }

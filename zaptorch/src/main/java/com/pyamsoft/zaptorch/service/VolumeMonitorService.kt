@@ -26,11 +26,10 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), Callback {
+class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View {
 
   internal lateinit var presenter: VolumeServicePresenter
 

@@ -26,7 +26,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.CHANGE_CAMERA
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
-import com.pyamsoft.zaptorch.service.VolumeServicePresenter.Callback
+import com.pyamsoft.zaptorch.service.VolumeServicePresenter.View
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
@@ -34,14 +34,14 @@ import timber.log.Timber
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
     private val bus: EventBus<ServiceEvent>,
     computationScheduler: Scheduler, ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler) : SchedulerPresenter<Callback>(
+    mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
     computationScheduler, ioScheduler, mainThreadScheduler) {
 
   private var keyDisposable: Disposable = null.clear()
 
-  override fun onBind(v: Callback) {
+  override fun onBind(v: View) {
     super.onBind(v)
-    registerOnBus(v::onToggleTorch, v::onChangeCameraApi, v::onFinishService)
+    registerOnBus(v, v, v)
   }
 
   override fun onUnbind() {
@@ -69,17 +69,17 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     }, computationScheduler, ioScheduler, mainThreadScheduler)
   }
 
-  private fun registerOnBus(onToggleTorch: () -> Unit, onChangeCameraApi: () -> Unit,
-      onFinishService: () -> Unit) {
+  private fun registerOnBus(torchCallback: TorchCallback, apiCallback: ApiCallback,
+      serviceCallback: ServiceCallback) {
     dispose {
       bus.listen()
           .subscribeOn(ioScheduler)
           .observeOn(mainThreadScheduler)
           .subscribe({ (type) ->
             when (type) {
-              TORCH -> onToggleTorch()
-              CHANGE_CAMERA -> onChangeCameraApi()
-              FINISH -> onFinishService()
+              TORCH -> torchCallback.onToggleTorch()
+              CHANGE_CAMERA -> apiCallback.onChangeCameraApi()
+              FINISH -> serviceCallback.onFinishService()
               else -> throw IllegalArgumentException(
                   "Invalid ServiceEvent.Type: " + type)
             }
@@ -87,12 +87,23 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     }
   }
 
-  interface Callback {
+  interface View : TorchCallback, ApiCallback, ServiceCallback
+
+  interface TorchCallback {
 
     fun onToggleTorch()
 
+  }
+
+  interface ApiCallback {
+
     fun onChangeCameraApi()
 
+  }
+
+  interface ServiceCallback {
+
     fun onFinishService()
+
   }
 }
