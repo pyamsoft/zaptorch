@@ -21,21 +21,23 @@ package com.pyamsoft.zaptorch.base
 import android.app.IntentService
 import android.content.Context
 import android.support.annotation.CheckResult
+import com.pyamsoft.pydroid.PYDroidModule
+import com.pyamsoft.pydroid.loader.ImageLoader
+import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.zaptorch.base.preference.CameraPreferences
 import com.pyamsoft.zaptorch.base.preference.ClearPreferences
 import com.pyamsoft.zaptorch.base.preference.UIPreferences
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
-class ZapTorchModule(context: Context,
+class ZapTorchModule(private val pyDroidModule: PYDroidModule,
+    private val loaderModule: LoaderModule,
     private val torchOffServiceClass: Class<out IntentService>) {
 
-  private val appContext: Context = context.applicationContext
-  private val preferences: ZapTorchPreferencesImpl = ZapTorchPreferencesImpl(context)
+  private val preferences: ZapTorchPreferencesImpl = ZapTorchPreferencesImpl(
+      pyDroidModule.provideContext())
 
   @CheckResult
-  fun provideContext(): Context = appContext
+  fun provideContext(): Context = pyDroidModule.provideContext()
 
   @CheckResult
   fun provideCameraPreferences(): CameraPreferences = preferences
@@ -50,11 +52,14 @@ class ZapTorchModule(context: Context,
   fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
 
   @CheckResult
-  fun provideMainThreadScheduler(): Scheduler = AndroidSchedulers.mainThread()
+  fun provideMainThreadScheduler(): Scheduler = pyDroidModule.provideMainThreadScheduler()
 
   @CheckResult
-  fun provideIoScheduler(): Scheduler = Schedulers.io()
+  fun provideIoScheduler(): Scheduler = pyDroidModule.provideIoScheduler()
 
   @CheckResult
-  fun provideComputationScheduler(): Scheduler = Schedulers.computation()
+  fun provideComputationScheduler(): Scheduler = pyDroidModule.provideComputationScheduler()
+
+  @CheckResult
+  fun provideImageLoader(): ImageLoader = loaderModule.provideImageLoader()
 }

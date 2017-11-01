@@ -25,7 +25,6 @@ apply plugin: "com.getkeepsafe.dexcount"
 //noinspection GroovyMissingReturnStatement
 android {
   compileSdkVersion rootProject.ext.maxSdk
-  buildToolsVersion "$buildTools"
 
   //noinspection GroovyMissingReturnStatement
   defaultConfig {
@@ -83,35 +82,29 @@ android {
 }
 
 dependencies {
-  compile fileTree(dir: "libs", include: ["*.jar"])
-
   // Databinding
   kapt "com.android.databinding:compiler:$plugin_version"
 
   // Firebase Crash
-  compile "com.google.firebase:firebase-crash:$firebase"
+  implementation "com.google.firebase:firebase-crash:$firebase"
 
   // Leak Canary
-  debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanary"
-  releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
-  testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanary"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
 
   // PYDroid
-  compile("com.github.pyamsoft.pydroid:pydroid-design:$pydroid@aar") {
+  implementation("com.github.pyamsoft.pydroid:pydroid-design:$pydroid@aar") {
     transitive = true
   }
-  compile("com.github.pyamsoft.pydroid:pydroid-ui:$pydroid@aar") {
+  implementation("com.github.pyamsoft.pydroid:pydroid-ui:$pydroid@aar") {
     transitive = true
   }
 
-  debugCompile project(path: ":zaptorch-main", configuration: "debug")
-  releaseCompile project(path: ":zaptorch-main", configuration: "release")
-  debugCompile project(path: ":zaptorch-service", configuration: "debug")
-  releaseCompile project(path: ":zaptorch-service", configuration: "release")
-  debugCompile project(path: ":zaptorch-settings", configuration: "debug")
-  releaseCompile project(path: ":zaptorch-settings", configuration: "release")
-
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  implementation project(":zaptorch-main")
+  implementation project(":zaptorch-service")
+  implementation project(":zaptorch-settings")
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 // AdView

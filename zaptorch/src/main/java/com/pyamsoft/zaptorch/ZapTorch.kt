@@ -21,7 +21,9 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.support.annotation.CheckResult
 import android.support.v4.app.Fragment
+import com.pyamsoft.pydroid.PYDroidModule
 import com.pyamsoft.pydroid.about.Licenses
+import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment
 import com.pyamsoft.zaptorch.base.ZapTorchModule
@@ -36,6 +38,8 @@ class ZapTorch : Application() {
 
   private lateinit var refWatcher: RefWatcher
   private var component: ZapTorchComponent? = null
+  private lateinit var pydroidModule: PYDroidModule
+  private lateinit var loaderModule: LoaderModule
 
   override fun onCreate() {
     super.onCreate()
@@ -43,7 +47,9 @@ class ZapTorch : Application() {
       return
     }
 
-    PYDroid.init(this, BuildConfig.DEBUG)
+    pydroidModule = PYDroidModule(this, BuildConfig.DEBUG)
+    loaderModule = LoaderModule(this)
+    PYDroid.init(pydroidModule, loaderModule)
     Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
 
     refWatcher = if (BuildConfig.DEBUG) {
@@ -56,7 +62,7 @@ class ZapTorch : Application() {
   }
 
   private fun buildComponent(): ZapTorchComponent =
-      ZapTorchComponentImpl(ZapTorchModule(applicationContext, TorchOffService::class.java))
+      ZapTorchComponentImpl(ZapTorchModule(pydroidModule, loaderModule, TorchOffService::class.java))
 
   override fun getSystemService(name: String?): Any {
     return if (Injector.name == name) {
@@ -100,7 +106,7 @@ class ZapTorch : Application() {
 
     @JvmStatic
     @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
-      val application = fragment.activity.application
+      val application = fragment.activity!!.application
       if (application is ZapTorch) {
         return application.refWatcher
       } else {

@@ -31,19 +31,20 @@ class PermissionErrorDialog : WatchedDialog() {
   override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity).setMessage(
-        "ZapTorch was unable to access your devices setupCamera." + " Please grant ZapTorch the 'Camera' permission")
-        .setPositiveButton("Okay") { _, _ ->
-          ActivityCompat.requestPermissions(activity,
-              arrayOf(Manifest.permission.CAMERA), 5000)
-          dismiss()
-        }
-        .setNegativeButton("No") { _, _ -> dismiss() }
-        .create()
+    activity!!.let {
+      return AlertDialog.Builder(it).setMessage(
+          "ZapTorch was unable to access your devices setupCamera." + " Please grant ZapTorch the 'Camera' permission")
+          .setPositiveButton("Okay") { _, _ ->
+            ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.CAMERA), 5000)
+            dismiss()
+          }
+          .setNegativeButton("No") { _, _ -> dismiss() }
+          .create()
+    }
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    activity.finish()
+    activity?.finish()
   }
 }

@@ -34,13 +34,15 @@ class AccessibilityRequestDialog : WatchedDialog() {
   private val accessibilityServiceIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity).setTitle("Enable ZapTorch AccessibilityService")
-        .setMessage(R.string.explain_accessibility_service)
-        .setPositiveButton("Let's Go") { _, _ ->
-          activity.startActivity(accessibilityServiceIntent)
-          dismiss()
-        }
-        .setNegativeButton("No Thanks") { _, _ -> dismiss() }
-        .create()
+    activity!!.let {
+      return AlertDialog.Builder(it).setTitle("Enable ZapTorch AccessibilityService")
+          .setMessage(R.string.explain_accessibility_service)
+          .setPositiveButton("Let's Go") { _, _ ->
+            it.startActivity(accessibilityServiceIntent)
+            dismiss()
+          }
+          .setNegativeButton("No Thanks") { _, _ -> dismiss() }
+          .create()
+    }
   }
 }

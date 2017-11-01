@@ -35,11 +35,11 @@ class ConfirmationDialog : WatchedDialog() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context.applicationContext).inject(this)
+    Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity).setMessage(
+    return AlertDialog.Builder(activity!!).setMessage(
         "Really clear all application settings?").setPositiveButton("Yes") { _, _ ->
       publisher.publish(ConfirmEvent)
       dismiss()

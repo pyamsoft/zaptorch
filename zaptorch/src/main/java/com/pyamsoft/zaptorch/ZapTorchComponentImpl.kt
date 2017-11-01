@@ -32,7 +32,7 @@ import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule
 
 internal class ZapTorchComponentImpl internal constructor(
-    zapTorchModule: ZapTorchModule) : ZapTorchComponent {
+    private val zapTorchModule: ZapTorchModule) : ZapTorchComponent {
 
   private val mainModule: MainModule = MainModule(zapTorchModule)
   private val volumeServiceModule: VolumeServiceModule = VolumeServiceModule(zapTorchModule)
@@ -41,6 +41,7 @@ internal class ZapTorchComponentImpl internal constructor(
 
   override fun inject(settingsFragment: SettingsFragment) {
     settingsFragment.publisher = settingsPreferenceFragmentModule.getPresenter()
+    settingsFragment.imageLoader = zapTorchModule.provideImageLoader()
   }
 
   override fun inject(confirmationDialog: ConfirmationDialog) {

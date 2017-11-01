@@ -42,14 +42,21 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Settin
   override fun provideBoundPresenters(): List<Presenter<*>> =
       super.provideBoundPresenters() + listOf(presenter)
 
+  override val preferenceXmlResId: Int = R.xml.preferences
+
+  override val rootViewContainer: Int  = R.id.main_viewport
+
+  override val applicationName: String
+    get() = getString(R.string.app_name)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    Injector.obtain<ZapTorchComponent>(context.applicationContext).plusSettingsComponent(
-        context.getString(R.string.camera_api_key)).inject(this)
+    Injector.obtain<ZapTorchComponent>(context!!.applicationContext).plusSettingsComponent(
+        getString(R.string.camera_api_key)).inject(this)
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
     zapTorchExplain.setOnPreferenceClickListener {
@@ -67,31 +74,24 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(), Settin
   }
 
   override fun onClearAll() {
-    Timber.d("received completed clearAll event. Kill Process")
-    try {
-      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
-    } catch (e: IllegalStateException) {
-      Timber.e(e, "Expected exception when Service is NULL")
-    }
+    context?.let {
+      Timber.d("received completed clearAll event. Kill Process")
+      try {
+        servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
+      } catch (e: IllegalStateException) {
+        Timber.e(e, "Expected exception when Service is NULL")
+      }
 
-    val activityManager = context.applicationContext
-        .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    activityManager.clearApplicationUserData()
+      val activityManager = it.applicationContext
+          .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+      activityManager.clearApplicationUserData()
+    }
   }
 
   override fun onClearAllClicked() {
     DialogUtil.guaranteeSingleDialogFragment(activity, ConfirmationDialog(),
         "confirm_dialog")
   }
-
-  override val rootViewContainer: Int
-    get() = R.id.main_viewport
-
-  override val applicationName: String
-    get() = getString(R.string.app_name)
-
-  override val preferenceXmlResId: Int
-    get() = R.xml.preferences
 
   override fun onDestroy() {
     super.onDestroy()
