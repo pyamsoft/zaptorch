@@ -37,6 +37,7 @@ import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class SettingsFragment : WatchedFragment() {
 
+  internal lateinit var imageLoader: ImageLoader
   internal lateinit var publisher: SettingPublisher
   private lateinit var binding: FragmentMainBinding
   private var fabTask = LoaderHelper.empty()
@@ -45,16 +46,16 @@ class SettingsFragment : WatchedFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context.applicationContext).inject(this)
+    Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
   }
 
-  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
     binding = FragmentMainBinding.inflate(inflater, container, false)
     return binding.root
   }
 
-  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     setupFAB()
     displayPreferenceFragment()
@@ -84,12 +85,11 @@ class SettingsFragment : WatchedFragment() {
     setActionBarUpEnabled(false)
     if (VolumeMonitorService.isRunning) {
       fabTask = LoaderHelper.unload(fabTask)
-      fabTask = ImageLoader.fromResource(activity, R.drawable.ic_help_24dp)
-          .into(binding.mainSettingsFab)
+      fabTask = imageLoader.fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
     } else {
       fabTask = LoaderHelper.unload(fabTask)
-      fabTask = ImageLoader.fromResource(activity, R.drawable.ic_service_start_24dp)
-          .into(binding.mainSettingsFab)
+      fabTask = imageLoader.fromResource(R.drawable.ic_service_start_24dp).into(
+          binding.mainSettingsFab)
     }
   }
 

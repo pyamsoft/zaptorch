@@ -29,7 +29,7 @@ class ServiceInfoDialog : WatchedDialog() {
   override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity).setMessage("ZapTorch service is On")
+    return AlertDialog.Builder(activity!!).setMessage("ZapTorch service is On")
         .setPositiveButton("Okay") { _, _ -> dismiss() }
         .create()
   }
