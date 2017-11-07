@@ -18,14 +18,18 @@
 
 package com.pyamsoft.zaptorch
 
+import android.annotation.SuppressLint
 import android.content.Context
-import com.pyamsoft.pydroid.SimpleInjector
+import android.support.annotation.CheckResult
 
-object Injector : SimpleInjector {
+object Injector {
 
-  override val name: String = "com.pyamsoft.zaptorch.INJECTOR"
+  const val name: String = "com.pyamsoft.zaptorch.INJECTOR"
 
-  override fun <T : Any> obtain(context: Context): T {
+  @SuppressLint("WrongConstant")
+  @CheckResult
+  @JvmStatic
+  fun <T : Any> obtain(context: Context): T {
     val service: Any? = context.getSystemService(name)
 
     @Suppress("UNCHECKED_CAST")
