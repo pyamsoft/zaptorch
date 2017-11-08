@@ -37,7 +37,6 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
-import com.pyamsoft.zaptorch.settings.SettingsFragment
 import timber.log.Timber
 
 class MainActivity : TamperActivity(), MainPresenter.View {
@@ -108,10 +107,11 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
     if (fragmentManager.findFragmentByTag(
-        SettingsFragment.TAG) == null && fragmentManager.findFragmentByTag(
+        MainFragment.TAG) == null && fragmentManager.findFragmentByTag(
         AboutLibrariesFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .replace(R.id.main_viewport, SettingsFragment(), SettingsFragment.TAG)
+          .replace(R.id.main_viewport,
+              MainFragment(), MainFragment.TAG)
           .commit()
     }
   }

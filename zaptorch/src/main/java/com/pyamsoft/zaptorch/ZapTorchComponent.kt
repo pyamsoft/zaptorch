@@ -23,11 +23,11 @@ import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
-import com.pyamsoft.zaptorch.settings.SettingsFragment
+import com.pyamsoft.zaptorch.main.MainFragment
 
 interface ZapTorchComponent {
 
-  fun inject(settingsFragment: SettingsFragment)
+  fun inject(mainFragment: MainFragment)
 
   fun inject(confirmationDialog: ConfirmationDialog)
 
