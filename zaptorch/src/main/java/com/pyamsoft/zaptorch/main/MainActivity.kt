@@ -45,7 +45,20 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
+  override val changeLogLines: Array<String> = arrayOf(
+      "BUGFIX: Better support for small screen devices"
+  )
+
+  override val versionName: String=BuildConfig.VERSION_NAME
+
+  override val applicationIcon: Int = R.mipmap.ic_launcher
+
+  override val currentApplicationVersion: Int = BuildConfig.VERSION_CODE
+
   override val safePackageName: String = "com.pyamsoft.zaptorch"
+
+  override val applicationName: String
+    get() = getString(R.string.app_name)
 
   override fun provideBoundPresenters(): List<Presenter<*>> =
       super.provideBoundPresenters() + listOf(presenter)
@@ -152,24 +165,6 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     menuInflater.inflate(R.menu.menu, menu)
     return super.onCreateOptionsMenu(menu)
   }
-
-  override val changeLogLines: Array<String>
-    get() = arrayOf(
-        "BUGFIX: Faster application startup",
-        "BUGFIX: Better camera support"
-    )
-
-  override val versionName: String
-    get() = BuildConfig.VERSION_NAME
-
-  override val applicationIcon: Int
-    get() = R.mipmap.ic_launcher
-
-  override val applicationName: String
-    get() = getString(R.string.app_name)
-
-  override val currentApplicationVersion: Int
-    get() = BuildConfig.VERSION_CODE
 
   companion object {
 
