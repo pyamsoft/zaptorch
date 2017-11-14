@@ -22,6 +22,8 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.os.Build
 import android.support.annotation.CheckResult
+import android.support.v4.media.VolumeProviderCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
