@@ -24,9 +24,9 @@ import com.pyamsoft.zaptorch.ZapTorch
 
 abstract class WatchedPreferenceFragment : DisposablePreferenceFragment() {
 
-  @CallSuper override fun onDestroy() {
-    super.onDestroy()
-    ZapTorch.getRefWatcher(this).watch(this)
-  }
+    @CallSuper override fun onDestroy() {
+        super.onDestroy()
+        ZapTorch.getRefWatcher(this).watch(this)
+    }
 }
 

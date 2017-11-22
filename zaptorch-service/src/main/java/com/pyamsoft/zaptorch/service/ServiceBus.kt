@@ -25,13 +25,13 @@ import io.reactivex.Observable
 
 internal class ServiceBus internal constructor() : EventBus<ServiceEvent> {
 
-  private val bus = RxBus.create<ServiceEvent>()
+    private val bus = RxBus.create<ServiceEvent>()
 
-  override fun listen(): Observable<ServiceEvent> = bus.listen()
+    override fun listen(): Observable<ServiceEvent> = bus.listen()
 
-  override fun publish(event: ServiceEvent) {
-    bus.publish(event)
-  }
+    override fun publish(event: ServiceEvent) {
+        bus.publish(event)
+    }
 
 }
 

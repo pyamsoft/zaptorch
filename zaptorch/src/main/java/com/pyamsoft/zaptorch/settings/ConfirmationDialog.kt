@@ -29,20 +29,20 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class ConfirmationDialog : WatchedDialog() {
 
-  internal lateinit var publisher: SettingPublisher
+    internal lateinit var publisher: SettingPublisher
 
-  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
+    override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
-  }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
+    }
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity!!).setMessage(
-        "Really clear all application settings?").setPositiveButton("Yes") { _, _ ->
-      publisher.publish(ConfirmEvent)
-      dismiss()
-    }.setNegativeButton("No") { _, _ -> dismiss() }.create()
-  }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(activity!!).setMessage(
+                "Really clear all application settings?").setPositiveButton("Yes") { _, _ ->
+            publisher.publish(ConfirmEvent)
+            dismiss()
+        }.setNegativeButton("No") { _, _ -> dismiss() }.create()
+    }
 }

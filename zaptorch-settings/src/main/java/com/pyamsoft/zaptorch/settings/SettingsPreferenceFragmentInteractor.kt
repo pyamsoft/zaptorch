@@ -24,11 +24,12 @@ import io.reactivex.Single
 
 internal interface SettingsPreferenceFragmentInteractor {
 
-  @CheckResult fun clearAll(): Single<Boolean>
+    @CheckResult
+    fun clearAll(): Single<Boolean>
 
-  fun registerCameraApiListener(
-      cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
+    fun registerCameraApiListener(
+            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
 
-  fun unregisterCameraApiListener(
-      cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
+    fun unregisterCameraApiListener(
+            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
 }

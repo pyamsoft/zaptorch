@@ -27,18 +27,18 @@ import timber.log.Timber
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  internal lateinit var servicePublisher: ServicePublisher
+    internal lateinit var servicePublisher: ServicePublisher
 
-  override fun onCreate() {
-    super.onCreate()
-    Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
-  }
-
-  override fun onHandleIntent(intent: Intent?) {
-    try {
-      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.TORCH))
-    } catch (e: IllegalStateException) {
-      Timber.e(e, "onError")
+    override fun onCreate() {
+        super.onCreate()
+        Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
     }
-  }
+
+    override fun onHandleIntent(intent: Intent?) {
+        try {
+            servicePublisher.publish(ServiceEvent(ServiceEvent.Type.TORCH))
+        } catch (e: IllegalStateException) {
+            Timber.e(e, "onError")
+        }
+    }
 }

@@ -19,24 +19,24 @@
 package com.pyamsoft.zaptorch
 
 import com.pyamsoft.zaptorch.main.MainComponent
+import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
-import com.pyamsoft.zaptorch.main.MainFragment
 
 interface ZapTorchComponent {
 
-  fun inject(mainFragment: MainFragment)
+    fun inject(mainFragment: MainFragment)
 
-  fun inject(confirmationDialog: ConfirmationDialog)
+    fun inject(confirmationDialog: ConfirmationDialog)
 
-  fun inject(volumeMonitorService: VolumeMonitorService)
+    fun inject(volumeMonitorService: VolumeMonitorService)
 
-  fun inject(torchOffService: TorchOffService)
+    fun inject(torchOffService: TorchOffService)
 
-  fun plusSettingsComponent(cameraApiKey: String): SettingsComponent
+    fun plusSettingsComponent(cameraApiKey: String): SettingsComponent
 
-  fun plusMainComponent(key: String): MainComponent
+    fun plusMainComponent(key: String): MainComponent
 
 }

@@ -32,83 +32,83 @@ import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
-    private val bus: EventBus<ServiceEvent>,
-    computationScheduler: Scheduler, ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
-    computationScheduler, ioScheduler, mainThreadScheduler) {
+        private val bus: EventBus<ServiceEvent>,
+        computationScheduler: Scheduler, ioScheduler: Scheduler,
+        mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
+        computationScheduler, ioScheduler, mainThreadScheduler) {
 
-  private var keyDisposable: Disposable = null.clear()
+    private var keyDisposable: Disposable = null.clear()
 
-  override fun onBind(v: View) {
-    super.onBind(v)
-    registerOnBus(v, v, v)
-  }
-
-  override fun onUnbind() {
-    super.onUnbind()
-    interactor.releaseCamera()
-    keyDisposable = keyDisposable.clear()
-  }
-
-  fun toggleTorch() {
-    interactor.toggleTorch()
-  }
-
-  fun handleKeyEvent(action: Int, keyCode: Int) {
-    keyDisposable = keyDisposable.clear()
-    keyDisposable = interactor.handleKeyPress(action, keyCode)
-        .subscribeOn(ioScheduler)
-        .observeOn(mainThreadScheduler)
-        .subscribe({ time -> Timber.d("Set back after %d delay", time) }
-            , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
-  }
-
-  fun setupCamera() {
-    interactor.setupCamera({
-      view?.onError(it)
-    }, computationScheduler, ioScheduler, mainThreadScheduler)
-  }
-
-  private fun registerOnBus(torchCallback: TorchCallback, apiCallback: ApiCallback,
-      serviceCallback: ServiceCallback) {
-    dispose {
-      bus.listen()
-          .subscribeOn(ioScheduler)
-          .observeOn(mainThreadScheduler)
-          .subscribe({ (type) ->
-            when (type) {
-              TORCH -> torchCallback.onToggleTorch()
-              CHANGE_CAMERA -> apiCallback.onChangeCameraApi()
-              FINISH -> serviceCallback.onFinishService()
-              else -> throw IllegalArgumentException(
-                  "Invalid ServiceEvent.Type: " + type)
-            }
-          }, { Timber.e(it, "onError event bus") })
+    override fun onBind(v: View) {
+        super.onBind(v)
+        registerOnBus(v, v, v)
     }
-  }
 
-  interface View : TorchCallback, ApiCallback, ServiceCallback, ErrorHandlerCallback
+    override fun onUnbind() {
+        super.onUnbind()
+        interactor.releaseCamera()
+        keyDisposable = keyDisposable.clear()
+    }
 
-  interface ErrorHandlerCallback {
+    fun toggleTorch() {
+        interactor.toggleTorch()
+    }
 
-    fun onError(intent: Intent)
-  }
+    fun handleKeyEvent(action: Int, keyCode: Int) {
+        keyDisposable = keyDisposable.clear()
+        keyDisposable = interactor.handleKeyPress(action, keyCode)
+                .subscribeOn(ioScheduler)
+                .observeOn(mainThreadScheduler)
+                .subscribe({ time -> Timber.d("Set back after %d delay", time) }
+                        , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
+    }
 
-  interface TorchCallback {
+    fun setupCamera() {
+        interactor.setupCamera({
+            view?.onError(it)
+        }, computationScheduler, ioScheduler, mainThreadScheduler)
+    }
 
-    fun onToggleTorch()
+    private fun registerOnBus(torchCallback: TorchCallback, apiCallback: ApiCallback,
+            serviceCallback: ServiceCallback) {
+        dispose {
+            bus.listen()
+                    .subscribeOn(ioScheduler)
+                    .observeOn(mainThreadScheduler)
+                    .subscribe({ (type) ->
+                        when (type) {
+                            TORCH -> torchCallback.onToggleTorch()
+                            CHANGE_CAMERA -> apiCallback.onChangeCameraApi()
+                            FINISH -> serviceCallback.onFinishService()
+                            else -> throw IllegalArgumentException(
+                                    "Invalid ServiceEvent.Type: " + type)
+                        }
+                    }, { Timber.e(it, "onError event bus") })
+        }
+    }
 
-  }
+    interface View : TorchCallback, ApiCallback, ServiceCallback, ErrorHandlerCallback
 
-  interface ApiCallback {
+    interface ErrorHandlerCallback {
 
-    fun onChangeCameraApi()
+        fun onError(intent: Intent)
+    }
 
-  }
+    interface TorchCallback {
 
-  interface ServiceCallback {
+        fun onToggleTorch()
 
-    fun onFinishService()
+    }
 
-  }
+    interface ApiCallback {
+
+        fun onChangeCameraApi()
+
+    }
+
+    interface ServiceCallback {
+
+        fun onFinishService()
+
+    }
 }

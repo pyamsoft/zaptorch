@@ -28,16 +28,16 @@ import com.pyamsoft.zaptorch.service.CameraInterface.Companion.TYPE_PERMISSION
 
 class CameraErrorExplanation : ActivityBase() {
 
-  override fun onPostResume() {
-    super.onPostResume()
-    val type = intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)
-    val fragment: DialogFragment? = when (type) {
-      TYPE_PERMISSION -> PermissionErrorDialog()
-      TYPE_ERROR -> CameraErrorDialog()
-      else -> null
+    override fun onPostResume() {
+        super.onPostResume()
+        val type = intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)
+        val fragment: DialogFragment? = when (type) {
+            TYPE_PERMISSION -> PermissionErrorDialog()
+            TYPE_ERROR -> CameraErrorDialog()
+            else -> null
+        }
+        if (fragment != null) {
+            DialogUtil.guaranteeSingleDialogFragment(this, fragment, "error")
+        }
     }
-    if (fragment != null) {
-      DialogUtil.guaranteeSingleDialogFragment(this, fragment, "error")
-    }
-  }
 }

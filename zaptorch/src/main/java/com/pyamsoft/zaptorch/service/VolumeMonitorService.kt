@@ -22,8 +22,6 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.os.Build
 import android.support.annotation.CheckResult
-import android.support.v4.media.VolumeProviderCompat
-import android.support.v4.media.session.MediaSessionCompat
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
@@ -33,83 +31,83 @@ import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View {
 
-  internal lateinit var presenter: VolumeServicePresenter
+    internal lateinit var presenter: VolumeServicePresenter
 
-  override fun onKeyEvent(event: KeyEvent): Boolean {
-    val action = event.action
-    val keyCode = event.keyCode
-    presenter.handleKeyEvent(action, keyCode)
+    override fun onKeyEvent(event: KeyEvent): Boolean {
+        val action = event.action
+        val keyCode = event.keyCode
+        presenter.handleKeyEvent(action, keyCode)
 
-    // Never consume events
-    return false
-  }
-
-  override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
-    Timber.d("onAccessibilityEvent")
-  }
-
-  override fun onInterrupt() {
-    Timber.e("onInterrupt")
-  }
-
-  override fun onCreate() {
-    super.onCreate()
-    Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
-    presenter.bind(this)
-  }
-
-  override fun onServiceConnected() {
-    super.onServiceConnected()
-    presenter.setupCamera()
-    isRunning = true
-  }
-
-  override fun onToggleTorch() {
-    Timber.d("Toggle Torch")
-    presenter.toggleTorch()
-  }
-
-  override fun onChangeCameraApi() {
-    // Simulate the lifecycle for destroying and re-creating the publisher
-    Timber.d("Change setupCamera API")
-    presenter.unbind()
-    presenter.bind(this)
-
-    try {
-      Thread.sleep(200)
-    } catch (e: InterruptedException) {
-      Timber.e(e, "Sleep interrupt")
+        // Never consume events
+        return false
     }
 
-    presenter.setupCamera()
-  }
-
-  override fun onFinishService() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      disableSelf()
+    override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
+        Timber.d("onAccessibilityEvent")
     }
-  }
 
-  override fun onError(intent: Intent) {
-    intent.setClass(applicationContext, CameraErrorExplanation::class.java)
-    application.startActivity(intent)
-  }
+    override fun onInterrupt() {
+        Timber.e("onInterrupt")
+    }
 
-  override fun onUnbind(intent: Intent): Boolean {
-    isRunning = false
-    return super.onUnbind(intent)
-  }
+    override fun onCreate() {
+        super.onCreate()
+        Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
+        presenter.bind(this)
+    }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    presenter.unbind()
-  }
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        presenter.setupCamera()
+        isRunning = true
+    }
 
-  companion object {
+    override fun onToggleTorch() {
+        Timber.d("Toggle Torch")
+        presenter.toggleTorch()
+    }
 
-    var isRunning: Boolean = false
-      @CheckResult get
-      private set
+    override fun onChangeCameraApi() {
+        // Simulate the lifecycle for destroying and re-creating the publisher
+        Timber.d("Change setupCamera API")
+        presenter.unbind()
+        presenter.bind(this)
 
-  }
+        try {
+            Thread.sleep(200)
+        } catch (e: InterruptedException) {
+            Timber.e(e, "Sleep interrupt")
+        }
+
+        presenter.setupCamera()
+    }
+
+    override fun onFinishService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            disableSelf()
+        }
+    }
+
+    override fun onError(intent: Intent) {
+        intent.setClass(applicationContext, CameraErrorExplanation::class.java)
+        application.startActivity(intent)
+    }
+
+    override fun onUnbind(intent: Intent): Boolean {
+        isRunning = false
+        return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.unbind()
+    }
+
+    companion object {
+
+        var isRunning: Boolean = false
+            @CheckResult get
+            private set
+
+    }
 }

@@ -21,13 +21,13 @@ package com.pyamsoft.zaptorch.settings
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 
 internal class SettingsComponentImpl(private val settingsModule: SettingsPreferenceFragmentModule,
-    private val serviceModule: VolumeServiceModule,
-    private val cameraApiKey: String) : SettingsComponent {
+        private val serviceModule: VolumeServiceModule,
+        private val cameraApiKey: String) : SettingsComponent {
 
-  override fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
-    settingsPreferenceFragment.presenter = settingsModule.getPreferenceFragmentPresenter(
-        cameraApiKey)
-    settingsPreferenceFragment.servicePublisher = serviceModule.getPresenter()
-  }
+    override fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
+        settingsPreferenceFragment.presenter = settingsModule.getPreferenceFragmentPresenter(
+                cameraApiKey)
+        settingsPreferenceFragment.servicePublisher = serviceModule.getPresenter()
+    }
 }
 

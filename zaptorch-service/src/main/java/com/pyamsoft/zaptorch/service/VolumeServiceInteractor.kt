@@ -25,16 +25,16 @@ import io.reactivex.Single
 
 internal interface VolumeServiceInteractor {
 
-  @CheckResult
-  fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
+    @CheckResult
+    fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
 
-  @CheckResult
-  fun shouldShowErrorDialog(): Single<Boolean>
+    @CheckResult
+    fun shouldShowErrorDialog(): Single<Boolean>
 
-  fun setupCamera(onCameraError: (Intent) -> Unit, computationScheduler: Scheduler,
-      ioScheduler: Scheduler, mainThreadScheduler: Scheduler)
+    fun setupCamera(onCameraError: (Intent) -> Unit, computationScheduler: Scheduler,
+            ioScheduler: Scheduler, mainThreadScheduler: Scheduler)
 
-  fun toggleTorch()
+    fun toggleTorch()
 
-  fun releaseCamera()
+    fun releaseCamera()
 }

@@ -26,19 +26,19 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class CameraErrorDialog : WatchedDialog() {
 
-  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
+    override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity!!).setMessage(
-        "ZapTorch was unable to access your devices setupCamera."
-            + " Please make sure that your device has a setupCamera with Flash functionality."
-            + " Please make sure no other application is using the setupCamera and try again.")
-        .setPositiveButton("Okay") { _, _ -> dismiss() }
-        .create()
-  }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(activity!!).setMessage(
+                "ZapTorch was unable to access your devices setupCamera."
+                        + " Please make sure that your device has a setupCamera with Flash functionality."
+                        + " Please make sure no other application is using the setupCamera and try again.")
+                .setPositiveButton("Okay") { _, _ -> dismiss() }
+                .create()
+    }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    activity?.finish()
-  }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.finish()
+    }
 }
