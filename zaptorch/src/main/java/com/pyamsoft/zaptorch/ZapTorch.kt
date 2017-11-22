@@ -36,82 +36,84 @@ import com.squareup.leakcanary.RefWatcher
 
 class ZapTorch : Application() {
 
-  private lateinit var refWatcher: RefWatcher
-  private var component: ZapTorchComponent? = null
-  private lateinit var pydroidModule: PYDroidModule
-  private lateinit var loaderModule: LoaderModule
+    private lateinit var refWatcher: RefWatcher
+    private var component: ZapTorchComponent? = null
+    private lateinit var pydroidModule: PYDroidModule
+    private lateinit var loaderModule: LoaderModule
 
-  override fun onCreate() {
-    super.onCreate()
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      return
+    override fun onCreate() {
+        super.onCreate()
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return
+        }
+
+        pydroidModule = PYDroidModule(this, BuildConfig.DEBUG)
+        loaderModule = LoaderModule(this)
+        PYDroid.init(pydroidModule, loaderModule)
+        Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
+
+        refWatcher = if (BuildConfig.DEBUG) {
+            // Assign
+            LeakCanary.install(this)
+        } else {
+            // Assign
+            RefWatcher.DISABLED
+        }
     }
 
-    pydroidModule = PYDroidModule(this, BuildConfig.DEBUG)
-    loaderModule = LoaderModule(this)
-    PYDroid.init(pydroidModule, loaderModule)
-    Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
+    private fun buildComponent(): ZapTorchComponent =
+            ZapTorchComponentImpl(
+                    ZapTorchModule(pydroidModule, loaderModule, TorchOffService::class.java))
 
-    refWatcher = if (BuildConfig.DEBUG) {
-      // Assign
-      LeakCanary.install(this)
-    } else {
-      // Assign
-      RefWatcher.DISABLED
+    override fun getSystemService(name: String?): Any {
+        return if (Injector.name == name) {
+            val zaptorch: ZapTorchComponent
+            val obj = component
+            if (obj == null) {
+                zaptorch = buildComponent()
+                component = zaptorch
+            } else {
+                zaptorch = obj
+            }
+
+            // Return
+            zaptorch
+        } else {
+            // Return
+            super.getSystemService(name)
+        }
     }
-  }
 
-  private fun buildComponent(): ZapTorchComponent =
-      ZapTorchComponentImpl(ZapTorchModule(pydroidModule, loaderModule, TorchOffService::class.java))
+    companion object {
+        @JvmStatic
+        @CheckResult
+        fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
+                getRefWatcherInternal(fragment)
 
-  override fun getSystemService(name: String?): Any {
-    return if (Injector.name == name) {
-      val zaptorch: ZapTorchComponent
-      val obj = component
-      if (obj == null) {
-        zaptorch = buildComponent()
-        component = zaptorch
-      } else {
-        zaptorch = obj
-      }
+        @JvmStatic
+        @CheckResult
+        fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
+                getRefWatcherInternal(fragment)
 
-      // Return
-      zaptorch
-    } else {
-      // Return
-      super.getSystemService(name)
+        @JvmStatic
+        @CheckResult
+        fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
+                getRefWatcherInternal(fragment)
+
+        @JvmStatic
+        @CheckResult
+        fun getRefWatcher(
+                fragment: ActionBarSettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(
+                fragment)
+
+        @JvmStatic
+        @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
+            val application = fragment.activity!!.application
+            if (application is ZapTorch) {
+                return application.refWatcher
+            } else {
+                throw IllegalStateException("Application is not ZapTorch")
+            }
+        }
     }
-  }
-
-  companion object {
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
-        getRefWatcherInternal(fragment)
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
-        getRefWatcherInternal(fragment)
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
-        getRefWatcherInternal(fragment)
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(
-        fragment: ActionBarSettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(fragment)
-
-    @JvmStatic
-    @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
-      val application = fragment.activity!!.application
-      if (application is ZapTorch) {
-        return application.refWatcher
-      } else {
-        throw IllegalStateException("Application is not ZapTorch")
-      }
-    }
-  }
 }

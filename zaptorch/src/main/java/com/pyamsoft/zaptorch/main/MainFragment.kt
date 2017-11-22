@@ -43,75 +43,76 @@ import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class MainFragment : WatchedFragment() {
 
-  internal lateinit var imageLoader: ImageLoader
-  internal lateinit var publisher: SettingPublisher
-  private lateinit var binding: FragmentMainBinding
-  private var fabTask = LoaderHelper.empty()
+    internal lateinit var imageLoader: ImageLoader
+    internal lateinit var publisher: SettingPublisher
+    private lateinit var binding: FragmentMainBinding
+    private var fabTask = LoaderHelper.empty()
 
-  override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
+    override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
-    binding = FragmentMainBinding.inflate(inflater, container, false)
-    return binding.root
-  }
-
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    setupFAB()
-    displayPreferenceFragment()
-  }
-
-  private fun setupFAB() {
-    FABUtil.setupFABBehavior(binding.mainSettingsFab, HideScrollFABBehavior(10))
-    binding.mainSettingsFab.setOnDebouncedClickListener {
-      if (VolumeMonitorService.isRunning) {
-        DialogUtil.guaranteeSingleDialogFragment(activity,
-            ServiceInfoDialog(),
-            "servce_info")
-      } else {
-        DialogUtil.guaranteeSingleDialogFragment(activity,
-            AccessibilityRequestDialog(),
-            "accessibility")
-      }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
     }
-  }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    fabTask = LoaderHelper.unload(fabTask)
-    binding.unbind()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    setActionBarUpEnabled(false)
-    if (VolumeMonitorService.isRunning) {
-      fabTask = LoaderHelper.unload(fabTask)
-      fabTask = imageLoader.fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
-    } else {
-      fabTask = LoaderHelper.unload(fabTask)
-      fabTask = imageLoader.fromResource(R.drawable.ic_service_start_24dp).into(
-          binding.mainSettingsFab)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?): View? {
+        binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
-  }
 
-  private fun displayPreferenceFragment() {
-    val fragmentManager = childFragmentManager
-    if (fragmentManager.findFragmentByTag(
-        SettingsPreferenceFragment.TAG) == null) {
-      fragmentManager.beginTransaction()
-          .replace(R.id.main_container, SettingsFragment(), SettingsFragment.TAG).commit()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupFAB()
+        displayPreferenceFragment()
     }
-  }
 
-  companion object {
+    private fun setupFAB() {
+        FABUtil.setupFABBehavior(binding.mainSettingsFab, HideScrollFABBehavior(10))
+        binding.mainSettingsFab.setOnDebouncedClickListener {
+            if (VolumeMonitorService.isRunning) {
+                DialogUtil.guaranteeSingleDialogFragment(activity,
+                        ServiceInfoDialog(),
+                        "servce_info")
+            } else {
+                DialogUtil.guaranteeSingleDialogFragment(activity,
+                        AccessibilityRequestDialog(),
+                        "accessibility")
+            }
+        }
+    }
 
-    const val TAG = "MainFragment"
-  }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fabTask = LoaderHelper.unload(fabTask)
+        binding.unbind()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setActionBarUpEnabled(false)
+        if (VolumeMonitorService.isRunning) {
+            fabTask = LoaderHelper.unload(fabTask)
+            fabTask = imageLoader.fromResource(R.drawable.ic_help_24dp).into(
+                    binding.mainSettingsFab)
+        } else {
+            fabTask = LoaderHelper.unload(fabTask)
+            fabTask = imageLoader.fromResource(R.drawable.ic_service_start_24dp).into(
+                    binding.mainSettingsFab)
+        }
+    }
+
+    private fun displayPreferenceFragment() {
+        val fragmentManager = childFragmentManager
+        if (fragmentManager.findFragmentByTag(
+                SettingsPreferenceFragment.TAG) == null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_container, SettingsFragment(), SettingsFragment.TAG).commit()
+        }
+    }
+
+    companion object {
+
+        const val TAG = "MainFragment"
+    }
 }

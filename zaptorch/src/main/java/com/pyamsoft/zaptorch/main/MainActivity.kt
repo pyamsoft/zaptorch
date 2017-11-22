@@ -41,133 +41,133 @@ import timber.log.Timber
 
 class MainActivity : TamperActivity(), MainPresenter.View {
 
-  internal lateinit var presenter: MainPresenter
-  private lateinit var binding: ActivityMainBinding
-  private var handleKeyPress: Boolean = false
+    internal lateinit var presenter: MainPresenter
+    private lateinit var binding: ActivityMainBinding
+    private var handleKeyPress: Boolean = false
 
-  override val changeLogLines: Array<String> = arrayOf(
-      "BUGFIX: Better support for small screen devices"
-  )
+    override val changeLogLines: Array<String> = arrayOf(
+            "BUGFIX: Better support for small screen devices"
+    )
 
-  override val versionName: String=BuildConfig.VERSION_NAME
+    override val versionName: String = BuildConfig.VERSION_NAME
 
-  override val applicationIcon: Int = R.mipmap.ic_launcher
+    override val applicationIcon: Int = R.mipmap.ic_launcher
 
-  override val currentApplicationVersion: Int = BuildConfig.VERSION_CODE
+    override val currentApplicationVersion: Int = BuildConfig.VERSION_CODE
 
-  override val safePackageName: String = "com.pyamsoft.zaptorch"
+    override val safePackageName: String = "com.pyamsoft.zaptorch"
 
-  override val applicationName: String
-    get() = getString(R.string.app_name)
+    override val applicationName: String
+        get() = getString(R.string.app_name)
 
-  override fun provideBoundPresenters(): List<Presenter<*>> =
-      super.provideBoundPresenters() + listOf(presenter)
+    override fun provideBoundPresenters(): List<Presenter<*>> =
+            super.provideBoundPresenters() + listOf(presenter)
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    setTheme(R.style.Theme_ZapTorch)
-    super.onCreate(savedInstanceState)
-    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-    PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_ZapTorch)
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
-    Injector.obtain<ZapTorchComponent>(applicationContext).plusMainComponent(
-        getString(R.string.handle_volume_keys_key)).inject(this)
-    setupAppBar()
+        Injector.obtain<ZapTorchComponent>(applicationContext).plusMainComponent(
+                getString(R.string.handle_volume_keys_key)).inject(this)
+        setupAppBar()
 
-    presenter.bind(this)
-  }
-
-  override fun onStart() {
-    super.onStart()
-    showMainFragment()
-  }
-
-  override fun onHandleKeyPress(handle: Boolean) {
-    handleKeyPress = handle
-    Timber.d("Handle keypress: %s", handle)
-  }
-
-  override fun onError(throwable: Throwable) {
-    Toasty.makeText(this, "Failed to handle volume keypress, please try again",
-        Toasty.LENGTH_SHORT).show()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    binding.unbind()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    AnimUtil.animateActionBarToolbar(binding.toolbar)
-  }
-
-  override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      handleKeyPress
-    } else {
-      super.onKeyUp(keyCode, event)
+        presenter.bind(this)
     }
-  }
 
-  override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      handleKeyPress
-    } else {
-      super.onKeyDown(keyCode, event)
+    override fun onStart() {
+        super.onStart()
+        showMainFragment()
     }
-  }
 
-  private fun showMainFragment() {
-    val fragmentManager = supportFragmentManager
-    if (fragmentManager.findFragmentByTag(
-        MainFragment.TAG) == null && fragmentManager.findFragmentByTag(
-        AboutLibrariesFragment.TAG) == null) {
-      fragmentManager.beginTransaction()
-          .replace(R.id.main_viewport,
-              MainFragment(), MainFragment.TAG)
-          .commit()
+    override fun onHandleKeyPress(handle: Boolean) {
+        handleKeyPress = handle
+        Timber.d("Handle keypress: %s", handle)
     }
-  }
 
-  override fun onBackPressed() {
-    val fragmentManager = supportFragmentManager
-    val backStackCount = fragmentManager.backStackEntryCount
-    if (backStackCount > 0) {
-      fragmentManager.popBackStackImmediate()
-    } else {
-      super.onBackPressed()
+    override fun onError(throwable: Throwable) {
+        Toasty.makeText(this, "Failed to handle volume keypress, please try again",
+                Toasty.LENGTH_SHORT).show()
     }
-  }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val itemId = item.itemId
-    val handled: Boolean = when (itemId) {
-      android.R.id.home -> {
-        onBackPressed()
-        true
-      }
-      R.id.menu_id_privacy_policy -> {
-        NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
-        true
-      }
-      else -> false
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.unbind()
     }
-    return handled || super.onOptionsItemSelected(item)
-  }
 
-  private fun setupAppBar() {
-    setSupportActionBar(binding.toolbar)
-    binding.toolbar.setTitle(R.string.app_name)
-    ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4f))
-  }
+    override fun onResume() {
+        super.onResume()
+        AnimUtil.animateActionBarToolbar(binding.toolbar)
+    }
 
-  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    menuInflater.inflate(R.menu.menu, menu)
-    return super.onCreateOptionsMenu(menu)
-  }
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            handleKeyPress
+        } else {
+            super.onKeyUp(keyCode, event)
+        }
+    }
 
-  companion object {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            handleKeyPress
+        } else {
+            super.onKeyDown(keyCode, event)
+        }
+    }
 
-    private const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
-  }
+    private fun showMainFragment() {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.findFragmentByTag(
+                MainFragment.TAG) == null && fragmentManager.findFragmentByTag(
+                AboutLibrariesFragment.TAG) == null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_viewport,
+                            MainFragment(), MainFragment.TAG)
+                    .commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        val fragmentManager = supportFragmentManager
+        val backStackCount = fragmentManager.backStackEntryCount
+        if (backStackCount > 0) {
+            fragmentManager.popBackStackImmediate()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemId = item.itemId
+        val handled: Boolean = when (itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            R.id.menu_id_privacy_policy -> {
+                NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
+                true
+            }
+            else -> false
+        }
+        return handled || super.onOptionsItemSelected(item)
+    }
+
+    private fun setupAppBar() {
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setTitle(R.string.app_name)
+        ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4f))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    companion object {
+
+        private const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
+    }
 }

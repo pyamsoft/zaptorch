@@ -19,11 +19,11 @@
 package com.pyamsoft.zaptorch.main
 
 internal class MainComponentImpl internal constructor(private val mainModule: MainModule,
-    private val keyPressKey: String) : MainComponent {
+        private val keyPressKey: String) : MainComponent {
 
-  override fun inject(activity: MainActivity) {
-    activity.presenter = mainModule.getPresenter(keyPressKey)
-  }
+    override fun inject(activity: MainActivity) {
+        activity.presenter = mainModule.getPresenter(keyPressKey)
+    }
 
 }
 

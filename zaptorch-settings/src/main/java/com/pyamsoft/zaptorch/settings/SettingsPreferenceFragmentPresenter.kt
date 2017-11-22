@@ -27,65 +27,65 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 
 class SettingsPreferenceFragmentPresenter internal constructor(
-    private val cameraApiKey: String,
-    private val bus: EventBus<ConfirmEvent>,
-    private val interactor: SettingsPreferenceFragmentInteractor,
-    computationScheduler: Scheduler,
-    ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
-    computationScheduler, ioScheduler, mainThreadScheduler) {
+        private val cameraApiKey: String,
+        private val bus: EventBus<ConfirmEvent>,
+        private val interactor: SettingsPreferenceFragmentInteractor,
+        computationScheduler: Scheduler,
+        ioScheduler: Scheduler,
+        mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
+        computationScheduler, ioScheduler, mainThreadScheduler) {
 
-  private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+    private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-  override fun onBind(v: View) {
-    super.onBind(v)
-    listenForCameraChanges(v)
-    registerEventBus(v)
-  }
-
-  override fun onUnbind() {
-    super.onUnbind()
-    unregisterCameraApiListener()
-  }
-
-  private fun registerCameraApiListener() {
-    unregisterCameraApiListener()
-    interactor.registerCameraApiListener(cameraApiListener)
-  }
-
-  private fun unregisterCameraApiListener() {
-    interactor.unregisterCameraApiListener(cameraApiListener)
-  }
-
-  private fun registerEventBus(v: ClearCallback) {
-    dispose {
-      bus.listen().flatMapSingle { interactor.clearAll() }
-          .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
-          .subscribe({ v.onClearAll() }, { Timber.e(it, "onError event bus") })
+    override fun onBind(v: View) {
+        super.onBind(v)
+        listenForCameraChanges(v)
+        registerEventBus(v)
     }
-  }
 
-  private fun listenForCameraChanges(v: ApiCallback) {
-    if (cameraApiListener == null) {
-      cameraApiListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == cameraApiKey) {
-          Timber.d("Camera API has changed")
-          v.onApiChanged()
+    override fun onUnbind() {
+        super.onUnbind()
+        unregisterCameraApiListener()
+    }
+
+    private fun registerCameraApiListener() {
+        unregisterCameraApiListener()
+        interactor.registerCameraApiListener(cameraApiListener)
+    }
+
+    private fun unregisterCameraApiListener() {
+        interactor.unregisterCameraApiListener(cameraApiListener)
+    }
+
+    private fun registerEventBus(v: ClearCallback) {
+        dispose {
+            bus.listen().flatMapSingle { interactor.clearAll() }
+                    .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
+                    .subscribe({ v.onClearAll() }, { Timber.e(it, "onError event bus") })
         }
-      }
     }
-    registerCameraApiListener()
-  }
 
-  interface View : ApiCallback, ClearCallback
+    private fun listenForCameraChanges(v: ApiCallback) {
+        if (cameraApiListener == null) {
+            cameraApiListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                if (key == cameraApiKey) {
+                    Timber.d("Camera API has changed")
+                    v.onApiChanged()
+                }
+            }
+        }
+        registerCameraApiListener()
+    }
 
-  interface ApiCallback {
+    interface View : ApiCallback, ClearCallback
 
-    fun onApiChanged()
-  }
+    interface ApiCallback {
 
-  interface ClearCallback {
+        fun onApiChanged()
+    }
 
-    fun onClearAll()
-  }
+    interface ClearCallback {
+
+        fun onClearAll()
+    }
 }

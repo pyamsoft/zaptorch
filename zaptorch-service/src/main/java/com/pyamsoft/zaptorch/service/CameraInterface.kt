@@ -20,11 +20,11 @@ package com.pyamsoft.zaptorch.service
 
 interface CameraInterface {
 
-  companion object {
+    companion object {
 
-    const val TYPE_NONE = -1
-    const val TYPE_PERMISSION = 0
-    const val TYPE_ERROR = 1
-    const val DIALOG_WHICH = "dialog"
-  }
+        const val TYPE_NONE = -1
+        const val TYPE_PERMISSION = 0
+        const val TYPE_ERROR = 1
+        const val DIALOG_WHICH = "dialog"
+    }
 }
