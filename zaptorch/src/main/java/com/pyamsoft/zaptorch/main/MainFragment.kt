@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.pyamsoft.backstack.BackStack
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
 import com.pyamsoft.pydroid.design.util.FABUtil
 import com.pyamsoft.pydroid.loader.ImageLoader
@@ -47,6 +48,7 @@ class MainFragment : WatchedFragment() {
     internal lateinit var publisher: SettingPublisher
     private lateinit var binding: FragmentMainBinding
     private var fabTask = LoaderHelper.empty()
+    private lateinit var backstack: BackStack
 
     override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
@@ -57,6 +59,7 @@ class MainFragment : WatchedFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
+        backstack = BackStack.create(this, R.id.main_container)
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -104,12 +107,12 @@ class MainFragment : WatchedFragment() {
 
     private fun displayPreferenceFragment() {
         val fragmentManager = childFragmentManager
-        if (fragmentManager.findFragmentByTag(
-                SettingsPreferenceFragment.TAG) == null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_container, SettingsFragment(), SettingsFragment.TAG).commit()
+        if (fragmentManager.findFragmentByTag(SettingsPreferenceFragment.TAG) == null) {
+            backstack.set(SettingsFragment.TAG) { SettingsFragment() }
         }
     }
+
+    override fun handleBackPress(): Boolean = backstack.back()
 
     companion object {
 

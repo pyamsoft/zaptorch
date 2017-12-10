@@ -25,6 +25,7 @@ import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import com.pyamsoft.backstack.BackStack
 import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.Toasty
@@ -60,12 +61,15 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     override val applicationName: String
         get() = getString(R.string.app_name)
 
+    private lateinit var backstack: BackStack
+
     override fun provideBoundPresenters(): List<Presenter<*>> =
             super.provideBoundPresenters() + listOf(presenter)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)
         super.onCreate(savedInstanceState)
+        backstack = BackStack.create(this, R.id.main_viewport)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
@@ -119,22 +123,14 @@ class MainActivity : TamperActivity(), MainPresenter.View {
 
     private fun showMainFragment() {
         val fragmentManager = supportFragmentManager
-        if (fragmentManager.findFragmentByTag(
-                MainFragment.TAG) == null && fragmentManager.findFragmentByTag(
-                AboutLibrariesFragment.TAG) == null) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_viewport,
-                            MainFragment(), MainFragment.TAG)
-                    .commit()
+        if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
+                && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
+            backstack.set(MainFragment.TAG) { MainFragment() }
         }
     }
 
     override fun onBackPressed() {
-        val fragmentManager = supportFragmentManager
-        val backStackCount = fragmentManager.backStackEntryCount
-        if (backStackCount > 0) {
-            fragmentManager.popBackStackImmediate()
-        } else {
+        if (!backstack.back()) {
             super.onBackPressed()
         }
     }
