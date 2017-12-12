@@ -25,7 +25,7 @@ import com.pyamsoft.pydroid.PYDroidModule
 import com.pyamsoft.pydroid.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.ui.PYDroid
-import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment
+import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.zaptorch.base.ZapTorchModule
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
@@ -103,8 +103,7 @@ class ZapTorch : Application() {
         @JvmStatic
         @CheckResult
         fun getRefWatcher(
-                fragment: ActionBarSettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(
-                fragment)
+                fragment: SettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(fragment)
 
         @JvmStatic
         @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {

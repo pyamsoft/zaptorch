@@ -23,11 +23,10 @@ import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
 import com.pyamsoft.backstack.BackStack
 import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
+import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.helper.Toasty
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.AnimUtil
@@ -75,7 +74,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
 
         Injector.obtain<ZapTorchComponent>(applicationContext).plusMainComponent(
                 getString(R.string.handle_volume_keys_key)).inject(this)
-        setupAppBar()
+        setupToolbar()
 
         presenter.bind(this)
     }
@@ -135,31 +134,26 @@ class MainActivity : TamperActivity(), MainPresenter.View {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        val handled: Boolean = when (itemId) {
-            android.R.id.home -> {
+    private fun setupToolbar() {
+        binding.toolbar.apply {
+            setToolbar(this)
+            setTitle(R.string.app_name)
+            ViewCompat.setElevation(this, AppUtil.convertToDP(context, 4f))
+
+            setNavigationOnClickListener(DebouncedOnClickListener.create {
                 onBackPressed()
-                true
+            })
+
+            inflateMenu(R.menu.menu)
+            setOnMenuItemClickListener {
+                if (it.itemId == R.id.menu_id_privacy_policy) {
+                    NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
+                    return@setOnMenuItemClickListener true
+                } else {
+                    return@setOnMenuItemClickListener false
+                }
             }
-            R.id.menu_id_privacy_policy -> {
-                NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
-                true
-            }
-            else -> false
         }
-        return handled || super.onOptionsItemSelected(item)
-    }
-
-    private fun setupAppBar() {
-        setSupportActionBar(binding.toolbar)
-        binding.toolbar.setTitle(R.string.app_name)
-        ViewCompat.setElevation(binding.toolbar, AppUtil.convertToDP(this, 4f))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
     }
 
     companion object {

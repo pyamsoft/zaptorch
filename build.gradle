@@ -44,7 +44,7 @@ buildscript {
     supportLib = "27.0.2"
     firebase = "11.6.2"
     leakCanary = "1.5.4"
-    pydroid = "14.1.2"
+    pydroid = "14.2.3"
   }
 
   dependencies {
