@@ -30,6 +30,7 @@ import com.pyamsoft.pydroid.loader.LoaderHelper
 import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.helper.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.DialogUtil
+import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -39,7 +40,7 @@ import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
 import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingPublisher
 import com.pyamsoft.zaptorch.settings.SettingsFragment
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragment
+import com.pyamsoft.zaptorch.settings.TorchPreferenceFragment
 import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class MainFragment : WatchedFragment() {
@@ -93,7 +94,11 @@ class MainFragment : WatchedFragment() {
 
     override fun onResume() {
         super.onResume()
-        setActionBarUpEnabled(false)
+        toolbarActivity.withToolbar {
+            it.setTitle(R.string.app_name)
+            it.setUpEnabled(false)
+        }
+
         if (VolumeMonitorService.isRunning) {
             fabTask = LoaderHelper.unload(fabTask)
             fabTask = imageLoader.fromResource(R.drawable.ic_help_24dp).into(
@@ -107,12 +112,12 @@ class MainFragment : WatchedFragment() {
 
     private fun displayPreferenceFragment() {
         val fragmentManager = childFragmentManager
-        if (fragmentManager.findFragmentByTag(SettingsPreferenceFragment.TAG) == null) {
+        if (fragmentManager.findFragmentByTag(TorchPreferenceFragment.TAG) == null) {
             backstack.set(SettingsFragment.TAG) { SettingsFragment() }
         }
     }
 
-    override fun handleBackPress(): Boolean = backstack.back()
+    override fun onBackPressed(): Boolean = backstack.back()
 
     companion object {
 

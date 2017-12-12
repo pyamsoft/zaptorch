@@ -23,8 +23,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.pyamsoft.pydroid.presenter.Presenter
-import com.pyamsoft.pydroid.ui.app.fragment.ActionBarSettingsPreferenceFragment
+import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
+import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
@@ -34,7 +35,7 @@ import com.pyamsoft.zaptorch.service.ServicePublisher
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import timber.log.Timber
 
-class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(),
+class TorchPreferenceFragment : SettingsPreferenceFragment(),
         SettingsPreferenceFragmentPresenter.View {
 
     internal lateinit var servicePublisher: ServicePublisher
@@ -99,8 +100,16 @@ class SettingsPreferenceFragment : ActionBarSettingsPreferenceFragment(),
         ZapTorch.getRefWatcher(this).watch(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        toolbarActivity.withToolbar {
+            it.setTitle(R.string.app_name)
+            it.setUpEnabled(false)
+        }
+    }
+
     companion object {
 
-        const val TAG = "SettingsPreferenceFragment"
+        const val TAG = "TorchPreferenceFragment"
     }
 }

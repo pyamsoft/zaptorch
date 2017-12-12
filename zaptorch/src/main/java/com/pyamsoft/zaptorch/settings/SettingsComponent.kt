@@ -20,6 +20,6 @@ package com.pyamsoft.zaptorch.settings
 
 interface SettingsComponent {
 
-    fun inject(settingsPreferenceFragment: SettingsPreferenceFragment)
+    fun inject(torchPreferenceFragment: TorchPreferenceFragment)
 
 }

@@ -24,10 +24,10 @@ internal class SettingsComponentImpl(private val settingsModule: SettingsPrefere
         private val serviceModule: VolumeServiceModule,
         private val cameraApiKey: String) : SettingsComponent {
 
-    override fun inject(settingsPreferenceFragment: SettingsPreferenceFragment) {
-        settingsPreferenceFragment.presenter = settingsModule.getPreferenceFragmentPresenter(
+    override fun inject(torchPreferenceFragment: TorchPreferenceFragment) {
+        torchPreferenceFragment.presenter = settingsModule.getPreferenceFragmentPresenter(
                 cameraApiKey)
-        settingsPreferenceFragment.servicePublisher = serviceModule.getPresenter()
+        torchPreferenceFragment.servicePublisher = serviceModule.getPresenter()
     }
 }
 
