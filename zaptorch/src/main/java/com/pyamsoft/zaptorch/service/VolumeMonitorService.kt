@@ -19,6 +19,9 @@
 package com.pyamsoft.zaptorch.service
 
 import android.accessibilityservice.AccessibilityService
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LifecycleRegistry
 import android.content.Intent
 import android.os.Build
 import android.support.annotation.CheckResult
@@ -26,12 +29,17 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.lifecycle.fakeBind
+import com.pyamsoft.zaptorch.lifecycle.fakeRelease
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View {
+class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View, LifecycleOwner {
 
+    private val lifecycle = LifecycleRegistry(this)
     internal lateinit var presenter: VolumeServicePresenter
+
+    override fun getLifecycle(): Lifecycle = lifecycle
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
         val action = event.action
@@ -53,7 +61,8 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     override fun onCreate() {
         super.onCreate()
         Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
-        presenter.bind(this)
+        presenter.bind(this, this)
+        lifecycle.fakeBind()
     }
 
     override fun onServiceConnected() {
@@ -70,8 +79,9 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     override fun onChangeCameraApi() {
         // Simulate the lifecycle for destroying and re-creating the publisher
         Timber.d("Change setupCamera API")
-        presenter.unbind()
-        presenter.bind(this)
+        lifecycle.fakeRelease()
+        presenter.bind(this, this)
+        lifecycle.fakeBind()
 
         try {
             Thread.sleep(200)
@@ -100,7 +110,7 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.unbind()
+        lifecycle.fakeRelease()
     }
 
     companion object {

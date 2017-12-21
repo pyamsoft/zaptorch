@@ -24,7 +24,6 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import com.pyamsoft.backstack.BackStack
-import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.helper.Toasty
@@ -62,9 +61,6 @@ class MainActivity : TamperActivity(), MainPresenter.View {
 
     private lateinit var backstack: BackStack
 
-    override fun provideBoundPresenters(): List<Presenter<*>> =
-            super.provideBoundPresenters() + listOf(presenter)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)
         super.onCreate(savedInstanceState)
@@ -76,7 +72,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
                 getString(R.string.handle_volume_keys_key)).inject(this)
         setupToolbar()
 
-        presenter.bind(this)
+        presenter.bind(this, this)
     }
 
     override fun onStart() {

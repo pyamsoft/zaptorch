@@ -29,8 +29,8 @@ import timber.log.Timber
 
 @TargetApi(Build.VERSION_CODES.M) internal class MarshmallowCamera internal constructor(
         context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
-        ioScheduler: Scheduler, mainThreadScheduler: Scheduler) : CameraCommon(context, interactor,
-        computationScheduler, ioScheduler, mainThreadScheduler) {
+        mainThreadScheduler: Scheduler) :
+        CameraCommon(context, interactor, computationScheduler, mainThreadScheduler) {
 
     private val cameraManager: CameraManager = context.applicationContext.getSystemService(
             Context.CAMERA_SERVICE) as CameraManager
@@ -68,11 +68,6 @@ import timber.log.Timber
 
         Timber.d("Unregister torch callback")
         cameraManager.unregisterTorchCallback(torchCallback)
-    }
-
-    override fun onUnbind() {
-        super.onUnbind()
-        release()
     }
 
     private fun setupCamera() {

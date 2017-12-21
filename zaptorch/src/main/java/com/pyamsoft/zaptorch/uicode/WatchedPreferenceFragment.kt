@@ -19,10 +19,10 @@
 package com.pyamsoft.zaptorch.uicode
 
 import android.support.annotation.CallSuper
-import com.pyamsoft.pydroid.ui.app.fragment.DisposablePreferenceFragment
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarPreferenceFragment
 import com.pyamsoft.zaptorch.ZapTorch
 
-abstract class WatchedPreferenceFragment : DisposablePreferenceFragment() {
+abstract class WatchedPreferenceFragment : ToolbarPreferenceFragment() {
 
     @CallSuper override fun onDestroy() {
         super.onDestroy()

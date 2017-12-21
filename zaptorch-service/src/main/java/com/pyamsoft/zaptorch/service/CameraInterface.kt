@@ -18,7 +18,35 @@
 
 package com.pyamsoft.zaptorch.service
 
+import android.content.Intent
+
 interface CameraInterface {
+
+    fun startErrorExplanationActivity()
+
+    fun startPermissionExplanationActivity()
+
+    fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
+
+    fun notifyCallbackOnOpened()
+
+    fun notifyCallbackOnClosed()
+
+    // Called from VolumeServiceInteractorImpl
+    fun destroy()
+
+    fun release()
+
+    fun toggleTorch()
+
+    interface OnStateChangedCallback {
+
+        fun onOpened()
+
+        fun onClosed()
+
+        fun onError(errorIntent: Intent)
+    }
 
     companion object {
 
