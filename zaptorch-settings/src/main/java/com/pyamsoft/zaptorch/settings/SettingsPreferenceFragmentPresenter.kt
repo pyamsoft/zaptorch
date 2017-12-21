@@ -37,14 +37,14 @@ class SettingsPreferenceFragmentPresenter internal constructor(
 
     private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-    override fun onBind(v: View) {
-        super.onBind(v)
-        listenForCameraChanges(v)
-        registerEventBus(v)
+    override fun onCreate() {
+        super.onCreate()
+        listenForCameraChanges()
+        registerEventBus()
     }
 
-    override fun onUnbind() {
-        super.onUnbind()
+    override fun onDestroy() {
+        super.onDestroy()
         unregisterCameraApiListener()
     }
 
@@ -57,20 +57,20 @@ class SettingsPreferenceFragmentPresenter internal constructor(
         interactor.unregisterCameraApiListener(cameraApiListener)
     }
 
-    private fun registerEventBus(v: ClearCallback) {
+    private fun registerEventBus() {
         dispose {
             bus.listen().flatMapSingle { interactor.clearAll() }
                     .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
-                    .subscribe({ v.onClearAll() }, { Timber.e(it, "onError event bus") })
+                    .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })
         }
     }
 
-    private fun listenForCameraChanges(v: ApiCallback) {
+    private fun listenForCameraChanges() {
         if (cameraApiListener == null) {
             cameraApiListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 if (key == cameraApiKey) {
                     Timber.d("Camera API has changed")
-                    v.onApiChanged()
+                    view?.onApiChanged()
                 }
             }
         }

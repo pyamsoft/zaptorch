@@ -45,9 +45,9 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
     val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
             context.applicationContext)
     val notification: Notification
-    val onStateChangedCallback: CameraCommon.OnStateChangedCallback
+    val onStateChangedCallback: CameraInterface.OnStateChangedCallback
     private var pressed: Boolean = false
-    private var cameraInterface: CameraCommon? = null
+    private var cameraInterface: CameraInterface? = null
 
     init {
         val intent = Intent(appContext, torchOffServiceClass)
@@ -70,7 +70,7 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
                 .setOngoing(false)
                 .build()
 
-        onStateChangedCallback = object : CameraCommon.OnStateChangedCallback {
+        onStateChangedCallback = object : CameraInterface.OnStateChangedCallback {
             override fun onOpened() {
                 notificationManagerCompat.notify(NOTIFICATION_ID, notification)
             }
@@ -129,24 +129,23 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
     override fun shouldShowErrorDialog(): Single<Boolean> =
             Single.fromCallable { preferences.shouldShowErrorDialog() }
 
-    override fun setupCamera(onCameraError: (Intent) -> Unit,
-            computationScheduler: Scheduler, ioScheduler: Scheduler,
-            mainThreadScheduler: Scheduler) {
+    override fun setupCamera(computationScheduler: Scheduler, mainThreadScheduler: Scheduler,
+            onCameraError: (Intent) -> Unit) {
         val cameraApi = preferences.cameraApi
         val camera: CameraCommon
         camera = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == CAMERA_API_MARSHMALLOW) {
             // Assign
-            MarshmallowCamera(appContext, this, computationScheduler, ioScheduler,
+            MarshmallowCamera(appContext, this, computationScheduler,
                     mainThreadScheduler)
         } else if (cameraApi == CAMERA_API_LOLLIPOP) {
             // Assign
-            LollipopCamera(appContext, this, computationScheduler, ioScheduler,
+            LollipopCamera(appContext, this, computationScheduler,
                     mainThreadScheduler)
         } else {
             throw RuntimeException("Invalid Camera API selected: " + cameraApi)
         }
 
-        camera.setOnStateChangedCallback(object : CameraCommon.OnStateChangedCallback {
+        camera.setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
             override fun onOpened() {
                 onStateChangedCallback.onOpened()
             }
@@ -171,7 +170,7 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
     override fun releaseCamera() {
         val obj = cameraInterface
         if (obj != null) {
-            obj.unbind()
+            obj.destroy()
             obj.setOnStateChangedCallback(null)
             cameraInterface = null
         }

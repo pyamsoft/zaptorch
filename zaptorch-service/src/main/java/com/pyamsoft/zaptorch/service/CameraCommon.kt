@@ -20,18 +20,19 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.CallSuper
 import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.helper.clear
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.pydroid.helper.enforceComputation
+import com.pyamsoft.pydroid.helper.enforceMainThread
+import com.pyamsoft.zaptorch.service.CameraInterface.OnStateChangedCallback
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(context: Context,
-        private val interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
-        ioScheduler: Scheduler, mainScheduler: Scheduler) : SchedulerPresenter<Unit>(
-        computationScheduler, ioScheduler, mainScheduler), CameraInterface {
+        private val interactor: VolumeServiceInteractor,
+        private val computationScheduler: Scheduler, private val mainScheduler: Scheduler) :
+        CameraInterface {
 
     @get:CheckResult
     val appContext: Context = context.applicationContext
@@ -42,6 +43,9 @@ internal abstract class CameraCommon protected constructor(context: Context,
     private var errorDisposable: Disposable = null.clear()
 
     init {
+        mainScheduler.enforceMainThread()
+        computationScheduler.enforceComputation()
+
         errorExplain.putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
         errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
@@ -49,11 +53,11 @@ internal abstract class CameraCommon protected constructor(context: Context,
         permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
-    fun startErrorExplanationActivity() {
+    override fun startErrorExplanationActivity() {
         errorDisposable = errorDisposable.clear()
         errorDisposable = interactor.shouldShowErrorDialog()
                 .subscribeOn(computationScheduler)
-                .observeOn(mainThreadScheduler)
+                .observeOn(mainScheduler)
                 .subscribe({
                     if (it) {
                         notifyCallbackOnError(errorExplain)
@@ -61,15 +65,15 @@ internal abstract class CameraCommon protected constructor(context: Context,
                 }, { Timber.e(it, "onError startErrorExplanationActivity") })
     }
 
-    fun startPermissionExplanationActivity() {
+    override fun startPermissionExplanationActivity() {
         notifyCallbackOnError(permissionExplain)
     }
 
-    fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
+    override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
         this.callback = callback
     }
 
-    fun notifyCallbackOnOpened() {
+    override fun notifyCallbackOnOpened() {
         val obj = callback
         if (obj != null) {
             Timber.d("Notify callback: opened")
@@ -77,7 +81,7 @@ internal abstract class CameraCommon protected constructor(context: Context,
         }
     }
 
-    fun notifyCallbackOnClosed() {
+    override fun notifyCallbackOnClosed() {
         val obj = callback
         if (obj != null) {
             Timber.d("Notify callback: closed")
@@ -93,21 +97,9 @@ internal abstract class CameraCommon protected constructor(context: Context,
         }
     }
 
-    @CallSuper override fun onUnbind() {
-        super.onUnbind()
+    // Called from VolumeServiceInteractorImpl
+    override fun destroy() {
         errorDisposable = errorDisposable.clear()
-    }
-
-    abstract fun release()
-
-    abstract fun toggleTorch()
-
-    internal interface OnStateChangedCallback {
-
-        fun onOpened()
-
-        fun onClosed()
-
-        fun onError(errorIntent: Intent)
+        release()
     }
 }

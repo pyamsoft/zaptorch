@@ -16,25 +16,25 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.lifecycle
 
-import android.content.Intent
-import android.support.annotation.CheckResult
-import io.reactivex.Scheduler
-import io.reactivex.Single
+import android.arch.lifecycle.Lifecycle.Event.ON_CREATE
+import android.arch.lifecycle.Lifecycle.Event.ON_DESTROY
+import android.arch.lifecycle.Lifecycle.Event.ON_PAUSE
+import android.arch.lifecycle.Lifecycle.Event.ON_RESUME
+import android.arch.lifecycle.Lifecycle.Event.ON_START
+import android.arch.lifecycle.Lifecycle.Event.ON_STOP
+import android.arch.lifecycle.LifecycleRegistry
 
-internal interface VolumeServiceInteractor {
-
-    @CheckResult
-    fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
-
-    @CheckResult
-    fun shouldShowErrorDialog(): Single<Boolean>
-
-    fun setupCamera(computationScheduler: Scheduler,
-            mainThreadScheduler: Scheduler, onCameraError: (Intent) -> Unit)
-
-    fun toggleTorch()
-
-    fun releaseCamera()
+fun LifecycleRegistry.fakeBind() {
+    handleLifecycleEvent(ON_CREATE)
+    handleLifecycleEvent(ON_START)
+    handleLifecycleEvent(ON_RESUME)
 }
+
+fun LifecycleRegistry.fakeRelease() {
+    handleLifecycleEvent(ON_PAUSE)
+    handleLifecycleEvent(ON_STOP)
+    handleLifecycleEvent(ON_DESTROY)
+}
+

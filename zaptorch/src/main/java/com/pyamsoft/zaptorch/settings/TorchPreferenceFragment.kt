@@ -22,7 +22,6 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -40,9 +39,6 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
     internal lateinit var servicePublisher: ServicePublisher
     internal lateinit var presenter: SettingsPreferenceFragmentPresenter
-
-    override fun provideBoundPresenters(): List<Presenter<*>> =
-            super.provideBoundPresenters() + listOf(presenter)
 
     override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -66,7 +62,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
             return@setOnPreferenceClickListener true
         }
 
-        presenter.bind(this)
+        presenter.bind(viewLifecycle, this)
     }
 
     override fun onApiChanged() {

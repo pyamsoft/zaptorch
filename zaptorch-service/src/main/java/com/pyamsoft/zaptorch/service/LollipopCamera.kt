@@ -42,8 +42,8 @@ import java.util.ArrayList
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP) internal class LollipopCamera internal constructor(
         context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
-        ioScheduler: Scheduler, mainScheduler: Scheduler) : CameraCommon(context, interactor,
-        computationScheduler, ioScheduler, mainScheduler) {
+        mainScheduler: Scheduler) :
+        CameraCommon(context, interactor, computationScheduler, mainScheduler) {
 
     private val cameraManager: CameraManager = appContext.getSystemService(
             Context.CAMERA_SERVICE) as CameraManager
@@ -65,11 +65,6 @@ import java.util.ArrayList
         }
 
         return null
-    }
-
-    override fun onUnbind() {
-        super.onUnbind()
-        release()
     }
 
     override fun release() {

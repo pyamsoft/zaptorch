@@ -30,27 +30,27 @@ class MainPresenter internal constructor(
         mainScheduler: Scheduler) : SchedulerPresenter<View>(computationScheduler, ioScheduler,
         mainScheduler) {
 
-    override fun onBind(v: View) {
-        super.onBind(v)
-        shouldHandleKeycode(v)
-        interactor.register(handleKeyPressKey, v::onHandleKeyPress)
+    override fun onCreate() {
+        super.onCreate()
+        shouldHandleKeycode()
+        interactor.register(handleKeyPressKey, { view?.onHandleKeyPress(it) })
     }
 
-    override fun onUnbind() {
-        super.onUnbind()
+    override fun onDestroy() {
+        super.onDestroy()
         interactor.unregister()
     }
 
-    private fun shouldHandleKeycode(v: OnHandleKeyPressChangedCallback) {
+    private fun shouldHandleKeycode() {
         dispose {
             interactor.shouldHandleKeys()
                     .subscribeOn(ioScheduler)
                     .observeOn(mainThreadScheduler)
                     .subscribe({
-                        v.onHandleKeyPress(it)
+                        view?.onHandleKeyPress(it)
                     }, {
                         Timber.e(it, "Error while handling keycode")
-                        v.onError(it)
+                        view?.onError(it)
                     })
         }
     }

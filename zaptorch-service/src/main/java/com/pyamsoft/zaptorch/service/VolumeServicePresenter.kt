@@ -39,13 +39,13 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
 
     private var keyDisposable: Disposable = null.clear()
 
-    override fun onBind(v: View) {
-        super.onBind(v)
-        registerOnBus(v, v, v)
+    override fun onCreate() {
+        super.onCreate()
+        registerOnBus()
     }
 
-    override fun onUnbind() {
-        super.onUnbind()
+    override fun onDestroy() {
+        super.onDestroy()
         interactor.releaseCamera()
         keyDisposable = keyDisposable.clear()
     }
@@ -64,22 +64,21 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     }
 
     fun setupCamera() {
-        interactor.setupCamera({
+        interactor.setupCamera(computationScheduler, mainThreadScheduler) {
             view?.onError(it)
-        }, computationScheduler, ioScheduler, mainThreadScheduler)
+        }
     }
 
-    private fun registerOnBus(torchCallback: TorchCallback, apiCallback: ApiCallback,
-            serviceCallback: ServiceCallback) {
+    private fun registerOnBus() {
         dispose {
             bus.listen()
                     .subscribeOn(ioScheduler)
                     .observeOn(mainThreadScheduler)
                     .subscribe({ (type) ->
                         when (type) {
-                            TORCH -> torchCallback.onToggleTorch()
-                            CHANGE_CAMERA -> apiCallback.onChangeCameraApi()
-                            FINISH -> serviceCallback.onFinishService()
+                            TORCH -> view?.onToggleTorch()
+                            CHANGE_CAMERA -> view?.onChangeCameraApi()
+                            FINISH -> view?.onFinishService()
                             else -> throw IllegalArgumentException(
                                     "Invalid ServiceEvent.Type: " + type)
                         }

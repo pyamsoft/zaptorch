@@ -27,7 +27,6 @@ import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
 import com.pyamsoft.pydroid.design.util.FABUtil
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderHelper
-import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.pydroid.ui.helper.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -50,8 +49,6 @@ class MainFragment : WatchedFragment() {
     private lateinit var binding: FragmentMainBinding
     private var fabTask = LoaderHelper.empty()
     private lateinit var backstack: BackStack
-
-    override fun provideBoundPresenters(): List<Presenter<*>> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
