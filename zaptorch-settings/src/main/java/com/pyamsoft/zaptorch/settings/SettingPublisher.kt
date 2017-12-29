@@ -27,4 +27,3 @@ class SettingPublisher internal constructor(private val bus: EventBus<ConfirmEve
         bus.publish(event)
     }
 }
-

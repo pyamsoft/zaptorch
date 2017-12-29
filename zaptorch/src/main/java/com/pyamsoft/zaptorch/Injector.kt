@@ -35,6 +35,4 @@ object Injector {
         @Suppress("UNCHECKED_CAST")
         return service as T
     }
-
 }
-

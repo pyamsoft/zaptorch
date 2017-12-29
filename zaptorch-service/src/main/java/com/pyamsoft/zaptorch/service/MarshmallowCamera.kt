@@ -54,7 +54,6 @@ import timber.log.Timber
                 Timber.e(e, "toggleTorch ERROR")
                 startErrorExplanationActivity()
             }
-
         } else {
             Timber.e("Torch unavailable")
             startErrorExplanationActivity()

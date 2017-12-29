@@ -29,4 +29,3 @@ abstract class WatchedPreferenceFragment : ToolbarPreferenceFragment() {
         ZapTorch.getRefWatcher(this).watch(this)
     }
 }
-

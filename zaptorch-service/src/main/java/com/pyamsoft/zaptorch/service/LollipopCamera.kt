@@ -150,7 +150,6 @@ import java.util.ArrayList
                     // Return
                     CameraInterface.TYPE_ERROR
                 }
-
             } else {
                 Timber.e("Missing setupCamera permission")
                 return CameraInterface.TYPE_PERMISSION
@@ -205,7 +204,6 @@ import java.util.ArrayList
             } catch (e: CameraAccessException) {
                 Timber.e(e, "onOpened")
             }
-
         }
 
         override fun onDisconnected(cameraDevice: CameraDevice) {
@@ -229,8 +227,8 @@ import java.util.ArrayList
                     manager: CameraManager, id: String): Size {
                 Timber.d("Get stream config map")
                 val map = manager.getCameraCharacteristics(id)
-                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?:
-                        throw IllegalStateException("Camera $id doesn't support any Stream Maps.")
+                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                        ?: throw IllegalStateException("Camera $id doesn't support any Stream Maps.")
 
                 Timber.d("Get possible output sizes")
                 val outputSizes = map.getOutputSizes(SurfaceTexture::class.java)
@@ -263,7 +261,6 @@ import java.util.ArrayList
             } catch (e: CameraAccessException) {
                 Timber.e(e, "onConfigured")
             }
-
         }
 
         override fun onConfigureFailed(cameraCaptureSession: CameraCaptureSession) {

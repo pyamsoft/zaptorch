@@ -24,6 +24,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import com.pyamsoft.backstack.BackStack
+import com.pyamsoft.backstack.BackStacks
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.helper.Toasty
@@ -64,7 +65,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)
         super.onCreate(savedInstanceState)
-        backstack = BackStack.create(this, R.id.main_viewport)
+        backstack = BackStacks.create(this, R.id.main_viewport)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 

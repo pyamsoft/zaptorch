@@ -29,5 +29,4 @@ internal interface MainInteractor {
 
     @CheckResult
     fun shouldHandleKeys(): Single<Boolean>
-
 }

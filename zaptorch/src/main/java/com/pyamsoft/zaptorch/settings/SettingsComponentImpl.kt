@@ -30,4 +30,3 @@ internal class SettingsComponentImpl(private val settingsModule: SettingsPrefere
         torchPreferenceFragment.servicePublisher = serviceModule.getPresenter()
     }
 }
-

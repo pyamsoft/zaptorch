@@ -48,7 +48,7 @@ buildscript {
     supportLib = "27.0.2"
     firebase = "11.8.0"
     leakCanary = "1.5.4"
-    pydroid = "15.0.0"
+    pydroid = "15.1.0"
     ktlint = "2.3.0"
   }
 
@@ -73,6 +73,11 @@ buildscript {
 subprojects {
   apply plugin: "org.jlleitschuh.gradle.ktlint"
   apply plugin: "com.github.ben-manes.versions"
+
+  ktlint {
+    version = "0.14.0"
+    android = true
+  }
 }
 
 allprojects {
