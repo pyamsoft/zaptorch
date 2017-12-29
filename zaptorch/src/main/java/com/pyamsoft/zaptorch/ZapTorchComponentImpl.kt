@@ -62,5 +62,4 @@ internal class ZapTorchComponentImpl internal constructor(
     }
 
     override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
-
 }

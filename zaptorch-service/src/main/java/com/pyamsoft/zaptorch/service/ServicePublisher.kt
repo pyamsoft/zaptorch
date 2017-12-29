@@ -27,4 +27,3 @@ class ServicePublisher internal constructor(private val bus: EventBus<ServiceEve
         bus.publish(event)
     }
 }
-

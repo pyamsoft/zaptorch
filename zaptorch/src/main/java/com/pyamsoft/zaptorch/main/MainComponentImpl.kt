@@ -24,6 +24,4 @@ internal class MainComponentImpl internal constructor(private val mainModule: Ma
     override fun inject(activity: MainActivity) {
         activity.presenter = mainModule.getPresenter(keyPressKey)
     }
-
 }
-

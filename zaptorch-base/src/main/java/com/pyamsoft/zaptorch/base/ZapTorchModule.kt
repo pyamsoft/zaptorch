@@ -21,7 +21,7 @@ package com.pyamsoft.zaptorch.base
 import android.app.IntentService
 import android.content.Context
 import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.PYDroidModule
+import com.pyamsoft.pydroid.base.PYDroidModule
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.zaptorch.base.preference.CameraPreferences

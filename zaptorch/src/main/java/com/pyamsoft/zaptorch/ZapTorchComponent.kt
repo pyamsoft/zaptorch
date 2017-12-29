@@ -38,5 +38,4 @@ interface ZapTorchComponent {
     fun plusSettingsComponent(cameraApiKey: String): SettingsComponent
 
     fun plusMainComponent(key: String): MainComponent
-
 }

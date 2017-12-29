@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.pyamsoft.backstack.BackStack
+import com.pyamsoft.backstack.BackStacks
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
 import com.pyamsoft.pydroid.design.util.FABUtil
 import com.pyamsoft.pydroid.loader.ImageLoader
@@ -57,7 +58,7 @@ class MainFragment : WatchedFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        backstack = BackStack.create(this, R.id.main_container)
+        backstack = BackStacks.create(this, viewLifecycle, R.id.main_container)
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }

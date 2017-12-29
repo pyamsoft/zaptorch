@@ -21,8 +21,8 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.support.annotation.CheckResult
 import android.support.v4.app.Fragment
-import com.pyamsoft.pydroid.PYDroidModule
-import com.pyamsoft.pydroid.about.Licenses
+import com.pyamsoft.pydroid.base.PYDroidModule
+import com.pyamsoft.pydroid.base.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment

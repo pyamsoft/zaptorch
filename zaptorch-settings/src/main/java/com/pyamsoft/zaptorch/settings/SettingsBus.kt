@@ -32,6 +32,4 @@ internal class SettingsBus internal constructor() : EventBus<ConfirmEvent> {
     override fun publish(event: ConfirmEvent) {
         bus.publish(event)
     }
-
 }
-

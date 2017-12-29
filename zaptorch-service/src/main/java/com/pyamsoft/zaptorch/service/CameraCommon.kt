@@ -27,6 +27,7 @@ import com.pyamsoft.pydroid.helper.enforceMainThread
 import com.pyamsoft.zaptorch.service.CameraInterface.OnStateChangedCallback
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(context: Context,
@@ -40,7 +41,7 @@ internal abstract class CameraCommon protected constructor(context: Context,
     private val permissionExplain = Intent()
     private var callback: OnStateChangedCallback? = null
 
-    private var errorDisposable: Disposable = null.clear()
+    private var errorDisposable: Disposable = Disposables.empty()
 
     init {
         mainScheduler.enforceMainThread()

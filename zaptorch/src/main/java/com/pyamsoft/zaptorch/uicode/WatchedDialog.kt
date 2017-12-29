@@ -29,4 +29,3 @@ abstract class WatchedDialog : ToolbarDialog() {
         ZapTorch.getRefWatcher(this).watch(this)
     }
 }
-

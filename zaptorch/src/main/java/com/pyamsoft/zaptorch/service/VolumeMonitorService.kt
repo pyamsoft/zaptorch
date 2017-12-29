@@ -118,6 +118,5 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
         var isRunning: Boolean = false
             @CheckResult get
             private set
-
     }
 }

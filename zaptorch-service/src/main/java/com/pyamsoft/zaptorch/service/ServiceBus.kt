@@ -32,6 +32,4 @@ internal class ServiceBus internal constructor() : EventBus<ServiceEvent> {
     override fun publish(event: ServiceEvent) {
         bus.publish(event)
     }
-
 }
-

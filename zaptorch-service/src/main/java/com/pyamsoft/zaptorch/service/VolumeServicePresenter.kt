@@ -29,6 +29,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import com.pyamsoft.zaptorch.service.VolumeServicePresenter.View
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
@@ -37,7 +38,7 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
         mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
         computationScheduler, ioScheduler, mainThreadScheduler) {
 
-    private var keyDisposable: Disposable = null.clear()
+    private var keyDisposable: Disposable = Disposables.empty()
 
     override fun onCreate() {
         super.onCreate()
@@ -96,18 +97,15 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     interface TorchCallback {
 
         fun onToggleTorch()
-
     }
 
     interface ApiCallback {
 
         fun onChangeCameraApi()
-
     }
 
     interface ServiceCallback {
 
         fun onFinishService()
-
     }
 }
