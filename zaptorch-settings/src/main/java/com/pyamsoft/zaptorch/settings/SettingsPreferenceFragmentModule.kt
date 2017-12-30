@@ -31,15 +31,12 @@ class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
     private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
     init {
-        interactor = SettingsPreferenceFragmentInteractorImpl(module.provideUiPreferences(),
-                module.provideClearPreferences())
+        interactor = SettingsPreferenceFragmentInteractorImpl(module.provideClearPreferences())
     }
 
     @CheckResult
-    fun getPreferenceFragmentPresenter(
-            cameraApiKey: String): SettingsPreferenceFragmentPresenter {
-        return SettingsPreferenceFragmentPresenter(cameraApiKey, bus, interactor,
-                computationScheduler,
+    fun getPreferenceFragmentPresenter(): SettingsPreferenceFragmentPresenter {
+        return SettingsPreferenceFragmentPresenter(bus, interactor, computationScheduler,
                 ioScheduler, mainScheduler)
     }
 

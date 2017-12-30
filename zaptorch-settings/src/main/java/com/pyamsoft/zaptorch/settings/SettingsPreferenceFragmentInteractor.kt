@@ -18,7 +18,6 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import android.content.SharedPreferences
 import android.support.annotation.CheckResult
 import io.reactivex.Single
 
@@ -26,10 +25,4 @@ internal interface SettingsPreferenceFragmentInteractor {
 
     @CheckResult
     fun clearAll(): Single<Boolean>
-
-    fun registerCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
-
-    fun unregisterCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?)
 }

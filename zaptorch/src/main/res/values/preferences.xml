@@ -35,18 +35,6 @@
     <item name="time_long">1000</item>
   </string-array>
 
-
-  <string-array name="camera_api">
-    <item name="api_lollipop">Lollipop Camera API</item>
-  </string-array>
-
-  <string-array name="camera_api_entries">
-    <item name="api_lollipop">0</item>
-  </string-array>
-
-  <string name="camera_api_title">Camera API</string>
-  <string name="camera_api_summary">Select between available Camera APIs</string>
-
   <string name="double_press_delay_title">Double Press Duration</string>
   <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
 

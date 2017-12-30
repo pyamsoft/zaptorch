@@ -18,7 +18,6 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import android.content.SharedPreferences
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.model.ConfirmEvent
@@ -27,7 +26,6 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 
 class SettingsPreferenceFragmentPresenter internal constructor(
-        private val cameraApiKey: String,
         private val bus: EventBus<ConfirmEvent>,
         private val interactor: SettingsPreferenceFragmentInteractor,
         computationScheduler: Scheduler,
@@ -35,26 +33,9 @@ class SettingsPreferenceFragmentPresenter internal constructor(
         mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
         computationScheduler, ioScheduler, mainThreadScheduler) {
 
-    private var cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
-
     override fun onCreate() {
         super.onCreate()
-        listenForCameraChanges()
         registerEventBus()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterCameraApiListener()
-    }
-
-    private fun registerCameraApiListener() {
-        unregisterCameraApiListener()
-        interactor.registerCameraApiListener(cameraApiListener)
-    }
-
-    private fun unregisterCameraApiListener() {
-        interactor.unregisterCameraApiListener(cameraApiListener)
     }
 
     private fun registerEventBus() {
@@ -65,24 +46,7 @@ class SettingsPreferenceFragmentPresenter internal constructor(
         }
     }
 
-    private fun listenForCameraChanges() {
-        if (cameraApiListener == null) {
-            cameraApiListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                if (key == cameraApiKey) {
-                    Timber.d("Camera API has changed")
-                    view?.onApiChanged()
-                }
-            }
-        }
-        registerCameraApiListener()
-    }
-
-    interface View : ApiCallback, ClearCallback
-
-    interface ApiCallback {
-
-        fun onApiChanged()
-    }
+    interface View : ClearCallback
 
     interface ClearCallback {
 

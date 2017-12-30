@@ -26,8 +26,5 @@ interface CameraPreferences {
     fun shouldShowErrorDialog(): Boolean
 
     @get:CheckResult
-    val cameraApi: Int
-
-    @get:CheckResult
     val buttonDelayTime: Long
 }
