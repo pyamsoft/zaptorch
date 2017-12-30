@@ -38,34 +38,33 @@ import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-internal class VolumeServiceInteractorImpl internal constructor(context: Context,
+internal class VolumeServiceInteractorImpl internal constructor(private val context: Context,
         private val preferences: CameraPreferences,
         torchOffServiceClass: Class<out IntentService>) : VolumeServiceInteractor {
-    private val appContext: Context = context.applicationContext
-    val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
-            context.applicationContext)
-    val notification: Notification
-    val onStateChangedCallback: CameraInterface.OnStateChangedCallback
+    private val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
+            context)
+    private val notification: Notification
+    private val onStateChangedCallback: CameraInterface.OnStateChangedCallback
     private var pressed: Boolean = false
     private var cameraInterface: CameraInterface? = null
 
     init {
-        val intent = Intent(appContext, torchOffServiceClass)
+        val intent = Intent(context, torchOffServiceClass)
 
         val notificationChannelId = "zaptorch_foreground"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setupNotificationChannel(notificationChannelId)
         }
 
-        notification = NotificationCompat.Builder(appContext,
+        notification = NotificationCompat.Builder(context,
                 notificationChannelId).setContentIntent(
-                PendingIntent.getService(appContext, NOTIFICATION_RC, intent,
+                PendingIntent.getService(context, NOTIFICATION_RC, intent,
                         PendingIntent.FLAG_UPDATE_CURRENT))
                 .setContentTitle("Torch is On")
                 .setContentText("Click to turn off")
                 .setSmallIcon(R.drawable.ic_light_notification)
                 .setAutoCancel(true)
-                .setColor(ContextCompat.getColor(appContext, R.color.purple500))
+                .setColor(ContextCompat.getColor(context, R.color.purple500))
                 .setWhen(0)
                 .setOngoing(false)
                 .build()
@@ -99,7 +98,7 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
         notificationChannel.enableVibration(false)
 
         Timber.d("Create notification channel with id: %s", notificationChannelId)
-        val notificationManager: NotificationManager = appContext.getSystemService(
+        val notificationManager: NotificationManager = context.getSystemService(
                 Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
     }
@@ -131,18 +130,15 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
 
     override fun setupCamera(computationScheduler: Scheduler, mainThreadScheduler: Scheduler,
             onCameraError: (Intent) -> Unit) {
-        val cameraApi = preferences.cameraApi
         val camera: CameraCommon
-        camera = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && cameraApi == CAMERA_API_MARSHMALLOW) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Assign
-            MarshmallowCamera(appContext, this, computationScheduler,
-                    mainThreadScheduler)
-        } else if (cameraApi == CAMERA_API_LOLLIPOP) {
-            // Assign
-            LollipopCamera(appContext, this, computationScheduler,
+            camera = MarshmallowCamera(context, this, computationScheduler,
                     mainThreadScheduler)
         } else {
-            throw RuntimeException("Invalid Camera API selected: " + cameraApi)
+            // Assign
+            camera = LollipopCamera(context, this, computationScheduler,
+                    mainThreadScheduler)
         }
 
         camera.setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
@@ -178,8 +174,6 @@ internal class VolumeServiceInteractorImpl internal constructor(context: Context
 
     companion object {
 
-        private const val CAMERA_API_LOLLIPOP = 0
-        private const val CAMERA_API_MARSHMALLOW = 1
         private const val NOTIFICATION_ID = 1345
         private const val NOTIFICATION_RC = 1009
     }

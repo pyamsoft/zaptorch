@@ -35,7 +35,7 @@ interface ZapTorchComponent {
 
     fun inject(torchOffService: TorchOffService)
 
-    fun plusSettingsComponent(cameraApiKey: String): SettingsComponent
+    fun plusSettingsComponent(): SettingsComponent
 
     fun plusMainComponent(key: String): MainComponent
 }

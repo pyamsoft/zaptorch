@@ -20,6 +20,8 @@ package com.pyamsoft.zaptorch.service
 
 import android.accessibilityservice.AccessibilityService
 import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.Lifecycle.Event.ON_CREATE
+import android.arch.lifecycle.Lifecycle.Event.ON_DESTROY
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
 import android.content.Intent
@@ -29,8 +31,8 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.lifecycle.fakeBind
-import com.pyamsoft.zaptorch.lifecycle.fakeRelease
+import com.pyamsoft.zaptorch.lifecycle.fakePauseStop
+import com.pyamsoft.zaptorch.lifecycle.fakeStartResume
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
@@ -62,34 +64,13 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
         super.onCreate()
         Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
         presenter.bind(this, this)
-        lifecycle.fakeBind()
+        lifecycle.handleLifecycleEvent(ON_CREATE)
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        presenter.setupCamera()
+        lifecycle.fakeStartResume()
         isRunning = true
-    }
-
-    override fun onToggleTorch() {
-        Timber.d("Toggle Torch")
-        presenter.toggleTorch()
-    }
-
-    override fun onChangeCameraApi() {
-        // Simulate the lifecycle for destroying and re-creating the publisher
-        Timber.d("Change setupCamera API")
-        lifecycle.fakeRelease()
-        presenter.bind(this, this)
-        lifecycle.fakeBind()
-
-        try {
-            Thread.sleep(200)
-        } catch (e: InterruptedException) {
-            Timber.e(e, "Sleep interrupt")
-        }
-
-        presenter.setupCamera()
     }
 
     override fun onFinishService() {
@@ -105,12 +86,13 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
 
     override fun onUnbind(intent: Intent): Boolean {
         isRunning = false
+        lifecycle.fakePauseStop()
         return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycle.fakeRelease()
+        lifecycle.handleLifecycleEvent(ON_DESTROY)
     }
 
     companion object {

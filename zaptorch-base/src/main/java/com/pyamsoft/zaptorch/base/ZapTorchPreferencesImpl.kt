@@ -34,8 +34,6 @@ internal class ZapTorchPreferencesImpl(
     private val displayCameraErrorsKey: String
     private val handleVolumeKeysKey: String
     private val doublePressDelayDefault: String
-    private val cameraApiKey: String
-    private val cameraApiDefault: String
     private val preferences: SharedPreferences
     private val displayCameraErrorsDefault: Boolean
     private val handleVolumeKeysDefault: Boolean
@@ -50,8 +48,6 @@ internal class ZapTorchPreferencesImpl(
         doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default)
         displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default)
         handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default)
-        cameraApiKey = appContext.getString(R.string.camera_api_key)
-        cameraApiDefault = appContext.getString(R.string.camera_api_default)
     }
 
     override val buttonDelayTime: Long
@@ -64,10 +60,7 @@ internal class ZapTorchPreferencesImpl(
     @CheckResult override fun shouldHandleKeys(): Boolean =
             preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
 
-    override val cameraApi: Int
-        @CheckResult get() = Integer.parseInt(preferences.getString(cameraApiKey, cameraApiDefault))
-
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     override fun clearAll() {
         // Commit because we must be sure transaction takes place before we continue
         preferences.edit().clear().commit()

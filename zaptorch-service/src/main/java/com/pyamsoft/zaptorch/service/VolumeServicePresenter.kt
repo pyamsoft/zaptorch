@@ -23,7 +23,6 @@ import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.helper.clear
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.model.ServiceEvent
-import com.pyamsoft.zaptorch.model.ServiceEvent.Type.CHANGE_CAMERA
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import com.pyamsoft.zaptorch.service.VolumeServicePresenter.View
@@ -51,7 +50,19 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
         keyDisposable = keyDisposable.clear()
     }
 
-    fun toggleTorch() {
+    override fun onStart() {
+        super.onStart()
+        setupCamera()
+    }
+
+    private fun setupCamera() {
+        interactor.setupCamera(computationScheduler, mainThreadScheduler) {
+            view?.onError(it)
+        }
+    }
+
+    private fun toggleTorch() {
+        Timber.d("Toggle torch")
         interactor.toggleTorch()
     }
 
@@ -64,12 +75,6 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
                         , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
     }
 
-    fun setupCamera() {
-        interactor.setupCamera(computationScheduler, mainThreadScheduler) {
-            view?.onError(it)
-        }
-    }
-
     private fun registerOnBus() {
         dispose {
             bus.listen()
@@ -77,8 +82,7 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
                     .observeOn(mainThreadScheduler)
                     .subscribe({ (type) ->
                         when (type) {
-                            TORCH -> view?.onToggleTorch()
-                            CHANGE_CAMERA -> view?.onChangeCameraApi()
+                            TORCH -> toggleTorch()
                             FINISH -> view?.onFinishService()
                             else -> throw IllegalArgumentException(
                                     "Invalid ServiceEvent.Type: " + type)
@@ -87,21 +91,11 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
         }
     }
 
-    interface View : TorchCallback, ApiCallback, ServiceCallback, ErrorHandlerCallback
+    interface View : ServiceCallback, ErrorHandlerCallback
 
     interface ErrorHandlerCallback {
 
         fun onError(intent: Intent)
-    }
-
-    interface TorchCallback {
-
-        fun onToggleTorch()
-    }
-
-    interface ApiCallback {
-
-        fun onChangeCameraApi()
     }
 
     interface ServiceCallback {

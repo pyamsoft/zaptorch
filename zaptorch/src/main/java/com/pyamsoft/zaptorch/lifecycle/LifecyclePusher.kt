@@ -37,3 +37,13 @@ fun LifecycleRegistry.fakeRelease() {
     handleLifecycleEvent(ON_STOP)
     handleLifecycleEvent(ON_DESTROY)
 }
+
+fun LifecycleRegistry.fakeStartResume() {
+    handleLifecycleEvent(ON_START)
+    handleLifecycleEvent(ON_RESUME)
+}
+
+fun LifecycleRegistry.fakePauseStop() {
+    handleLifecycleEvent(ON_PAUSE)
+    handleLifecycleEvent(ON_STOP)
+}

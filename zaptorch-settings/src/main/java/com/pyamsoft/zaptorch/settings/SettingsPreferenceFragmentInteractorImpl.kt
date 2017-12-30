@@ -18,34 +18,16 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import android.content.SharedPreferences
 import com.pyamsoft.zaptorch.base.preference.ClearPreferences
-import com.pyamsoft.zaptorch.base.preference.UIPreferences
 import io.reactivex.Single
 
 internal class SettingsPreferenceFragmentInteractorImpl internal constructor(
-        private val preferences: UIPreferences,
         private val clearPreferences: ClearPreferences) : SettingsPreferenceFragmentInteractor {
 
     override fun clearAll(): Single<Boolean> {
         return Single.fromCallable {
             clearPreferences.clearAll()
             return@fromCallable true
-        }
-    }
-
-    override fun registerCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
-        unregisterCameraApiListener(cameraApiListener)
-        if (cameraApiListener != null) {
-            preferences.register(cameraApiListener)
-        }
-    }
-
-    override fun unregisterCameraApiListener(
-            cameraApiListener: SharedPreferences.OnSharedPreferenceChangeListener?) {
-        if (cameraApiListener != null) {
-            preferences.unregister(cameraApiListener)
         }
     }
 }

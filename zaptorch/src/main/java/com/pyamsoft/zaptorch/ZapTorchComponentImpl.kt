@@ -56,10 +56,8 @@ internal class ZapTorchComponentImpl internal constructor(
         torchOffService.servicePublisher = volumeServiceModule.getPresenter()
     }
 
-    override fun plusSettingsComponent(cameraApiKey: String): SettingsComponent {
-        return SettingsComponentImpl(settingsPreferenceFragmentModule, volumeServiceModule,
-                cameraApiKey)
-    }
+    override fun plusSettingsComponent(): SettingsComponent =
+            SettingsComponentImpl(settingsPreferenceFragmentModule, volumeServiceModule)
 
     override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
 }

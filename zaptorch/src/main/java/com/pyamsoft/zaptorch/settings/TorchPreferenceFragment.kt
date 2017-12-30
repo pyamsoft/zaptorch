@@ -31,7 +31,6 @@ import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePublisher
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import timber.log.Timber
 
 class TorchPreferenceFragment : SettingsPreferenceFragment(),
@@ -50,8 +49,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Injector.obtain<ZapTorchComponent>(context!!.applicationContext).plusSettingsComponent(
-                getString(R.string.camera_api_key)).inject(this)
+        Injector.obtain<ZapTorchComponent>(
+                context!!.applicationContext).plusSettingsComponent().inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,12 +62,6 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
         }
 
         presenter.bind(viewLifecycle, this)
-    }
-
-    override fun onApiChanged() {
-        if (VolumeMonitorService.isRunning) {
-            servicePublisher.publish(ServiceEvent(ServiceEvent.Type.CHANGE_CAMERA))
-        }
     }
 
     override fun onClearAll() {
