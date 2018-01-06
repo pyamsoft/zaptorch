@@ -36,6 +36,8 @@ import android.support.annotation.CheckResult
 import android.support.v4.content.ContextCompat
 import android.util.Size
 import android.view.Surface
+import com.pyamsoft.zaptorch.api.CameraInterface
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Scheduler
 import timber.log.Timber
 import java.util.ArrayList

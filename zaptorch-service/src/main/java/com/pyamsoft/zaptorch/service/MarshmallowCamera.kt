@@ -24,6 +24,7 @@ import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.support.annotation.CheckResult
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Scheduler
 import timber.log.Timber
 

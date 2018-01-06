@@ -16,17 +16,17 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.base.preference
+package com.pyamsoft.zaptorch.api
 
-import android.content.SharedPreferences
 import android.support.annotation.CheckResult
+import io.reactivex.Single
 
-interface UIPreferences {
+interface MainInteractor {
+
+    fun register(handleKeyPressKey: String, onHandleChanged: (Boolean) -> Unit)
+
+    fun unregister()
 
     @CheckResult
-    fun shouldHandleKeys(): Boolean
-
-    fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
-
-    fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun shouldHandleKeys(): Single<Boolean>
 }

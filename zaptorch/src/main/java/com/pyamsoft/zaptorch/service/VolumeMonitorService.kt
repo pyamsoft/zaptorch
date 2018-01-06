@@ -30,6 +30,7 @@ import android.support.annotation.CheckResult
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.lifecycle.fakePauseStop
 import com.pyamsoft.zaptorch.lifecycle.fakeStartResume
@@ -93,6 +94,7 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     override fun onDestroy() {
         super.onDestroy()
         lifecycle.handleLifecycleEvent(ON_DESTROY)
+        ZapTorch.getRefWatcher(this).watch(this)
     }
 
     companion object {

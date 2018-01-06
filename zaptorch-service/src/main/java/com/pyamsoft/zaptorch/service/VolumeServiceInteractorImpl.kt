@@ -32,7 +32,9 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.view.KeyEvent
-import com.pyamsoft.zaptorch.base.preference.CameraPreferences
+import com.pyamsoft.zaptorch.api.CameraInterface
+import com.pyamsoft.zaptorch.api.CameraPreferences
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import timber.log.Timber
@@ -40,7 +42,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 internal class VolumeServiceInteractorImpl internal constructor(private val context: Context,
         private val preferences: CameraPreferences,
-        torchOffServiceClass: Class<out IntentService>) : VolumeServiceInteractor {
+        torchOffServiceClass: Class<out IntentService>) :
+        VolumeServiceInteractor {
     private val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
             context)
     private val notification: Notification

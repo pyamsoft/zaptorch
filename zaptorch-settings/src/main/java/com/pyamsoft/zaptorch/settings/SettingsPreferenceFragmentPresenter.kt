@@ -20,6 +20,7 @@ package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.View
 import io.reactivex.Scheduler

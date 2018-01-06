@@ -21,10 +21,10 @@ package com.pyamsoft.zaptorch.service.error
 import android.support.v4.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
 import com.pyamsoft.pydroid.ui.util.DialogUtil
-import com.pyamsoft.zaptorch.service.CameraInterface.Companion.DIALOG_WHICH
-import com.pyamsoft.zaptorch.service.CameraInterface.Companion.TYPE_ERROR
-import com.pyamsoft.zaptorch.service.CameraInterface.Companion.TYPE_NONE
-import com.pyamsoft.zaptorch.service.CameraInterface.Companion.TYPE_PERMISSION
+import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
+import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_ERROR
+import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
+import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_PERMISSION
 
 class CameraErrorExplanation : ActivityBase() {
 

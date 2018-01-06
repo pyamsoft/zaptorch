@@ -23,12 +23,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.support.annotation.CheckResult
 import android.support.v7.preference.PreferenceManager
-import com.pyamsoft.zaptorch.base.preference.CameraPreferences
-import com.pyamsoft.zaptorch.base.preference.ClearPreferences
-import com.pyamsoft.zaptorch.base.preference.UIPreferences
+import com.pyamsoft.zaptorch.api.CameraPreferences
+import com.pyamsoft.zaptorch.api.ClearPreferences
+import com.pyamsoft.zaptorch.api.UIPreferences
 
 internal class ZapTorchPreferencesImpl(
-        context: Context) : CameraPreferences, ClearPreferences, UIPreferences {
+        context: Context) : CameraPreferences,
+        ClearPreferences, UIPreferences {
 
     private val doublePressDelayKey: String
     private val displayCameraErrorsKey: String

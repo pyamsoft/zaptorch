@@ -16,43 +16,15 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.api
 
-import android.content.Intent
+import android.support.annotation.CheckResult
 
-interface CameraInterface {
+interface CameraPreferences {
 
-    fun startErrorExplanationActivity()
+    @CheckResult
+    fun shouldShowErrorDialog(): Boolean
 
-    fun startPermissionExplanationActivity()
-
-    fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
-
-    fun notifyCallbackOnOpened()
-
-    fun notifyCallbackOnClosed()
-
-    // Called from VolumeServiceInteractorImpl
-    fun destroy()
-
-    fun release()
-
-    fun toggleTorch()
-
-    interface OnStateChangedCallback {
-
-        fun onOpened()
-
-        fun onClosed()
-
-        fun onError(errorIntent: Intent)
-    }
-
-    companion object {
-
-        const val TYPE_NONE = -1
-        const val TYPE_PERMISSION = 0
-        const val TYPE_ERROR = 1
-        const val DIALOG_WHICH = "dialog"
-    }
+    @get:CheckResult
+    val buttonDelayTime: Long
 }

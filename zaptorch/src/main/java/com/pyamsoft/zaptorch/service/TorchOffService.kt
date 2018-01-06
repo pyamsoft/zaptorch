@@ -21,6 +21,7 @@ package com.pyamsoft.zaptorch.service
 import android.app.IntentService
 import android.content.Intent
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import timber.log.Timber
@@ -32,6 +33,11 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
     override fun onCreate() {
         super.onCreate()
         Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ZapTorch.getRefWatcher(this).watch(this)
     }
 
     override fun onHandleIntent(intent: Intent?) {

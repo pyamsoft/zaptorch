@@ -46,7 +46,7 @@ android {
 }
 
 dependencies {
-  api project(":zaptorch-base")
+  api project(":zaptorch-api")
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 

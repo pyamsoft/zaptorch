@@ -19,14 +19,14 @@
 package com.pyamsoft.zaptorch
 
 import android.app.Application
+import android.app.Service
 import android.support.annotation.CheckResult
-import android.support.v4.app.Fragment
 import com.pyamsoft.pydroid.base.PYDroidModule
 import com.pyamsoft.pydroid.base.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
-import com.pyamsoft.zaptorch.base.ZapTorchModule
+import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 import com.pyamsoft.zaptorch.uicode.WatchedFragment
@@ -63,7 +63,7 @@ class ZapTorch : Application() {
 
     private fun buildComponent(): ZapTorchComponent =
             ZapTorchComponentImpl(
-                    ZapTorchModule(pydroidModule, loaderModule, TorchOffService::class.java))
+                    ZapTorchModuleImpl(pydroidModule, loaderModule, TorchOffService::class.java))
 
     override fun getSystemService(name: String?): Any {
         return if (Injector.name == name) {
@@ -88,26 +88,30 @@ class ZapTorch : Application() {
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
-                getRefWatcherInternal(fragment)
+                getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
-                getRefWatcherInternal(fragment)
+                getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
-                getRefWatcherInternal(fragment)
+                getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(
-                fragment: SettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(fragment)
+                fragment: SettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(
+                fragment.activity!!.application)
 
         @JvmStatic
-        @CheckResult private fun getRefWatcherInternal(fragment: Fragment): RefWatcher {
-            val application = fragment.activity!!.application
+        @CheckResult
+        fun getRefWatcher(service: Service): RefWatcher = getRefWatcherInternal(service.application)
+
+        @JvmStatic
+        @CheckResult private fun getRefWatcherInternal(application: Application): RefWatcher {
             if (application is ZapTorch) {
                 return application.refWatcher
             } else {
