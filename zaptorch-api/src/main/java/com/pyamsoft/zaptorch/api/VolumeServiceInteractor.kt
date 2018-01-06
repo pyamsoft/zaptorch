@@ -16,5 +16,25 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main', ':zaptorch-model', ':zaptorch-api',
-    ':zaptorch-settings', ':zaptorch-service'
+package com.pyamsoft.zaptorch.api
+
+import android.content.Intent
+import android.support.annotation.CheckResult
+import io.reactivex.Scheduler
+import io.reactivex.Single
+
+interface VolumeServiceInteractor {
+
+    @CheckResult
+    fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
+
+    @CheckResult
+    fun shouldShowErrorDialog(): Single<Boolean>
+
+    fun setupCamera(computationScheduler: Scheduler,
+            mainThreadScheduler: Scheduler, onCameraError: (Intent) -> Unit)
+
+    fun toggleTorch()
+
+    fun releaseCamera()
+}

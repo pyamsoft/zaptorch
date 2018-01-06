@@ -16,13 +16,17 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.api
 
+import android.content.SharedPreferences
 import android.support.annotation.CheckResult
-import io.reactivex.Single
 
-internal interface SettingsPreferenceFragmentInteractor {
+interface UIPreferences {
 
     @CheckResult
-    fun clearAll(): Single<Boolean>
+    fun shouldHandleKeys(): Boolean
+
+    fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
+
+    fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 }

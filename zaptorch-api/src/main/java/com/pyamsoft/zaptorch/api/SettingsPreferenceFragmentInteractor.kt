@@ -16,9 +16,13 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.base.preference
+package com.pyamsoft.zaptorch.api
 
-interface ClearPreferences {
+import android.support.annotation.CheckResult
+import io.reactivex.Single
 
-    fun clearAll()
+interface SettingsPreferenceFragmentInteractor {
+
+    @CheckResult
+    fun clearAll(): Single<Boolean>
 }

@@ -24,7 +24,9 @@ import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.helper.clear
 import com.pyamsoft.pydroid.helper.enforceComputation
 import com.pyamsoft.pydroid.helper.enforceMainThread
-import com.pyamsoft.zaptorch.service.CameraInterface.OnStateChangedCallback
+import com.pyamsoft.zaptorch.api.CameraInterface
+import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -47,10 +49,12 @@ internal abstract class CameraCommon protected constructor(context: Context,
         mainScheduler.enforceMainThread()
         computationScheduler.enforceComputation()
 
-        errorExplain.putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
+        errorExplain.putExtra(
+                CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
         errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-        permissionExplain.putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION)
+        permissionExplain.putExtra(
+                CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION)
         permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 

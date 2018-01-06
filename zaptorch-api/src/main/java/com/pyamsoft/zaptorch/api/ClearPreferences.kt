@@ -16,17 +16,9 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.api
 
-import android.support.annotation.CheckResult
-import io.reactivex.Single
+interface ClearPreferences {
 
-internal interface MainInteractor {
-
-    fun register(handleKeyPressKey: String, onHandleChanged: (Boolean) -> Unit)
-
-    fun unregister()
-
-    @CheckResult
-    fun shouldHandleKeys(): Single<Boolean>
+    fun clearAll()
 }

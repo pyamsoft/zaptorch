@@ -24,42 +24,43 @@ import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.base.PYDroidModule
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderModule
-import com.pyamsoft.zaptorch.base.preference.CameraPreferences
-import com.pyamsoft.zaptorch.base.preference.ClearPreferences
-import com.pyamsoft.zaptorch.base.preference.UIPreferences
+import com.pyamsoft.zaptorch.api.CameraPreferences
+import com.pyamsoft.zaptorch.api.ClearPreferences
+import com.pyamsoft.zaptorch.api.UIPreferences
+import com.pyamsoft.zaptorch.api.ZapTorchModule
 import io.reactivex.Scheduler
 
-class ZapTorchModule(private val pyDroidModule: PYDroidModule,
+class ZapTorchModuleImpl(private val pyDroidModule: PYDroidModule,
         private val loaderModule: LoaderModule,
-        private val torchOffServiceClass: Class<out IntentService>) {
+        private val torchOffServiceClass: Class<out IntentService>) : ZapTorchModule {
 
     private val preferences: ZapTorchPreferencesImpl = ZapTorchPreferencesImpl(
             pyDroidModule.provideContext())
 
     @CheckResult
-    fun provideContext(): Context = pyDroidModule.provideContext()
+    override fun provideContext(): Context = pyDroidModule.provideContext()
 
     @CheckResult
-    fun provideCameraPreferences(): CameraPreferences = preferences
+    override fun provideCameraPreferences(): CameraPreferences = preferences
 
     @CheckResult
-    fun provideClearPreferences(): ClearPreferences = preferences
+    override fun provideClearPreferences(): ClearPreferences = preferences
 
     @CheckResult
-    fun provideUiPreferences(): UIPreferences = preferences
+    override fun provideUiPreferences(): UIPreferences = preferences
 
     @CheckResult
-    fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
+    override fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
 
     @CheckResult
-    fun provideMainThreadScheduler(): Scheduler = pyDroidModule.provideMainThreadScheduler()
+    override fun provideMainThreadScheduler(): Scheduler = pyDroidModule.provideMainThreadScheduler()
 
     @CheckResult
-    fun provideIoScheduler(): Scheduler = pyDroidModule.provideIoScheduler()
+    override fun provideIoScheduler(): Scheduler = pyDroidModule.provideIoScheduler()
 
     @CheckResult
-    fun provideComputationScheduler(): Scheduler = pyDroidModule.provideComputationScheduler()
+    override fun provideComputationScheduler(): Scheduler = pyDroidModule.provideComputationScheduler()
 
     @CheckResult
-    fun provideImageLoader(): ImageLoader = loaderModule.provideImageLoader()
+    override fun provideImageLoader(): ImageLoader = loaderModule.provideImageLoader()
 }

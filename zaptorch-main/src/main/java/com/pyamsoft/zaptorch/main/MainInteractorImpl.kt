@@ -20,7 +20,8 @@ package com.pyamsoft.zaptorch.main
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.pyamsoft.zaptorch.base.preference.UIPreferences
+import com.pyamsoft.zaptorch.api.MainInteractor
+import com.pyamsoft.zaptorch.api.UIPreferences
 import io.reactivex.Single
 
 internal class MainInteractorImpl internal constructor(

@@ -19,7 +19,8 @@
 package com.pyamsoft.zaptorch.service
 
 import android.support.annotation.CheckResult
-import com.pyamsoft.zaptorch.base.ZapTorchModule
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.api.ZapTorchModule
 import io.reactivex.Scheduler
 
 class VolumeServiceModule(module: ZapTorchModule) {

@@ -19,7 +19,8 @@
 package com.pyamsoft.zaptorch.settings
 
 import android.support.annotation.CheckResult
-import com.pyamsoft.zaptorch.base.ZapTorchModule
+import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
+import com.pyamsoft.zaptorch.api.ZapTorchModule
 import io.reactivex.Scheduler
 
 class SettingsPreferenceFragmentModule(module: ZapTorchModule) {

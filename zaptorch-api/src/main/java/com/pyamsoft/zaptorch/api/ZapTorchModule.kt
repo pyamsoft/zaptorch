@@ -16,25 +16,40 @@
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.api
 
-import android.content.Intent
+import android.app.IntentService
+import android.content.Context
 import android.support.annotation.CheckResult
+import com.pyamsoft.pydroid.loader.ImageLoader
 import io.reactivex.Scheduler
-import io.reactivex.Single
 
-internal interface VolumeServiceInteractor {
-
-    @CheckResult
-    fun handleKeyPress(action: Int, keyCode: Int): Single<Long>
+interface ZapTorchModule {
 
     @CheckResult
-    fun shouldShowErrorDialog(): Single<Boolean>
+    fun provideContext(): Context
 
-    fun setupCamera(computationScheduler: Scheduler,
-            mainThreadScheduler: Scheduler, onCameraError: (Intent) -> Unit)
+    @CheckResult
+    fun provideCameraPreferences(): CameraPreferences
 
-    fun toggleTorch()
+    @CheckResult
+    fun provideClearPreferences(): ClearPreferences
 
-    fun releaseCamera()
+    @CheckResult
+    fun provideUiPreferences(): UIPreferences
+
+    @CheckResult
+    fun provideTorchOffServiceClass(): Class<out IntentService>
+
+    @CheckResult
+    fun provideMainThreadScheduler(): Scheduler
+
+    @CheckResult
+    fun provideIoScheduler(): Scheduler
+
+    @CheckResult
+    fun provideComputationScheduler(): Scheduler
+
+    @CheckResult
+    fun provideImageLoader(): ImageLoader
 }

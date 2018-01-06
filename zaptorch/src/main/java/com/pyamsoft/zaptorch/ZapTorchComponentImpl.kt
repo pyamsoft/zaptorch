@@ -18,7 +18,7 @@
 
 package com.pyamsoft.zaptorch
 
-import com.pyamsoft.zaptorch.base.ZapTorchModule
+import com.pyamsoft.zaptorch.api.ZapTorchModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragment
