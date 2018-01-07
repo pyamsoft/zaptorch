@@ -22,12 +22,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.pyamsoft.backstack.BackStack
-import com.pyamsoft.backstack.BackStacks
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
 import com.pyamsoft.pydroid.design.util.FABUtil
 import com.pyamsoft.pydroid.loader.ImageLoader
-import com.pyamsoft.pydroid.loader.LoaderHelper
 import com.pyamsoft.pydroid.ui.helper.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -40,7 +37,6 @@ import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
 import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingPublisher
 import com.pyamsoft.zaptorch.settings.SettingsFragment
-import com.pyamsoft.zaptorch.settings.TorchPreferenceFragment
 import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class MainFragment : WatchedFragment() {
@@ -48,8 +44,6 @@ class MainFragment : WatchedFragment() {
     internal lateinit var imageLoader: ImageLoader
     internal lateinit var publisher: SettingPublisher
     private lateinit var binding: FragmentMainBinding
-    private var fabTask = LoaderHelper.empty()
-    private lateinit var backstack: BackStack
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +52,6 @@ class MainFragment : WatchedFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        backstack = BackStacks.create(this, viewLifecycle, R.id.main_container)
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,7 +79,6 @@ class MainFragment : WatchedFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        fabTask = LoaderHelper.unload(fabTask)
         binding.unbind()
     }
 
@@ -97,25 +89,24 @@ class MainFragment : WatchedFragment() {
             it.setUpEnabled(false)
         }
 
-        if (VolumeMonitorService.isRunning) {
-            fabTask = LoaderHelper.unload(fabTask)
-            fabTask = imageLoader.fromResource(R.drawable.ic_help_24dp).into(
-                    binding.mainSettingsFab)
-        } else {
-            fabTask = LoaderHelper.unload(fabTask)
-            fabTask = imageLoader.fromResource(R.drawable.ic_service_start_24dp).into(
-                    binding.mainSettingsFab)
+        imageLoader.apply {
+            if (VolumeMonitorService.isRunning) {
+                fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
+                        .bind(viewLifecycle)
+            } else {
+                fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
+                        .bind(viewLifecycle)
+            }
         }
     }
 
     private fun displayPreferenceFragment() {
         val fragmentManager = childFragmentManager
-        if (fragmentManager.findFragmentByTag(TorchPreferenceFragment.TAG) == null) {
-            backstack.set(SettingsFragment.TAG) { SettingsFragment() }
+        if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
+            fragmentManager.beginTransaction().add(R.id.main_container, SettingsFragment(),
+                    SettingsFragment.TAG).commit()
         }
     }
-
-    override fun onBackPressed(): Boolean = backstack.back()
 
     companion object {
 

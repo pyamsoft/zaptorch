@@ -21,9 +21,11 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.app.Service
 import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.base.PYDroidModule
+import com.pyamsoft.pydroid.PYDroidModule
+import com.pyamsoft.pydroid.PYDroidModuleImpl
 import com.pyamsoft.pydroid.base.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
+import com.pyamsoft.pydroid.loader.LoaderModuleImpl
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
@@ -47,8 +49,8 @@ class ZapTorch : Application() {
             return
         }
 
-        pydroidModule = PYDroidModule(this, BuildConfig.DEBUG)
-        loaderModule = LoaderModule(this)
+        pydroidModule = PYDroidModuleImpl(this, BuildConfig.DEBUG)
+        loaderModule = LoaderModuleImpl(pydroidModule)
         PYDroid.init(pydroidModule, loaderModule)
         Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
 
