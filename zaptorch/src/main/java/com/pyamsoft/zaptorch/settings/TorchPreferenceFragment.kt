@@ -21,6 +21,7 @@ package com.pyamsoft.zaptorch.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.View
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
@@ -29,6 +30,7 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePublisher
 import timber.log.Timber
@@ -45,6 +47,9 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
     override val applicationName: String
         get() = getString(R.string.app_name)
+
+    override val aboutReplaceFragment: Fragment?
+        get() = activity?.supportFragmentManager?.findFragmentByTag(MainFragment.TAG)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

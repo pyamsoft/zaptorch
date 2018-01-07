@@ -23,8 +23,6 @@ import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
-import com.pyamsoft.backstack.BackStack
-import com.pyamsoft.backstack.BackStacks
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.helper.Toasty
@@ -60,12 +58,9 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     override val applicationName: String
         get() = getString(R.string.app_name)
 
-    private lateinit var backstack: BackStack
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)
         super.onCreate(savedInstanceState)
-        backstack = BackStacks.create(this, R.id.main_viewport)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
@@ -121,13 +116,8 @@ class MainActivity : TamperActivity(), MainPresenter.View {
         val fragmentManager = supportFragmentManager
         if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
                 && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
-            backstack.set(MainFragment.TAG) { MainFragment() }
-        }
-    }
-
-    override fun onBackPressed() {
-        if (!backstack.back()) {
-            super.onBackPressed()
+            fragmentManager.beginTransaction().add(R.id.main_viewport, MainFragment(),
+                    MainFragment.TAG).commit()
         }
     }
 
