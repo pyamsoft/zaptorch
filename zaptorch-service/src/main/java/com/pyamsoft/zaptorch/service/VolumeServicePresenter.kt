@@ -20,7 +20,7 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.helper.clear
+import com.pyamsoft.pydroid.ktext.clear
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent

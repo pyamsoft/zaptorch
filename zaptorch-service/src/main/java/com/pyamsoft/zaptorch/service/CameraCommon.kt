@@ -21,9 +21,9 @@ package com.pyamsoft.zaptorch.service
 import android.content.Context
 import android.content.Intent
 import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.helper.clear
-import com.pyamsoft.pydroid.helper.enforceComputation
-import com.pyamsoft.pydroid.helper.enforceMainThread
+import com.pyamsoft.pydroid.ktext.clear
+import com.pyamsoft.pydroid.ktext.enforceComputation
+import com.pyamsoft.pydroid.ktext.enforceMainThread
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
