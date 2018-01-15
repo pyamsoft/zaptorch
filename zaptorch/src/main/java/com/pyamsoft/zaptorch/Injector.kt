@@ -31,8 +31,11 @@ object Injector {
     @JvmStatic
     fun <T : Any> obtain(context: Context): T {
         val service: Any? = context.getSystemService(name)
+        if (service == null) {
 
-        @Suppress("UNCHECKED_CAST")
-        return service as T
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            return service as T
+        }
     }
 }
