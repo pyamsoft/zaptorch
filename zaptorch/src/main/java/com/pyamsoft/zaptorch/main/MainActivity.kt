@@ -44,7 +44,8 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     private var handleKeyPress: Boolean = false
 
     override val changeLogLines: Array<String> = arrayOf(
-            "BUGFIX: Better support for small screen devices"
+            "CHANGE: Remove API switching as it is generally useless",
+            "CHANGE: Faster startup time"
     )
 
     override val versionName: String = BuildConfig.VERSION_NAME
