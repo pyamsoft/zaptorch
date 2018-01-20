@@ -1,10 +1,9 @@
+.idea
+!.idea/codeStyleSettings.xml
+
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea
 /build
 /captures
 .externalNativeBuild
-/zaptorch/src/main/res/values/ads.xml
