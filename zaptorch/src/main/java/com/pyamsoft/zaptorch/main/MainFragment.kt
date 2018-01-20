@@ -50,8 +50,10 @@ class MainFragment : WatchedFragment() {
         Injector.obtain<ZapTorchComponent>(context!!.applicationContext).inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -66,13 +68,17 @@ class MainFragment : WatchedFragment() {
         FABUtil.setupFABBehavior(binding.mainSettingsFab, HideScrollFABBehavior(10))
         binding.mainSettingsFab.setOnDebouncedClickListener {
             if (VolumeMonitorService.isRunning) {
-                DialogUtil.guaranteeSingleDialogFragment(activity,
-                        ServiceInfoDialog(),
-                        "servce_info")
+                DialogUtil.guaranteeSingleDialogFragment(
+                    activity,
+                    ServiceInfoDialog(),
+                    "servce_info"
+                )
             } else {
-                DialogUtil.guaranteeSingleDialogFragment(activity,
-                        AccessibilityRequestDialog(),
-                        "accessibility")
+                DialogUtil.guaranteeSingleDialogFragment(
+                    activity,
+                    AccessibilityRequestDialog(),
+                    "accessibility"
+                )
             }
         }
     }
@@ -92,10 +98,10 @@ class MainFragment : WatchedFragment() {
         imageLoader.apply {
             if (VolumeMonitorService.isRunning) {
                 fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
-                        .bind(viewLifecycle)
+                    .bind(viewLifecycle)
             } else {
                 fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
-                        .bind(viewLifecycle)
+                    .bind(viewLifecycle)
             }
         }
     }
@@ -103,8 +109,10 @@ class MainFragment : WatchedFragment() {
     private fun displayPreferenceFragment() {
         val fragmentManager = childFragmentManager
         if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
-            fragmentManager.beginTransaction().add(R.id.main_container, SettingsFragment(),
-                    SettingsFragment.TAG).commit()
+            fragmentManager.beginTransaction().add(
+                R.id.main_container, SettingsFragment(),
+                SettingsFragment.TAG
+            ).commit()
         }
     }
 

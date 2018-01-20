@@ -42,22 +42,26 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 import java.util.ArrayList
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP) internal class LollipopCamera internal constructor(
-        context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
-        mainScheduler: Scheduler) :
-        CameraCommon(context, interactor, computationScheduler, mainScheduler) {
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+internal class LollipopCamera internal constructor(
+    context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
+    mainScheduler: Scheduler
+) :
+    CameraCommon(context, interactor, computationScheduler, mainScheduler) {
 
     private val cameraManager: CameraManager = appContext.getSystemService(
-            Context.CAMERA_SERVICE) as CameraManager
+        Context.CAMERA_SERVICE
+    ) as CameraManager
     private val flashCameraId = setupCamera()
     private val cameraCallback = CameraCallback(this, cameraManager)
 
-    @CheckResult private fun setupCamera(): String? {
+    @CheckResult
+    private fun setupCamera(): String? {
         try {
             val cameraList = cameraManager.cameraIdList
             for (camera in cameraList) {
                 val hasFlash = cameraManager.getCameraCharacteristics(camera)
-                        .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                    .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
                 if (hasFlash != null && hasFlash) {
                     return camera
                 }
@@ -88,8 +92,10 @@ import java.util.ArrayList
         }
     }
 
-    internal class CameraCallback internal constructor(private val cameraInterface: CameraCommon,
-            private val manager: CameraManager) : CameraDevice.StateCallback() {
+    internal class CameraCallback internal constructor(
+        private val cameraInterface: CameraCommon,
+        private val manager: CameraManager
+    ) : CameraDevice.StateCallback() {
         private val list: MutableList<Surface>
 
         private var cameraDevice: CameraDevice? = null
@@ -132,8 +138,10 @@ import java.util.ArrayList
 
         @CheckResult
         fun accessCamera(context: Context, id: String): Int {
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED) {
                 return try {
                     Timber.d("Has setupCamera permission, attempt to access")
                     if (opened) {
@@ -167,8 +175,10 @@ import java.util.ArrayList
             try {
                 Timber.d("create capture builder")
                 val captureBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_MANUAL)
-                captureBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                        CameraMetadata.CONTROL_AF_MODE_AUTO)
+                captureBuilder.set(
+                    CaptureRequest.CONTROL_AE_MODE,
+                    CameraMetadata.CONTROL_AF_MODE_AUTO
+                )
                 captureBuilder.set(CaptureRequest.FLASH_MODE, CameraMetadata.FLASH_MODE_TORCH)
 
                 if (size == null) {
@@ -181,7 +191,8 @@ import java.util.ArrayList
                 // The setupCamera session recycles the surface texture, so we should not have to
                 val surfaceTexture = SurfaceTexture(1)
                 val smallestSize = size ?: throw RuntimeException(
-                        "Size is NULL, This should not happen!")
+                    "Size is NULL, This should not happen!"
+                )
                 surfaceTexture.setDefaultBufferSize(smallestSize.width, smallestSize.height)
 
                 Timber.d("add surface to texture")
@@ -226,10 +237,11 @@ import java.util.ArrayList
             @JvmStatic
             @Throws(CameraAccessException::class)
             fun getSmallestSize(
-                    manager: CameraManager, id: String): Size {
+                manager: CameraManager, id: String
+            ): Size {
                 Timber.d("Get stream config map")
                 val map = manager.getCameraCharacteristics(id)
-                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                         ?: throw IllegalStateException("Camera $id doesn't support any Stream Maps.")
 
                 Timber.d("Get possible output sizes")
@@ -241,16 +253,17 @@ import java.util.ArrayList
                 Timber.d("Select a size")
                 var chosen = outputSizes[0]
                 outputSizes
-                        .asSequence()
-                        .filter { chosen.width >= it.width && chosen.height >= it.height }
-                        .forEach { chosen = it }
+                    .asSequence()
+                    .filter { chosen.width >= it.width && chosen.height >= it.height }
+                    .forEach { chosen = it }
                 return chosen
             }
         }
     }
 
     internal class SessionCallback internal constructor(
-            private val request: CaptureRequest) : CameraCaptureSession.StateCallback() {
+        private val request: CaptureRequest
+    ) : CameraCaptureSession.StateCallback() {
 
         private var session: CameraCaptureSession? = null
 

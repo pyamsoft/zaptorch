@@ -25,7 +25,8 @@ import com.pyamsoft.zaptorch.api.UIPreferences
 import io.reactivex.Single
 
 internal class MainInteractorImpl internal constructor(
-        private val preferences: UIPreferences) : MainInteractor {
+    private val preferences: UIPreferences
+) : MainInteractor {
 
     private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
@@ -53,5 +54,5 @@ internal class MainInteractorImpl internal constructor(
     }
 
     override fun shouldHandleKeys(): Single<Boolean> =
-            Single.fromCallable { preferences.shouldHandleKeys() }
+        Single.fromCallable { preferences.shouldHandleKeys() }
 }

@@ -37,7 +37,8 @@ class ConfirmationDialog : WatchedDialog() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!).setMessage(
-                "Really clear all application settings?").setPositiveButton("Yes") { _, _ ->
+            "Really clear all application settings?"
+        ).setPositiveButton("Yes") { _, _ ->
             publisher.publish(ConfirmEvent)
             dismiss()
         }.setNegativeButton("No") { _, _ -> dismiss() }.create()

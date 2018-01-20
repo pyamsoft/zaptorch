@@ -32,14 +32,18 @@ class VolumeServiceModule(module: ZapTorchModule) {
     private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
     init {
-        interactor = VolumeServiceInteractorImpl(module.provideContext(),
-                module.provideCameraPreferences(), module.provideTorchOffServiceClass())
+        interactor = VolumeServiceInteractorImpl(
+            module.provideContext(),
+            module.provideCameraPreferences(), module.provideTorchOffServiceClass()
+        )
     }
 
     @CheckResult
     fun getServicePresenter(): VolumeServicePresenter =
-            VolumeServicePresenter(interactor, bus, computationScheduler, ioScheduler,
-                    mainScheduler)
+        VolumeServicePresenter(
+            interactor, bus, computationScheduler, ioScheduler,
+            mainScheduler
+        )
 
     @CheckResult
     fun getPresenter(): ServicePublisher = ServicePublisher(bus)

@@ -30,12 +30,15 @@ import com.pyamsoft.zaptorch.api.UIPreferences
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 import io.reactivex.Scheduler
 
-class ZapTorchModuleImpl(private val pyDroidModule: PYDroidModule,
-        private val loaderModule: LoaderModule,
-        private val torchOffServiceClass: Class<out IntentService>) : ZapTorchModule {
+class ZapTorchModuleImpl(
+    private val pyDroidModule: PYDroidModule,
+    private val loaderModule: LoaderModule,
+    private val torchOffServiceClass: Class<out IntentService>
+) : ZapTorchModule {
 
     private val preferences: ZapTorchPreferencesImpl = ZapTorchPreferencesImpl(
-            pyDroidModule.provideContext())
+        pyDroidModule.provideContext()
+    )
 
     @CheckResult
     override fun provideContext(): Context = pyDroidModule.provideContext()

@@ -33,13 +33,13 @@ class AccessibilityRequestDialog : WatchedDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity!!.let {
             return AlertDialog.Builder(it).setTitle("Enable ZapTorch AccessibilityService")
-                    .setMessage(R.string.explain_accessibility_service)
-                    .setPositiveButton("Let's Go") { _, _ ->
-                        it.startActivity(accessibilityServiceIntent)
-                        dismiss()
-                    }
-                    .setNegativeButton("No Thanks") { _, _ -> dismiss() }
-                    .create()
+                .setMessage(R.string.explain_accessibility_service)
+                .setPositiveButton("Let's Go") { _, _ ->
+                    it.startActivity(accessibilityServiceIntent)
+                    dismiss()
+                }
+                .setNegativeButton("No Thanks") { _, _ -> dismiss() }
+                .create()
         }
     }
 }

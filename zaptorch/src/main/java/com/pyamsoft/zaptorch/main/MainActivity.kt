@@ -44,8 +44,8 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     private var handleKeyPress: Boolean = false
 
     override val changeLogLines: Array<String> = arrayOf(
-            "CHANGE: Remove API switching as it is generally useless",
-            "CHANGE: Faster startup time"
+        "CHANGE: Remove API switching as it is generally useless",
+        "CHANGE: Faster startup time"
     )
 
     override val versionName: String = BuildConfig.VERSION_NAME
@@ -66,7 +66,8 @@ class MainActivity : TamperActivity(), MainPresenter.View {
         PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
         Injector.obtain<ZapTorchComponent>(applicationContext).plusMainComponent(
-                getString(R.string.handle_volume_keys_key)).inject(this)
+            getString(R.string.handle_volume_keys_key)
+        ).inject(this)
         setupToolbar()
 
         presenter.bind(this, this)
@@ -83,8 +84,10 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     }
 
     override fun onError(throwable: Throwable) {
-        Toasty.makeText(this, "Failed to handle volume keypress, please try again",
-                Toasty.LENGTH_SHORT).show()
+        Toasty.makeText(
+            this, "Failed to handle volume keypress, please try again",
+            Toasty.LENGTH_SHORT
+        ).show()
     }
 
     override fun onDestroy() {
@@ -116,9 +119,11 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     private fun showMainFragment() {
         val fragmentManager = supportFragmentManager
         if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
-                && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
-            fragmentManager.beginTransaction().add(R.id.main_viewport, MainFragment(),
-                    MainFragment.TAG).commit()
+            && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null) {
+            fragmentManager.beginTransaction().add(
+                R.id.main_viewport, MainFragment(),
+                MainFragment.TAG
+            ).commit()
         }
     }
 
