@@ -32,11 +32,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
-class VolumeServicePresenter internal constructor(private val interactor: VolumeServiceInteractor,
-        private val bus: EventBus<ServiceEvent>,
-        computationScheduler: Scheduler, ioScheduler: Scheduler,
-        mainThreadScheduler: Scheduler) : SchedulerPresenter<View>(
-        computationScheduler, ioScheduler, mainThreadScheduler) {
+class VolumeServicePresenter internal constructor(
+    private val interactor: VolumeServiceInteractor,
+    private val bus: EventBus<ServiceEvent>,
+    computationScheduler: Scheduler, ioScheduler: Scheduler,
+    mainThreadScheduler: Scheduler
+) : SchedulerPresenter<View>(
+    computationScheduler, ioScheduler, mainThreadScheduler
+) {
 
     private var keyDisposable: Disposable = Disposables.empty()
 
@@ -70,25 +73,26 @@ class VolumeServicePresenter internal constructor(private val interactor: Volume
     fun handleKeyEvent(action: Int, keyCode: Int) {
         keyDisposable = keyDisposable.clear()
         keyDisposable = interactor.handleKeyPress(action, keyCode)
-                .subscribeOn(ioScheduler)
-                .observeOn(mainThreadScheduler)
-                .subscribe({ time -> Timber.d("Set back after %d delay", time) }
-                        , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
+            .subscribeOn(ioScheduler)
+            .observeOn(mainThreadScheduler)
+            .subscribe({ time -> Timber.d("Set back after %d delay", time) }
+                , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
     }
 
     private fun registerOnBus() {
         dispose {
             bus.listen()
-                    .subscribeOn(ioScheduler)
-                    .observeOn(mainThreadScheduler)
-                    .subscribe({ (type) ->
-                        when (type) {
-                            TORCH -> toggleTorch()
-                            FINISH -> view?.onFinishService()
-                            else -> throw IllegalArgumentException(
-                                    "Invalid ServiceEvent.Type: " + type)
-                        }
-                    }, { Timber.e(it, "onError event bus") })
+                .subscribeOn(ioScheduler)
+                .observeOn(mainThreadScheduler)
+                .subscribe({ (type) ->
+                    when (type) {
+                        TORCH -> toggleTorch()
+                        FINISH -> view?.onFinishService()
+                        else -> throw IllegalArgumentException(
+                            "Invalid ServiceEvent.Type: " + type
+                        )
+                    }
+                }, { Timber.e(it, "onError event bus") })
         }
     }
 

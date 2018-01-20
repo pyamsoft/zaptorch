@@ -27,11 +27,12 @@ class CameraErrorDialog : WatchedDialog() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!).setMessage(
-                "ZapTorch was unable to access your devices setupCamera."
-                        + " Please make sure that your device has a setupCamera with Flash functionality."
-                        + " Please make sure no other application is using the setupCamera and try again.")
-                .setPositiveButton("Okay") { _, _ -> dismiss() }
-                .create()
+            "ZapTorch was unable to access your devices setupCamera."
+                    + " Please make sure that your device has a setupCamera with Flash functionality."
+                    + " Please make sure no other application is using the setupCamera and try again."
+        )
+            .setPositiveButton("Okay") { _, _ -> dismiss() }
+            .create()
     }
 
     override fun onDestroyView() {

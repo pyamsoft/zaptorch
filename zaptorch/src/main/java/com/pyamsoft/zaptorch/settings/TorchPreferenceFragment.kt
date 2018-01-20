@@ -36,7 +36,7 @@ import com.pyamsoft.zaptorch.service.ServicePublisher
 import timber.log.Timber
 
 class TorchPreferenceFragment : SettingsPreferenceFragment(),
-        SettingsPreferenceFragmentPresenter.View {
+    SettingsPreferenceFragmentPresenter.View {
 
     internal lateinit var servicePublisher: ServicePublisher
     internal lateinit var presenter: SettingsPreferenceFragmentPresenter
@@ -55,7 +55,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
         super.onCreate(savedInstanceState)
 
         Injector.obtain<ZapTorchComponent>(
-                context!!.applicationContext).plusSettingsComponent().inject(this)
+            context!!.applicationContext
+        ).plusSettingsComponent().inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,14 +80,16 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
             }
 
             val activityManager = it.applicationContext
-                    .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             activityManager.clearApplicationUserData()
         }
     }
 
     override fun onClearAllClicked() {
-        DialogUtil.guaranteeSingleDialogFragment(activity, ConfirmationDialog(),
-                "confirm_dialog")
+        DialogUtil.guaranteeSingleDialogFragment(
+            activity, ConfirmationDialog(),
+            "confirm_dialog"
+        )
     }
 
     override fun onDestroy() {

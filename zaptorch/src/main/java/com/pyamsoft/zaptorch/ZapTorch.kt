@@ -64,8 +64,9 @@ class ZapTorch : Application() {
     }
 
     private fun buildComponent(): ZapTorchComponent =
-            ZapTorchComponentImpl(
-                    ZapTorchModuleImpl(pydroidModule, loaderModule, TorchOffService::class.java))
+        ZapTorchComponentImpl(
+            ZapTorchModuleImpl(pydroidModule, loaderModule, TorchOffService::class.java)
+        )
 
     override fun getSystemService(name: String?): Any {
         return if (Injector.name == name) {
@@ -90,30 +91,33 @@ class ZapTorch : Application() {
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
-                getRefWatcherInternal(fragment.activity!!.application)
+            getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
-                getRefWatcherInternal(fragment.activity!!.application)
+            getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
-                getRefWatcherInternal(fragment.activity!!.application)
+            getRefWatcherInternal(fragment.activity!!.application)
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(
-                fragment: SettingsPreferenceFragment): RefWatcher = getRefWatcherInternal(
-                fragment.activity!!.application)
+            fragment: SettingsPreferenceFragment
+        ): RefWatcher = getRefWatcherInternal(
+            fragment.activity!!.application
+        )
 
         @JvmStatic
         @CheckResult
         fun getRefWatcher(service: Service): RefWatcher = getRefWatcherInternal(service.application)
 
         @JvmStatic
-        @CheckResult private fun getRefWatcherInternal(application: Application): RefWatcher {
+        @CheckResult
+        private fun getRefWatcherInternal(application: Application): RefWatcher {
             if (application is ZapTorch) {
                 return application.refWatcher
             } else {

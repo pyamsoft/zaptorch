@@ -28,8 +28,9 @@ import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
 
 internal class ZapTorchPreferencesImpl(
-        context: Context) : CameraPreferences,
-        ClearPreferences, UIPreferences {
+    context: Context
+) : CameraPreferences,
+    ClearPreferences, UIPreferences {
 
     private val doublePressDelayKey: String
     private val displayCameraErrorsKey: String
@@ -53,13 +54,16 @@ internal class ZapTorchPreferencesImpl(
 
     override val buttonDelayTime: Long
         @CheckResult get() = java.lang.Long.parseLong(
-                preferences.getString(doublePressDelayKey, doublePressDelayDefault))
+            preferences.getString(doublePressDelayKey, doublePressDelayDefault)
+        )
 
-    @CheckResult override fun shouldShowErrorDialog(): Boolean =
-            preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
+    @CheckResult
+    override fun shouldShowErrorDialog(): Boolean =
+        preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
 
-    @CheckResult override fun shouldHandleKeys(): Boolean =
-            preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
+    @CheckResult
+    override fun shouldHandleKeys(): Boolean =
+        preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
 
     @SuppressLint("ApplySharedPref")
     override fun clearAll() {

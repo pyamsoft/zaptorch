@@ -32,10 +32,12 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
-internal abstract class CameraCommon protected constructor(context: Context,
-        private val interactor: VolumeServiceInteractor,
-        private val computationScheduler: Scheduler, private val mainScheduler: Scheduler) :
-        CameraInterface {
+internal abstract class CameraCommon protected constructor(
+    context: Context,
+    private val interactor: VolumeServiceInteractor,
+    private val computationScheduler: Scheduler, private val mainScheduler: Scheduler
+) :
+    CameraInterface {
 
     @get:CheckResult
     val appContext: Context = context.applicationContext
@@ -50,24 +52,26 @@ internal abstract class CameraCommon protected constructor(context: Context,
         computationScheduler.enforceComputation()
 
         errorExplain.putExtra(
-                CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
+            CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR
+        )
         errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
         permissionExplain.putExtra(
-                CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION)
+            CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION
+        )
         permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
     override fun startErrorExplanationActivity() {
         errorDisposable = errorDisposable.clear()
         errorDisposable = interactor.shouldShowErrorDialog()
-                .subscribeOn(computationScheduler)
-                .observeOn(mainScheduler)
-                .subscribe({
-                    if (it) {
-                        notifyCallbackOnError(errorExplain)
-                    }
-                }, { Timber.e(it, "onError startErrorExplanationActivity") })
+            .subscribeOn(computationScheduler)
+            .observeOn(mainScheduler)
+            .subscribe({
+                if (it) {
+                    notifyCallbackOnError(errorExplain)
+                }
+            }, { Timber.e(it, "onError startErrorExplanationActivity") })
     }
 
     override fun startPermissionExplanationActivity() {

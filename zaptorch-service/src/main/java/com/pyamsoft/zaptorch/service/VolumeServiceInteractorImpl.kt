@@ -40,12 +40,15 @@ import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-internal class VolumeServiceInteractorImpl internal constructor(private val context: Context,
-        private val preferences: CameraPreferences,
-        torchOffServiceClass: Class<out IntentService>) :
-        VolumeServiceInteractor {
+internal class VolumeServiceInteractorImpl internal constructor(
+    private val context: Context,
+    private val preferences: CameraPreferences,
+    torchOffServiceClass: Class<out IntentService>
+) :
+    VolumeServiceInteractor {
     private val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
-            context)
+        context
+    )
     private val notification: Notification
     private val onStateChangedCallback: CameraInterface.OnStateChangedCallback
     private var pressed: Boolean = false
@@ -59,18 +62,23 @@ internal class VolumeServiceInteractorImpl internal constructor(private val cont
             setupNotificationChannel(notificationChannelId)
         }
 
-        notification = NotificationCompat.Builder(context,
-                notificationChannelId).setContentIntent(
-                PendingIntent.getService(context, NOTIFICATION_RC, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT))
-                .setContentTitle("Torch is On")
-                .setContentText("Click to turn off")
-                .setSmallIcon(R.drawable.ic_light_notification)
-                .setAutoCancel(true)
-                .setColor(ContextCompat.getColor(context, R.color.purple500))
-                .setWhen(0)
-                .setOngoing(false)
-                .build()
+        notification = NotificationCompat.Builder(
+            context,
+            notificationChannelId
+        ).setContentIntent(
+            PendingIntent.getService(
+                context, NOTIFICATION_RC, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        )
+            .setContentTitle("Torch is On")
+            .setContentText("Click to turn off")
+            .setSmallIcon(R.drawable.ic_light_notification)
+            .setAutoCancel(true)
+            .setColor(ContextCompat.getColor(context, R.color.purple500))
+            .setWhen(0)
+            .setOngoing(false)
+            .build()
 
         onStateChangedCallback = object : CameraInterface.OnStateChangedCallback {
             override fun onOpened() {
@@ -89,8 +97,10 @@ internal class VolumeServiceInteractorImpl internal constructor(private val cont
         pressed = false
     }
 
-    @RequiresApi(VERSION_CODES.O) private fun setupNotificationChannel(
-            notificationChannelId: String) {
+    @RequiresApi(VERSION_CODES.O)
+    private fun setupNotificationChannel(
+        notificationChannelId: String
+    ) {
         val name = "Torch Service"
         val description = "Notification related to the ZapTorch service"
         val importance = NotificationManager.IMPORTANCE_MIN
@@ -102,7 +112,8 @@ internal class VolumeServiceInteractorImpl internal constructor(private val cont
 
         Timber.d("Create notification channel with id: %s", notificationChannelId)
         val notificationManager: NotificationManager = context.getSystemService(
-                Context.NOTIFICATION_SERVICE) as NotificationManager
+            Context.NOTIFICATION_SERVICE
+        ) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
     }
 
@@ -117,10 +128,10 @@ internal class VolumeServiceInteractorImpl internal constructor(private val cont
                 } else {
                     pressed = true
                     keyPressSingle = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
-                            .doOnSuccess {
-                                Timber.d("Set pressed back to false")
-                                pressed = false
-                            }
+                        .doOnSuccess {
+                            Timber.d("Set pressed back to false")
+                            pressed = false
+                        }
                 }
             }
         }
@@ -129,19 +140,25 @@ internal class VolumeServiceInteractorImpl internal constructor(private val cont
     }
 
     override fun shouldShowErrorDialog(): Single<Boolean> =
-            Single.fromCallable { preferences.shouldShowErrorDialog() }
+        Single.fromCallable { preferences.shouldShowErrorDialog() }
 
-    override fun setupCamera(computationScheduler: Scheduler, mainThreadScheduler: Scheduler,
-            onCameraError: (Intent) -> Unit) {
+    override fun setupCamera(
+        computationScheduler: Scheduler, mainThreadScheduler: Scheduler,
+        onCameraError: (Intent) -> Unit
+    ) {
         val camera: CameraCommon
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Assign
-            camera = MarshmallowCamera(context, this, computationScheduler,
-                    mainThreadScheduler)
+            camera = MarshmallowCamera(
+                context, this, computationScheduler,
+                mainThreadScheduler
+            )
         } else {
             // Assign
-            camera = LollipopCamera(context, this, computationScheduler,
-                    mainThreadScheduler)
+            camera = LollipopCamera(
+                context, this, computationScheduler,
+                mainThreadScheduler
+            )
         }
 
         camera.setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {

@@ -31,8 +31,10 @@ interface VolumeServiceInteractor {
     @CheckResult
     fun shouldShowErrorDialog(): Single<Boolean>
 
-    fun setupCamera(computationScheduler: Scheduler,
-            mainThreadScheduler: Scheduler, onCameraError: (Intent) -> Unit)
+    fun setupCamera(
+        computationScheduler: Scheduler,
+        mainThreadScheduler: Scheduler, onCameraError: (Intent) -> Unit
+    )
 
     fun toggleTorch()
 

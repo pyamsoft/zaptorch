@@ -27,7 +27,7 @@ class ServiceInfoDialog : WatchedDialog() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(activity!!).setMessage("ZapTorch service is On")
-                .setPositiveButton("Okay") { _, _ -> dismiss() }
-                .create()
+            .setPositiveButton("Okay") { _, _ -> dismiss() }
+            .create()
     }
 }

@@ -28,13 +28,16 @@ import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Scheduler
 import timber.log.Timber
 
-@TargetApi(Build.VERSION_CODES.M) internal class MarshmallowCamera internal constructor(
-        context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
-        mainThreadScheduler: Scheduler) :
-        CameraCommon(context, interactor, computationScheduler, mainThreadScheduler) {
+@TargetApi(Build.VERSION_CODES.M)
+internal class MarshmallowCamera internal constructor(
+    context: Context, interactor: VolumeServiceInteractor, computationScheduler: Scheduler,
+    mainThreadScheduler: Scheduler
+) :
+    CameraCommon(context, interactor, computationScheduler, mainThreadScheduler) {
 
     private val cameraManager: CameraManager = context.applicationContext.getSystemService(
-            Context.CAMERA_SERVICE) as CameraManager
+        Context.CAMERA_SERVICE
+    ) as CameraManager
     private val torchCallback = TorchCallback(this)
 
     init {
@@ -76,7 +79,8 @@ import timber.log.Timber
     }
 
     internal class TorchCallback internal constructor(
-            private val cameraCommon: CameraCommon) : CameraManager.TorchCallback() {
+        private val cameraCommon: CameraCommon
+    ) : CameraManager.TorchCallback() {
 
         var cameraId: String? = null
             @CheckResult get

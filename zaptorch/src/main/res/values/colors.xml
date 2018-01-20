@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~     Copyright (C) 2017 Peter Kenji Yamanaka
   ~
   ~     This program is free software; you can redistribute it and/or modify
@@ -18,7 +17,7 @@
   -->
 
 <resources>
-  <color name="primary">#FF3F51B5</color>
-  <color name="primaryDark">#FF303F9F</color>
-  <color name="accent">#FFE91E63</color>
+    <color name="primary">#FF3F51B5</color>
+    <color name="primaryDark">#FF303F9F</color>
+    <color name="accent">#FFE91E63</color>
 </resources>
