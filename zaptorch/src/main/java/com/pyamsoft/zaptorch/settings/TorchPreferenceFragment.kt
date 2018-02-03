@@ -27,6 +27,7 @@ import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.DialogUtil
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.MainFragment
