@@ -44,8 +44,8 @@ internal class VolumeServiceInteractorImpl internal constructor(
   private val context: Context,
   private val preferences: CameraPreferences,
   torchOffServiceClass: Class<out IntentService>
-) :
-    VolumeServiceInteractor {
+) : VolumeServiceInteractor {
+
   private val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
       context
   )
@@ -62,23 +62,19 @@ internal class VolumeServiceInteractorImpl internal constructor(
       setupNotificationChannel(notificationChannelId)
     }
 
-    notification = NotificationCompat.Builder(
-        context,
-        notificationChannelId
-    )
-        .setContentIntent(
-            PendingIntent.getService(
-                context, NOTIFICATION_RC, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        )
-        .setContentTitle("Torch is On")
-        .setContentText("Click to turn off")
-        .setSmallIcon(R.drawable.ic_light_notification)
-        .setAutoCancel(true)
-        .setColor(ContextCompat.getColor(context, R.color.purple500))
-        .setWhen(0)
-        .setOngoing(false)
+    val pendingIntent =
+      PendingIntent.getService(context, NOTIFICATION_RC, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    notification = NotificationCompat.Builder(context, notificationChannelId)
+        .apply {
+          setContentIntent(pendingIntent)
+          setContentTitle("Torch is On")
+          setContentText("Click to turn off")
+          setSmallIcon(R.drawable.ic_light_notification)
+          setAutoCancel(true)
+          setWhen(0)
+          setOngoing(false)
+          color = ContextCompat.getColor(context, R.color.purple500)
+        }
         .build()
 
     onStateChangedCallback = object : CameraInterface.OnStateChangedCallback {
@@ -103,13 +99,14 @@ internal class VolumeServiceInteractorImpl internal constructor(
     notificationChannelId: String
   ) {
     val name = "Torch Service"
-    val description = "Notification related to the ZapTorch service"
+    val desc = "Notification related to the ZapTorch service"
     val importance = NotificationManager.IMPORTANCE_MIN
-    val notificationChannel = NotificationChannel(notificationChannelId, name, importance)
-    notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-    notificationChannel.description = description
-    notificationChannel.enableLights(false)
-    notificationChannel.enableVibration(false)
+    val notificationChannel = NotificationChannel(notificationChannelId, name, importance).apply {
+      lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+      description = desc
+      enableLights(false)
+      enableVibration(false)
+    }
 
     Timber.d("Create notification channel with id: %s", notificationChannelId)
     val notificationManager: NotificationManager = context.getSystemService(
