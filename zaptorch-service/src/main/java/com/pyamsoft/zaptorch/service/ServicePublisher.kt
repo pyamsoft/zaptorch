@@ -23,7 +23,7 @@ import com.pyamsoft.zaptorch.model.ServiceEvent
 
 class ServicePublisher internal constructor(private val bus: EventBus<ServiceEvent>) {
 
-    fun publish(event: ServiceEvent) {
-        bus.publish(event)
-    }
+  fun publish(event: ServiceEvent) {
+    bus.publish(event)
+  }
 }

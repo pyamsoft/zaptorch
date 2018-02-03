@@ -23,10 +23,13 @@ import io.reactivex.Single
 
 interface MainInteractor {
 
-    fun register(handleKeyPressKey: String, onHandleChanged: (Boolean) -> Unit)
+  fun register(
+    handleKeyPressKey: String,
+    onHandleChanged: (Boolean) -> Unit
+  )
 
-    fun unregister()
+  fun unregister()
 
-    @CheckResult
-    fun shouldHandleKeys(): Single<Boolean>
+  @CheckResult
+  fun shouldHandleKeys(): Single<Boolean>
 }

@@ -24,18 +24,18 @@ import android.support.annotation.CheckResult
 
 object Injector {
 
-    const val name: String = "com.pyamsoft.zaptorch.INJECTOR"
+  const val name: String = "com.pyamsoft.zaptorch.INJECTOR"
 
-    @SuppressLint("WrongConstant")
-    @CheckResult
-    @JvmStatic
-    fun <T : Any> obtain(context: Context): T {
-        val service: Any? = context.getSystemService(name)
-        if (service == null) {
-            throw IllegalStateException("No service found for: $name")
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            return service as T
-        }
+  @SuppressLint("WrongConstant")
+  @CheckResult
+  @JvmStatic
+  fun <T : Any> obtain(context: Context): T {
+    val service: Any? = context.getSystemService(name)
+    if (service == null) {
+      throw IllegalStateException("No service found for: $name")
+    } else {
+      @Suppress("UNCHECKED_CAST")
+      return service as T
     }
+  }
 }

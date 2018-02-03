@@ -27,15 +27,15 @@ import com.pyamsoft.zaptorch.settings.SettingsComponent
 
 interface ZapTorchComponent {
 
-    fun inject(mainFragment: MainFragment)
+  fun inject(mainFragment: MainFragment)
 
-    fun inject(confirmationDialog: ConfirmationDialog)
+  fun inject(confirmationDialog: ConfirmationDialog)
 
-    fun inject(volumeMonitorService: VolumeMonitorService)
+  fun inject(volumeMonitorService: VolumeMonitorService)
 
-    fun inject(torchOffService: TorchOffService)
+  fun inject(torchOffService: TorchOffService)
 
-    fun plusSettingsComponent(): SettingsComponent
+  fun plusSettingsComponent(): SettingsComponent
 
-    fun plusMainComponent(key: String): MainComponent
+  fun plusMainComponent(key: String): MainComponent
 }

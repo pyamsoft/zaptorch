@@ -39,68 +39,70 @@ import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View, LifecycleOwner {
 
-    private val lifecycle = LifecycleRegistry(this)
-    internal lateinit var presenter: VolumeServicePresenter
+  private val lifecycle = LifecycleRegistry(this)
+  internal lateinit var presenter: VolumeServicePresenter
 
-    override fun getLifecycle(): Lifecycle = lifecycle
+  override fun getLifecycle(): Lifecycle = lifecycle
 
-    override fun onKeyEvent(event: KeyEvent): Boolean {
-        val action = event.action
-        val keyCode = event.keyCode
-        presenter.handleKeyEvent(action, keyCode)
+  override fun onKeyEvent(event: KeyEvent): Boolean {
+    val action = event.action
+    val keyCode = event.keyCode
+    presenter.handleKeyEvent(action, keyCode)
 
-        // Never consume events
-        return false
+    // Never consume events
+    return false
+  }
+
+  override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
+    Timber.d("onAccessibilityEvent")
+  }
+
+  override fun onInterrupt() {
+    Timber.e("onInterrupt")
+  }
+
+  override fun onCreate() {
+    super.onCreate()
+    Injector.obtain<ZapTorchComponent>(applicationContext)
+        .inject(this)
+    presenter.bind(this, this)
+    lifecycle.handleLifecycleEvent(ON_CREATE)
+  }
+
+  override fun onServiceConnected() {
+    super.onServiceConnected()
+    lifecycle.fakeStartResume()
+    isRunning = true
+  }
+
+  override fun onFinishService() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      disableSelf()
     }
+  }
 
-    override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
-        Timber.d("onAccessibilityEvent")
-    }
+  override fun onError(intent: Intent) {
+    intent.setClass(applicationContext, CameraErrorExplanation::class.java)
+    application.startActivity(intent)
+  }
 
-    override fun onInterrupt() {
-        Timber.e("onInterrupt")
-    }
+  override fun onUnbind(intent: Intent): Boolean {
+    isRunning = false
+    lifecycle.fakePauseStop()
+    return super.onUnbind(intent)
+  }
 
-    override fun onCreate() {
-        super.onCreate()
-        Injector.obtain<ZapTorchComponent>(applicationContext).inject(this)
-        presenter.bind(this, this)
-        lifecycle.handleLifecycleEvent(ON_CREATE)
-    }
+  override fun onDestroy() {
+    super.onDestroy()
+    lifecycle.handleLifecycleEvent(ON_DESTROY)
+    ZapTorch.getRefWatcher(this)
+        .watch(this)
+  }
 
-    override fun onServiceConnected() {
-        super.onServiceConnected()
-        lifecycle.fakeStartResume()
-        isRunning = true
-    }
+  companion object {
 
-    override fun onFinishService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            disableSelf()
-        }
-    }
-
-    override fun onError(intent: Intent) {
-        intent.setClass(applicationContext, CameraErrorExplanation::class.java)
-        application.startActivity(intent)
-    }
-
-    override fun onUnbind(intent: Intent): Boolean {
-        isRunning = false
-        lifecycle.fakePauseStop()
-        return super.onUnbind(intent)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lifecycle.handleLifecycleEvent(ON_DESTROY)
-        ZapTorch.getRefWatcher(this).watch(this)
-    }
-
-    companion object {
-
-        var isRunning: Boolean = false
-            @CheckResult get
-            private set
-    }
+    var isRunning: Boolean = false
+      @CheckResult get
+      private set
+  }
 }

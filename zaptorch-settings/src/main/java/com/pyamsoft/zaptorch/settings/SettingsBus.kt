@@ -25,11 +25,11 @@ import io.reactivex.Observable
 
 internal class SettingsBus internal constructor() : EventBus<ConfirmEvent> {
 
-    private val bus = RxBus.create<ConfirmEvent>()
+  private val bus = RxBus.create<ConfirmEvent>()
 
-    override fun listen(): Observable<ConfirmEvent> = bus.listen()
+  override fun listen(): Observable<ConfirmEvent> = bus.listen()
 
-    override fun publish(event: ConfirmEvent) {
-        bus.publish(event)
-    }
+  override fun publish(event: ConfirmEvent) {
+    bus.publish(event)
+  }
 }

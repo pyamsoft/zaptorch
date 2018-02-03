@@ -23,7 +23,7 @@ import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class SettingPublisher internal constructor(private val bus: EventBus<ConfirmEvent>) {
 
-    fun publish(event: ConfirmEvent) {
-        bus.publish(event)
-    }
+  fun publish(event: ConfirmEvent) {
+    bus.publish(event)
+  }
 }

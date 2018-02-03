@@ -27,32 +27,34 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 
 class SettingsPreferenceFragmentPresenter internal constructor(
-    private val bus: EventBus<ConfirmEvent>,
-    private val interactor: SettingsPreferenceFragmentInteractor,
-    computationScheduler: Scheduler,
-    ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler
+  private val bus: EventBus<ConfirmEvent>,
+  private val interactor: SettingsPreferenceFragmentInteractor,
+  computationScheduler: Scheduler,
+  ioScheduler: Scheduler,
+  mainThreadScheduler: Scheduler
 ) : SchedulerPresenter<View>(
     computationScheduler, ioScheduler, mainThreadScheduler
 ) {
 
-    override fun onCreate() {
-        super.onCreate()
-        registerEventBus()
+  override fun onCreate() {
+    super.onCreate()
+    registerEventBus()
+  }
+
+  private fun registerEventBus() {
+    dispose {
+      bus.listen()
+          .flatMapSingle { interactor.clearAll() }
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
+          .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })
     }
+  }
 
-    private fun registerEventBus() {
-        dispose {
-            bus.listen().flatMapSingle { interactor.clearAll() }
-                .subscribeOn(ioScheduler).observeOn(mainThreadScheduler)
-                .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })
-        }
-    }
+  interface View : ClearCallback
 
-    interface View : ClearCallback
+  interface ClearCallback {
 
-    interface ClearCallback {
-
-        fun onClearAll()
-    }
+    fun onClearAll()
+  }
 }

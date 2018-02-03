@@ -33,82 +33,83 @@ import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
-    context: Context,
-    private val interactor: VolumeServiceInteractor,
-    private val computationScheduler: Scheduler, private val mainScheduler: Scheduler
+  context: Context,
+  private val interactor: VolumeServiceInteractor,
+  private val computationScheduler: Scheduler,
+  private val mainScheduler: Scheduler
 ) :
     CameraInterface {
 
-    @get:CheckResult
-    val appContext: Context = context.applicationContext
-    private val errorExplain = Intent()
-    private val permissionExplain = Intent()
-    private var callback: OnStateChangedCallback? = null
+  @get:CheckResult
+  val appContext: Context = context.applicationContext
+  private val errorExplain = Intent()
+  private val permissionExplain = Intent()
+  private var callback: OnStateChangedCallback? = null
 
-    private var errorDisposable: Disposable = Disposables.empty()
+  private var errorDisposable: Disposable = Disposables.empty()
 
-    init {
-        mainScheduler.enforceMainThread()
-        computationScheduler.enforceComputation()
+  init {
+    mainScheduler.enforceMainThread()
+    computationScheduler.enforceComputation()
 
-        errorExplain.putExtra(
-            CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR
-        )
-        errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    errorExplain.putExtra(
+        CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR
+    )
+    errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-        permissionExplain.putExtra(
-            CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION
-        )
-        permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    permissionExplain.putExtra(
+        CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION
+    )
+    permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+  }
+
+  override fun startErrorExplanationActivity() {
+    errorDisposable = errorDisposable.clear()
+    errorDisposable = interactor.shouldShowErrorDialog()
+        .subscribeOn(computationScheduler)
+        .observeOn(mainScheduler)
+        .subscribe({
+          if (it) {
+            notifyCallbackOnError(errorExplain)
+          }
+        }, { Timber.e(it, "onError startErrorExplanationActivity") })
+  }
+
+  override fun startPermissionExplanationActivity() {
+    notifyCallbackOnError(permissionExplain)
+  }
+
+  override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
+    this.callback = callback
+  }
+
+  override fun notifyCallbackOnOpened() {
+    val obj = callback
+    if (obj != null) {
+      Timber.d("Notify callback: opened")
+      obj.onOpened()
     }
+  }
 
-    override fun startErrorExplanationActivity() {
-        errorDisposable = errorDisposable.clear()
-        errorDisposable = interactor.shouldShowErrorDialog()
-            .subscribeOn(computationScheduler)
-            .observeOn(mainScheduler)
-            .subscribe({
-                if (it) {
-                    notifyCallbackOnError(errorExplain)
-                }
-            }, { Timber.e(it, "onError startErrorExplanationActivity") })
+  override fun notifyCallbackOnClosed() {
+    val obj = callback
+    if (obj != null) {
+      Timber.d("Notify callback: closed")
+      obj.onClosed()
     }
+  }
 
-    override fun startPermissionExplanationActivity() {
-        notifyCallbackOnError(permissionExplain)
+  private fun notifyCallbackOnError(errorIntent: Intent) {
+    val obj = callback
+    if (obj != null) {
+      Timber.w("Notify callback: error")
+      obj.onError(errorIntent)
     }
+  }
 
-    override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
-        this.callback = callback
-    }
-
-    override fun notifyCallbackOnOpened() {
-        val obj = callback
-        if (obj != null) {
-            Timber.d("Notify callback: opened")
-            obj.onOpened()
-        }
-    }
-
-    override fun notifyCallbackOnClosed() {
-        val obj = callback
-        if (obj != null) {
-            Timber.d("Notify callback: closed")
-            obj.onClosed()
-        }
-    }
-
-    private fun notifyCallbackOnError(errorIntent: Intent) {
-        val obj = callback
-        if (obj != null) {
-            Timber.w("Notify callback: error")
-            obj.onError(errorIntent)
-        }
-    }
-
-    // Called from VolumeServiceInteractorImpl
-    override fun destroy() {
-        errorDisposable = errorDisposable.clear()
-        release()
-    }
+  // Called from VolumeServiceInteractorImpl
+  override fun destroy() {
+    errorDisposable = errorDisposable.clear()
+    release()
+  }
 }

@@ -25,34 +25,37 @@ import com.pyamsoft.zaptorch.api.UIPreferences
 import io.reactivex.Single
 
 internal class MainInteractorImpl internal constructor(
-    private val preferences: UIPreferences
+  private val preferences: UIPreferences
 ) : MainInteractor {
 
-    private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
+  private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
-    override fun register(handleKeyPressKey: String, onHandleChanged: (Boolean) -> Unit) {
-        if (listener == null) {
-            listener = OnSharedPreferenceChangeListener { _, key ->
-                if (key == handleKeyPressKey) {
-                    onHandleChanged(preferences.shouldHandleKeys())
-                }
-            }
+  override fun register(
+    handleKeyPressKey: String,
+    onHandleChanged: (Boolean) -> Unit
+  ) {
+    if (listener == null) {
+      listener = OnSharedPreferenceChangeListener { _, key ->
+        if (key == handleKeyPressKey) {
+          onHandleChanged(preferences.shouldHandleKeys())
         }
-
-        val obj = listener
-        if (obj != null) {
-            preferences.register(obj)
-        }
+      }
     }
 
-    override fun unregister() {
-        val obj = listener
-        if (obj != null) {
-            preferences.unregister(obj)
-        }
-        listener = null
+    val obj = listener
+    if (obj != null) {
+      preferences.register(obj)
     }
+  }
 
-    override fun shouldHandleKeys(): Single<Boolean> =
-        Single.fromCallable { preferences.shouldHandleKeys() }
+  override fun unregister() {
+    val obj = listener
+    if (obj != null) {
+      preferences.unregister(obj)
+    }
+    listener = null
+  }
+
+  override fun shouldHandleKeys(): Single<Boolean> =
+    Single.fromCallable { preferences.shouldHandleKeys() }
 }

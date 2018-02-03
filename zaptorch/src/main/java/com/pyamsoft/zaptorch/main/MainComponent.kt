@@ -20,5 +20,5 @@ package com.pyamsoft.zaptorch.main
 
 interface MainComponent {
 
-    fun inject(activity: MainActivity)
+  fun inject(activity: MainActivity)
 }
