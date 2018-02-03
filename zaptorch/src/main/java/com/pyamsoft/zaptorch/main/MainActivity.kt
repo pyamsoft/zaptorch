@@ -30,7 +30,9 @@ import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.AnimUtil
 import com.pyamsoft.pydroid.util.AppUtil
 import com.pyamsoft.pydroid.util.NetworkUtil
+import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
 import timber.log.Timber

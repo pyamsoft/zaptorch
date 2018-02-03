@@ -37,6 +37,7 @@ import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingPublisher
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.uicode.WatchedFragment
+import com.pyamsoft.zaptorch.R
 
 class MainFragment : WatchedFragment() {
 
