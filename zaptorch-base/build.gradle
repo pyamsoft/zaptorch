@@ -23,37 +23,37 @@ apply plugin: "com.getkeepsafe.dexcount"
 
 //noinspection GroovyMissingReturnStatement
 android {
-    compileSdkVersion rootProject.ext.maxSdk
+  compileSdkVersion rootProject.ext.maxSdk
 
-    //noinspection GroovyMissingReturnStatement
-    defaultConfig {
-        minSdkVersion rootProject.ext.minSdk
-        targetSdkVersion rootProject.ext.maxSdk
+  //noinspection GroovyMissingReturnStatement
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSdk
+    targetSdkVersion rootProject.ext.maxSdk
 
-        resConfigs "en"
+    resConfigs "en"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-    }
+  }
 }
 
 dependencies {
-    // PYDroid
-    api("com.github.pyamsoft.pydroid:pydroid-base:$pydroid@aar") {
-        transitive = true
-    }
-    api("com.github.pyamsoft.pydroid:pydroid-loader:$pydroid@aar") {
-        transitive = true
-    }
+  // PYDroid
+  api("com.github.pyamsoft.pydroid:pydroid-base:$pydroid@aar") {
+    transitive = true
+  }
+  api("com.github.pyamsoft.pydroid:pydroid-loader:$pydroid@aar") {
+    transitive = true
+  }
 
-    api project(":zaptorch-api")
+  api project(":zaptorch-api")
 }
 

@@ -20,7 +20,8 @@ package com.pyamsoft.zaptorch.model
 
 data class ServiceEvent(val type: Type) {
 
-    enum class Type {
-        FINISH, TORCH
-    }
+  enum class Type {
+    FINISH,
+    TORCH
+  }
 }

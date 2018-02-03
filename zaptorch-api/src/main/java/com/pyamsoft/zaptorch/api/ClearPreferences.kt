@@ -20,5 +20,5 @@ package com.pyamsoft.zaptorch.api
 
 interface ClearPreferences {
 
-    fun clearAll()
+  fun clearAll()
 }

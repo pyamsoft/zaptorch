@@ -23,14 +23,14 @@ import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import io.reactivex.Single
 
 internal class SettingsPreferenceFragmentInteractorImpl internal constructor(
-    private val clearPreferences: ClearPreferences
+  private val clearPreferences: ClearPreferences
 ) :
     SettingsPreferenceFragmentInteractor {
 
-    override fun clearAll(): Single<Boolean> {
-        return Single.fromCallable {
-            clearPreferences.clearAll()
-            return@fromCallable true
-        }
+  override fun clearAll(): Single<Boolean> {
+    return Single.fromCallable {
+      clearPreferences.clearAll()
+      return@fromCallable true
     }
+  }
 }

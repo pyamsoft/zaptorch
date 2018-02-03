@@ -25,26 +25,26 @@ import io.reactivex.Scheduler
 
 class VolumeServiceModule(module: ZapTorchModule) {
 
-    private val interactor: VolumeServiceInteractor
-    private val bus = ServiceBus()
-    private val computationScheduler: Scheduler = module.provideComputationScheduler()
-    private val ioScheduler: Scheduler = module.provideIoScheduler()
-    private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
+  private val interactor: VolumeServiceInteractor
+  private val bus = ServiceBus()
+  private val computationScheduler: Scheduler = module.provideComputationScheduler()
+  private val ioScheduler: Scheduler = module.provideIoScheduler()
+  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
-    init {
-        interactor = VolumeServiceInteractorImpl(
-            module.provideContext(),
-            module.provideCameraPreferences(), module.provideTorchOffServiceClass()
-        )
-    }
+  init {
+    interactor = VolumeServiceInteractorImpl(
+        module.provideContext(),
+        module.provideCameraPreferences(), module.provideTorchOffServiceClass()
+    )
+  }
 
-    @CheckResult
-    fun getServicePresenter(): VolumeServicePresenter =
-        VolumeServicePresenter(
-            interactor, bus, computationScheduler, ioScheduler,
-            mainScheduler
-        )
+  @CheckResult
+  fun getServicePresenter(): VolumeServicePresenter =
+    VolumeServicePresenter(
+        interactor, bus, computationScheduler, ioScheduler,
+        mainScheduler
+    )
 
-    @CheckResult
-    fun getPresenter(): ServicePublisher = ServicePublisher(bus)
+  @CheckResult
+  fun getPresenter(): ServicePublisher = ServicePublisher(bus)
 }

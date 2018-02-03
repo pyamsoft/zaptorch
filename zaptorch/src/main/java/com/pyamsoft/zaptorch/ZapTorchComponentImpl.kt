@@ -32,34 +32,35 @@ import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule
 
 internal class ZapTorchComponentImpl internal constructor(
-    private val zapTorchModule: ZapTorchModule
+  private val zapTorchModule: ZapTorchModule
 ) : ZapTorchComponent {
 
-    private val mainModule: MainModule = MainModule(zapTorchModule)
-    private val volumeServiceModule: VolumeServiceModule = VolumeServiceModule(zapTorchModule)
-    private val settingsPreferenceFragmentModule: SettingsPreferenceFragmentModule = SettingsPreferenceFragmentModule(
+  private val mainModule: MainModule = MainModule(zapTorchModule)
+  private val volumeServiceModule: VolumeServiceModule = VolumeServiceModule(zapTorchModule)
+  private val settingsPreferenceFragmentModule: SettingsPreferenceFragmentModule =
+    SettingsPreferenceFragmentModule(
         zapTorchModule
     )
 
-    override fun inject(mainFragment: MainFragment) {
-        mainFragment.publisher = settingsPreferenceFragmentModule.getPresenter()
-        mainFragment.imageLoader = zapTorchModule.provideImageLoader()
-    }
+  override fun inject(mainFragment: MainFragment) {
+    mainFragment.publisher = settingsPreferenceFragmentModule.getPresenter()
+    mainFragment.imageLoader = zapTorchModule.provideImageLoader()
+  }
 
-    override fun inject(confirmationDialog: ConfirmationDialog) {
-        confirmationDialog.publisher = settingsPreferenceFragmentModule.getPresenter()
-    }
+  override fun inject(confirmationDialog: ConfirmationDialog) {
+    confirmationDialog.publisher = settingsPreferenceFragmentModule.getPresenter()
+  }
 
-    override fun inject(volumeMonitorService: VolumeMonitorService) {
-        volumeMonitorService.presenter = volumeServiceModule.getServicePresenter()
-    }
+  override fun inject(volumeMonitorService: VolumeMonitorService) {
+    volumeMonitorService.presenter = volumeServiceModule.getServicePresenter()
+  }
 
-    override fun inject(torchOffService: TorchOffService) {
-        torchOffService.servicePublisher = volumeServiceModule.getPresenter()
-    }
+  override fun inject(torchOffService: TorchOffService) {
+    torchOffService.servicePublisher = volumeServiceModule.getPresenter()
+  }
 
-    override fun plusSettingsComponent(): SettingsComponent =
-        SettingsComponentImpl(settingsPreferenceFragmentModule, volumeServiceModule)
+  override fun plusSettingsComponent(): SettingsComponent =
+    SettingsComponentImpl(settingsPreferenceFragmentModule, volumeServiceModule)
 
-    override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
+  override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
 }

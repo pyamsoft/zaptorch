@@ -22,37 +22,37 @@ import android.content.Intent
 
 interface CameraInterface {
 
-    fun startErrorExplanationActivity()
+  fun startErrorExplanationActivity()
 
-    fun startPermissionExplanationActivity()
+  fun startPermissionExplanationActivity()
 
-    fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
+  fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
 
-    fun notifyCallbackOnOpened()
+  fun notifyCallbackOnOpened()
 
-    fun notifyCallbackOnClosed()
+  fun notifyCallbackOnClosed()
 
-    // Called from VolumeServiceInteractorImpl
-    fun destroy()
+  // Called from VolumeServiceInteractorImpl
+  fun destroy()
 
-    fun release()
+  fun release()
 
-    fun toggleTorch()
+  fun toggleTorch()
 
-    interface OnStateChangedCallback {
+  interface OnStateChangedCallback {
 
-        fun onOpened()
+    fun onOpened()
 
-        fun onClosed()
+    fun onClosed()
 
-        fun onError(errorIntent: Intent)
-    }
+    fun onError(errorIntent: Intent)
+  }
 
-    companion object {
+  companion object {
 
-        const val TYPE_NONE = -1
-        const val TYPE_PERMISSION = 0
-        const val TYPE_ERROR = 1
-        const val DIALOG_WHICH = "dialog"
-    }
+    const val TYPE_NONE = -1
+    const val TYPE_PERMISSION = 0
+    const val TYPE_ERROR = 1
+    const val DIALOG_WHICH = "dialog"
+  }
 }

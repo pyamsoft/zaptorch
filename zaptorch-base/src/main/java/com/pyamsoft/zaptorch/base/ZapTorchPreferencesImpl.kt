@@ -28,54 +28,56 @@ import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
 
 internal class ZapTorchPreferencesImpl(
-    context: Context
+  context: Context
 ) : CameraPreferences,
     ClearPreferences, UIPreferences {
 
-    private val doublePressDelayKey: String
-    private val displayCameraErrorsKey: String
-    private val handleVolumeKeysKey: String
-    private val doublePressDelayDefault: String
-    private val preferences: SharedPreferences
-    private val displayCameraErrorsDefault: Boolean
-    private val handleVolumeKeysDefault: Boolean
+  private val doublePressDelayKey: String
+  private val displayCameraErrorsKey: String
+  private val handleVolumeKeysKey: String
+  private val doublePressDelayDefault: String
+  private val preferences: SharedPreferences
+  private val displayCameraErrorsDefault: Boolean
+  private val handleVolumeKeysDefault: Boolean
 
-    init {
-        val appContext = context.applicationContext
-        preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
-        val res = appContext.resources
-        doublePressDelayKey = appContext.getString(R.string.double_press_delay_key)
-        displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key)
-        handleVolumeKeysKey = appContext.getString(R.string.handle_volume_keys_key)
-        doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default)
-        displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default)
-        handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default)
-    }
+  init {
+    val appContext = context.applicationContext
+    preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val res = appContext.resources
+    doublePressDelayKey = appContext.getString(R.string.double_press_delay_key)
+    displayCameraErrorsKey = appContext.getString(R.string.display_camera_errors_key)
+    handleVolumeKeysKey = appContext.getString(R.string.handle_volume_keys_key)
+    doublePressDelayDefault = appContext.getString(R.string.double_press_delay_default)
+    displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default)
+    handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default)
+  }
 
-    override val buttonDelayTime: Long
-        @CheckResult get() = java.lang.Long.parseLong(
-            preferences.getString(doublePressDelayKey, doublePressDelayDefault)
-        )
+  override val buttonDelayTime: Long
+    @CheckResult get() = java.lang.Long.parseLong(
+        preferences.getString(doublePressDelayKey, doublePressDelayDefault)
+    )
 
-    @CheckResult
-    override fun shouldShowErrorDialog(): Boolean =
-        preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
+  @CheckResult
+  override fun shouldShowErrorDialog(): Boolean =
+    preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
 
-    @CheckResult
-    override fun shouldHandleKeys(): Boolean =
-        preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
+  @CheckResult
+  override fun shouldHandleKeys(): Boolean =
+    preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
 
-    @SuppressLint("ApplySharedPref")
-    override fun clearAll() {
-        // Commit because we must be sure transaction takes place before we continue
-        preferences.edit().clear().commit()
-    }
+  @SuppressLint("ApplySharedPref")
+  override fun clearAll() {
+    // Commit because we must be sure transaction takes place before we continue
+    preferences.edit()
+        .clear()
+        .commit()
+  }
 
-    override fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-    }
+  override fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+    preferences.registerOnSharedPreferenceChangeListener(listener)
+  }
 
-    override fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
-        preferences.unregisterOnSharedPreferenceChangeListener(listener)
-    }
+  override fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+    preferences.unregisterOnSharedPreferenceChangeListener(listener)
+  }
 }

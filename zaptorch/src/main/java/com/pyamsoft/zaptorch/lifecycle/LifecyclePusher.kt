@@ -27,23 +27,23 @@ import android.arch.lifecycle.Lifecycle.Event.ON_STOP
 import android.arch.lifecycle.LifecycleRegistry
 
 fun LifecycleRegistry.fakeBind() {
-    handleLifecycleEvent(ON_CREATE)
-    handleLifecycleEvent(ON_START)
-    handleLifecycleEvent(ON_RESUME)
+  handleLifecycleEvent(ON_CREATE)
+  handleLifecycleEvent(ON_START)
+  handleLifecycleEvent(ON_RESUME)
 }
 
 fun LifecycleRegistry.fakeRelease() {
-    handleLifecycleEvent(ON_PAUSE)
-    handleLifecycleEvent(ON_STOP)
-    handleLifecycleEvent(ON_DESTROY)
+  handleLifecycleEvent(ON_PAUSE)
+  handleLifecycleEvent(ON_STOP)
+  handleLifecycleEvent(ON_DESTROY)
 }
 
 fun LifecycleRegistry.fakeStartResume() {
-    handleLifecycleEvent(ON_START)
-    handleLifecycleEvent(ON_RESUME)
+  handleLifecycleEvent(ON_START)
+  handleLifecycleEvent(ON_RESUME)
 }
 
 fun LifecycleRegistry.fakePauseStop() {
-    handleLifecycleEvent(ON_PAUSE)
-    handleLifecycleEvent(ON_STOP)
+  handleLifecycleEvent(ON_PAUSE)
+  handleLifecycleEvent(ON_STOP)
 }

@@ -33,78 +33,82 @@ import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(
-    private val interactor: VolumeServiceInteractor,
-    private val bus: EventBus<ServiceEvent>,
-    computationScheduler: Scheduler, ioScheduler: Scheduler,
-    mainThreadScheduler: Scheduler
+  private val interactor: VolumeServiceInteractor,
+  private val bus: EventBus<ServiceEvent>,
+  computationScheduler: Scheduler,
+  ioScheduler: Scheduler,
+  mainThreadScheduler: Scheduler
 ) : SchedulerPresenter<View>(
     computationScheduler, ioScheduler, mainThreadScheduler
 ) {
 
-    private var keyDisposable: Disposable = Disposables.empty()
+  private var keyDisposable: Disposable = Disposables.empty()
 
-    override fun onCreate() {
-        super.onCreate()
-        registerOnBus()
+  override fun onCreate() {
+    super.onCreate()
+    registerOnBus()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    interactor.releaseCamera()
+    keyDisposable = keyDisposable.clear()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    setupCamera()
+  }
+
+  private fun setupCamera() {
+    interactor.setupCamera(computationScheduler, mainThreadScheduler) {
+      view?.onError(it)
     }
+  }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        interactor.releaseCamera()
-        keyDisposable = keyDisposable.clear()
+  private fun toggleTorch() {
+    Timber.d("Toggle torch")
+    interactor.toggleTorch()
+  }
+
+  fun handleKeyEvent(
+    action: Int,
+    keyCode: Int
+  ) {
+    keyDisposable = keyDisposable.clear()
+    keyDisposable = interactor.handleKeyPress(action, keyCode)
+        .subscribeOn(ioScheduler)
+        .observeOn(mainThreadScheduler)
+        .subscribe({ time -> Timber.d("Set back after %d delay", time) }
+            , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
+  }
+
+  private fun registerOnBus() {
+    dispose {
+      bus.listen()
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
+          .subscribe({ (type) ->
+            when (type) {
+              TORCH -> toggleTorch()
+              FINISH -> view?.onFinishService()
+              else -> throw IllegalArgumentException(
+                  "Invalid ServiceEvent.Type: " + type
+              )
+            }
+          }, { Timber.e(it, "onError event bus") })
     }
+  }
 
-    override fun onStart() {
-        super.onStart()
-        setupCamera()
-    }
+  interface View : ServiceCallback, ErrorHandlerCallback
 
-    private fun setupCamera() {
-        interactor.setupCamera(computationScheduler, mainThreadScheduler) {
-            view?.onError(it)
-        }
-    }
+  interface ErrorHandlerCallback {
 
-    private fun toggleTorch() {
-        Timber.d("Toggle torch")
-        interactor.toggleTorch()
-    }
+    fun onError(intent: Intent)
+  }
 
-    fun handleKeyEvent(action: Int, keyCode: Int) {
-        keyDisposable = keyDisposable.clear()
-        keyDisposable = interactor.handleKeyPress(action, keyCode)
-            .subscribeOn(ioScheduler)
-            .observeOn(mainThreadScheduler)
-            .subscribe({ time -> Timber.d("Set back after %d delay", time) }
-                , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
-    }
+  interface ServiceCallback {
 
-    private fun registerOnBus() {
-        dispose {
-            bus.listen()
-                .subscribeOn(ioScheduler)
-                .observeOn(mainThreadScheduler)
-                .subscribe({ (type) ->
-                    when (type) {
-                        TORCH -> toggleTorch()
-                        FINISH -> view?.onFinishService()
-                        else -> throw IllegalArgumentException(
-                            "Invalid ServiceEvent.Type: " + type
-                        )
-                    }
-                }, { Timber.e(it, "onError event bus") })
-        }
-    }
-
-    interface View : ServiceCallback, ErrorHandlerCallback
-
-    interface ErrorHandlerCallback {
-
-        fun onError(intent: Intent)
-    }
-
-    interface ServiceCallback {
-
-        fun onFinishService()
-    }
+    fun onFinishService()
+  }
 }

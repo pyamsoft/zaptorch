@@ -26,30 +26,30 @@ import io.reactivex.Scheduler
 
 interface ZapTorchModule {
 
-    @CheckResult
-    fun provideContext(): Context
+  @CheckResult
+  fun provideContext(): Context
 
-    @CheckResult
-    fun provideCameraPreferences(): CameraPreferences
+  @CheckResult
+  fun provideCameraPreferences(): CameraPreferences
 
-    @CheckResult
-    fun provideClearPreferences(): ClearPreferences
+  @CheckResult
+  fun provideClearPreferences(): ClearPreferences
 
-    @CheckResult
-    fun provideUiPreferences(): UIPreferences
+  @CheckResult
+  fun provideUiPreferences(): UIPreferences
 
-    @CheckResult
-    fun provideTorchOffServiceClass(): Class<out IntentService>
+  @CheckResult
+  fun provideTorchOffServiceClass(): Class<out IntentService>
 
-    @CheckResult
-    fun provideMainThreadScheduler(): Scheduler
+  @CheckResult
+  fun provideMainThreadScheduler(): Scheduler
 
-    @CheckResult
-    fun provideIoScheduler(): Scheduler
+  @CheckResult
+  fun provideIoScheduler(): Scheduler
 
-    @CheckResult
-    fun provideComputationScheduler(): Scheduler
+  @CheckResult
+  fun provideComputationScheduler(): Scheduler
 
-    @CheckResult
-    fun provideImageLoader(): ImageLoader
+  @CheckResult
+  fun provideImageLoader(): ImageLoader
 }

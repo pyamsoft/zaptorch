@@ -19,82 +19,82 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        kotlin_version = '1.2.21'
-        plugin_version = '3.0.1'
-    }
-    repositories {
-        jcenter()
-        google()
+  ext {
+    kotlin_version = '1.2.21'
+    plugin_version = '3.0.1'
+  }
+  repositories {
+    jcenter()
+    google()
 
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-
-        maven {
-            url "https://maven.google.com"
-        }
-
-        maven {
-            url 'https://jitpack.io'
-        }
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
 
-    ext {
-
-        minSdk = 21
-        maxSdk = 27
-
-        supportLib = "27.0.2"
-        firebase = "11.8.0"
-        leakCanary = "1.5.4"
-        pydroid = "15.4.2"
-        ktlint = "3.0.0"
+    maven {
+      url "https://maven.google.com"
     }
 
-    dependencies {
-        classpath "com.android.tools.build:gradle:$plugin_version"
-
-        // Dex count
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
-
-        // Gradle version checker
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-
-        // Google services
-        classpath 'com.google.gms:google-services:3.1.2'
-
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        classpath "gradle.plugin.org.jlleitschuh.gradle:ktlint-gradle:$ktlint"
+    maven {
+      url 'https://jitpack.io'
     }
+  }
+
+  ext {
+
+    minSdk = 21
+    maxSdk = 27
+
+    supportLib = "27.0.2"
+    firebase = "11.8.0"
+    leakCanary = "1.5.4"
+    pydroid = "15.4.2"
+    ktlint = "3.0.0"
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:$plugin_version"
+
+    // Dex count
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
+
+    // Gradle version checker
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+
+    // Google services
+    classpath 'com.google.gms:google-services:3.1.2'
+
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+    classpath "gradle.plugin.org.jlleitschuh.gradle:ktlint-gradle:$ktlint"
+  }
 }
 
 subprojects {
-    apply plugin: "org.jlleitschuh.gradle.ktlint"
-    apply plugin: "com.github.ben-manes.versions"
+  apply plugin: "org.jlleitschuh.gradle.ktlint"
+  apply plugin: "com.github.ben-manes.versions"
 
-    ktlint {
-        version = "0.15.0"
-        android = true
-    }
+  ktlint {
+    version = "0.15.0"
+    android = true
+  }
 }
 
 allprojects {
-    repositories {
-        jcenter()
-        google()
+  repositories {
+    jcenter()
+    google()
 
-        maven {
-            url "https://maven.google.com"
-        }
-
-        maven {
-            url 'https://jitpack.io'
-        }
+    maven {
+      url "https://maven.google.com"
     }
+
+    maven {
+      url 'https://jitpack.io'
+    }
+  }
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }

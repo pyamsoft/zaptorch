@@ -25,46 +25,47 @@ import io.reactivex.Scheduler
 import timber.log.Timber
 
 class MainPresenter internal constructor(
-    private val handleKeyPressKey: String,
-    private val interactor: MainInteractor,
-    computationScheduler: Scheduler, ioScheduler: Scheduler,
-    mainScheduler: Scheduler
+  private val handleKeyPressKey: String,
+  private val interactor: MainInteractor,
+  computationScheduler: Scheduler,
+  ioScheduler: Scheduler,
+  mainScheduler: Scheduler
 ) : SchedulerPresenter<View>(
     computationScheduler, ioScheduler,
     mainScheduler
 ) {
 
-    override fun onCreate() {
-        super.onCreate()
-        shouldHandleKeycode()
-        interactor.register(handleKeyPressKey, { view?.onHandleKeyPress(it) })
+  override fun onCreate() {
+    super.onCreate()
+    shouldHandleKeycode()
+    interactor.register(handleKeyPressKey, { view?.onHandleKeyPress(it) })
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    interactor.unregister()
+  }
+
+  private fun shouldHandleKeycode() {
+    dispose {
+      interactor.shouldHandleKeys()
+          .subscribeOn(ioScheduler)
+          .observeOn(mainThreadScheduler)
+          .subscribe({
+            view?.onHandleKeyPress(it)
+          }, {
+            Timber.e(it, "Error while handling keycode")
+            view?.onError(it)
+          })
     }
+  }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        interactor.unregister()
-    }
+  interface View : OnHandleKeyPressChangedCallback
 
-    private fun shouldHandleKeycode() {
-        dispose {
-            interactor.shouldHandleKeys()
-                .subscribeOn(ioScheduler)
-                .observeOn(mainThreadScheduler)
-                .subscribe({
-                    view?.onHandleKeyPress(it)
-                }, {
-                    Timber.e(it, "Error while handling keycode")
-                    view?.onError(it)
-                })
-        }
-    }
+  interface OnHandleKeyPressChangedCallback {
 
-    interface View : OnHandleKeyPressChangedCallback
+    fun onHandleKeyPress(handle: Boolean)
 
-    interface OnHandleKeyPressChangedCallback {
-
-        fun onHandleKeyPress(handle: Boolean)
-
-        fun onError(throwable: Throwable)
-    }
+    fun onError(throwable: Throwable)
+  }
 }
