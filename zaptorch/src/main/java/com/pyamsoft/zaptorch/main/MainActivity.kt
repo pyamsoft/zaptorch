@@ -25,11 +25,11 @@ import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
-import com.pyamsoft.pydroid.ui.helper.Toasty
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.AnimUtil
 import com.pyamsoft.pydroid.util.AppUtil
 import com.pyamsoft.pydroid.util.NetworkUtil
+import com.pyamsoft.pydroid.util.Toasty
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
