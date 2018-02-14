@@ -41,9 +41,13 @@ android {
       minifyEnabled false
     }
   }
+
+  // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
+  libraryVariants.all {
+    it.generateBuildConfig.enabled = false
+  }
 }
 
 dependencies {
   api project(":zaptorch-api")
 }
-

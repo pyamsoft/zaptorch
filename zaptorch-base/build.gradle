@@ -41,16 +41,16 @@ android {
       minifyEnabled false
     }
   }
+
+  // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
+  libraryVariants.all {
+    it.generateBuildConfig.enabled = false
+  }
 }
 
 dependencies {
-  // PYDroid
-  api("com.github.pyamsoft.pydroid:pydroid-base:$pydroid@aar") {
-    transitive = true
-  }
-  api("com.github.pyamsoft.pydroid:pydroid-loader:$pydroid@aar") {
-    transitive = true
-  }
+  // Android Support
+  implementation "com.android.support:preference-v7:$supportLib"
 
   api project(":zaptorch-api")
 }
