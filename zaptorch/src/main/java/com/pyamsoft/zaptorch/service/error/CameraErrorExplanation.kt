@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.service.error
 
 import android.support.v4.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
-import com.pyamsoft.pydroid.ui.util.DialogUtil
+import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_ERROR
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
@@ -34,8 +34,6 @@ class CameraErrorExplanation : ActivityBase() {
       TYPE_ERROR -> CameraErrorDialog()
       else -> null
     }
-    if (fragment != null) {
-      DialogUtil.guaranteeSingleDialogFragment(this, fragment, "error")
-    }
+    fragment?.show(this, "camera_error")
   }
 }

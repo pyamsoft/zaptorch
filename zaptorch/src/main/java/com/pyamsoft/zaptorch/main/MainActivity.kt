@@ -22,12 +22,12 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
-import com.pyamsoft.pydroid.ui.helper.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
-import com.pyamsoft.pydroid.ui.util.AnimUtil
-import com.pyamsoft.pydroid.util.AppUtil
-import com.pyamsoft.pydroid.util.NetworkUtil
+import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
+import com.pyamsoft.pydroid.ui.util.animateMenu
 import com.pyamsoft.pydroid.util.Toasty
+import com.pyamsoft.pydroid.util.hyperlink
+import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
@@ -97,7 +97,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
 
   override fun onResume() {
     super.onResume()
-    AnimUtil.animateActionBarToolbar(binding.toolbar)
+    binding.toolbar.animateMenu()
   }
 
   override fun onKeyUp(
@@ -125,7 +125,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
     if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
-        && fragmentManager.findFragmentByTag(AboutLibrariesFragment.TAG) == null
+        && !AboutLibrariesFragment.isPresent(this)
     ) {
       fragmentManager.beginTransaction()
           .add(
@@ -140,7 +140,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     binding.toolbar.apply {
       setToolbar(this)
       setTitle(R.string.app_name)
-      ViewCompat.setElevation(this, AppUtil.convertToDP(context, 4f))
+      ViewCompat.setElevation(this, 4f.toDp(context).toFloat())
 
       setNavigationOnClickListener(DebouncedOnClickListener.create {
         onBackPressed()
@@ -149,7 +149,8 @@ class MainActivity : TamperActivity(), MainPresenter.View {
       inflateMenu(R.menu.menu)
       setOnMenuItemClickListener {
         if (it.itemId == R.id.menu_id_privacy_policy) {
-          NetworkUtil.newLink(applicationContext, PRIVACY_POLICY_URL)
+          PRIVACY_POLICY_URL.hyperlink(context)
+              .navigate()
           return@setOnMenuItemClickListener true
         } else {
           return@setOnMenuItemClickListener false

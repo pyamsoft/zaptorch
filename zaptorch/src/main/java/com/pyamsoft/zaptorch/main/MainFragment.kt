@@ -21,12 +21,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
-import com.pyamsoft.pydroid.design.util.FABUtil
+import com.pyamsoft.pydroid.design.util.withBehavior
 import com.pyamsoft.pydroid.loader.ImageLoader
-import com.pyamsoft.pydroid.ui.helper.setOnDebouncedClickListener
-import com.pyamsoft.pydroid.ui.util.DialogUtil
+import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
+import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
@@ -35,7 +36,6 @@ import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingPublisher
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.uicode.WatchedFragment
-import com.pyamsoft.zaptorch.R
 
 class MainFragment : WatchedFragment() {
 
@@ -68,20 +68,14 @@ class MainFragment : WatchedFragment() {
   }
 
   private fun setupFAB() {
-    FABUtil.setupFABBehavior(binding.mainSettingsFab, HideScrollFABBehavior(10))
-    binding.mainSettingsFab.setOnDebouncedClickListener {
-      if (VolumeMonitorService.isRunning) {
-        DialogUtil.guaranteeSingleDialogFragment(
-            activity,
-            ServiceInfoDialog(),
-            "servce_info"
-        )
-      } else {
-        DialogUtil.guaranteeSingleDialogFragment(
-            activity,
-            AccessibilityRequestDialog(),
-            "accessibility"
-        )
+    binding.apply {
+      binding.mainSettingsFab.withBehavior(HideScrollFABBehavior(10))
+      mainSettingsFab.setOnDebouncedClickListener {
+        if (VolumeMonitorService.isRunning) {
+          ServiceInfoDialog().show(activity, "service_info")
+        } else {
+          AccessibilityRequestDialog().show(activity, "accessibility")
+        }
       }
     }
   }
