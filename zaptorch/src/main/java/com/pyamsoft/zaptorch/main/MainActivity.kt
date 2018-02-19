@@ -87,7 +87,6 @@ class MainActivity : TamperActivity(), MainPresenter.View {
         this, "Failed to handle volume keypress, please try again",
         Toasty.LENGTH_SHORT
     )
-        .show()
   }
 
   override fun onDestroy() {

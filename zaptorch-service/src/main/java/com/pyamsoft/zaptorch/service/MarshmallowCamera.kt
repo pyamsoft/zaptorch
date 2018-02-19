@@ -35,9 +35,8 @@ internal class MarshmallowCamera internal constructor(
 ) :
     CameraCommon(context, interactor, computationScheduler, mainThreadScheduler) {
 
-  private val cameraManager: CameraManager = context.applicationContext.getSystemService(
-      Context.CAMERA_SERVICE
-  ) as CameraManager
+  private val cameraManager: CameraManager =
+    context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
   private val torchCallback = TorchCallback(this)
 
   init {
