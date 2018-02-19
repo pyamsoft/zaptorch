@@ -22,6 +22,8 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
 import android.view.KeyEvent
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
+import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
+import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.animateMenu
@@ -41,9 +43,9 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
-  override val changeLogLines: Array<String> = arrayOf(
-      "BUGFIX: Smoother animations"
-  )
+  override val changeLogLines: ChangeLogBuilder = buildChangeLog {
+    bugfix("Smoother animations")
+  }
 
   override val versionName: String = BuildConfig.VERSION_NAME
 
