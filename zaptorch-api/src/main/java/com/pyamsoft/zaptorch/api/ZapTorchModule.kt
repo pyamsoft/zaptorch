@@ -17,15 +17,11 @@
 package com.pyamsoft.zaptorch.api
 
 import android.app.IntentService
-import android.content.Context
 import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.loader.ImageLoader
-import io.reactivex.Scheduler
+import com.pyamsoft.pydroid.ApplicationModule
+import com.pyamsoft.pydroid.loader.LoaderModule
 
-interface ZapTorchModule {
-
-  @CheckResult
-  fun provideContext(): Context
+interface ZapTorchModule : ApplicationModule, LoaderModule {
 
   @CheckResult
   fun provideCameraPreferences(): CameraPreferences
@@ -38,16 +34,4 @@ interface ZapTorchModule {
 
   @CheckResult
   fun provideTorchOffServiceClass(): Class<out IntentService>
-
-  @CheckResult
-  fun provideMainThreadScheduler(): Scheduler
-
-  @CheckResult
-  fun provideIoScheduler(): Scheduler
-
-  @CheckResult
-  fun provideComputationScheduler(): Scheduler
-
-  @CheckResult
-  fun provideImageLoader(): ImageLoader
 }

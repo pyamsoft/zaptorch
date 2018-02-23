@@ -16,10 +16,11 @@
 
 package com.pyamsoft.zaptorch.base
 
+import android.app.Application
 import android.app.IntentService
 import android.content.Context
-import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.PYDroidModule
+import com.pyamsoft.pydroid.data.Cache
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.zaptorch.api.CameraPreferences
@@ -38,31 +39,26 @@ class ZapTorchModuleImpl(
       pyDroidModule.provideContext()
   )
 
-  @CheckResult
+  override fun provideApplication(): Application = pyDroidModule.provideApplication()
+
   override fun provideContext(): Context = pyDroidModule.provideContext()
 
-  @CheckResult
-  override fun provideCameraPreferences(): CameraPreferences = preferences
-
-  @CheckResult
-  override fun provideClearPreferences(): ClearPreferences = preferences
-
-  @CheckResult
-  override fun provideUiPreferences(): UIPreferences = preferences
-
-  @CheckResult
-  override fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
-
-  @CheckResult
   override fun provideMainThreadScheduler(): Scheduler = pyDroidModule.provideMainThreadScheduler()
 
-  @CheckResult
   override fun provideIoScheduler(): Scheduler = pyDroidModule.provideIoScheduler()
 
-  @CheckResult
   override fun provideComputationScheduler(): Scheduler =
     pyDroidModule.provideComputationScheduler()
 
-  @CheckResult
   override fun provideImageLoader(): ImageLoader = loaderModule.provideImageLoader()
+
+  override fun provideImageLoaderCache(): Cache = loaderModule.provideImageLoaderCache()
+
+  override fun provideCameraPreferences(): CameraPreferences = preferences
+
+  override fun provideClearPreferences(): ClearPreferences = preferences
+
+  override fun provideUiPreferences(): UIPreferences = preferences
+
+  override fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
 }

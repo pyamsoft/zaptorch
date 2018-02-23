@@ -20,7 +20,7 @@ import android.app.Application
 import android.app.Service
 import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.PYDroidModule
-import com.pyamsoft.pydroid.PYDroidModuleImpl
+import com.pyamsoft.pydroid.base.PYDroidModuleImpl
 import com.pyamsoft.pydroid.base.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.loader.LoaderModuleImpl
@@ -36,10 +36,14 @@ import com.squareup.leakcanary.RefWatcher
 
 class ZapTorch : Application() {
 
+  private val component: ZapTorchComponent by lazy(LazyThreadSafetyMode.NONE) { buildComponent() }
+  private val pydroidModule: PYDroidModule by lazy(LazyThreadSafetyMode.NONE) {
+    PYDroidModuleImpl(this, BuildConfig.DEBUG)
+  }
+  private val loaderModule: LoaderModule by lazy(LazyThreadSafetyMode.NONE) {
+    LoaderModuleImpl(pydroidModule)
+  }
   private lateinit var refWatcher: RefWatcher
-  private var component: ZapTorchComponent? = null
-  private lateinit var pydroidModule: PYDroidModule
-  private lateinit var loaderModule: LoaderModule
 
   override fun onCreate() {
     super.onCreate()
@@ -47,18 +51,15 @@ class ZapTorch : Application() {
       return
     }
 
-    pydroidModule = PYDroidModuleImpl(this, BuildConfig.DEBUG)
-    loaderModule = LoaderModuleImpl(pydroidModule)
+    if (BuildConfig.DEBUG) {
+      refWatcher = LeakCanary.install(this)
+    } else {
+      refWatcher = RefWatcher.DISABLED
+    }
+
     PYDroid.init(pydroidModule, loaderModule)
     Licenses.create("Firebase", "https://firebase.google.com", "licenses/firebase")
 
-    refWatcher = if (BuildConfig.DEBUG) {
-      // Assign
-      LeakCanary.install(this)
-    } else {
-      // Assign
-      RefWatcher.DISABLED
-    }
   }
 
   private fun buildComponent(): ZapTorchComponent =
@@ -67,21 +68,10 @@ class ZapTorch : Application() {
     )
 
   override fun getSystemService(name: String?): Any {
-    return if (Injector.name == name) {
-      val zaptorch: ZapTorchComponent
-      val obj = component
-      if (obj == null) {
-        zaptorch = buildComponent()
-        component = zaptorch
-      } else {
-        zaptorch = obj
-      }
-
-      // Return
-      zaptorch
+    if (Injector.name == name) {
+      return component
     } else {
-      // Return
-      super.getSystemService(name)
+      return super.getSystemService(name)
     }
   }
 
