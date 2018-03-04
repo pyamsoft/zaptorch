@@ -20,7 +20,6 @@ import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentPresenter.View
 import io.reactivex.Scheduler
 import timber.log.Timber
 
@@ -30,7 +29,7 @@ class SettingsPreferenceFragmentPresenter internal constructor(
   computationScheduler: Scheduler,
   ioScheduler: Scheduler,
   mainThreadScheduler: Scheduler
-) : SchedulerPresenter<View>(
+) : SchedulerPresenter<SettingsPreferenceFragmentPresenter.View>(
     computationScheduler, ioScheduler, mainThreadScheduler
 ) {
 

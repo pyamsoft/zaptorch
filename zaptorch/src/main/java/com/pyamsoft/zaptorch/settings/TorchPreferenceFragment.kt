@@ -46,7 +46,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context!!.applicationContext)
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .plusSettingsComponent()
         .inject(this)
   }
@@ -66,18 +66,16 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
   }
 
   override fun onClearAll() {
-    context?.let {
-      Timber.d("received completed clearAll event. Kill Process")
-      try {
-        servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
-      } catch (e: IllegalStateException) {
-        Timber.e(e, "Expected exception when Service is NULL")
-      }
-
-      val activityManager = it.applicationContext
-          .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-      activityManager.clearApplicationUserData()
+    Timber.d("received completed clearAll event. Kill Process")
+    try {
+      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
+    } catch (e: IllegalStateException) {
+      Timber.e(e, "Expected exception when Service is NULL")
     }
+
+    val activityManager =
+      requireContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    activityManager.clearApplicationUserData()
   }
 
   override fun onClearAllClicked() {

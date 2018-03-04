@@ -65,9 +65,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(
-            getString(R.string.handle_volume_keys_key)
-        )
+        .plusMainComponent(getString(R.string.handle_volume_keys_key))
         .inject(this)
     setupToolbar()
 
@@ -105,10 +103,10 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     keyCode: Int,
     event: KeyEvent
   ): Boolean {
-    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      handleKeyPress
+    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+      return handleKeyPress
     } else {
-      super.onKeyUp(keyCode, event)
+      return super.onKeyUp(keyCode, event)
     }
   }
 
@@ -116,10 +114,10 @@ class MainActivity : TamperActivity(), MainPresenter.View {
     keyCode: Int,
     event: KeyEvent
   ): Boolean {
-    return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      handleKeyPress
+    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+      return handleKeyPress
     } else {
-      super.onKeyDown(keyCode, event)
+      return super.onKeyDown(keyCode, event)
     }
   }
 
@@ -129,10 +127,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
         && !AboutLibrariesFragment.isPresent(this)
     ) {
       fragmentManager.beginTransaction()
-          .add(
-              R.id.main_viewport, MainFragment(),
-              MainFragment.TAG
-          )
+          .add(R.id.main_viewport, MainFragment(), MainFragment.TAG)
           .commit()
     }
   }

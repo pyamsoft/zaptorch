@@ -19,18 +19,15 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.app.Service
 import android.support.annotation.CheckResult
+import android.support.v4.app.Fragment
 import com.pyamsoft.pydroid.PYDroidModule
 import com.pyamsoft.pydroid.base.PYDroidModuleImpl
 import com.pyamsoft.pydroid.base.about.Licenses
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.pydroid.loader.LoaderModuleImpl
 import com.pyamsoft.pydroid.ui.PYDroid
-import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.uicode.WatchedDialog
-import com.pyamsoft.zaptorch.uicode.WatchedFragment
-import com.pyamsoft.zaptorch.uicode.WatchedPreferenceFragment
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 
@@ -76,28 +73,11 @@ class ZapTorch : Application() {
   }
 
   companion object {
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(fragment: WatchedDialog): RefWatcher =
-      getRefWatcherInternal(fragment.activity!!.application)
 
     @JvmStatic
     @CheckResult
-    fun getRefWatcher(fragment: WatchedPreferenceFragment): RefWatcher =
-      getRefWatcherInternal(fragment.activity!!.application)
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(fragment: WatchedFragment): RefWatcher =
-      getRefWatcherInternal(fragment.activity!!.application)
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(
-      fragment: SettingsPreferenceFragment
-    ): RefWatcher = getRefWatcherInternal(
-        fragment.activity!!.application
-    )
+    fun getRefWatcher(fragment: Fragment): RefWatcher =
+      getRefWatcherInternal(fragment.requireActivity().application)
 
     @JvmStatic
     @CheckResult

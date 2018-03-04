@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.CheckResult
 import com.pyamsoft.pydroid.data.clear
 import com.pyamsoft.pydroid.data.enforceComputation
 import com.pyamsoft.pydroid.data.enforceMainThread
@@ -31,15 +30,13 @@ import io.reactivex.disposables.Disposables
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
-  context: Context,
+  protected val context: Context,
   private val interactor: VolumeServiceInteractor,
   private val computationScheduler: Scheduler,
   private val mainScheduler: Scheduler
 ) :
     CameraInterface {
 
-  @get:CheckResult
-  val appContext: Context = context.applicationContext
   private val errorExplain = Intent()
   private val permissionExplain = Intent()
   private var callback: OnStateChangedCallback? = null

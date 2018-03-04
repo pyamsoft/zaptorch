@@ -45,7 +45,7 @@ class MainFragment : WatchedFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(context!!.applicationContext)
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .inject(this)
   }
 
@@ -107,10 +107,7 @@ class MainFragment : WatchedFragment() {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .add(
-              R.id.main_container, SettingsFragment(),
-              SettingsFragment.TAG
-          )
+          .add(R.id.main_container, SettingsFragment(), SettingsFragment.TAG)
           .commit()
     }
   }

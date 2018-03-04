@@ -49,7 +49,7 @@ internal class LollipopCamera internal constructor(
 ) :
     CameraCommon(context, interactor, computationScheduler, mainScheduler) {
 
-  private val cameraManager: CameraManager = appContext.getSystemService(
+  private val cameraManager: CameraManager = context.getSystemService(
       Context.CAMERA_SERVICE
   ) as CameraManager
   private val flashCameraId = setupCamera()
@@ -83,7 +83,7 @@ internal class LollipopCamera internal constructor(
       startErrorExplanationActivity()
     } else {
       Timber.d("Open setupCamera")
-      val result = cameraCallback.accessCamera(appContext, flashCameraId)
+      val result = cameraCallback.accessCamera(context, flashCameraId)
       when (result) {
         CameraInterface.TYPE_ERROR -> startErrorExplanationActivity()
         CameraInterface.TYPE_PERMISSION -> startPermissionExplanationActivity()

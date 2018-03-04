@@ -24,7 +24,7 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 class ServiceInfoDialog : WatchedDialog() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity!!)
+    return AlertDialog.Builder(requireActivity())
         .setMessage("ZapTorch service is On")
         .setPositiveButton("Okay") { _, _ -> dismiss() }
         .create()

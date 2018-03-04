@@ -24,7 +24,6 @@ import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
-import com.pyamsoft.zaptorch.service.VolumeServicePresenter.View
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -36,7 +35,7 @@ class VolumeServicePresenter internal constructor(
   computationScheduler: Scheduler,
   ioScheduler: Scheduler,
   mainThreadScheduler: Scheduler
-) : SchedulerPresenter<View>(
+) : SchedulerPresenter<VolumeServicePresenter.View>(
     computationScheduler, ioScheduler, mainThreadScheduler
 ) {
 
@@ -90,9 +89,7 @@ class VolumeServicePresenter internal constructor(
             when (type) {
               TORCH -> toggleTorch()
               FINISH -> view?.onFinishService()
-              else -> throw IllegalArgumentException(
-                  "Invalid ServiceEvent.Type: " + type
-              )
+              else -> throw IllegalArgumentException("Invalid ServiceEvent.Type: $type")
             }
           }, { Timber.e(it, "onError event bus") })
     }

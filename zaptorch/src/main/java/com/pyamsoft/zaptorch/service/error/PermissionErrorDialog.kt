@@ -26,21 +26,18 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 class PermissionErrorDialog : WatchedDialog() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    activity!!.let {
-      return AlertDialog.Builder(it)
-          .setMessage(
-              "ZapTorch was unable to access your devices setupCamera." + " Please grant ZapTorch the 'Camera' permission"
+    return AlertDialog.Builder(requireActivity())
+        .setMessage(
+            "ZapTorch was unable to access your devices setupCamera." + " Please grant ZapTorch the 'Camera' permission"
+        )
+        .setPositiveButton("Okay") { _, _ ->
+          ActivityCompat.requestPermissions(
+              requireActivity(), arrayOf(Manifest.permission.CAMERA), 5000
           )
-          .setPositiveButton("Okay") { _, _ ->
-            ActivityCompat.requestPermissions(
-                it, arrayOf(Manifest.permission.CAMERA),
-                5000
-            )
-            dismiss()
-          }
-          .setNegativeButton("No") { _, _ -> dismiss() }
-          .create()
-    }
+          dismiss()
+        }
+        .setNegativeButton("No") { _, _ -> dismiss() }
+        .create()
   }
 
   override fun onDestroyView() {

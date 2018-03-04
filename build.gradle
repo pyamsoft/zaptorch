@@ -18,7 +18,7 @@
 
 buildscript {
   ext {
-    kotlin_version = '1.2.21'
+    kotlin_version = '1.2.30'
     plugin_version = '3.0.1'
   }
   repositories {
@@ -43,10 +43,10 @@ buildscript {
     minSdk = 21
     maxSdk = 27
 
-    supportLib = "27.0.2"
+    supportLib = "27.1.0"
     firebase = "11.8.0"
     leakCanary = "1.5.4"
-    pydroid = "16.3.6"
+    pydroid = "16.3.13"
     ktlint = "3.0.0"
   }
 
@@ -73,7 +73,7 @@ subprojects {
   apply plugin: "com.github.ben-manes.versions"
 
   ktlint {
-    version = "0.16.1"
+    version = "0.17.0"
     android = true
   }
 }

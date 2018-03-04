@@ -24,10 +24,8 @@ import com.pyamsoft.zaptorch.uicode.WatchedDialog
 class HowToDialog : WatchedDialog() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(activity!!)
-        .setMessage(
-            "Just double press the volume down key to turn the flashlight on and off"
-        )
+    return AlertDialog.Builder(requireActivity())
+        .setMessage("Just double press the volume down key to turn the flashlight on and off")
         .setTitle("How to Use")
         .setNeutralButton("Got It") { _, _ -> dismiss() }
         .create()

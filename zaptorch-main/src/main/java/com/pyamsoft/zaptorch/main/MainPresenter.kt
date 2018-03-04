@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.presenter.SchedulerPresenter
 import com.pyamsoft.zaptorch.api.MainInteractor
-import com.pyamsoft.zaptorch.main.MainPresenter.View
 import io.reactivex.Scheduler
 import timber.log.Timber
 
@@ -28,7 +27,7 @@ class MainPresenter internal constructor(
   computationScheduler: Scheduler,
   ioScheduler: Scheduler,
   mainScheduler: Scheduler
-) : SchedulerPresenter<View>(
+) : SchedulerPresenter<MainPresenter.View>(
     computationScheduler, ioScheduler,
     mainScheduler
 ) {

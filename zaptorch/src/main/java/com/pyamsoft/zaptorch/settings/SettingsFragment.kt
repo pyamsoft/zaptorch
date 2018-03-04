@@ -18,12 +18,19 @@ package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.ui.app.fragment.AppSettingsFragment
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
+import com.pyamsoft.zaptorch.ZapTorch
 
 class SettingsFragment : AppSettingsFragment() {
 
   override fun provideSettingsFragment(): SettingsPreferenceFragment = TorchPreferenceFragment()
 
   override fun provideSettingsTag(): String = TorchPreferenceFragment.TAG
+
+  override fun onDestroy() {
+    super.onDestroy()
+    ZapTorch.getRefWatcher(this)
+        .watch(this)
+  }
 
   companion object {
     const val TAG = "SettingsFragment"

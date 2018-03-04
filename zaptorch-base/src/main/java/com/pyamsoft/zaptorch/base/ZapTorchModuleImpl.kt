@@ -20,7 +20,7 @@ import android.app.Application
 import android.app.IntentService
 import android.content.Context
 import com.pyamsoft.pydroid.PYDroidModule
-import com.pyamsoft.pydroid.data.Cache
+import com.pyamsoft.pydroid.cache.Cache
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderModule
 import com.pyamsoft.zaptorch.api.CameraPreferences
