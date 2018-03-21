@@ -58,7 +58,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
     super.onViewCreated(view, savedInstanceState)
     val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
     zapTorchExplain.setOnPreferenceClickListener {
-      HowToDialog().show(activity, "howto")
+      HowToDialog().show(requireActivity(), "howto")
       return@setOnPreferenceClickListener true
     }
 
@@ -79,7 +79,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
   }
 
   override fun onClearAllClicked() {
-    ConfirmationDialog().show(activity, "confirm_dialog")
+    ConfirmationDialog().show(requireActivity(), "confirm_dialog")
   }
 
   override fun onDestroy() {
