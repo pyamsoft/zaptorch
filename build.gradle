@@ -46,7 +46,7 @@ buildscript {
     supportLib = "27.1.0"
     firebase = "11.8.0"
     leakCanary = "1.5.4"
-    pydroid = "16.4.7"
+    pydroid = "16.4.8"
     ktlint = "3.0.0"
   }
 
