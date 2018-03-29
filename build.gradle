@@ -44,10 +44,10 @@ buildscript {
     maxSdk = 27
 
     supportLib = "27.1.0"
-    firebase = "11.8.0"
+    firebase = "12.0.1"
     leakCanary = "1.5.4"
-    pydroid = "16.4.8"
-    ktlint = "3.0.0"
+    pydroid = "16.5.3"
+    ktlint = "3.2.0"
   }
 
   dependencies {
@@ -73,7 +73,7 @@ subprojects {
   apply plugin: "com.github.ben-manes.versions"
 
   ktlint {
-    version = "0.22.0"
+    version = "0.20.0"
     android = true
   }
 }
