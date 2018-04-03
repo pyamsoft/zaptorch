@@ -72,6 +72,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
           setWhen(0)
           setOngoing(false)
           color = ContextCompat.getColor(context, R.color.purple500)
+          priority = NotificationCompat.PRIORITY_DEFAULT
         }
         .build()
 
@@ -98,7 +99,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
   ) {
     val name = "Torch Service"
     val desc = "Notification related to the ZapTorch service"
-    val importance = NotificationManager.IMPORTANCE_MIN
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
     val notificationChannel = NotificationChannel(notificationChannelId, name, importance).apply {
       lockscreenVisibility = Notification.VISIBILITY_PUBLIC
       description = desc
