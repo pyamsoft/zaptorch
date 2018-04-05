@@ -44,9 +44,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
   torchOffServiceClass: Class<out IntentService>
 ) : VolumeServiceInteractor {
 
-  private val notificationManagerCompat: NotificationManagerCompat = NotificationManagerCompat.from(
-      context
-  )
+  private val notificationManagerCompat = NotificationManagerCompat.from(context)
   private val notification: Notification
   private val onStateChangedCallback: CameraInterface.OnStateChangedCallback
   private var pressed: Boolean = false
