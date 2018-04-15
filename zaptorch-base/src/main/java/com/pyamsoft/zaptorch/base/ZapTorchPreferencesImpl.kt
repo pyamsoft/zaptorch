@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.support.annotation.CheckResult
 import android.support.v7.preference.PreferenceManager
-import androidx.content.edit
+import androidx.core.content.edit
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
