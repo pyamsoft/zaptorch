@@ -20,12 +20,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.pyamsoft.pydroid.design.fab.HideScrollFABBehavior
-import com.pyamsoft.pydroid.design.util.withBehavior
+import com.pyamsoft.pydroid.ui.util.withBehavior
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
+import com.pyamsoft.pydroid.ui.widget.HideScrollFABBehavior
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -69,7 +69,7 @@ class MainFragment : WatchedFragment() {
 
   private fun setupFAB() {
     binding.apply {
-      binding.mainSettingsFab.withBehavior(HideScrollFABBehavior(10))
+      mainSettingsFab.withBehavior(HideScrollFABBehavior(10))
       mainSettingsFab.setOnDebouncedClickListener {
         if (VolumeMonitorService.isRunning) {
           ServiceInfoDialog().show(requireActivity(), "service_info")

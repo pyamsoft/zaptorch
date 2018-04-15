@@ -18,16 +18,18 @@ package com.pyamsoft.zaptorch.main
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.view.KeyEvent
+import android.view.View
 import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
-import android.view.KeyEvent
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
+import com.pyamsoft.pydroid.ui.util.Snackbreak
+import com.pyamsoft.pydroid.ui.util.Snackbreak.ErrorDetail
 import com.pyamsoft.pydroid.ui.util.animateMenu
-import com.pyamsoft.pydroid.util.Toasty
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.BuildConfig
@@ -58,6 +60,9 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   override val applicationName: String
     get() = getString(R.string.app_name)
 
+  override val rootView: View
+    get() = binding.root
+
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
@@ -83,10 +88,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   }
 
   override fun onError(throwable: Throwable) {
-    Toasty.makeText(
-        this, "Failed to handle volume keypress, please try again",
-        Toasty.LENGTH_SHORT
-    )
+    Snackbreak.short(this, rootView, ErrorDetail("Error", throwable.localizedMessage))
   }
 
   override fun onDestroy() {
@@ -133,6 +135,7 @@ class MainActivity : TamperActivity(), MainPresenter.View {
   }
 
   private fun setupToolbar() {
+    val self = this
     binding.toolbar.apply {
       setToolbar(this)
       setTitle(R.string.app_name)
@@ -146,7 +149,9 @@ class MainActivity : TamperActivity(), MainPresenter.View {
       setOnMenuItemClickListener {
         if (it.itemId == R.id.menu_id_privacy_policy) {
           PRIVACY_POLICY_URL.hyperlink(context)
-              .navigate()
+              .navigate {
+                Snackbreak.short(self, rootView, ErrorDetail("Error", it.localizedMessage))
+              }
           return@setOnMenuItemClickListener true
         } else {
           return@setOnMenuItemClickListener false

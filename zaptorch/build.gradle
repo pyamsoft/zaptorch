@@ -88,7 +88,6 @@ dependencies {
   testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
 
   // PYDroid
-  implementation "com.github.pyamsoft.pydroid:pydroid-design:$pydroid"
   implementation "com.github.pyamsoft.pydroid:pydroid-ui:$pydroid"
 
   implementation project(":zaptorch-base")
