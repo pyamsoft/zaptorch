@@ -25,9 +25,6 @@ class VolumeServiceModule(module: ZapTorchModule) {
 
   private val interactor: VolumeServiceInteractor
   private val bus = ServiceBus()
-  private val computationScheduler: Scheduler = module.provideComputationScheduler()
-  private val ioScheduler: Scheduler = module.provideIoScheduler()
-  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
   init {
     interactor = VolumeServiceInteractorImpl(
@@ -37,11 +34,7 @@ class VolumeServiceModule(module: ZapTorchModule) {
   }
 
   @CheckResult
-  fun getServicePresenter(): VolumeServicePresenter =
-    VolumeServicePresenter(
-        interactor, bus, computationScheduler, ioScheduler,
-        mainScheduler
-    )
+  fun getServicePresenter(): VolumeServicePresenter = VolumeServicePresenter(interactor, bus)
 
   @CheckResult
   fun getPresenter(): ServicePublisher = ServicePublisher(bus)

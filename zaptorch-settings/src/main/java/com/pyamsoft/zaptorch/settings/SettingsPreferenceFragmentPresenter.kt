@@ -17,21 +17,17 @@
 package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class SettingsPreferenceFragmentPresenter internal constructor(
   private val bus: EventBus<ConfirmEvent>,
-  private val interactor: SettingsPreferenceFragmentInteractor,
-  computationScheduler: Scheduler,
-  ioScheduler: Scheduler,
-  mainThreadScheduler: Scheduler
-) : SchedulerPresenter<SettingsPreferenceFragmentPresenter.View>(
-    computationScheduler, ioScheduler, mainThreadScheduler
-) {
+  private val interactor: SettingsPreferenceFragmentInteractor
+) : Presenter<SettingsPreferenceFragmentPresenter.View>() {
 
   override fun onCreate() {
     super.onCreate()
@@ -42,8 +38,8 @@ class SettingsPreferenceFragmentPresenter internal constructor(
     dispose {
       bus.listen()
           .flatMapSingle { interactor.clearAll() }
-          .subscribeOn(ioScheduler)
-          .observeOn(mainThreadScheduler)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
           .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })
     }
   }

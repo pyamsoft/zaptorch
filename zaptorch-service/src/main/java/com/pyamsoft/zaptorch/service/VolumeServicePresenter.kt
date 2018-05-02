@@ -18,26 +18,21 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.data.clear
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
-import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class VolumeServicePresenter internal constructor(
   private val interactor: VolumeServiceInteractor,
-  private val bus: EventBus<ServiceEvent>,
-  computationScheduler: Scheduler,
-  ioScheduler: Scheduler,
-  mainThreadScheduler: Scheduler
-) : SchedulerPresenter<VolumeServicePresenter.View>(
-    computationScheduler, ioScheduler, mainThreadScheduler
-) {
+  private val bus: EventBus<ServiceEvent>
+) : Presenter<VolumeServicePresenter.View>() {
 
   private var keyDisposable: Disposable = Disposables.empty()
 
@@ -49,7 +44,7 @@ class VolumeServicePresenter internal constructor(
   override fun onDestroy() {
     super.onDestroy()
     interactor.releaseCamera()
-    keyDisposable = keyDisposable.clear()
+    keyDisposable.dispose()
   }
 
   override fun onStart() {
@@ -58,7 +53,7 @@ class VolumeServicePresenter internal constructor(
   }
 
   private fun setupCamera() {
-    interactor.setupCamera(computationScheduler, mainThreadScheduler) {
+    interactor.setupCamera {
       view?.onError(it)
     }
   }
@@ -72,10 +67,10 @@ class VolumeServicePresenter internal constructor(
     action: Int,
     keyCode: Int
   ) {
-    keyDisposable = keyDisposable.clear()
+    keyDisposable.dispose()
     keyDisposable = interactor.handleKeyPress(action, keyCode)
-        .subscribeOn(ioScheduler)
-        .observeOn(mainThreadScheduler)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe({ time -> Timber.d("Set back after %d delay", time) }
             , { throwable -> Timber.e(throwable, "onError handleKeyEvent") })
   }
@@ -83,8 +78,8 @@ class VolumeServicePresenter internal constructor(
   private fun registerOnBus() {
     dispose {
       bus.listen()
-          .subscribeOn(ioScheduler)
-          .observeOn(mainThreadScheduler)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
           .subscribe({ (type) ->
             when (type) {
               TORCH -> toggleTorch()

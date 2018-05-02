@@ -33,7 +33,6 @@ import android.view.KeyEvent
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -139,24 +138,14 @@ internal class VolumeServiceInteractorImpl internal constructor(
   override fun shouldShowErrorDialog(): Single<Boolean> =
     Single.fromCallable { preferences.shouldShowErrorDialog() }
 
-  override fun setupCamera(
-    computationScheduler: Scheduler,
-    mainThreadScheduler: Scheduler,
-    onCameraError: (Intent) -> Unit
-  ) {
+  override fun setupCamera(onCameraError: (Intent) -> Unit) {
     val camera: CameraCommon
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       // Assign
-      camera = MarshmallowCamera(
-          context, this, computationScheduler,
-          mainThreadScheduler
-      )
+      camera = MarshmallowCamera(context, this)
     } else {
       // Assign
-      camera = LollipopCamera(
-          context, this, computationScheduler,
-          mainThreadScheduler
-      )
+      camera = LollipopCamera(context, this)
     }
 
     camera.setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {

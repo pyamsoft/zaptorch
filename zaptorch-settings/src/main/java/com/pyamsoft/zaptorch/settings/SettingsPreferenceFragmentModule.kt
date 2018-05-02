@@ -25,21 +25,14 @@ class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
 
   private val interactor: SettingsPreferenceFragmentInteractor
   private val bus = SettingsBus()
-  private val computationScheduler: Scheduler = module.provideComputationScheduler()
-  private val ioScheduler: Scheduler = module.provideIoScheduler()
-  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
   init {
     interactor = SettingsPreferenceFragmentInteractorImpl(module.provideClearPreferences())
   }
 
   @CheckResult
-  fun getPreferenceFragmentPresenter(): SettingsPreferenceFragmentPresenter {
-    return SettingsPreferenceFragmentPresenter(
-        bus, interactor, computationScheduler,
-        ioScheduler, mainScheduler
-    )
-  }
+  fun getPreferenceFragmentPresenter(): SettingsPreferenceFragmentPresenter =
+    SettingsPreferenceFragmentPresenter(bus, interactor)
 
   @CheckResult
   fun getPresenter(): SettingPublisher = SettingPublisher(bus)

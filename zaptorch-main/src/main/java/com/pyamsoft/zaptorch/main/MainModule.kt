@@ -19,20 +19,15 @@ package com.pyamsoft.zaptorch.main
 import android.support.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
-import io.reactivex.Scheduler
 
 class MainModule(module: ZapTorchModule) {
 
   private val interactor: MainInteractor
-  private val computationScheduler: Scheduler = module.provideComputationScheduler()
-  private val ioScheduler: Scheduler = module.provideIoScheduler()
-  private val mainScheduler: Scheduler = module.provideMainThreadScheduler()
 
   init {
     interactor = MainInteractorImpl(module.provideUiPreferences())
   }
 
   @CheckResult
-  fun getPresenter(keyPressKey: String): MainPresenter =
-    MainPresenter(keyPressKey, interactor, computationScheduler, ioScheduler, mainScheduler)
+  fun getPresenter(keyPressKey: String): MainPresenter = MainPresenter(keyPressKey, interactor)
 }

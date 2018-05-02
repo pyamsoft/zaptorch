@@ -16,12 +16,26 @@
 
 package com.pyamsoft.zaptorch.api
 
+import android.app.Application
 import android.app.IntentService
+import android.content.Context
 import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.ApplicationModule
-import com.pyamsoft.pydroid.loader.LoaderModule
+import com.pyamsoft.pydroid.cache.Cache
+import com.pyamsoft.pydroid.loader.ImageLoader
 
-interface ZapTorchModule : ApplicationModule, LoaderModule {
+interface ZapTorchModule {
+
+  @CheckResult
+  fun provideApplication(): Application
+
+  @CheckResult
+  fun provideContext(): Context
+
+  @CheckResult
+  fun provideImageLoader(): ImageLoader
+
+  @CheckResult
+  fun provideImageLoaderCache(): Cache
 
   @CheckResult
   fun provideCameraPreferences(): CameraPreferences

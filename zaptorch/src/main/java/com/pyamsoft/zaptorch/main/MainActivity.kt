@@ -18,14 +18,14 @@ package com.pyamsoft.zaptorch.main
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.View
 import android.support.v4.view.ViewCompat
 import android.support.v7.preference.PreferenceManager
+import android.view.KeyEvent
+import android.view.View
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
+import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
-import com.pyamsoft.pydroid.ui.sec.TamperActivity
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.util.Snackbreak.ErrorDetail
@@ -39,15 +39,11 @@ import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
 import timber.log.Timber
 
-class MainActivity : TamperActivity(), MainPresenter.View {
+class MainActivity : RatingActivity(), MainPresenter.View {
 
   internal lateinit var presenter: MainPresenter
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
-
-  override val changeLogLines: ChangeLogBuilder = buildChangeLog {
-    bugfix("Smoother animations")
-  }
 
   override val versionName: String = BuildConfig.VERSION_NAME
 
@@ -55,13 +51,15 @@ class MainActivity : TamperActivity(), MainPresenter.View {
 
   override val currentApplicationVersion: Int = BuildConfig.VERSION_CODE
 
-  override val safePackageName: String = "com.pyamsoft.zaptorch"
-
   override val applicationName: String
     get() = getString(R.string.app_name)
 
   override val rootView: View
     get() = binding.root
+
+  override val changeLogLines: ChangeLogBuilder = buildChangeLog {
+    bugfix("Smoother animations")
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)

@@ -18,24 +18,19 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.content.Intent
-import com.pyamsoft.pydroid.data.clear
-import com.pyamsoft.pydroid.data.enforceComputation
-import com.pyamsoft.pydroid.data.enforceMainThread
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
   protected val context: Context,
-  private val interactor: VolumeServiceInteractor,
-  private val computationScheduler: Scheduler,
-  private val mainScheduler: Scheduler
-) :
-    CameraInterface {
+  private val interactor: VolumeServiceInteractor
+) : CameraInterface {
 
   private val errorExplain = Intent()
   private val permissionExplain = Intent()
@@ -44,25 +39,24 @@ internal abstract class CameraCommon protected constructor(
   private var errorDisposable: Disposable = Disposables.empty()
 
   init {
-    mainScheduler.enforceMainThread()
-    computationScheduler.enforceComputation()
+    errorDisposable.dispose()
 
-    errorExplain.putExtra(
-        CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR
-    )
-    errorExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    errorExplain.apply {
+      putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
 
-    permissionExplain.putExtra(
-        CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION
-    )
-    permissionExplain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    permissionExplain.apply {
+      putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION)
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
   }
 
   override fun startErrorExplanationActivity() {
-    errorDisposable = errorDisposable.clear()
+    errorDisposable.dispose()
     errorDisposable = interactor.shouldShowErrorDialog()
-        .subscribeOn(computationScheduler)
-        .observeOn(mainScheduler)
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
           if (it) {
             notifyCallbackOnError(errorExplain)
@@ -104,7 +98,7 @@ internal abstract class CameraCommon protected constructor(
 
   // Called from VolumeServiceInteractorImpl
   override fun destroy() {
-    errorDisposable = errorDisposable.clear()
+    errorDisposable.dispose()
     release()
   }
 }

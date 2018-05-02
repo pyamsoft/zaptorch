@@ -36,18 +36,14 @@ import android.util.Size
 import android.view.Surface
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.Scheduler
 import timber.log.Timber
 import java.util.ArrayList
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 internal class LollipopCamera internal constructor(
   context: Context,
-  interactor: VolumeServiceInteractor,
-  computationScheduler: Scheduler,
-  mainScheduler: Scheduler
-) :
-    CameraCommon(context, interactor, computationScheduler, mainScheduler) {
+  interactor: VolumeServiceInteractor
+) : CameraCommon(context, interactor) {
 
   private val cameraManager: CameraManager = context.getSystemService(
       Context.CAMERA_SERVICE

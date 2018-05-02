@@ -16,21 +16,16 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.presenter.SchedulerPresenter
+import com.pyamsoft.pydroid.presenter.Presenter
 import com.pyamsoft.zaptorch.api.MainInteractor
-import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class MainPresenter internal constructor(
   private val handleKeyPressKey: String,
-  private val interactor: MainInteractor,
-  computationScheduler: Scheduler,
-  ioScheduler: Scheduler,
-  mainScheduler: Scheduler
-) : SchedulerPresenter<MainPresenter.View>(
-    computationScheduler, ioScheduler,
-    mainScheduler
-) {
+  private val interactor: MainInteractor
+) : Presenter<MainPresenter.View>() {
 
   override fun onCreate() {
     super.onCreate()
@@ -46,8 +41,8 @@ class MainPresenter internal constructor(
   private fun shouldHandleKeycode() {
     dispose {
       interactor.shouldHandleKeys()
-          .subscribeOn(ioScheduler)
-          .observeOn(mainThreadScheduler)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
           .subscribe({
             view?.onHandleKeyPress(it)
           }, {

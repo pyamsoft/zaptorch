@@ -23,17 +23,13 @@ import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.support.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.Scheduler
 import timber.log.Timber
 
 @TargetApi(Build.VERSION_CODES.M)
 internal class MarshmallowCamera internal constructor(
   context: Context,
-  interactor: VolumeServiceInteractor,
-  computationScheduler: Scheduler,
-  mainThreadScheduler: Scheduler
-) :
-    CameraCommon(context, interactor, computationScheduler, mainThreadScheduler) {
+  interactor: VolumeServiceInteractor
+) : CameraCommon(context, interactor) {
 
   private val cameraManager: CameraManager =
     context.getSystemService(Context.CAMERA_SERVICE) as CameraManager

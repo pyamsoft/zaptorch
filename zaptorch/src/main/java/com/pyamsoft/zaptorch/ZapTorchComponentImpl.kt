@@ -33,12 +33,9 @@ internal class ZapTorchComponentImpl internal constructor(
   private val zapTorchModule: ZapTorchModule
 ) : ZapTorchComponent {
 
-  private val mainModule: MainModule = MainModule(zapTorchModule)
-  private val volumeServiceModule: VolumeServiceModule = VolumeServiceModule(zapTorchModule)
-  private val settingsPreferenceFragmentModule: SettingsPreferenceFragmentModule =
-    SettingsPreferenceFragmentModule(
-        zapTorchModule
-    )
+  private val mainModule = MainModule(zapTorchModule)
+  private val volumeServiceModule = VolumeServiceModule(zapTorchModule)
+  private val settingsPreferenceFragmentModule = SettingsPreferenceFragmentModule(zapTorchModule)
 
   override fun inject(mainFragment: MainFragment) {
     mainFragment.publisher = settingsPreferenceFragmentModule.getPresenter()

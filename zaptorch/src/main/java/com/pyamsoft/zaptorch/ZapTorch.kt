@@ -20,25 +20,16 @@ import android.app.Application
 import android.app.Service
 import android.support.annotation.CheckResult
 import android.support.v4.app.Fragment
-import com.pyamsoft.pydroid.PYDroidModule
-import com.pyamsoft.pydroid.base.PYDroidModuleImpl
-import com.pyamsoft.pydroid.loader.LoaderModule
-import com.pyamsoft.pydroid.loader.LoaderModuleImpl
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 
-class ZapTorch : Application() {
+class ZapTorch : Application(), PYDroid.Instance {
 
-  private val component: ZapTorchComponent by lazy(LazyThreadSafetyMode.NONE) { buildComponent() }
-  private val pydroidModule: PYDroidModule by lazy(LazyThreadSafetyMode.NONE) {
-    PYDroidModuleImpl(this, BuildConfig.DEBUG)
-  }
-  private val loaderModule: LoaderModule by lazy(LazyThreadSafetyMode.NONE) {
-    LoaderModuleImpl(pydroidModule)
-  }
+  private var pyDroid: PYDroid? = null
+  private lateinit var component: ZapTorchComponent
   private lateinit var refWatcher: RefWatcher
 
   override fun onCreate() {
@@ -53,13 +44,22 @@ class ZapTorch : Application() {
       refWatcher = RefWatcher.DISABLED
     }
 
-    PYDroid.init(pydroidModule, loaderModule)
+    PYDroid.init(this, this, BuildConfig.DEBUG)
   }
 
-  private fun buildComponent(): ZapTorchComponent =
-    ZapTorchComponentImpl(
-        ZapTorchModuleImpl(pydroidModule, loaderModule, TorchOffService::class.java)
-    )
+  override fun getPydroid(): PYDroid? = pyDroid
+
+  override fun setPydroid(instance: PYDroid) {
+    pyDroid = instance.also {
+      component = ZapTorchComponentImpl(
+          ZapTorchModuleImpl(
+              this,
+              it.modules().loaderModule(),
+              TorchOffService::class.java
+          )
+      )
+    }
+  }
 
   override fun getSystemService(name: String?): Any {
     if (Injector.name == name) {

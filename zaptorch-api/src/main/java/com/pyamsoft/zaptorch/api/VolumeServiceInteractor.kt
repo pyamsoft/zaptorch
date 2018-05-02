@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.api
 
 import android.content.Intent
 import android.support.annotation.CheckResult
-import io.reactivex.Scheduler
 import io.reactivex.Single
 
 interface VolumeServiceInteractor {
@@ -32,11 +31,7 @@ interface VolumeServiceInteractor {
   @CheckResult
   fun shouldShowErrorDialog(): Single<Boolean>
 
-  fun setupCamera(
-    computationScheduler: Scheduler,
-    mainThreadScheduler: Scheduler,
-    onCameraError: (Intent) -> Unit
-  )
+  fun setupCamera(onCameraError: (Intent) -> Unit)
 
   fun toggleTorch()
 
