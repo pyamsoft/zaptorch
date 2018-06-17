@@ -49,7 +49,7 @@ android {
 }
 
 dependencies {
-  api "com.android.support:support-annotations:$supportLib"
-  api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+  api "androidx.annotation:annotation:$androidx"
+  api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

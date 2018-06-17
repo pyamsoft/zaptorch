@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.service.error
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class CameraErrorDialog : WatchedDialog() {

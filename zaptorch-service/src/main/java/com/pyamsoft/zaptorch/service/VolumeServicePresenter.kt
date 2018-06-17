@@ -17,8 +17,8 @@
 package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
-import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.presenter.Presenter
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.presenter.Presenter
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH

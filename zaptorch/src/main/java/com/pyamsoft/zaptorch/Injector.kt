@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 
 object Injector {
 

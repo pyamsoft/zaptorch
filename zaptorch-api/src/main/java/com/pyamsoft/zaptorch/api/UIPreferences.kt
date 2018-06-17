@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.api
 
 import android.content.SharedPreferences
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 
 interface UIPreferences {
 

@@ -19,8 +19,8 @@ package com.pyamsoft.zaptorch.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.annotation.CheckResult
-import android.support.v7.preference.PreferenceManager
+import androidx.annotation.CheckResult
+import androidx.preference.PreferenceManager
 import androidx.core.content.edit
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences

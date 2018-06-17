@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.service
 
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 import io.reactivex.Scheduler

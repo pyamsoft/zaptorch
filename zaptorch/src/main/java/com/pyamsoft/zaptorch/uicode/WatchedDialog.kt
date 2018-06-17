@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.uicode
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 import com.pyamsoft.zaptorch.ZapTorch
 

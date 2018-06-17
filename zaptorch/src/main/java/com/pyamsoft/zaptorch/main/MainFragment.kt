@@ -20,11 +20,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.pyamsoft.pydroid.ui.util.withBehavior
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
+import com.pyamsoft.pydroid.ui.util.withBehavior
 import com.pyamsoft.pydroid.ui.widget.HideScrollFABBehavior
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
@@ -95,10 +95,10 @@ class MainFragment : WatchedFragment() {
     imageLoader.apply {
       if (VolumeMonitorService.isRunning) {
         fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycle)
+            .bind(viewLifecycleOwner)
       } else {
         fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycle)
+            .bind(viewLifecycleOwner)
       }
     }
   }

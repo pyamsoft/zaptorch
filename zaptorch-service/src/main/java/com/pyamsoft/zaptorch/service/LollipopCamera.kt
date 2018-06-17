@@ -30,8 +30,8 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.os.Build
-import android.support.annotation.CheckResult
-import android.support.v4.content.ContextCompat
+import androidx.annotation.CheckResult
+import androidx.core.content.ContextCompat
 import android.util.Size
 import android.view.Surface
 import com.pyamsoft.zaptorch.api.CameraInterface

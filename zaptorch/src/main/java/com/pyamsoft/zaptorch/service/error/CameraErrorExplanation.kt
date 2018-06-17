@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.service.error
 
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH

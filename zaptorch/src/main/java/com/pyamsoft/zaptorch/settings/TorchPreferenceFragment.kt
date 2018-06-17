@@ -62,7 +62,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
       return@setOnPreferenceClickListener true
     }
 
-    presenter.bind(viewLifecycle, this)
+    presenter.bind(viewLifecycleOwner, this)
   }
 
   override fun onClearAll() {

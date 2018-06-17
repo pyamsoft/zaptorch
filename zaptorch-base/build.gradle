@@ -50,7 +50,7 @@ android {
 
 dependencies {
   // Android Support
-  implementation "com.android.support:preference-v7:$supportLib"
+  implementation "androidx.preference:preference:$androidx"
 
   api project(":zaptorch-api")
 }

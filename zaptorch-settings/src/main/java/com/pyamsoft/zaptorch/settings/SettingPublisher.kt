@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.bus.EventBus
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class SettingPublisher internal constructor(private val bus: EventBus<ConfirmEvent>) {

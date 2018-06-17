@@ -19,8 +19,8 @@ package com.pyamsoft.zaptorch.api
 import android.app.Application
 import android.app.IntentService
 import android.content.Context
-import android.support.annotation.CheckResult
-import com.pyamsoft.pydroid.cache.Cache
+import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.cache.Cache
 import com.pyamsoft.pydroid.loader.ImageLoader
 
 interface ZapTorchModule {

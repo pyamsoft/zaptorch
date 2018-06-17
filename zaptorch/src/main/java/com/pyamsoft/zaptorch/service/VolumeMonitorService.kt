@@ -17,14 +17,14 @@
 package com.pyamsoft.zaptorch.service
 
 import android.accessibilityservice.AccessibilityService
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.Lifecycle.Event.ON_CREATE
-import android.arch.lifecycle.Lifecycle.Event.ON_DESTROY
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Lifecycle.Event.ON_CREATE
+import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import android.content.Intent
 import android.os.Build
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector

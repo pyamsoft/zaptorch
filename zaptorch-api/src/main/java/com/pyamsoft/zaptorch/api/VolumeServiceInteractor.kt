@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.api
 
 import android.content.Intent
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 import io.reactivex.Single
 
 interface VolumeServiceInteractor {

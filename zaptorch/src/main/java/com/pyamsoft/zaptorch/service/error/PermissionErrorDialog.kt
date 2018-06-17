@@ -19,8 +19,8 @@ package com.pyamsoft.zaptorch.service.error
 import android.Manifest
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AlertDialog
 import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
 class PermissionErrorDialog : WatchedDialog() {

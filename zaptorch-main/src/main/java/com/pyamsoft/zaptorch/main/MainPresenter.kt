@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.presenter.Presenter
+import com.pyamsoft.pydroid.core.presenter.Presenter
 import com.pyamsoft.zaptorch.api.MainInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

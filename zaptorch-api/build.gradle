@@ -50,7 +50,7 @@ android {
 
 dependencies {
   // PYDroid
-  api "com.github.pyamsoft.pydroid:pydroid-loader:$pydroid"
+  api "com.github.pyamsoft.pydroid:loader:$pydroid"
 
   api project(":zaptorch-model")
 }

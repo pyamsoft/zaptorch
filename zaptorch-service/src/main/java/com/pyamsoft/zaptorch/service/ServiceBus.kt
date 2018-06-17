@@ -16,8 +16,8 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.pydroid.bus.RxBus
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import io.reactivex.Observable
 

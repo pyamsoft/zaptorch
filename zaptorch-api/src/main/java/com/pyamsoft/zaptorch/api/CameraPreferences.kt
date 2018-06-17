@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.api
 
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 
 interface CameraPreferences {
 

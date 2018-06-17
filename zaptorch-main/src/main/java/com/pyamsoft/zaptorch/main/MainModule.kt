@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.support.annotation.CheckResult
+import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 
