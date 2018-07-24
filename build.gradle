@@ -34,7 +34,7 @@ buildscript {
 
     pydroid = "18.0.1-SNAPSHOT"
     androidx = "1.0.0-beta01"
-    leakCanary = "1.5.4"
+    leakCanary = "1.6.1"
   }
 
   dependencies {
