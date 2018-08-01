@@ -25,11 +25,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES
+import android.view.KeyEvent
+import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import android.view.KeyEvent
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
@@ -40,7 +41,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 internal class VolumeServiceInteractorImpl internal constructor(
   private val context: Context,
   private val preferences: CameraPreferences,
-  torchOffServiceClass: Class<out IntentService>
+  torchOffServiceClass: Class<out IntentService>,
+  @ColorRes private val notificationColor: Int
 ) : VolumeServiceInteractor {
 
   private val notificationManagerCompat = NotificationManagerCompat.from(context)
@@ -68,7 +70,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
           setAutoCancel(true)
           setWhen(0)
           setOngoing(false)
-          color = ContextCompat.getColor(context, R.color.purple500)
+          color = ContextCompat.getColor(context, notificationColor)
           priority = NotificationCompat.PRIORITY_DEFAULT
         }
         .build()

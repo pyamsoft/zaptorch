@@ -20,6 +20,7 @@ import android.app.Application
 import android.app.IntentService
 import android.content.Context
 import androidx.annotation.CheckResult
+import androidx.annotation.ColorRes
 import com.pyamsoft.pydroid.core.cache.Cache
 import com.pyamsoft.pydroid.loader.ImageLoader
 
@@ -48,4 +49,8 @@ interface ZapTorchModule {
 
   @CheckResult
   fun provideTorchOffServiceClass(): Class<out IntentService>
+
+  @ColorRes
+  @CheckResult
+  fun provideNotificationColor(): Int
 }

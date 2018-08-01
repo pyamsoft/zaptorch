@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-  api "androidx.annotation:annotation:$androidx"
+  api "androidx.annotation:annotation:$annotation"
   api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

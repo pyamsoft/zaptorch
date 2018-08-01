@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.base
 import android.app.Application
 import android.app.IntentService
 import android.content.Context
+import androidx.annotation.ColorRes
 import com.pyamsoft.pydroid.core.cache.Cache
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.LoaderModule
@@ -30,7 +31,8 @@ import com.pyamsoft.zaptorch.api.ZapTorchModule
 class ZapTorchModuleImpl(
   private val application: Application,
   private val loaderModule: LoaderModule,
-  private val torchOffServiceClass: Class<out IntentService>
+  private val torchOffServiceClass: Class<out IntentService>,
+  @ColorRes private val notificationColor: Int
 ) : ZapTorchModule {
 
   private val preferences = ZapTorchPreferencesImpl(application)
@@ -50,4 +52,6 @@ class ZapTorchModuleImpl(
   override fun provideUiPreferences(): UIPreferences = preferences
 
   override fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
+
+  override fun provideNotificationColor(): Int = notificationColor
 }

@@ -55,7 +55,8 @@ class ZapTorch : Application(), PYDroid.Instance {
           ZapTorchModuleImpl(
               this,
               it.modules().loaderModule(),
-              TorchOffService::class.java
+              TorchOffService::class.java,
+              R.color.purple500
           )
       )
     }

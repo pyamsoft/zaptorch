@@ -19,7 +19,6 @@ package com.pyamsoft.zaptorch.service
 import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
-import io.reactivex.Scheduler
 
 class VolumeServiceModule(module: ZapTorchModule) {
 
@@ -29,7 +28,9 @@ class VolumeServiceModule(module: ZapTorchModule) {
   init {
     interactor = VolumeServiceInteractorImpl(
         module.provideContext(),
-        module.provideCameraPreferences(), module.provideTorchOffServiceClass()
+        module.provideCameraPreferences(),
+        module.provideTorchOffServiceClass(),
+        module.provideNotificationColor()
     )
   }
 
