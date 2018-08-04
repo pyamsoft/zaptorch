@@ -17,16 +17,21 @@
 package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 
-class VolumeServiceModule(module: ZapTorchModule) {
+class VolumeServiceModule(
+  module: ZapTorchModule,
+  enforcer: Enforcer
+) {
 
   private val interactor: VolumeServiceInteractor
   private val bus = ServiceBus()
 
   init {
     interactor = VolumeServiceInteractorImpl(
+        enforcer,
         module.provideContext(),
         module.provideCameraPreferences(),
         module.provideTorchOffServiceClass(),

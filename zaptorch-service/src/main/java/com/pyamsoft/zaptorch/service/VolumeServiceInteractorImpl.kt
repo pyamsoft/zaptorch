@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
@@ -39,6 +40,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 internal class VolumeServiceInteractorImpl internal constructor(
+  private val enforcer: Enforcer,
   private val context: Context,
   private val preferences: CameraPreferences,
   torchOffServiceClass: Class<out IntentService>,
@@ -116,25 +118,28 @@ internal class VolumeServiceInteractorImpl internal constructor(
     action: Int,
     keyCode: Int
   ): Single<Long> {
-    var keyPressSingle = Single.never<Long>()
-    if (action == KeyEvent.ACTION_UP) {
-      if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-        if (pressed) {
-          Timber.d("Key has been double pressed")
-          pressed = false
-          toggleTorch()
-        } else {
-          pressed = true
-          keyPressSingle = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
-              .doOnSuccess {
-                Timber.d("Set pressed back to false")
-                pressed = false
-              }
+    return Single.defer {
+      enforcer.assertNotOnMainThread()
+      var keyPressSingle = Single.never<Long>()
+      if (action == KeyEvent.ACTION_UP) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+          if (pressed) {
+            Timber.d("Key has been double pressed")
+            pressed = false
+            toggleTorch()
+          } else {
+            pressed = true
+            keyPressSingle = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
+                .doOnSuccess {
+                  Timber.d("Set pressed back to false")
+                  pressed = false
+                }
+          }
         }
       }
-    }
 
-    return keyPressSingle
+      return@defer keyPressSingle
+    }
   }
 
   override fun shouldShowErrorDialog(): Single<Boolean> =

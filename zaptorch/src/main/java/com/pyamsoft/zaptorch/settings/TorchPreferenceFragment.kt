@@ -91,7 +91,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
   override fun onDestroyView() {
     super.onDestroyView()
-    hideScrollListener?.also { listView.removeOnScrollListener(it) }
+    hideScrollListener?.also { listView?.removeOnScrollListener(it) }
+    hideScrollListener = null
   }
 
   override fun onClearAll() {

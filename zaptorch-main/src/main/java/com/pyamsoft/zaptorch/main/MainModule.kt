@@ -17,15 +17,19 @@
 package com.pyamsoft.zaptorch.main
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 
-class MainModule(module: ZapTorchModule) {
+class MainModule(
+  enforcer: Enforcer,
+  module: ZapTorchModule
+) {
 
   private val interactor: MainInteractor
 
   init {
-    interactor = MainInteractorImpl(module.provideUiPreferences())
+    interactor = MainInteractorImpl(enforcer, module.provideUiPreferences())
   }
 
   @CheckResult

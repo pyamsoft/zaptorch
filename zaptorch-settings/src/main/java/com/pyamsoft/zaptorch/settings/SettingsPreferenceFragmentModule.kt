@@ -17,17 +17,21 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
-import io.reactivex.Scheduler
 
-class SettingsPreferenceFragmentModule(module: ZapTorchModule) {
+class SettingsPreferenceFragmentModule(
+  enforcer: Enforcer,
+  module: ZapTorchModule
+) {
 
   private val interactor: SettingsPreferenceFragmentInteractor
   private val bus = SettingsBus()
 
   init {
-    interactor = SettingsPreferenceFragmentInteractorImpl(module.provideClearPreferences())
+    interactor =
+        SettingsPreferenceFragmentInteractorImpl(enforcer, module.provideClearPreferences())
   }
 
   @CheckResult

@@ -37,7 +37,10 @@ class SettingsPreferenceFragmentPresenter internal constructor(
   private fun registerEventBus() {
     dispose {
       bus.listen()
-          .flatMapSingle { interactor.clearAll() }
+          .flatMapSingle {
+            return@flatMapSingle interactor.clearAll()
+                .subscribeOn(Schedulers.io())
+          }
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })

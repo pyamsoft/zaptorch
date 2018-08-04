@@ -16,16 +16,19 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import io.reactivex.Single
 
 internal class SettingsPreferenceFragmentInteractorImpl internal constructor(
+  private val enforcer: Enforcer,
   private val clearPreferences: ClearPreferences
 ) : SettingsPreferenceFragmentInteractor {
 
   override fun clearAll(): Single<Boolean> {
     return Single.fromCallable {
+      enforcer.assertNotOnMainThread()
       clearPreferences.clearAll()
       return@fromCallable true
     }

@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorch
 
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
@@ -30,12 +31,14 @@ import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule
 
 internal class ZapTorchComponentImpl internal constructor(
+  enforcer: Enforcer,
   private val zapTorchModule: ZapTorchModule
 ) : ZapTorchComponent {
 
-  private val mainModule = MainModule(zapTorchModule)
-  private val volumeServiceModule = VolumeServiceModule(zapTorchModule)
-  private val settingsPreferenceFragmentModule = SettingsPreferenceFragmentModule(zapTorchModule)
+  private val mainModule = MainModule(enforcer, zapTorchModule)
+  private val volumeServiceModule = VolumeServiceModule(zapTorchModule, enforcer)
+  private val settingsPreferenceFragmentModule =
+    SettingsPreferenceFragmentModule(enforcer, zapTorchModule)
 
   override fun inject(mainFragment: MainFragment) {
     mainFragment.publisher = settingsPreferenceFragmentModule.getPresenter()

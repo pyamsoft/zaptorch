@@ -30,7 +30,7 @@ class MainPresenter internal constructor(
   override fun onCreate() {
     super.onCreate()
     shouldHandleKeycode()
-    interactor.register(handleKeyPressKey, { view?.onHandleKeyPress(it) })
+    interactor.register(handleKeyPressKey) { view?.onHandleKeyPress(it) }
   }
 
   override fun onDestroy() {

@@ -18,11 +18,13 @@ package com.pyamsoft.zaptorch.main
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
 import io.reactivex.Single
 
 internal class MainInteractorImpl internal constructor(
+  private val enforcer: Enforcer,
   private val preferences: UIPreferences
 ) : MainInteractor {
 
@@ -54,6 +56,8 @@ internal class MainInteractorImpl internal constructor(
     listener = null
   }
 
-  override fun shouldHandleKeys(): Single<Boolean> =
-    Single.fromCallable { preferences.shouldHandleKeys() }
+  override fun shouldHandleKeys(): Single<Boolean> = Single.fromCallable {
+    enforcer.assertNotOnMainThread()
+    return@fromCallable preferences.shouldHandleKeys()
+  }
 }

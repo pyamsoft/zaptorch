@@ -52,6 +52,7 @@ class ZapTorch : Application(), PYDroid.Instance {
   override fun setPydroid(instance: PYDroid) {
     pyDroid = instance.also {
       component = ZapTorchComponentImpl(
+          it.enforcer(),
           ZapTorchModuleImpl(
               this,
               it.modules().loaderModule(),
