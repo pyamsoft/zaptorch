@@ -20,12 +20,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.CheckResult
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.pydroid.ui.util.withBehavior
-import com.pyamsoft.pydroid.ui.widget.HideScrollFABBehavior
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -39,14 +39,19 @@ import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
 class MainFragment : WatchedFragment() {
 
+  private lateinit var binding: FragmentMainBinding
   internal lateinit var imageLoader: ImageLoader
   internal lateinit var publisher: SettingPublisher
-  private lateinit var binding: FragmentMainBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .inject(this)
+  }
+
+  @CheckResult
+  internal fun getFloatingActionButton(): FloatingActionButton {
+    return binding.mainSettingsFab
   }
 
   override fun onCreateView(
@@ -69,7 +74,6 @@ class MainFragment : WatchedFragment() {
 
   private fun setupFAB() {
     binding.apply {
-      mainSettingsFab.withBehavior(HideScrollFABBehavior(10))
       mainSettingsFab.setOnDebouncedClickListener {
         if (VolumeMonitorService.isRunning) {
           ServiceInfoDialog().show(requireActivity(), "service_info")

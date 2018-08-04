@@ -21,12 +21,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
+import com.pyamsoft.pydroid.ui.util.popHide
+import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
+import com.pyamsoft.pydroid.ui.widget.HideOnScrollListener
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.service.ServicePublisher
 import timber.log.Timber
@@ -34,6 +38,7 @@ import timber.log.Timber
 class TorchPreferenceFragment : SettingsPreferenceFragment(),
     SettingsPreferenceFragmentPresenter.View {
 
+  private var hideScrollListener: HideOnScrollListener? = null
   internal lateinit var servicePublisher: ServicePublisher
   internal lateinit var presenter: SettingsPreferenceFragmentPresenter
 
@@ -62,7 +67,31 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
       return@setOnPreferenceClickListener true
     }
 
+    addScrollListener()
+
     presenter.bind(viewLifecycleOwner, this)
+  }
+
+  private fun addScrollListener() {
+    val fragment = requireActivity().supportFragmentManager.findFragmentByTag(MainFragment.TAG)
+    if (fragment is MainFragment) {
+      val fab = fragment.getFloatingActionButton()
+      val listener = HideOnScrollListener.withView(fab) {
+        if (it) {
+          fab.popShow()
+        } else {
+          fab.popHide()
+        }
+      }
+
+      listView.addOnScrollListener(listener)
+      hideScrollListener = listener
+    }
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    hideScrollListener?.also { listView.removeOnScrollListener(it) }
   }
 
   override fun onClearAll() {
