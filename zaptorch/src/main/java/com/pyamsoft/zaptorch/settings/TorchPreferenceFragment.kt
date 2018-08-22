@@ -19,7 +19,10 @@ package com.pyamsoft.zaptorch.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
@@ -28,19 +31,16 @@ import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.pydroid.ui.widget.HideOnScrollListener
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.model.ServiceEvent
-import com.pyamsoft.zaptorch.service.ServicePublisher
 import timber.log.Timber
 
-class TorchPreferenceFragment : SettingsPreferenceFragment(),
-    SettingsPreferenceFragmentPresenter.View {
+class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   private var hideScrollListener: HideOnScrollListener? = null
-  internal lateinit var servicePublisher: ServicePublisher
-  internal lateinit var presenter: SettingsPreferenceFragmentPresenter
+  internal lateinit var publisher: Publisher<ServiceEvent>
+  internal lateinit var viewModel: SettingsViewModel
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -56,11 +56,12 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
         .inject(this)
   }
 
-  override fun onViewCreated(
-    view: View,
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
     savedInstanceState: Bundle?
-  ) {
-    super.onViewCreated(view, savedInstanceState)
+  ): View? {
+    val view = super.onCreateView(inflater, container, savedInstanceState)
     val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
     zapTorchExplain.setOnPreferenceClickListener {
       HowToDialog().show(requireActivity(), "howto")
@@ -69,7 +70,9 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
     addScrollListener()
 
-    presenter.bind(viewLifecycleOwner, this)
+    viewModel.onClearAllEvent(viewLifecycleOwner) { onClearAll() }
+
+    return view
   }
 
   private fun addScrollListener() {
@@ -95,10 +98,10 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
     hideScrollListener = null
   }
 
-  override fun onClearAll() {
+  private fun onClearAll() {
     Timber.d("received completed clearAll event. Kill Process")
     try {
-      servicePublisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
+      publisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
     } catch (e: IllegalStateException) {
       Timber.e(e, "Expected exception when Service is NULL")
     }
@@ -110,12 +113,6 @@ class TorchPreferenceFragment : SettingsPreferenceFragment(),
 
   override fun onClearAllClicked() {
     ConfirmationDialog().show(requireActivity(), "confirm_dialog")
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    ZapTorch.getRefWatcher(this)
-        .watch(this)
   }
 
   override fun onResume() {

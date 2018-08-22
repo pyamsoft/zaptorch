@@ -22,5 +22,5 @@ import io.reactivex.Single
 interface SettingsPreferenceFragmentInteractor {
 
   @CheckResult
-  fun clearAll(): Single<Boolean>
+  fun clearAll(): Single<Unit>
 }

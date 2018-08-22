@@ -19,16 +19,16 @@ package com.pyamsoft.zaptorch.service.error
 import android.Manifest
 import android.app.Dialog
 import android.os.Bundle
-import androidx.core.app.ActivityCompat
 import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.zaptorch.uicode.WatchedDialog
+import androidx.core.app.ActivityCompat
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 
-class PermissionErrorDialog : WatchedDialog() {
+class PermissionErrorDialog : ToolbarDialog() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())
-        .setMessage(
-            "ZapTorch was unable to access your devices setupCamera." + " Please grant ZapTorch the 'Camera' permission"
+        .setMessage("""ZapTorch was unable to access your devices Camera
+              |Please grant ZapTorch the 'Camera' permission.""".trimMargin()
         )
         .setPositiveButton("Okay") { _, _ ->
           ActivityCompat.requestPermissions(

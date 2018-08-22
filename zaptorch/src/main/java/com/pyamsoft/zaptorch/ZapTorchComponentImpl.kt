@@ -28,7 +28,7 @@ import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
-import com.pyamsoft.zaptorch.settings.SettingsPreferenceFragmentModule
+import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class ZapTorchComponentImpl internal constructor(
   enforcer: Enforcer,
@@ -38,23 +38,23 @@ internal class ZapTorchComponentImpl internal constructor(
   private val mainModule = MainModule(enforcer, zapTorchModule)
   private val volumeServiceModule = VolumeServiceModule(zapTorchModule, enforcer)
   private val settingsPreferenceFragmentModule =
-    SettingsPreferenceFragmentModule(enforcer, zapTorchModule)
+    SettingsModule(enforcer, zapTorchModule)
 
   override fun inject(mainFragment: MainFragment) {
-    mainFragment.publisher = settingsPreferenceFragmentModule.getPresenter()
+    mainFragment.publisher = settingsPreferenceFragmentModule.getPublisher()
     mainFragment.imageLoader = zapTorchModule.provideImageLoader()
   }
 
   override fun inject(confirmationDialog: ConfirmationDialog) {
-    confirmationDialog.publisher = settingsPreferenceFragmentModule.getPresenter()
+    confirmationDialog.publisher = settingsPreferenceFragmentModule.getPublisher()
   }
 
   override fun inject(volumeMonitorService: VolumeMonitorService) {
-    volumeMonitorService.presenter = volumeServiceModule.getServicePresenter()
+    volumeMonitorService.viewModel = volumeServiceModule.getViewModel()
   }
 
   override fun inject(torchOffService: TorchOffService) {
-    torchOffService.servicePublisher = volumeServiceModule.getPresenter()
+    torchOffService.servicePublisher = volumeServiceModule.getPublisher()
   }
 
   override fun plusSettingsComponent(): SettingsComponent =

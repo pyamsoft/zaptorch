@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service
 
 import android.app.IntentService
 import android.content.Intent
+import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -26,7 +27,7 @@ import timber.log.Timber
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  internal lateinit var servicePublisher: ServicePublisher
+  internal lateinit var servicePublisher: Publisher<ServiceEvent>
 
   override fun onCreate() {
     super.onCreate()

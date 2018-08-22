@@ -16,25 +16,11 @@
 
 package com.pyamsoft.zaptorch.lifecycle
 
-import androidx.lifecycle.Lifecycle.Event.ON_CREATE
-import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
 import androidx.lifecycle.Lifecycle.Event.ON_PAUSE
 import androidx.lifecycle.Lifecycle.Event.ON_RESUME
 import androidx.lifecycle.Lifecycle.Event.ON_START
 import androidx.lifecycle.Lifecycle.Event.ON_STOP
 import androidx.lifecycle.LifecycleRegistry
-
-fun LifecycleRegistry.fakeBind() {
-  handleLifecycleEvent(ON_CREATE)
-  handleLifecycleEvent(ON_START)
-  handleLifecycleEvent(ON_RESUME)
-}
-
-fun LifecycleRegistry.fakeRelease() {
-  handleLifecycleEvent(ON_PAUSE)
-  handleLifecycleEvent(ON_STOP)
-  handleLifecycleEvent(ON_DESTROY)
-}
 
 fun LifecycleRegistry.fakeStartResume() {
   handleLifecycleEvent(ON_START)

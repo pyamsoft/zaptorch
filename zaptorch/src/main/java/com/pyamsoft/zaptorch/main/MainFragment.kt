@@ -22,7 +22,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.loader.ImageLoader
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarFragment
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
@@ -30,18 +32,17 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding
+import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
 import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
-import com.pyamsoft.zaptorch.settings.SettingPublisher
 import com.pyamsoft.zaptorch.settings.SettingsFragment
-import com.pyamsoft.zaptorch.uicode.WatchedFragment
 
-class MainFragment : WatchedFragment() {
+class MainFragment : ToolbarFragment() {
 
   private lateinit var binding: FragmentMainBinding
   internal lateinit var imageLoader: ImageLoader
-  internal lateinit var publisher: SettingPublisher
+  internal lateinit var publisher: Publisher<ConfirmEvent>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

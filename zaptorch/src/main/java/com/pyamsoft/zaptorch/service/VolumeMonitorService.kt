@@ -17,16 +17,16 @@
 package com.pyamsoft.zaptorch.service
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
+import android.os.Build
+import android.view.KeyEvent
+import android.view.accessibility.AccessibilityEvent
+import androidx.annotation.CheckResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.Event.ON_CREATE
 import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import android.content.Intent
-import android.os.Build
-import androidx.annotation.CheckResult
-import android.view.KeyEvent
-import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -35,17 +35,17 @@ import com.pyamsoft.zaptorch.lifecycle.fakeStartResume
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View, LifecycleOwner {
+class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
 
   private val lifecycle = LifecycleRegistry(this)
-  internal lateinit var presenter: VolumeServicePresenter
+  internal lateinit var viewModel: VolumeServiceViewModel
 
   override fun getLifecycle(): Lifecycle = lifecycle
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    presenter.handleKeyEvent(action, keyCode)
+    viewModel.handleKeyEvent(this, action, keyCode)
 
     // Never consume events
     return false
@@ -63,8 +63,11 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
-    presenter.bind(this, this)
     lifecycle.handleLifecycleEvent(ON_CREATE)
+
+    viewModel.onCameraError(this) { onCameraError(it) }
+    viewModel.onServiceFinishEvent(this) { onFinishService() }
+    viewModel.onTorchEvent(this) { Timber.d("Toggling torch") }
   }
 
   override fun onServiceConnected() {
@@ -73,13 +76,13 @@ class VolumeMonitorService : AccessibilityService(), VolumeServicePresenter.View
     isRunning = true
   }
 
-  override fun onFinishService() {
+  private fun onFinishService() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       disableSelf()
     }
   }
 
-  override fun onError(intent: Intent) {
+  private fun onCameraError(intent: Intent) {
     intent.setClass(applicationContext, CameraErrorExplanation::class.java)
     application.startActivity(intent)
   }

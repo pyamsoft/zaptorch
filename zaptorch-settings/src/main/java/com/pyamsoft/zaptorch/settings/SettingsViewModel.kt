@@ -16,41 +16,37 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.core.presenter.Presenter
+import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.core.viewmodel.LifecycleViewModel
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
-class SettingsPreferenceFragmentPresenter internal constructor(
+class SettingsViewModel internal constructor(
+  private val enforcer: Enforcer,
   private val bus: EventBus<ConfirmEvent>,
   private val interactor: SettingsPreferenceFragmentInteractor
-) : Presenter<SettingsPreferenceFragmentPresenter.View>() {
+) : LifecycleViewModel {
 
-  override fun onCreate() {
-    super.onCreate()
-    registerEventBus()
-  }
-
-  private fun registerEventBus() {
-    dispose {
-      bus.listen()
-          .flatMapSingle {
-            return@flatMapSingle interactor.clearAll()
-                .subscribeOn(Schedulers.io())
-          }
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe({ view?.onClearAll() }, { Timber.e(it, "onError event bus") })
-    }
-  }
-
-  interface View : ClearCallback
-
-  interface ClearCallback {
-
-    fun onClearAll()
+  fun onClearAllEvent(
+    owner: LifecycleOwner,
+    func: () -> Unit
+  ) {
+    bus.listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .flatMapSingle {
+          enforcer.assertNotOnMainThread()
+          return@flatMapSingle interactor.clearAll()
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+        }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { func() }
+        .bind(owner)
   }
 }

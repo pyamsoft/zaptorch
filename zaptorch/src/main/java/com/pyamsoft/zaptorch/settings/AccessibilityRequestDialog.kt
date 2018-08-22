@@ -21,10 +21,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
-class AccessibilityRequestDialog : WatchedDialog() {
+class AccessibilityRequestDialog : ToolbarDialog() {
 
   private val accessibilityServiceIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 

@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 internal class VolumeServiceInteractorImpl internal constructor(
   private val enforcer: Enforcer,
+  private val errorBus: Publisher<Intent>,
   private val context: Context,
   private val preferences: CameraPreferences,
   torchOffServiceClass: Class<out IntentService>,
@@ -145,7 +147,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
   override fun shouldShowErrorDialog(): Single<Boolean> =
     Single.fromCallable { preferences.shouldShowErrorDialog() }
 
-  override fun setupCamera(onCameraError: (Intent) -> Unit) {
+  override fun setupCamera() {
     val camera: CameraCommon
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       // Assign
@@ -165,7 +167,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
       }
 
       override fun onError(errorIntent: Intent) {
-        onCameraError(errorIntent)
+        errorBus.publish(errorIntent)
       }
     })
 

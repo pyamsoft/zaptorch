@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.api
 
-import android.content.Intent
 import androidx.annotation.CheckResult
 import io.reactivex.Single
 
@@ -31,7 +30,7 @@ interface VolumeServiceInteractor {
   @CheckResult
   fun shouldShowErrorDialog(): Single<Boolean>
 
-  fun setupCamera(onCameraError: (Intent) -> Unit)
+  fun setupCamera()
 
   fun toggleTorch()
 

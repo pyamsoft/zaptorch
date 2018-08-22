@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.core.bus.RxBus
-import com.pyamsoft.zaptorch.model.ServiceEvent
-import io.reactivex.Observable
+import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.zaptorch.api.ClearPreferences
+import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
+import io.reactivex.Single
 
-internal class ServiceBus internal constructor() : EventBus<ServiceEvent> {
+internal class SettingsInteractorImpl internal constructor(
+  private val enforcer: Enforcer,
+  private val clearPreferences: ClearPreferences
+) : SettingsPreferenceFragmentInteractor {
 
-  private val bus = RxBus.create<ServiceEvent>()
-
-  override fun listen(): Observable<ServiceEvent> = bus.listen()
-
-  override fun publish(event: ServiceEvent) {
-    bus.publish(event)
+  override fun clearAll(): Single<Unit> {
+    return Single.fromCallable {
+      enforcer.assertNotOnMainThread()
+      clearPreferences.clearAll()
+    }
   }
 }

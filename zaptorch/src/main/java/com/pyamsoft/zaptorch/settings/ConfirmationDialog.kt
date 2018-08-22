@@ -19,14 +19,15 @@ package com.pyamsoft.zaptorch.settings
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import com.pyamsoft.pydroid.core.bus.Publisher
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import com.pyamsoft.zaptorch.uicode.WatchedDialog
 
-class ConfirmationDialog : WatchedDialog() {
+class ConfirmationDialog : ToolbarDialog() {
 
-  internal lateinit var publisher: SettingPublisher
+  internal lateinit var publisher: Publisher<ConfirmEvent>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

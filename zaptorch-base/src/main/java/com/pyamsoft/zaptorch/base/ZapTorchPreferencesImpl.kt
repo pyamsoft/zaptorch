@@ -20,8 +20,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.CheckResult
-import androidx.preference.PreferenceManager
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
@@ -51,9 +51,9 @@ internal class ZapTorchPreferencesImpl(
   }
 
   override val buttonDelayTime: Long
-    @CheckResult get() = java.lang.Long.parseLong(
-        preferences.getString(doublePressDelayKey, doublePressDelayDefault)
-    )
+    @CheckResult get() = preferences.getString(
+        doublePressDelayKey, doublePressDelayDefault
+    ).orEmpty().toLong()
 
   @CheckResult
   override fun shouldShowErrorDialog(): Boolean =

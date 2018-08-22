@@ -16,10 +16,14 @@
 
 package com.pyamsoft.zaptorch.service
 
+import android.content.Intent
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.bus.Publisher
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
+import com.pyamsoft.zaptorch.model.ServiceEvent
 
 class VolumeServiceModule(
   module: ZapTorchModule,
@@ -27,11 +31,13 @@ class VolumeServiceModule(
 ) {
 
   private val interactor: VolumeServiceInteractor
-  private val bus = ServiceBus()
+  private val bus = RxBus.create<ServiceEvent>()
+  private val errorBus = RxBus.create<Intent>()
 
   init {
     interactor = VolumeServiceInteractorImpl(
         enforcer,
+        errorBus,
         module.provideContext(),
         module.provideCameraPreferences(),
         module.provideTorchOffServiceClass(),
@@ -40,8 +46,8 @@ class VolumeServiceModule(
   }
 
   @CheckResult
-  fun getServicePresenter(): VolumeServicePresenter = VolumeServicePresenter(interactor, bus)
+  fun getViewModel() = VolumeServiceViewModel(errorBus, interactor, bus)
 
   @CheckResult
-  fun getPresenter(): ServicePublisher = ServicePublisher(bus)
+  fun getPublisher(): Publisher<ServiceEvent> = bus
 }

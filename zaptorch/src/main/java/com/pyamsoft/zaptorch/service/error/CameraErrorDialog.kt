@@ -19,16 +19,16 @@ package com.pyamsoft.zaptorch.service.error
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.zaptorch.uicode.WatchedDialog
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 
-class CameraErrorDialog : WatchedDialog() {
+class CameraErrorDialog : ToolbarDialog() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())
         .setMessage(
-            """ZapTorch was unable to access your devices setupCamera.
-              |Please make sure that your device has a setupCamera with Flash functionality.
-              |Please make sure no other application is using the setupCamera and try again.
+            """ZapTorch was unable to access your devices Camera.
+              |Please make sure that your device has a Camera with Flash functionality.
+              |Please make sure no other application is using the Camera and try again.
             """.trimMargin()
         )
         .setPositiveButton("Okay") { _, _ -> dismiss() }

@@ -16,21 +16,29 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.bus.Publisher
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
-import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
-import io.reactivex.Single
+import com.pyamsoft.zaptorch.api.ZapTorchModule
+import com.pyamsoft.zaptorch.model.ConfirmEvent
 
-internal class SettingsPreferenceFragmentInteractorImpl internal constructor(
+class SettingsModule(
   private val enforcer: Enforcer,
-  private val clearPreferences: ClearPreferences
-) : SettingsPreferenceFragmentInteractor {
+  module: ZapTorchModule
+) {
 
-  override fun clearAll(): Single<Boolean> {
-    return Single.fromCallable {
-      enforcer.assertNotOnMainThread()
-      clearPreferences.clearAll()
-      return@fromCallable true
-    }
+  private val interactor: SettingsPreferenceFragmentInteractor
+  private val bus = RxBus.create<ConfirmEvent>()
+
+  init {
+    interactor = SettingsInteractorImpl(enforcer, module.provideClearPreferences())
   }
+
+  @CheckResult
+  fun getViewModel() = SettingsViewModel(enforcer, bus, interactor)
+
+  @CheckResult
+  fun getPublisher(): Publisher<ConfirmEvent> = bus
 }
