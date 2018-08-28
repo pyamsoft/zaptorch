@@ -21,7 +21,6 @@ import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -34,14 +33,13 @@ class SettingsViewModel internal constructor(
 
   @CheckResult
   fun onClearAllEvent(func: () -> Unit): Disposable {
-    return Observable.defer {
-      enforcer.assertNotOnMainThread()
-      return@defer bus.listen()
-          .flatMapSingle {
-            enforcer.assertNotOnMainThread()
-            return@flatMapSingle interactor.clearAll()
-          }
-    }
+    return bus.listen()
+        .observeOn(Schedulers.io())
+        .flatMapSingle {
+          enforcer.assertNotOnMainThread()
+          return@flatMapSingle interactor.clearAll()
+              .observeOn(Schedulers.io())
+        }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { func() }
