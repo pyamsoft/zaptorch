@@ -17,17 +17,10 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
-import io.reactivex.Single
+import io.reactivex.Observable
 
 interface MainInteractor {
 
-  fun register(
-    handleKeyPressKey: String,
-    onHandleChanged: (Boolean) -> Unit
-  )
-
-  fun unregister()
-
   @CheckResult
-  fun shouldHandleKeys(): Single<Boolean>
+  fun onHandleKeyPressChanged(handleKeyPressKey: String): Observable<Boolean>
 }

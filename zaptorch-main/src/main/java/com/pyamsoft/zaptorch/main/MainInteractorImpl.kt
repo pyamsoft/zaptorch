@@ -16,48 +16,40 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
-import io.reactivex.Single
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
 
 internal class MainInteractorImpl internal constructor(
   private val enforcer: Enforcer,
   private val preferences: UIPreferences
 ) : MainInteractor {
 
-  private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
-
-  override fun register(
-    handleKeyPressKey: String,
-    onHandleChanged: (Boolean) -> Unit
-  ) {
-    if (listener == null) {
-      listener = OnSharedPreferenceChangeListener { _, key ->
+  override fun onHandleKeyPressChanged(handleKeyPressKey: String): Observable<Boolean> {
+    return Observable.create {
+      val listener = OnSharedPreferenceChangeListener { _, key ->
         if (key == handleKeyPressKey) {
-          onHandleChanged(preferences.shouldHandleKeys())
+          emit(it)
         }
       }
-    }
 
-    val obj = listener
-    if (obj != null) {
-      preferences.register(obj)
+      enforcer.assertNotOnMainThread()
+      preferences.register(listener)
+      it.setCancellable {
+        preferences.unregister(listener)
+      }
+
+      emit(it)
     }
   }
 
-  override fun unregister() {
-    val obj = listener
-    if (obj != null) {
-      preferences.unregister(obj)
+  private fun emit(emitter: ObservableEmitter<Boolean>) {
+    if (!emitter.isDisposed) {
+      emitter.onNext(preferences.shouldHandleKeys())
     }
-    listener = null
   }
 
-  override fun shouldHandleKeys(): Single<Boolean> = Single.fromCallable {
-    enforcer.assertNotOnMainThread()
-    return@fromCallable preferences.shouldHandleKeys()
-  }
 }

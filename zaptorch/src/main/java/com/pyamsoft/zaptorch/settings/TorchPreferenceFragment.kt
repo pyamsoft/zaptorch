@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.pyamsoft.pydroid.core.addTo
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.popHide
@@ -34,6 +35,7 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.model.ServiceEvent
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 class TorchPreferenceFragment : SettingsPreferenceFragment() {
@@ -48,6 +50,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   override val applicationName: String
     get() = getString(R.string.app_name)
+
+  private val compositeDisposable = CompositeDisposable()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -70,7 +74,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
     addScrollListener()
 
-    viewModel.onClearAllEvent(viewLifecycleOwner) { onClearAll() }
+    viewModel.onClearAllEvent { onClearAll() }
+        .addTo(compositeDisposable)
 
     return view
   }
@@ -96,6 +101,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
     super.onDestroyView()
     hideScrollListener?.also { listView?.removeOnScrollListener(it) }
     hideScrollListener = null
+    compositeDisposable.clear()
   }
 
   private fun onClearAll() {

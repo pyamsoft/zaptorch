@@ -33,5 +33,5 @@ class MainModule(
   }
 
   @CheckResult
-  fun getPresenter(keyPressKey: String): MainPresenter = MainPresenter(keyPressKey, interactor)
+  fun getPresenter(keyPressKey: String): MainViewModel = MainViewModel(keyPressKey, interactor)
 }

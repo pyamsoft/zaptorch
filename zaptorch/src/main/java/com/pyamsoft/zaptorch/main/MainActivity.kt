@@ -16,12 +16,13 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.core.view.ViewCompat
-import androidx.preference.PreferenceManager
 import android.view.KeyEvent
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.databinding.DataBindingUtil
+import androidx.preference.PreferenceManager
+import com.pyamsoft.pydroid.core.addTo
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
@@ -37,11 +38,12 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
-class MainActivity : RatingActivity(), MainPresenter.View {
+class MainActivity : RatingActivity() {
 
-  internal lateinit var presenter: MainPresenter
+  internal lateinit var viewModel: MainViewModel
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
@@ -61,6 +63,8 @@ class MainActivity : RatingActivity(), MainPresenter.View {
     bugfix("Smoother animations")
   }
 
+  private val compositeDisposable = CompositeDisposable()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
@@ -72,7 +76,8 @@ class MainActivity : RatingActivity(), MainPresenter.View {
         .inject(this)
     setupToolbar()
 
-    presenter.bind(this, this)
+    viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
+        .addTo(compositeDisposable)
   }
 
   override fun onStart() {
@@ -80,17 +85,14 @@ class MainActivity : RatingActivity(), MainPresenter.View {
     showMainFragment()
   }
 
-  override fun onHandleKeyPress(handle: Boolean) {
+  private fun onHandleKeyPress(handle: Boolean) {
     handleKeyPress = handle
     Timber.d("Handle keypress: %s", handle)
   }
 
-  override fun onError(throwable: Throwable) {
-    Snackbreak.short(this, rootView, ErrorDetail("Error", throwable.localizedMessage))
-  }
-
   override fun onDestroy() {
     super.onDestroy()
+    compositeDisposable.clear()
     binding.unbind()
   }
 
@@ -144,8 +146,8 @@ class MainActivity : RatingActivity(), MainPresenter.View {
       })
 
       inflateMenu(R.menu.menu)
-      setOnMenuItemClickListener {
-        if (it.itemId == R.id.menu_id_privacy_policy) {
+      setOnMenuItemClickListener { item ->
+        if (item.itemId == R.id.menu_id_privacy_policy) {
           PRIVACY_POLICY_URL.hyperlink(context)
               .navigate {
                 Snackbreak.short(self, rootView, ErrorDetail("Error", it.localizedMessage))

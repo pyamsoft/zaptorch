@@ -17,72 +17,62 @@
 package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
-import androidx.lifecycle.LifecycleOwner
+import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.core.bus.Listener
-import com.pyamsoft.pydroid.core.viewmodel.LifecycleViewModel
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class VolumeServiceViewModel internal constructor(
   private val errorBus: Listener<Intent>,
   private val interactor: VolumeServiceInteractor,
   private val bus: Listener<ServiceEvent>
-) : LifecycleViewModel {
+) {
 
-  fun onCameraError(
-    owner: LifecycleOwner,
-    func: (Intent) -> Unit
-  ) {
-    errorBus.listen()
+  @CheckResult
+  fun onCameraError(func: (Intent) -> Unit): Disposable {
+    return errorBus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { interactor.setupCamera() }
         .doOnDispose { interactor.releaseCamera() }
         .subscribe(func)
-        .bind(owner)
   }
 
-  fun onTorchEvent(
-    owner: LifecycleOwner,
-    func: () -> Unit
-  ) {
-    bus.listen()
+  @CheckResult
+  fun onTorchEvent(func: () -> Unit): Disposable {
+    return bus.listen()
         .map { it.type }
         .filter { it == TORCH }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnNext { interactor.toggleTorch() }
         .subscribe { func() }
-        .bind(owner)
   }
 
-  fun onServiceFinishEvent(
-    owner: LifecycleOwner,
-    func: () -> Unit
-  ) {
-    bus.listen()
+  @CheckResult
+  fun onServiceFinishEvent(func: () -> Unit): Disposable {
+    return bus.listen()
         .map { it.type }
         .filter { it == FINISH }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { func() }
-        .bind(owner)
   }
 
+  @CheckResult
   fun handleKeyEvent(
-    owner: LifecycleOwner,
     action: Int,
     keyCode: Int
-  ) {
-    interactor.handleKeyPress(action, keyCode)
+  ): Disposable {
+    return interactor.handleKeyPress(action, keyCode)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe()
-        .disposeOnClear(owner)
   }
 
 }

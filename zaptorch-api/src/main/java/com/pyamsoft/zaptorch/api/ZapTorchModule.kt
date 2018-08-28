@@ -36,9 +36,6 @@ interface ZapTorchModule {
   fun provideImageLoader(): ImageLoader
 
   @CheckResult
-  fun provideImageLoaderCache(): Cache
-
-  @CheckResult
   fun provideCameraPreferences(): CameraPreferences
 
   @CheckResult

@@ -43,8 +43,6 @@ class ZapTorchModuleImpl(
 
   override fun provideImageLoader(): ImageLoader = loaderModule.provideImageLoader()
 
-  override fun provideImageLoaderCache(): Cache = loaderModule.provideImageLoaderCache()
-
   override fun provideCameraPreferences(): CameraPreferences = preferences
 
   override fun provideClearPreferences(): ClearPreferences = preferences

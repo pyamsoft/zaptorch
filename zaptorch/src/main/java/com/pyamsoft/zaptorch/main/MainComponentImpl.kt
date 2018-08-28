@@ -22,6 +22,6 @@ internal class MainComponentImpl internal constructor(
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
-    activity.presenter = mainModule.getPresenter(keyPressKey)
+    activity.viewModel = mainModule.getPresenter(keyPressKey)
   }
 }
