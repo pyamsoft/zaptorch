@@ -22,7 +22,6 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
-import com.pyamsoft.pydroid.core.addTo
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
@@ -63,8 +62,6 @@ class MainActivity : RatingActivity() {
     bugfix("Smoother animations")
   }
 
-  private val compositeDisposable = CompositeDisposable()
-
   override fun onCreate(savedInstanceState: Bundle?) {
     setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
@@ -72,12 +69,11 @@ class MainActivity : RatingActivity() {
     PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
 
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(getString(R.string.handle_volume_keys_key))
+        .plusMainComponent(this, getString(R.string.handle_volume_keys_key))
         .inject(this)
     setupToolbar()
 
     viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
-        .addTo(compositeDisposable)
   }
 
   override fun onStart() {
@@ -92,7 +88,6 @@ class MainActivity : RatingActivity() {
 
   override fun onDestroy() {
     super.onDestroy()
-    compositeDisposable.clear()
     binding.unbind()
   }
 

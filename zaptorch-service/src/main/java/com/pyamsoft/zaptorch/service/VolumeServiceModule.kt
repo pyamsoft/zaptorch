@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
 import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
@@ -46,7 +47,7 @@ class VolumeServiceModule(
   }
 
   @CheckResult
-  fun getViewModel() = VolumeServiceViewModel(errorBus, interactor, bus)
+  fun getViewModel(owner: LifecycleOwner) = VolumeServiceViewModel(owner, errorBus, interactor, bus)
 
   @CheckResult
   fun getPublisher(): Publisher<ServiceEvent> = bus

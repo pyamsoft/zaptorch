@@ -16,32 +16,34 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.core.viewmodel.BaseViewModel
 import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class SettingsViewModel internal constructor(
+  owner: LifecycleOwner,
   private val enforcer: Enforcer,
   private val bus: EventBus<ConfirmEvent>,
   private val interactor: SettingsPreferenceFragmentInteractor
-) {
+) : BaseViewModel(owner) {
 
-  @CheckResult
-  fun onClearAllEvent(func: () -> Unit): Disposable {
-    return bus.listen()
-        .observeOn(Schedulers.io())
-        .flatMapSingle {
-          enforcer.assertNotOnMainThread()
-          return@flatMapSingle interactor.clearAll()
-              .observeOn(Schedulers.io())
-        }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { func() }
+  fun onClearAllEvent(func: () -> Unit) {
+    dispose {
+      bus.listen()
+          .observeOn(Schedulers.io())
+          .flatMapSingle {
+            enforcer.assertNotOnMainThread()
+            return@flatMapSingle interactor.clearAll()
+                .observeOn(Schedulers.io())
+          }
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe { func() }
+    }
   }
 }

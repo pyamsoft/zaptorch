@@ -17,59 +17,69 @@
 package com.pyamsoft.zaptorch.service
 
 import android.content.Intent
-import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.Listener
+import com.pyamsoft.pydroid.core.viewmodel.BaseViewModel
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.FINISH
 import com.pyamsoft.zaptorch.model.ServiceEvent.Type.TORCH
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class VolumeServiceViewModel internal constructor(
+  owner: LifecycleOwner,
   private val errorBus: Listener<Intent>,
   private val interactor: VolumeServiceInteractor,
   private val bus: Listener<ServiceEvent>
-) {
+) : BaseViewModel(owner) {
 
-  @CheckResult
-  fun onCameraError(func: (Intent) -> Unit): Disposable {
-    return errorBus.listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe { interactor.setupCamera() }
-        .doOnDispose { interactor.releaseCamera() }
-        .subscribe(func)
+  private var handleKeyDisposable by disposable()
+
+  override fun onCleared() {
+    super.onCleared()
+    handleKeyDisposable.tryDispose()
   }
 
-  @CheckResult
-  fun onTorchEvent(func: () -> Unit): Disposable {
-    return bus.listen()
-        .map { it.type }
-        .filter { it == TORCH }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnNext { interactor.toggleTorch() }
-        .subscribe { func() }
+  fun onCameraError(func: (Intent) -> Unit) {
+    dispose {
+      errorBus.listen()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .doOnSubscribe { interactor.setupCamera() }
+          .doOnDispose { interactor.releaseCamera() }
+          .subscribe(func)
+    }
   }
 
-  @CheckResult
-  fun onServiceFinishEvent(func: () -> Unit): Disposable {
-    return bus.listen()
-        .map { it.type }
-        .filter { it == FINISH }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { func() }
+  fun onTorchEvent(func: () -> Unit) {
+    dispose {
+      bus.listen()
+          .map { it.type }
+          .filter { it == TORCH }
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .doOnNext { interactor.toggleTorch() }
+          .subscribe { func() }
+    }
   }
 
-  @CheckResult
+  fun onServiceFinishEvent(func: () -> Unit) {
+    dispose {
+      bus.listen()
+          .map { it.type }
+          .filter { it == FINISH }
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe { func() }
+    }
+  }
+
   fun handleKeyEvent(
     action: Int,
     keyCode: Int
-  ): Disposable {
-    return interactor.handleKeyPress(action, keyCode)
+  ) {
+    handleKeyDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe()

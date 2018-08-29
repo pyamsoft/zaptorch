@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
@@ -37,7 +38,7 @@ class SettingsModule(
   }
 
   @CheckResult
-  fun getViewModel() = SettingsViewModel(enforcer, bus, interactor)
+  fun getViewModel(owner: LifecycleOwner) = SettingsViewModel(owner, enforcer, bus, interactor)
 
   @CheckResult
   fun getPublisher(): Publisher<ConfirmEvent> = bus

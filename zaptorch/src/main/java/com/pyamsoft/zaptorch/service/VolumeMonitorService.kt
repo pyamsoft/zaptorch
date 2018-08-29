@@ -22,29 +22,33 @@ import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.core.addTo
-import com.pyamsoft.pydroid.core.disposable
-import com.pyamsoft.pydroid.core.tryDispose
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import com.pyamsoft.pydroid.core.lifecycle.fakeBind
+import com.pyamsoft.pydroid.core.lifecycle.fakeUnbind
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
-import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService() {
+class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
 
+  private val registry = LifecycleRegistry(this)
   internal lateinit var viewModel: VolumeServiceViewModel
-  private val compositeDisposable = CompositeDisposable()
-  private var keyDisposable by disposable()
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    keyDisposable = viewModel.handleKeyEvent(action, keyCode)
+    viewModel.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
+  }
+
+  override fun getLifecycle(): Lifecycle {
+    return registry
   }
 
   override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
@@ -58,14 +62,14 @@ class VolumeMonitorService : AccessibilityService() {
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
+        .plusServiceComponent(this)
         .inject(this)
 
     viewModel.onCameraError { onCameraError(it) }
-        .addTo(compositeDisposable)
     viewModel.onServiceFinishEvent { onFinishService() }
-        .addTo(compositeDisposable)
     viewModel.onTorchEvent { Timber.d("Toggling torch") }
-        .addTo(compositeDisposable)
+
+    registry.fakeBind()
   }
 
   override fun onServiceConnected() {
@@ -91,10 +95,9 @@ class VolumeMonitorService : AccessibilityService() {
 
   override fun onDestroy() {
     super.onDestroy()
+    registry.fakeUnbind()
     ZapTorch.getRefWatcher(this)
         .watch(this)
-    compositeDisposable.clear()
-    keyDisposable.tryDispose()
   }
 
   companion object {

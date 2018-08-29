@@ -16,12 +16,15 @@
 
 package com.pyamsoft.zaptorch.main
 
+import androidx.lifecycle.LifecycleOwner
+
 internal class MainComponentImpl internal constructor(
+  private val owner: LifecycleOwner,
   private val mainModule: MainModule,
   private val keyPressKey: String
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
-    activity.viewModel = mainModule.getPresenter(keyPressKey)
+    activity.viewModel = mainModule.getPresenter(owner, keyPressKey)
   }
 }

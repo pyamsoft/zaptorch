@@ -16,10 +16,12 @@
 
 package com.pyamsoft.zaptorch
 
+import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragment
+import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 
@@ -29,11 +31,17 @@ interface ZapTorchComponent {
 
   fun inject(confirmationDialog: ConfirmationDialog)
 
-  fun inject(volumeMonitorService: VolumeMonitorService)
-
   fun inject(torchOffService: TorchOffService)
 
-  fun plusSettingsComponent(): SettingsComponent
+  @CheckResult
+  fun plusSettingsComponent(owner: LifecycleOwner): SettingsComponent
 
-  fun plusMainComponent(key: String): MainComponent
+  @CheckResult
+  fun plusMainComponent(
+    owner: LifecycleOwner,
+    key: String
+  ): MainComponent
+
+  @CheckResult
+  fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent
 }

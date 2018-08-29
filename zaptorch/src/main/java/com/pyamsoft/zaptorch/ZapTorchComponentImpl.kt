@@ -16,14 +16,16 @@
 
 package com.pyamsoft.zaptorch
 
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.main.MainModule
+import com.pyamsoft.zaptorch.service.ServiceComponent
+import com.pyamsoft.zaptorch.service.ServiceComponentImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
@@ -49,16 +51,18 @@ internal class ZapTorchComponentImpl internal constructor(
     confirmationDialog.publisher = settingsPreferenceFragmentModule.getPublisher()
   }
 
-  override fun inject(volumeMonitorService: VolumeMonitorService) {
-    volumeMonitorService.viewModel = volumeServiceModule.getViewModel()
-  }
-
   override fun inject(torchOffService: TorchOffService) {
     torchOffService.servicePublisher = volumeServiceModule.getPublisher()
   }
 
-  override fun plusSettingsComponent(): SettingsComponent =
-    SettingsComponentImpl(settingsPreferenceFragmentModule, volumeServiceModule)
+  override fun plusSettingsComponent(owner: LifecycleOwner): SettingsComponent =
+    SettingsComponentImpl(owner, settingsPreferenceFragmentModule, volumeServiceModule)
 
-  override fun plusMainComponent(key: String): MainComponent = MainComponentImpl(mainModule, key)
+  override fun plusMainComponent(
+    owner: LifecycleOwner,
+    key: String
+  ): MainComponent = MainComponentImpl(owner, mainModule, key)
+
+  override fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent =
+    ServiceComponentImpl(owner, volumeServiceModule)
 }

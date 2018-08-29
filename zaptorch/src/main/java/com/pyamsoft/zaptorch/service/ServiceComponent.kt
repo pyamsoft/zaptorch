@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.service
 
-import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.zaptorch.service.VolumeServiceModule
+interface ServiceComponent {
 
-internal class SettingsComponentImpl(
-  private val owner: LifecycleOwner,
-  private val settingsModule: SettingsModule,
-  private val serviceModule: VolumeServiceModule
-) : SettingsComponent {
-
-  override fun inject(torchPreferenceFragment: TorchPreferenceFragment) {
-    torchPreferenceFragment.viewModel = settingsModule.getViewModel(owner)
-    torchPreferenceFragment.publisher = serviceModule.getPublisher()
-  }
+  fun inject(service: VolumeMonitorService)
 }
