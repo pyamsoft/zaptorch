@@ -16,9 +16,11 @@
 
 package com.pyamsoft.zaptorch
 
+import android.app.Application
+import android.app.IntentService
 import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.core.threads.Enforcer
-import com.pyamsoft.zaptorch.api.ZapTorchModule
+import com.pyamsoft.pydroid.ui.ModuleProvider
+import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragment
@@ -33,14 +35,18 @@ import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class ZapTorchComponentImpl internal constructor(
-  enforcer: Enforcer,
-  private val zapTorchModule: ZapTorchModule
+  application: Application,
+  moduleProvider: ModuleProvider,
+  serviceClass: Class<out IntentService>,
+  notificationColor: Int
 ) : ZapTorchComponent {
 
-  private val mainModule = MainModule(enforcer, zapTorchModule)
-  private val volumeServiceModule = VolumeServiceModule(zapTorchModule, enforcer)
+  private val zapTorchModule =
+    ZapTorchModuleImpl(application, moduleProvider.loaderModule(), serviceClass, notificationColor)
+  private val mainModule = MainModule(moduleProvider.enforcer(), zapTorchModule)
+  private val volumeServiceModule = VolumeServiceModule(zapTorchModule, moduleProvider.enforcer())
   private val settingsPreferenceFragmentModule =
-    SettingsModule(enforcer, zapTorchModule)
+    SettingsModule(moduleProvider.enforcer(), zapTorchModule)
 
   override fun inject(mainFragment: MainFragment) {
     mainFragment.publisher = settingsPreferenceFragmentModule.getPublisher()

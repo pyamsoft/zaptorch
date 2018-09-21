@@ -17,13 +17,14 @@
 package com.pyamsoft.zaptorch.settings
 
 import android.app.ActivityManager
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
+import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -101,9 +102,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
       Timber.e(e, "Expected exception when Service is NULL")
     }
 
-    val activityManager =
-      requireContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    activityManager.clearApplicationUserData()
+    requireNotNull(requireContext().getSystemService<ActivityManager>()).clearApplicationUserData()
   }
 
   override fun onClearAllClicked() {
@@ -112,7 +111,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   override fun onResume() {
     super.onResume()
-    toolbarActivity.withToolbar {
+    requireToolbarActivity().withToolbar {
       it.setTitle(R.string.app_name)
       it.setUpEnabled(false)
     }

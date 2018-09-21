@@ -25,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.app.fragment.ToolbarFragment
+import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
@@ -92,17 +93,17 @@ class MainFragment : ToolbarFragment() {
 
   override fun onResume() {
     super.onResume()
-    toolbarActivity.withToolbar {
+    requireToolbarActivity().withToolbar {
       it.setTitle(R.string.app_name)
       it.setUpEnabled(false)
     }
 
     imageLoader.apply {
       if (VolumeMonitorService.isRunning) {
-        fromResource(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
+        load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
             .bind(viewLifecycleOwner)
       } else {
-        fromResource(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
+        load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
             .bind(viewLifecycleOwner)
       }
     }

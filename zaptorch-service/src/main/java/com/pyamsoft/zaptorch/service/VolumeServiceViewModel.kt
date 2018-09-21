@@ -19,6 +19,8 @@ package com.pyamsoft.zaptorch.service
 import android.content.Intent
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.Listener
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.core.viewmodel.BaseViewModel
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.model.ServiceEvent
@@ -34,7 +36,7 @@ class VolumeServiceViewModel internal constructor(
   private val bus: Listener<ServiceEvent>
 ) : BaseViewModel(owner) {
 
-  private var handleKeyDisposable by disposable()
+  private var handleKeyDisposable by singleDisposable()
 
   override fun onCleared() {
     super.onCleared()

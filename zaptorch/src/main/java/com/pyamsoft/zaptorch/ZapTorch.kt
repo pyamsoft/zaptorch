@@ -20,7 +20,6 @@ import android.app.Application
 import android.app.Service
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.ui.PYDroid
-import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -51,13 +50,10 @@ class ZapTorch : Application(), PYDroid.Instance {
   override fun setPydroid(instance: PYDroid) {
     pyDroid = instance.also {
       component = ZapTorchComponentImpl(
-          it.enforcer(),
-          ZapTorchModuleImpl(
-              this,
-              it.modules().loaderModule(),
-              TorchOffService::class.java,
-              R.color.purple500
-          )
+          this,
+          it.modules(),
+          TorchOffService::class.java,
+          R.color.purple500
       )
     }
   }
