@@ -28,7 +28,6 @@ import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.Snackbreak
-import com.pyamsoft.pydroid.ui.util.Snackbreak.ErrorDetail
 import com.pyamsoft.pydroid.ui.util.animateMenu
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.pydroid.util.toDp
@@ -37,7 +36,6 @@ import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
-import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 class MainActivity : RatingActivity() {
@@ -130,7 +128,6 @@ class MainActivity : RatingActivity() {
   }
 
   private fun setupToolbar() {
-    val self = this
     binding.toolbar.apply {
       setToolbar(this)
       setTitle(R.string.app_name)
@@ -145,7 +142,8 @@ class MainActivity : RatingActivity() {
         if (item.itemId == R.id.menu_id_privacy_policy) {
           PRIVACY_POLICY_URL.hyperlink(context)
               .navigate {
-                Snackbreak.short(self, rootView, ErrorDetail("Error", it.localizedMessage))
+                Snackbreak.short(rootView, it.localizedMessage)
+                    .show()
               }
           return@setOnMenuItemClickListener true
         } else {

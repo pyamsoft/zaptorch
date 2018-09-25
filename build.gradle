@@ -34,10 +34,10 @@ buildscript {
     maxSdk = 28
 
     // AndroidX
-    annotation = "1.0.0-rc02"
-    preference = "1.0.0-rc02"
+    annotation = "1.0.0"
+    preference = "1.0.0"
 
-    pydroid = "18.1.6-SNAPSHOT-2"
+    pydroid = "18.1.6-SNAPSHOT-3"
     leakCanary = "1.6.1"
   }
 
