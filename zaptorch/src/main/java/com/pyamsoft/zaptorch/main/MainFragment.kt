@@ -34,7 +34,7 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding
 import com.pyamsoft.zaptorch.model.ConfirmEvent
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
+import com.pyamsoft.zaptorch.service.VolumeServiceViewModel
 import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
 import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingsFragment
@@ -44,12 +44,7 @@ class MainFragment : ToolbarFragment() {
   private lateinit var binding: FragmentMainBinding
   internal lateinit var imageLoader: ImageLoader
   internal lateinit var publisher: Publisher<ConfirmEvent>
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .inject(this)
-  }
+  internal lateinit var serviceViewModel: VolumeServiceViewModel
 
   @CheckResult
   internal fun getFloatingActionButton(): FloatingActionButton {
@@ -61,6 +56,9 @@ class MainFragment : ToolbarFragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusMainComponent(viewLifecycleOwner, getString(R.string.handle_volume_keys_key))
+        .inject(this)
     binding = FragmentMainBinding.inflate(inflater, container, false)
     return binding.root
   }
@@ -70,18 +68,31 @@ class MainFragment : ToolbarFragment() {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-    setupFAB()
     displayPreferenceFragment()
+
+    serviceViewModel.onServiceStateChanged {
+      setupFAB(it)
+    }
   }
 
-  private fun setupFAB() {
+  private fun setupFAB(running: Boolean) {
     binding.apply {
       mainSettingsFab.setOnDebouncedClickListener {
-        if (VolumeMonitorService.isRunning) {
+        if (running) {
           ServiceInfoDialog().show(requireActivity(), "service_info")
         } else {
           AccessibilityRequestDialog().show(requireActivity(), "accessibility")
         }
+      }
+    }
+
+    imageLoader.apply {
+      if (running) {
+        load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
+            .bind(viewLifecycleOwner)
+      } else {
+        load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
+            .bind(viewLifecycleOwner)
       }
     }
   }
@@ -96,16 +107,6 @@ class MainFragment : ToolbarFragment() {
     requireToolbarActivity().withToolbar {
       it.setTitle(R.string.app_name)
       it.setUpEnabled(false)
-    }
-
-    imageLoader.apply {
-      if (VolumeMonitorService.isRunning) {
-        load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycleOwner)
-      } else {
-        load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycleOwner)
-      }
     }
   }
 

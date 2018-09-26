@@ -32,10 +32,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.pyamsoft.pydroid.core.bus.Publisher
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import io.reactivex.Observable
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -54,6 +56,8 @@ internal class VolumeServiceInteractorImpl internal constructor(
   private val onStateChangedCallback: CameraInterface.OnStateChangedCallback
   private var pressed: Boolean = false
   private var cameraInterface: CameraInterface? = null
+  private var running = false
+  private val runningStateBus = RxBus.create<Boolean>()
 
   init {
     val intent = Intent(context, torchOffServiceClass)
@@ -94,6 +98,16 @@ internal class VolumeServiceInteractorImpl internal constructor(
     }
 
     pressed = false
+  }
+
+  override fun setServiceState(changed: Boolean) {
+    running = changed
+    runningStateBus.publish(changed)
+  }
+
+  override fun observeServiceState(): Observable<Boolean> {
+    return runningStateBus.listen()
+        .startWith(running)
   }
 
   @RequiresApi(VERSION_CODES.O)

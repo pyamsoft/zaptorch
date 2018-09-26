@@ -17,14 +17,26 @@
 package com.pyamsoft.zaptorch.main
 
 import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.loader.LoaderModule
+import com.pyamsoft.zaptorch.service.VolumeServiceModule
+import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class MainComponentImpl internal constructor(
   private val owner: LifecycleOwner,
   private val mainModule: MainModule,
-  private val keyPressKey: String
+  private val keyPressKey: String,
+  private val settingsModule: SettingsModule,
+  private val loaderModule: LoaderModule,
+  private val serviceModule: VolumeServiceModule
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
     activity.viewModel = mainModule.getPresenter(owner, keyPressKey)
+  }
+
+  override fun inject(mainFragment: MainFragment) {
+    mainFragment.publisher = settingsModule.getPublisher()
+    mainFragment.imageLoader = loaderModule.provideImageLoader()
+    mainFragment.serviceViewModel = serviceModule.getViewModel(owner)
   }
 }

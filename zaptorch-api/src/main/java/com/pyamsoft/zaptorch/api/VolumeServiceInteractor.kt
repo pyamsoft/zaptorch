@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
+import io.reactivex.Observable
 import io.reactivex.Single
 
 interface VolumeServiceInteractor {
@@ -35,4 +36,9 @@ interface VolumeServiceInteractor {
   fun toggleTorch()
 
   fun releaseCamera()
+
+  @CheckResult
+  fun observeServiceState(): Observable<Boolean>
+
+  fun setServiceState(changed: Boolean)
 }

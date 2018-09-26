@@ -87,4 +87,17 @@ class VolumeServiceViewModel internal constructor(
         .subscribe()
   }
 
+  fun onServiceStateChanged(func: (Boolean) -> Unit) {
+    dispose {
+      interactor.observeServiceState()
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(func)
+    }
+  }
+
+  fun setServiceState(running: Boolean) {
+    interactor.setServiceState(running)
+  }
+
 }

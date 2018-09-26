@@ -23,7 +23,6 @@ import com.pyamsoft.pydroid.ui.ModuleProvider
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
-import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.main.MainModule
 import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.ServiceComponentImpl
@@ -36,22 +35,17 @@ import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class ZapTorchComponentImpl internal constructor(
   application: Application,
-  moduleProvider: ModuleProvider,
+  private val moduleProvider: ModuleProvider,
   serviceClass: Class<out IntentService>,
   notificationColor: Int
 ) : ZapTorchComponent {
 
   private val zapTorchModule =
-    ZapTorchModuleImpl(application, moduleProvider.loaderModule(), serviceClass, notificationColor)
+    ZapTorchModuleImpl(application, serviceClass, notificationColor)
   private val mainModule = MainModule(moduleProvider.enforcer(), zapTorchModule)
   private val volumeServiceModule = VolumeServiceModule(zapTorchModule, moduleProvider.enforcer())
   private val settingsPreferenceFragmentModule =
     SettingsModule(moduleProvider.enforcer(), zapTorchModule)
-
-  override fun inject(mainFragment: MainFragment) {
-    mainFragment.publisher = settingsPreferenceFragmentModule.getPublisher()
-    mainFragment.imageLoader = zapTorchModule.provideImageLoader()
-  }
 
   override fun inject(confirmationDialog: ConfirmationDialog) {
     confirmationDialog.publisher = settingsPreferenceFragmentModule.getPublisher()
@@ -67,7 +61,14 @@ internal class ZapTorchComponentImpl internal constructor(
   override fun plusMainComponent(
     owner: LifecycleOwner,
     key: String
-  ): MainComponent = MainComponentImpl(owner, mainModule, key)
+  ): MainComponent = MainComponentImpl(
+      owner,
+      mainModule,
+      key,
+      settingsPreferenceFragmentModule,
+      moduleProvider.loaderModule(),
+      volumeServiceModule
+  )
 
   override fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent =
     ServiceComponentImpl(owner, volumeServiceModule)

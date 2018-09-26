@@ -21,8 +21,6 @@ import android.app.IntentService
 import android.content.Context
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorRes
-import com.pyamsoft.pydroid.core.cache.Cache
-import com.pyamsoft.pydroid.loader.ImageLoader
 
 interface ZapTorchModule {
 
@@ -31,9 +29,6 @@ interface ZapTorchModule {
 
   @CheckResult
   fun provideContext(): Context
-
-  @CheckResult
-  fun provideImageLoader(): ImageLoader
 
   @CheckResult
   fun provideCameraPreferences(): CameraPreferences
