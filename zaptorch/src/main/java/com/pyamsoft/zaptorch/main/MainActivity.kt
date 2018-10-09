@@ -28,7 +28,7 @@ import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.Snackbreak
-import com.pyamsoft.pydroid.ui.util.animateMenu
+import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.BuildConfig
@@ -89,11 +89,6 @@ class MainActivity : RatingActivity() {
     binding.unbind()
   }
 
-  override fun onResume() {
-    super.onResume()
-    binding.toolbar.animateMenu()
-  }
-
   override fun onKeyUp(
     keyCode: Int,
     event: KeyEvent
@@ -123,7 +118,7 @@ class MainActivity : RatingActivity() {
     ) {
       fragmentManager.beginTransaction()
           .add(R.id.main_viewport, MainFragment(), MainFragment.TAG)
-          .commit()
+          .commit(this)
     }
   }
 
