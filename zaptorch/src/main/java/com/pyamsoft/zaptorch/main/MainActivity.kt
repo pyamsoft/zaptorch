@@ -23,6 +23,7 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
+import com.pyamsoft.pydroid.ui.bugreport.BugreportDialog
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
@@ -146,6 +147,10 @@ class MainActivity : RatingActivity() {
         }
       }
     }
+
+    BugreportDialog.attachToToolbar(
+        this, binding.toolbar, applicationName, currentApplicationVersion
+    )
   }
 
   companion object {
