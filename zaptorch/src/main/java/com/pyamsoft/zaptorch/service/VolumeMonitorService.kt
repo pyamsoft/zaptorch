@@ -24,12 +24,12 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import com.pyamsoft.pydroid.core.lifecycle.fakeBind
-import com.pyamsoft.pydroid.core.lifecycle.fakeUnbind
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
+import com.pyamsoft.pydroid.util.fakeUnbind
+import com.pyamsoft.pydroid.util.fakeBind
 import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService(), LifecycleOwner {

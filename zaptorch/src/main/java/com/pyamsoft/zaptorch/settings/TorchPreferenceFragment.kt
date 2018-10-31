@@ -50,6 +50,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
   override val applicationName: String
     get() = getString(R.string.app_name)
 
+  override val isDarkTheme: Boolean = true
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
