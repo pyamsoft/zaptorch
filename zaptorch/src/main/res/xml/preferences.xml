@@ -19,6 +19,7 @@
   <PreferenceCategory android:title="Service Settings">
 
     <Preference
+        android:icon="@drawable/ic_help_24dp"
         android:key="@string/zaptorch_explain_key"
         android:summary="@string/zaptorch_explain_summary"
         android:title="@string/zaptorch_explain_title"/>
@@ -28,18 +29,21 @@
         android:dialogTitle="@string/double_press_delay_title"
         android:entries="@array/double_press_delay"
         android:entryValues="@array/double_press_delay_entries"
+        android:icon="@drawable/ic_timer_24dp"
         android:key="@string/double_press_delay_key"
         android:summary="@string/double_press_delay_summary"
         android:title="@string/double_press_delay_title"/>
 
     <CheckBoxPreference
         android:defaultValue="@bool/display_camera_errors_default"
+        android:icon="@drawable/ic_camera_24dp"
         android:key="@string/display_camera_errors_key"
         android:summary="@string/display_camera_errors_summary"
         android:title="@string/display_camera_errors_title"/>
 
     <CheckBoxPreference
         android:defaultValue="@bool/handle_volume_keys_default"
+        android:icon="@drawable/ic_volume_24dp"
         android:key="@string/handle_volume_keys_key"
         android:summaryOff="@string/handle_volume_keys_summary_unchecked"
         android:summaryOn="@string/handle_volume_keys_summary_checked"
