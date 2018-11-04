@@ -28,8 +28,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion rootProject.ext.minSdk
     targetSdkVersion rootProject.ext.maxSdk
-    versionCode 82
-    versionName "1.7.0"
+    versionCode 84
+    versionName "1.7.2"
 
     // For vector drawables
     vectorDrawables.useSupportLibrary = true

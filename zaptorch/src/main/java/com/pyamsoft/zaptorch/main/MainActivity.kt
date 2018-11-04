@@ -58,7 +58,8 @@ class MainActivity : RatingActivity() {
     get() = binding.root
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
-    bugfix("Stability updates and bugfixes")
+    change("New icon style")
+    change("Better open source license viewing experience")
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,9 +149,7 @@ class MainActivity : RatingActivity() {
       }
     }
 
-    BugreportDialog.attachToToolbar(
-        this, binding.toolbar, applicationName, currentApplicationVersion
-    )
+    BugreportDialog.attachToToolbar(this, applicationName, currentApplicationVersion)
   }
 
   companion object {
