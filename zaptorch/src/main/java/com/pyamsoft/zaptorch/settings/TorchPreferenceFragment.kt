@@ -52,6 +52,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   override val isDarkTheme: Boolean = true
 
+  override val bugreportUrl: String = "https://github.com/pyamsoft/zaptorch/issues"
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
