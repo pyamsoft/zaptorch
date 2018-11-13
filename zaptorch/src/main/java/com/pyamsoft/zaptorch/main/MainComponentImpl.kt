@@ -18,11 +18,13 @@ package com.pyamsoft.zaptorch.main
 
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.loader.LoaderModule
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class MainComponentImpl internal constructor(
   private val owner: LifecycleOwner,
+  private val theming: Theming,
   private val mainModule: MainModule,
   private val keyPressKey: String,
   private val settingsModule: SettingsModule,
@@ -32,6 +34,7 @@ internal class MainComponentImpl internal constructor(
 
   override fun inject(activity: MainActivity) {
     activity.viewModel = mainModule.getPresenter(owner, keyPressKey)
+    activity.theming = theming
   }
 
   override fun inject(mainFragment: MainFragment) {

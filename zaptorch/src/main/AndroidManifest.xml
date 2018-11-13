@@ -27,7 +27,8 @@
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
       android:roundIcon="@mipmap/ic_launcher"
-      android:theme="@style/Theme.ZapTorch">
+      android:theme="@style/Theme.ZapTorch.Dark"
+      tools:ignore="GoogleAppIndexingWarning">
 
     <!-- Support super wide screen -->
     <meta-data
@@ -37,7 +38,7 @@
     <activity
         android:name=".main.MainActivity"
         android:launchMode="singleTask"
-        android:theme="@style/Theme.ZapTorch.Splash">
+        android:theme="@style/Theme.ZapTorch.Dark.Splash">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
@@ -51,7 +52,6 @@
         android:exported="false"
         android:launchMode="singleInstance"
         android:noHistory="true"
-        android:theme="@style/Theme.ZapTorch.Error"
         android:windowSoftInputMode="stateHidden"/>
 
     <service

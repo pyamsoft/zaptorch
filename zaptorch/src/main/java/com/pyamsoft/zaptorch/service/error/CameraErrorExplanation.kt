@@ -16,15 +16,34 @@
 
 package com.pyamsoft.zaptorch.service.error
 
+import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.show
+import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_ERROR
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_PERMISSION
 
 class CameraErrorExplanation : ActivityBase() {
+
+  internal lateinit var theming: Theming
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    Injector.obtain<ZapTorchComponent>(applicationContext)
+        .inject(this)
+
+    if (theming.isDarkTheme()) {
+      setTheme(R.style.Theme_ZapTorch_Dark)
+    } else {
+      setTheme(R.style.Theme_ZapTorch_Light)
+    }
+    super.onCreate(savedInstanceState)
+  }
 
   override fun onPostResume() {
     super.onPostResume()

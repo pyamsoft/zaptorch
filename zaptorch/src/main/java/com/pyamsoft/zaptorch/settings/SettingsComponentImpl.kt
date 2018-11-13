@@ -17,10 +17,12 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 
 internal class SettingsComponentImpl(
   private val owner: LifecycleOwner,
+  private val theming: Theming,
   private val settingsModule: SettingsModule,
   private val serviceModule: VolumeServiceModule
 ) : SettingsComponent {
@@ -28,5 +30,6 @@ internal class SettingsComponentImpl(
   override fun inject(torchPreferenceFragment: TorchPreferenceFragment) {
     torchPreferenceFragment.viewModel = settingsModule.getViewModel(owner)
     torchPreferenceFragment.publisher = serviceModule.getPublisher()
+    torchPreferenceFragment.theming = theming
   }
 }

@@ -21,11 +21,11 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.util.commit
@@ -41,6 +41,8 @@ import timber.log.Timber
 class MainActivity : RatingActivity() {
 
   internal lateinit var viewModel: MainViewModel
+  internal lateinit var theming: Theming
+
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
@@ -62,14 +64,18 @@ class MainActivity : RatingActivity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    setTheme(R.style.Theme_ZapTorch)
-    super.onCreate(savedInstanceState)
-    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-    PreferenceManager.setDefaultValues(applicationContext, R.xml.preferences, false)
-
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .plusMainComponent(this, getString(R.string.handle_volume_keys_key))
         .inject(this)
+
+    if (theming.isDarkTheme()) {
+      setTheme(R.style.Theme_ZapTorch_Dark)
+    } else {
+      setTheme(R.style.Theme_ZapTorch_Light)
+    }
+    super.onCreate(savedInstanceState)
+    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
     setupToolbar()
 
     viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
@@ -124,7 +130,14 @@ class MainActivity : RatingActivity() {
   }
 
   private fun setupToolbar() {
+    val theme: Int
+    if (theming.isDarkTheme()) {
+      theme = R.style.ThemeOverlay_AppCompat
+    } else {
+      theme = R.style.ThemeOverlay_AppCompat_Light
+    }
     binding.toolbar.apply {
+      popupTheme = theme
       setToolbar(this)
       setTitle(R.string.app_name)
       ViewCompat.setElevation(this, 4f.toDp(context).toFloat())

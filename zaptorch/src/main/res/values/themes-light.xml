@@ -16,17 +16,17 @@
 
 <resources>
 
-  <style name="Base.Theme.ZapTorch.Dark" parent="@style/Theme.MaterialComponents.NoActionBar">
+  <style name="Base.Theme.ZapTorch.Light" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
     <item name="colorPrimary">@color/primary</item>
     <item name="colorPrimaryDark">@color/primaryDark</item>
     <item name="colorAccent">@color/accent</item>
   </style>
 
-  <style name="Theme.ZapTorch.Dark" parent="@style/Base.Theme.ZapTorch.Dark">
+  <style name="Theme.ZapTorch.Light" parent="@style/Base.Theme.ZapTorch.Light">
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 
-  <style name="Theme.ZapTorch.Dark.Error" parent="@style/Base.Theme.ZapTorch.Dark">
+  <style name="Theme.ZapTorch.Light.Error" parent="@style/Base.Theme.ZapTorch.Light">
     <item name="android:windowIsTranslucent">true</item>
     <item name="android:windowBackground">@color/transparent</item>
     <item name="android:windowContentOverlay">@null</item>
@@ -35,7 +35,4 @@
     <item name="android:backgroundDimEnabled">false</item>
   </style>
 
-  <style name="Theme.ZapTorch.Dark.Splash" parent="@style/Base.Theme.ZapTorch.Dark">
-    <item name="android:windowBackground">@drawable/splash_screen</item>
-  </style>
 </resources>

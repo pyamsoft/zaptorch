@@ -21,10 +21,13 @@ import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 
 interface ZapTorchComponent {
+
+  fun inject(activity: CameraErrorExplanation)
 
   fun inject(confirmationDialog: ConfirmationDialog)
 

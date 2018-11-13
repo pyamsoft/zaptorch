@@ -18,13 +18,12 @@ package com.pyamsoft.zaptorch.settings
 
 import android.app.ActivityManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.getSystemService
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -42,6 +41,7 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
   private var hideScrollListener: HideOnScrollListener? = null
   internal lateinit var publisher: Publisher<ServiceEvent>
   internal lateinit var viewModel: SettingsViewModel
+  internal lateinit var theming: Theming
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -50,29 +50,43 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
   override val applicationName: String
     get() = getString(R.string.app_name)
 
-  override val isDarkTheme: Boolean = true
-
   override val bugreportUrl: String = "https://github.com/pyamsoft/zaptorch/issues"
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
+  override fun onViewCreated(
+    view: View,
     savedInstanceState: Bundle?
-  ): View? {
+  ) {
+    super.onViewCreated(view, savedInstanceState)
+
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .plusSettingsComponent(viewLifecycleOwner)
         .inject(this)
 
-    val view = super.onCreateView(inflater, container, savedInstanceState)
+    setupExplain()
+    setupDarkTheme()
+
+    addScrollListener()
+    viewModel.onClearAllEvent { onClearAll() }
+  }
+
+  private fun setupDarkTheme() {
+    val theme = findPreference(getString(R.string.dark_mode_key))
+    theme.setOnPreferenceChangeListener { _, newValue ->
+      if (newValue is Boolean) {
+        theming.setDarkTheme(newValue)
+        requireActivity().recreate()
+        return@setOnPreferenceChangeListener true
+      }
+      return@setOnPreferenceChangeListener false
+    }
+  }
+
+  private fun setupExplain() {
     val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
     zapTorchExplain.setOnPreferenceClickListener {
       HowToDialog().show(requireActivity(), "howto")
       return@setOnPreferenceClickListener true
     }
-
-    addScrollListener()
-    viewModel.onClearAllEvent { onClearAll() }
-    return view
   }
 
   private fun addScrollListener() {

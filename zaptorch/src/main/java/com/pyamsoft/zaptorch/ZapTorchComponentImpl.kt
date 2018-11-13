@@ -28,6 +28,7 @@ import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.ServiceComponentImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
+import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
@@ -35,17 +36,23 @@ import com.pyamsoft.zaptorch.settings.SettingsModule
 
 internal class ZapTorchComponentImpl internal constructor(
   application: Application,
-  private val moduleProvider: ModuleProvider,
+  moduleProvider: ModuleProvider,
   serviceClass: Class<out IntentService>,
   notificationColor: Int
 ) : ZapTorchComponent {
 
+  private val theming = moduleProvider.theming()
+  private val loaderModule = moduleProvider.loaderModule()
   private val zapTorchModule =
     ZapTorchModuleImpl(application, serviceClass, notificationColor)
   private val mainModule = MainModule(moduleProvider.enforcer(), zapTorchModule)
   private val volumeServiceModule = VolumeServiceModule(zapTorchModule, moduleProvider.enforcer())
   private val settingsPreferenceFragmentModule =
     SettingsModule(moduleProvider.enforcer(), zapTorchModule)
+
+  override fun inject(activity: CameraErrorExplanation) {
+    activity.theming = theming
+  }
 
   override fun inject(confirmationDialog: ConfirmationDialog) {
     confirmationDialog.publisher = settingsPreferenceFragmentModule.getPublisher()
@@ -56,17 +63,18 @@ internal class ZapTorchComponentImpl internal constructor(
   }
 
   override fun plusSettingsComponent(owner: LifecycleOwner): SettingsComponent =
-    SettingsComponentImpl(owner, settingsPreferenceFragmentModule, volumeServiceModule)
+    SettingsComponentImpl(owner, theming, settingsPreferenceFragmentModule, volumeServiceModule)
 
   override fun plusMainComponent(
     owner: LifecycleOwner,
     key: String
   ): MainComponent = MainComponentImpl(
       owner,
+      theming,
       mainModule,
       key,
       settingsPreferenceFragmentModule,
-      moduleProvider.loaderModule(),
+      loaderModule,
       volumeServiceModule
   )
 

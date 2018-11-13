@@ -20,6 +20,7 @@ import android.app.Application
 import android.app.Service
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.ui.PYDroid
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -42,6 +43,7 @@ class ZapTorch : Application(), PYDroid.Instance {
       refWatcher = RefWatcher.DISABLED
     }
 
+    Theming.IS_DEFAULT_DARK_THEME = true
     PYDroid.init(this, this, BuildConfig.DEBUG)
   }
 
