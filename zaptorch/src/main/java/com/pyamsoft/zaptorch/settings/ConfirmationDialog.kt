@@ -29,13 +29,10 @@ class ConfirmationDialog : ToolbarDialog() {
 
   internal lateinit var publisher: Publisher<ConfirmEvent>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .inject(this)
-  }
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())
         .setMessage(
             "Really clear all application settings?"

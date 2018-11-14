@@ -18,7 +18,9 @@ package com.pyamsoft.zaptorch.settings
 
 import android.app.ActivityManager
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.getSystemService
 import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
@@ -52,15 +54,23 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   override val bugreportUrl: String = "https://github.com/pyamsoft/zaptorch/issues"
 
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusSettingsComponent(viewLifecycleOwner)
+        .inject(this)
+
+    return super.onCreateView(inflater, container, savedInstanceState)
+  }
+
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
-
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(viewLifecycleOwner)
-        .inject(this)
 
     setupExplain()
     setupDarkTheme()
