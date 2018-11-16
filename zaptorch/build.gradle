@@ -28,8 +28,8 @@ android {
     applicationId "com.pyamsoft.zaptorch"
     minSdkVersion rootProject.ext.minSdk
     targetSdkVersion rootProject.ext.maxSdk
-    versionCode 85
-    versionName "1.7.3-SNAPSHOT"
+    versionCode 86
+    versionName "1.8.0"
 
     // For vector drawables
     vectorDrawables.useSupportLibrary = true
@@ -63,7 +63,7 @@ android {
       signingConfig signingConfigs.release
       minifyEnabled true
       shrinkResources true
-      proguardFiles getDefaultProguardFile("proguard-android.txt"),
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
           "proguard-rules.pro"
     }
 
