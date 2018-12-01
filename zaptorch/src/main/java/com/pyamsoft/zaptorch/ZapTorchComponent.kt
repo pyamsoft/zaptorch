@@ -17,31 +17,25 @@
 package com.pyamsoft.zaptorch
 
 import androidx.annotation.CheckResult
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.zaptorch.main.MainComponent
-import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
-import com.pyamsoft.zaptorch.settings.SettingsComponent
+import com.pyamsoft.zaptorch.settings.TorchPreferenceFragment
 
 interface ZapTorchComponent {
 
   fun inject(activity: CameraErrorExplanation)
 
-  fun inject(confirmationDialog: ConfirmationDialog)
+  fun inject(dialog: ConfirmationDialog)
 
-  fun inject(torchOffService: TorchOffService)
+  fun inject(service: TorchOffService)
 
-  @CheckResult
-  fun plusSettingsComponent(owner: LifecycleOwner): SettingsComponent
+  fun inject(fragment: TorchPreferenceFragment)
 
-  @CheckResult
-  fun plusMainComponent(
-    owner: LifecycleOwner,
-    key: String
-  ): MainComponent
+  fun inject(service: VolumeMonitorService)
 
   @CheckResult
-  fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent
+  fun plusMainComponent(key: String): MainComponent
 }

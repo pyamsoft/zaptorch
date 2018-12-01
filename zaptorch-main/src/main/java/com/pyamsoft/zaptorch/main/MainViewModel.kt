@@ -16,24 +16,22 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.core.viewmodel.BaseViewModel
+import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.MainInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 class MainViewModel internal constructor(
-  owner: LifecycleOwner,
   private val handleKeyPressKey: String,
   private val interactor: MainInteractor
-) : BaseViewModel(owner) {
+) {
 
-  fun onHandleKeyPressChanged(func: (Boolean) -> Unit) {
-    dispose {
-      interactor.onHandleKeyPressChanged(handleKeyPressKey)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(func)
-    }
+  @CheckResult
+  fun onHandleKeyPressChanged(func: (Boolean) -> Unit): Disposable {
+    return interactor.onHandleKeyPressChanged(handleKeyPressKey)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(func)
   }
 }

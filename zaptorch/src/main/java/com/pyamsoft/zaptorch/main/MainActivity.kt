@@ -21,7 +21,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import com.pyamsoft.pydroid.ui.about.AboutLibrariesFragment
+import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
@@ -43,17 +43,13 @@ class MainActivity : RatingActivity() {
   internal lateinit var viewModel: MainViewModel
   internal lateinit var theming: Theming
 
+  private lateinit var component: MainComponent
   private lateinit var binding: ActivityMainBinding
   private var handleKeyPress: Boolean = false
 
   override val versionName: String = BuildConfig.VERSION_NAME
 
   override val applicationIcon: Int = R.mipmap.ic_launcher
-
-  override val currentApplicationVersion: Int = BuildConfig.VERSION_CODE
-
-  override val applicationName: String
-    get() = getString(R.string.app_name)
 
   override val rootView: View
     get() = binding.root
@@ -63,10 +59,18 @@ class MainActivity : RatingActivity() {
     change("Better open source license viewing experience")
   }
 
+  override fun getSystemService(name: String): Any {
+    if (COMPONENT_NAME == name) {
+      return component
+    } else {
+      return super.getSystemService(name)
+    }
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
-    Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(this, getString(R.string.handle_volume_keys_key))
-        .inject(this)
+    component = Injector.obtain<ZapTorchComponent>(applicationContext)
+        .plusMainComponent(getString(R.string.handle_volume_keys_key))
+    component.inject(this)
 
     if (theming.isDarkTheme()) {
       setTheme(R.style.Theme_ZapTorch_Dark)
@@ -121,7 +125,7 @@ class MainActivity : RatingActivity() {
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
     if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
-        && !AboutLibrariesFragment.isPresent(this)
+        && !AboutFragment.isPresent(this)
     ) {
       fragmentManager.beginTransaction()
           .add(R.id.main_viewport, MainFragment(), MainFragment.TAG)
@@ -164,6 +168,7 @@ class MainActivity : RatingActivity() {
 
   companion object {
 
+    internal const val COMPONENT_NAME = "MainActivity"
     private const val PRIVACY_POLICY_URL =
       "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
   }

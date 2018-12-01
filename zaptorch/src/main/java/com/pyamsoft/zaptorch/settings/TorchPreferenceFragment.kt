@@ -49,18 +49,12 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   override val rootViewContainer: Int = R.id.main_viewport
 
-  override val applicationName: String
-    get() = getString(R.string.app_name)
-
-  override val bugreportUrl: String = "https://github.com/pyamsoft/zaptorch/issues"
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(viewLifecycleOwner)
         .inject(this)
 
     return super.onCreateView(inflater, container, savedInstanceState)

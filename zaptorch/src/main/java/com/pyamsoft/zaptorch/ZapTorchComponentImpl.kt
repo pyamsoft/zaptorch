@@ -18,21 +18,18 @@ package com.pyamsoft.zaptorch
 
 import android.app.Application
 import android.app.IntentService
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.ui.ModuleProvider
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainModule
-import com.pyamsoft.zaptorch.service.ServiceComponent
-import com.pyamsoft.zaptorch.service.ServiceComponentImpl
 import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
-import com.pyamsoft.zaptorch.settings.SettingsComponent
-import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsModule
+import com.pyamsoft.zaptorch.settings.TorchPreferenceFragment
 
 internal class ZapTorchComponentImpl internal constructor(
   application: Application,
@@ -54,22 +51,27 @@ internal class ZapTorchComponentImpl internal constructor(
     activity.theming = theming
   }
 
-  override fun inject(confirmationDialog: ConfirmationDialog) {
-    confirmationDialog.publisher = settingsPreferenceFragmentModule.getPublisher()
+  override fun inject(dialog: ConfirmationDialog) {
+    dialog.publisher = settingsPreferenceFragmentModule.getPublisher()
   }
 
-  override fun inject(torchOffService: TorchOffService) {
-    torchOffService.servicePublisher = volumeServiceModule.getPublisher()
+  override fun inject(service: TorchOffService) {
+    service.servicePublisher = volumeServiceModule.getPublisher()
   }
 
-  override fun plusSettingsComponent(owner: LifecycleOwner): SettingsComponent =
-    SettingsComponentImpl(owner, theming, settingsPreferenceFragmentModule, volumeServiceModule)
+  override fun inject(fragment: TorchPreferenceFragment) {
+    fragment.publisher = volumeServiceModule.getPublisher()
+    fragment.viewModel = settingsPreferenceFragmentModule.getViewModel()
+    fragment.theming = theming
+  }
+
+  override fun inject(service: VolumeMonitorService) {
+    service.viewModel = volumeServiceModule.getViewModel()
+  }
 
   override fun plusMainComponent(
-    owner: LifecycleOwner,
     key: String
   ): MainComponent = MainComponentImpl(
-      owner,
       theming,
       mainModule,
       key,
@@ -77,7 +79,4 @@ internal class ZapTorchComponentImpl internal constructor(
       loaderModule,
       volumeServiceModule
   )
-
-  override fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent =
-    ServiceComponentImpl(owner, volumeServiceModule)
 }

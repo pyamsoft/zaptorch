@@ -61,7 +61,6 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusServiceComponent(this)
         .inject(this)
 
     viewModel.onCameraError { onCameraError(it) }

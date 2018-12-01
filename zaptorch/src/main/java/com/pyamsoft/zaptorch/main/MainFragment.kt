@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +33,6 @@ import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.databinding.FragmentMainBinding
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.service.VolumeServiceViewModel
@@ -52,13 +52,13 @@ class MainFragment : ToolbarFragment() {
     return binding.mainSettingsFab
   }
 
+  @SuppressLint("WrongConstant")
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusMainComponent(viewLifecycleOwner, getString(R.string.handle_volume_keys_key))
+    Injector.obtain<MainComponent>(requireActivity())
         .inject(this)
     binding = FragmentMainBinding.inflate(inflater, container, false)
     return binding.root

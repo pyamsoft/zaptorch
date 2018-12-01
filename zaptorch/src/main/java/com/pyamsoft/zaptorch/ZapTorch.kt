@@ -44,7 +44,14 @@ class ZapTorch : Application(), PYDroid.Instance {
     }
 
     Theming.IS_DEFAULT_DARK_THEME = true
-    PYDroid.init(this, this, BuildConfig.DEBUG)
+    PYDroid.init(
+        this,
+        this,
+        getString(R.string.app_name),
+        "https://github.com/pyamsoft/zaptorch/issues",
+        BuildConfig.VERSION_CODE,
+        BuildConfig.DEBUG
+    )
   }
 
   override fun getPydroid(): PYDroid? = pyDroid

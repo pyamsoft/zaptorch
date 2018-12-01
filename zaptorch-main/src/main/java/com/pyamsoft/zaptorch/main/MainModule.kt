@@ -17,7 +17,6 @@
 package com.pyamsoft.zaptorch.main
 
 import androidx.annotation.CheckResult
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
@@ -34,8 +33,5 @@ class MainModule(
   }
 
   @CheckResult
-  fun getPresenter(
-    owner: LifecycleOwner,
-    keyPressKey: String
-  ) = MainViewModel(owner, keyPressKey, interactor)
+  fun getViewModel(keyPressKey: String) = MainViewModel(keyPressKey, interactor)
 }
