@@ -19,40 +19,39 @@ package com.pyamsoft.zaptorch.main
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.theme.Theming
-import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.util.hyperlink
-import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
 import timber.log.Timber
 
 class MainActivity : RatingActivity() {
 
+  internal lateinit var mainView: MainView
   internal lateinit var viewModel: MainViewModel
   internal lateinit var theming: Theming
 
   private lateinit var component: MainComponent
-  private lateinit var binding: ActivityMainBinding
+
   private var handleKeyPress: Boolean = false
+  private var keyPressDisposable by singleDisposable()
 
   override val versionName: String = BuildConfig.VERSION_NAME
 
   override val applicationIcon: Int = R.mipmap.ic_launcher
 
   override val rootView: View
-    get() = binding.root
+    get() = mainView.root()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -78,26 +77,28 @@ class MainActivity : RatingActivity() {
       setTheme(R.style.Theme_ZapTorch_Light)
     }
     super.onCreate(savedInstanceState)
-    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+    createMainView()
 
-    setupToolbar()
-
-    viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
+    keyPressDisposable = viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
   }
 
-  override fun onStart() {
-    super.onStart()
-    showMainFragment()
+  private fun createMainView() {
+    mainView.create()
+    mainView.onToolbarNavClicked { onBackPressed() }
+    mainView.onMenuItemClicked { itemId: Int ->
+      if (itemId == R.id.menu_id_privacy_policy) {
+        PRIVACY_POLICY_URL.hyperlink(this)
+            .navigate {
+              Snackbreak.short(rootView, it.localizedMessage)
+                  .show()
+            }
+      }
+    }
   }
 
   private fun onHandleKeyPress(handle: Boolean) {
     handleKeyPress = handle
     Timber.d("Handle keypress: %s", handle)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    binding.unbind()
   }
 
   override fun onKeyUp(
@@ -122,6 +123,16 @@ class MainActivity : RatingActivity() {
     }
   }
 
+  override fun onStart() {
+    super.onStart()
+    showMainFragment()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    keyPressDisposable.tryDispose()
+  }
+
   private fun showMainFragment() {
     val fragmentManager = supportFragmentManager
     if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
@@ -130,39 +141,6 @@ class MainActivity : RatingActivity() {
       fragmentManager.beginTransaction()
           .add(R.id.main_viewport, MainFragment(), MainFragment.TAG)
           .commit(this)
-    }
-  }
-
-  private fun setupToolbar() {
-    val theme: Int
-    if (theming.isDarkTheme()) {
-      theme = R.style.ThemeOverlay_AppCompat
-    } else {
-      theme = R.style.ThemeOverlay_AppCompat_Light
-    }
-    binding.toolbar.apply {
-      popupTheme = theme
-      setToolbar(this)
-      setTitle(R.string.app_name)
-      ViewCompat.setElevation(this, 4f.toDp(context).toFloat())
-
-      setNavigationOnClickListener(DebouncedOnClickListener.create {
-        onBackPressed()
-      })
-
-      inflateMenu(R.menu.menu)
-      setOnMenuItemClickListener { item ->
-        if (item.itemId == R.id.menu_id_privacy_policy) {
-          PRIVACY_POLICY_URL.hyperlink(context)
-              .navigate {
-                Snackbreak.short(rootView, it.localizedMessage)
-                    .show()
-              }
-          return@setOnMenuItemClickListener true
-        } else {
-          return@setOnMenuItemClickListener false
-        }
-      }
     }
   }
 

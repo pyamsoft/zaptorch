@@ -33,6 +33,7 @@ internal class MainComponentImpl internal constructor(
   override fun inject(activity: MainActivity) {
     activity.viewModel = mainModule.getViewModel(keyPressKey)
     activity.theming = theming
+    activity.mainView = MainViewImpl(activity, theming)
   }
 
   override fun inject(mainFragment: MainFragment) {
