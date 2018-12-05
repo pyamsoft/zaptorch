@@ -17,22 +17,35 @@
 package com.pyamsoft.zaptorch.main
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.api.MainInteractor
+import androidx.recyclerview.widget.RecyclerView
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.model.FabScrollListenerRequestEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel internal constructor(
-  private val handleKeyPressKey: String,
-  private val interactor: MainInteractor
+class MainFragmentViewModel internal constructor(
+  private val fabScrollRequestBus: EventBus<FabScrollListenerRequestEvent>
 ) {
 
   @CheckResult
-  fun onHandleKeyPressChanged(func: (Boolean) -> Unit): Disposable {
-    return interactor.onHandleKeyPressChanged(handleKeyPressKey)
+  fun onFabScrollListenerCreateRequest(func: (tag: String) -> Unit): Disposable {
+    return fabScrollRequestBus.listen()
+        // Do not listen to create results, only requests for new creations
+        .filter { it.listenerResult == null }
+        // Just need the tag
+        .map { it.requestTag }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(func)
   }
 
+  fun publishScrollListener(
+    tag: String,
+    listener: RecyclerView.OnScrollListener
+  ) {
+    fabScrollRequestBus.publish(
+        FabScrollListenerRequestEvent(tag, listener)
+    )
+  }
 }

@@ -20,6 +20,4 @@ interface MainComponent {
 
   fun inject(activity: MainActivity)
 
-  fun inject(mainFragment: MainFragment)
-
 }

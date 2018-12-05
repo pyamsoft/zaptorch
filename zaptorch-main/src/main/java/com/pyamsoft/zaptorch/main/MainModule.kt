@@ -23,7 +23,7 @@ import com.pyamsoft.zaptorch.api.ZapTorchModule
 
 class MainModule(
   enforcer: Enforcer,
-  module: ZapTorchModule
+  private val module: ZapTorchModule
 ) {
 
   private val interactor: MainInteractor
@@ -34,4 +34,7 @@ class MainModule(
 
   @CheckResult
   fun getViewModel(keyPressKey: String) = MainViewModel(keyPressKey, interactor)
+
+  @CheckResult
+  fun getFragmentViewModel() = MainFragmentViewModel(module.provideFabScrollRequestBus())
 }

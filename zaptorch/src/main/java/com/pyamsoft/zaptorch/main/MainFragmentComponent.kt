@@ -16,23 +16,8 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.api.MainInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+interface MainFragmentComponent {
 
-class MainViewModel internal constructor(
-  private val handleKeyPressKey: String,
-  private val interactor: MainInteractor
-) {
-
-  @CheckResult
-  fun onHandleKeyPressChanged(func: (Boolean) -> Unit): Disposable {
-    return interactor.onHandleKeyPressChanged(handleKeyPressKey)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(func)
-  }
+  fun inject(mainFragment: MainFragment)
 
 }

@@ -35,6 +35,7 @@ buildscript {
     // AndroidX
     annotation = "1.0.0"
     preference = "1.0.0"
+    recyclerView = "1.0.0"
 
     pydroid = "18.2.0-SNAPSHOT"
     leakCanary = "1.6.2"

@@ -23,27 +23,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.getSystemService
 import com.pyamsoft.pydroid.core.bus.Publisher
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
-import com.pyamsoft.pydroid.ui.theme.Theming
-import com.pyamsoft.pydroid.ui.util.popHide
-import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.pydroid.ui.widget.HideOnScrollListener
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.main.MainFragment
 import com.pyamsoft.zaptorch.model.ServiceEvent
 import timber.log.Timber
 
 class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
-  private var hideScrollListener: HideOnScrollListener? = null
   internal lateinit var publisher: Publisher<ServiceEvent>
   internal lateinit var viewModel: SettingsViewModel
-  internal lateinit var theming: Theming
+  internal lateinit var settingsView: SettingsView
+
+  private var clearDisposable by singleDisposable()
+  private var scrollListenerDisposable by singleDisposable()
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -55,8 +54,10 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
     savedInstanceState: Bundle?
   ): View? {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusSettingsComponent(viewLifecycleOwner, preferenceScreen, TAG)
         .inject(this)
 
+    settingsView.create()
     return super.onCreateView(inflater, container, savedInstanceState)
   }
 
@@ -66,54 +67,26 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
   ) {
     super.onViewCreated(view, savedInstanceState)
 
-    setupExplain()
-    setupDarkTheme()
+    settingsView.onExplainClicked { HowToDialog().show(requireActivity(), "howto") }
 
     addScrollListener()
-    viewModel.onClearAllEvent { onClearAll() }
-  }
-
-  private fun setupDarkTheme() {
-    val theme = findPreference(getString(R.string.dark_mode_key))
-    theme.setOnPreferenceChangeListener { _, newValue ->
-      if (newValue is Boolean) {
-        theming.setDarkTheme(newValue)
-        requireActivity().recreate()
-        return@setOnPreferenceChangeListener true
-      }
-      return@setOnPreferenceChangeListener false
-    }
-  }
-
-  private fun setupExplain() {
-    val zapTorchExplain = findPreference(getString(R.string.zaptorch_explain_key))
-    zapTorchExplain.setOnPreferenceClickListener {
-      HowToDialog().show(requireActivity(), "howto")
-      return@setOnPreferenceClickListener true
-    }
+    clearDisposable = viewModel.onClearAllEvent { onClearAll() }
   }
 
   private fun addScrollListener() {
-    val fragment = requireActivity().supportFragmentManager.findFragmentByTag(MainFragment.TAG)
-    if (fragment is MainFragment) {
-      val fab = fragment.getFloatingActionButton()
-      val listener = HideOnScrollListener.withView(fab) {
-        if (it) {
-          fab.popShow()
-        } else {
-          fab.popHide()
-        }
-      }
-
-      listView.addOnScrollListener(listener)
-      hideScrollListener = listener
+    scrollListenerDisposable = viewModel.onScrollListenerCreated {
+      Timber.d("Received listener: $TAG")
+      settingsView.addScrollListener(listView, it)
     }
+
+    Timber.d("Publisher request: $TAG")
+    viewModel.publishScrollListenerCreateRequest()
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    hideScrollListener?.also { listView?.removeOnScrollListener(it) }
-    hideScrollListener = null
+    clearDisposable.tryDispose()
+    scrollListenerDisposable.tryDispose()
   }
 
   private fun onClearAll() {

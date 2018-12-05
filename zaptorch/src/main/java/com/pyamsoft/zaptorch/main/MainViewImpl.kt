@@ -10,6 +10,7 @@ import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.util.toDp
+import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
 
 internal class MainViewImpl internal constructor(
@@ -68,9 +69,4 @@ internal class MainViewImpl internal constructor(
     }
   }
 
-  companion object {
-
-    private const val PRIVACY_POLICY_URL =
-      "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
-  }
 }

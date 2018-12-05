@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.ui.theme.Theming
+interface SettingsComponent {
 
-internal class MainComponentImpl internal constructor(
-  private val theming: Theming,
-  private val mainModule: MainModule,
-  private val keyPressKey: String
-) : MainComponent {
+  fun inject(fragment: TorchPreferenceFragment)
 
-  override fun inject(activity: MainActivity) {
-    activity.viewModel = mainModule.getViewModel(keyPressKey)
-    activity.theming = theming
-    activity.mainView = MainViewImpl(activity, theming)
-  }
 }

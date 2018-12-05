@@ -18,18 +18,26 @@ package com.pyamsoft.zaptorch
 
 import android.app.Application
 import android.app.IntentService
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
+import androidx.preference.PreferenceScreen
+import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.ui.ModuleProvider
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
+import com.pyamsoft.zaptorch.main.MainFragmentComponent
+import com.pyamsoft.zaptorch.main.MainFragmentComponentImpl
 import com.pyamsoft.zaptorch.main.MainModule
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
+import com.pyamsoft.zaptorch.settings.SettingsComponent
+import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsModule
-import com.pyamsoft.zaptorch.settings.TorchPreferenceFragment
 
 internal class ZapTorchComponentImpl internal constructor(
   application: Application,
@@ -59,24 +67,29 @@ internal class ZapTorchComponentImpl internal constructor(
     service.servicePublisher = volumeServiceModule.getPublisher()
   }
 
-  override fun inject(fragment: TorchPreferenceFragment) {
-    fragment.publisher = volumeServiceModule.getPublisher()
-    fragment.viewModel = settingsPreferenceFragmentModule.getViewModel()
-    fragment.theming = theming
-  }
-
   override fun inject(service: VolumeMonitorService) {
     service.viewModel = volumeServiceModule.getViewModel()
   }
 
   override fun plusMainComponent(
     key: String
-  ): MainComponent = MainComponentImpl(
-      theming,
-      mainModule,
-      key,
-      settingsPreferenceFragmentModule,
-      loaderModule,
-      volumeServiceModule
+  ): MainComponent = MainComponentImpl(theming, mainModule, key)
+
+  override fun plusMainFragmentComponent(
+    owner: LifecycleOwner,
+    inflater: LayoutInflater,
+    container: ViewGroup?
+  ): MainFragmentComponent = MainFragmentComponentImpl(
+      owner, inflater, container, settingsPreferenceFragmentModule,
+      loaderModule, volumeServiceModule, mainModule
+  )
+
+  override fun plusSettingsComponent(
+    owner: LifecycleOwner,
+    preferenceScreen: PreferenceScreen,
+    tag: String
+  ): SettingsComponent = SettingsComponentImpl(
+      owner, preferenceScreen, tag,
+      settingsPreferenceFragmentModule, volumeServiceModule
   )
 }

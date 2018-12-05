@@ -21,33 +21,30 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
-import com.pyamsoft.pydroid.util.fakeUnbind
-import com.pyamsoft.pydroid.util.fakeBind
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
+class VolumeMonitorService : AccessibilityService() {
 
-  private val registry = LifecycleRegistry(this)
   internal lateinit var viewModel: VolumeServiceViewModel
+
+  private var handleKeyDisposable by singleDisposable()
+  private var cameraErrorDisposable by singleDisposable()
+  private var torchToggleDisposable by singleDisposable()
+  private var serviceEventDisposable by singleDisposable()
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    viewModel.handleKeyEvent(action, keyCode)
+    handleKeyDisposable = viewModel.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
-  }
-
-  override fun getLifecycle(): Lifecycle {
-    return registry
   }
 
   override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
@@ -63,11 +60,9 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    viewModel.onCameraError { onCameraError(it) }
-    viewModel.onServiceFinishEvent { onFinishService() }
-    viewModel.onTorchEvent { Timber.d("Toggling torch") }
-
-    registry.fakeBind()
+    cameraErrorDisposable = viewModel.onCameraError { onCameraError(it) }
+    torchToggleDisposable = viewModel.onTorchEvent { Timber.d("Toggling torch") }
+    serviceEventDisposable = viewModel.onServiceFinishEvent { onFinishService() }
   }
 
   override fun onServiceConnected() {
@@ -93,7 +88,12 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
 
   override fun onDestroy() {
     super.onDestroy()
-    registry.fakeUnbind()
+
+    handleKeyDisposable.tryDispose()
+    cameraErrorDisposable.tryDispose()
+    torchToggleDisposable.tryDispose()
+    serviceEventDisposable.tryDispose()
+
     ZapTorch.getRefWatcher(this)
         .watch(this)
   }

@@ -26,7 +26,7 @@ import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class SettingsModule(
   private val enforcer: Enforcer,
-  module: ZapTorchModule
+  private val module: ZapTorchModule
 ) {
 
   private val interactor: SettingsPreferenceFragmentInteractor
@@ -37,7 +37,13 @@ class SettingsModule(
   }
 
   @CheckResult
-  fun getViewModel() = SettingsViewModel(enforcer, bus, interactor)
+  fun getViewModel(tag: String) = SettingsViewModel(
+      enforcer,
+      bus,
+      interactor,
+      module.provideFabScrollRequestBus(),
+      tag
+  )
 
   @CheckResult
   fun getPublisher(): Publisher<ConfirmEvent> = bus

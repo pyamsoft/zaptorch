@@ -16,52 +16,49 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.CheckResult
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pyamsoft.pydroid.core.bus.Publisher
-import com.pyamsoft.pydroid.loader.ImageLoader
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.app.fragment.ToolbarFragment
 import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.commit
-import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.databinding.FragmentMainBinding
+import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.model.ConfirmEvent
 import com.pyamsoft.zaptorch.service.VolumeServiceViewModel
 import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
 import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
 import com.pyamsoft.zaptorch.settings.SettingsFragment
+import timber.log.Timber
 
 class MainFragment : ToolbarFragment() {
 
-  private lateinit var binding: FragmentMainBinding
-  internal lateinit var imageLoader: ImageLoader
+  internal lateinit var mainView: MainFragmentView
   internal lateinit var publisher: Publisher<ConfirmEvent>
   internal lateinit var serviceViewModel: VolumeServiceViewModel
+  internal lateinit var mainViewModel: MainFragmentViewModel
 
-  @CheckResult
-  internal fun getFloatingActionButton(): FloatingActionButton {
-    return binding.mainSettingsFab
-  }
+  private var serviceStateDisposable by singleDisposable()
+  private var fabScrollRequestDisposable by singleDisposable()
 
-  @SuppressLint("WrongConstant")
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    Injector.obtain<MainComponent>(requireActivity())
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusMainFragmentComponent(viewLifecycleOwner, inflater, container)
         .inject(this)
-    binding = FragmentMainBinding.inflate(inflater, container, false)
-    return binding.root
+
+    mainView.create()
+    return mainView.root()
   }
 
   override fun onViewCreated(
@@ -71,36 +68,29 @@ class MainFragment : ToolbarFragment() {
     super.onViewCreated(view, savedInstanceState)
     displayPreferenceFragment()
 
-    serviceViewModel.onServiceStateChanged {
-      setupFAB(it)
-    }
-  }
-
-  private fun setupFAB(running: Boolean) {
-    binding.apply {
-      mainSettingsFab.setOnDebouncedClickListener {
-        if (running) {
+    serviceStateDisposable = serviceViewModel.onServiceStateChanged { running: Boolean ->
+      mainView.setFabFromServiceState(running) {
+        if (it) {
           ServiceInfoDialog().show(requireActivity(), "service_info")
         } else {
-          AccessibilityRequestDialog().show(requireActivity(), "accessibility")
+          AccessibilityRequestDialog().show(requireActivity(), "accessibility_request")
         }
       }
     }
 
-    imageLoader.apply {
-      if (running) {
-        load(R.drawable.ic_help_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycleOwner)
-      } else {
-        load(R.drawable.ic_service_start_24dp).into(binding.mainSettingsFab)
-            .bind(viewLifecycleOwner)
+    fabScrollRequestDisposable = mainViewModel.onFabScrollListenerCreateRequest { tag: String ->
+      Timber.d("Got create request: $tag")
+      mainView.createFabScrollListener { listener ->
+        Timber.d("Created listener: $tag")
+        mainViewModel.publishScrollListener(tag, listener)
       }
     }
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    binding.unbind()
+    serviceStateDisposable.tryDispose()
+    fabScrollRequestDisposable.tryDispose()
   }
 
   override fun onResume() {

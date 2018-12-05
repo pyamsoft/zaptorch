@@ -20,10 +20,13 @@ import android.app.Application
 import android.app.IntentService
 import android.content.Context
 import androidx.annotation.ColorRes
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
 import com.pyamsoft.zaptorch.api.ZapTorchModule
+import com.pyamsoft.zaptorch.model.FabScrollListenerRequestEvent
 
 class ZapTorchModuleImpl(
   private val application: Application,
@@ -31,6 +34,7 @@ class ZapTorchModuleImpl(
   @ColorRes private val notificationColor: Int
 ) : ZapTorchModule {
 
+  private val fabScrollBus = RxBus.create<FabScrollListenerRequestEvent>()
   private val preferences = ZapTorchPreferencesImpl(application)
 
   override fun provideApplication(): Application = application
@@ -46,4 +50,6 @@ class ZapTorchModuleImpl(
   override fun provideTorchOffServiceClass(): Class<out IntentService> = torchOffServiceClass
 
   override fun provideNotificationColor(): Int = notificationColor
+
+  override fun provideFabScrollRequestBus(): EventBus<FabScrollListenerRequestEvent> = fabScrollBus
 }

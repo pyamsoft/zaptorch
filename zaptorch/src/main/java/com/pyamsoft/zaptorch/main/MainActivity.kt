@@ -41,8 +41,6 @@ class MainActivity : RatingActivity() {
   internal lateinit var viewModel: MainViewModel
   internal lateinit var theming: Theming
 
-  private lateinit var component: MainComponent
-
   private var handleKeyPress: Boolean = false
   private var keyPressDisposable by singleDisposable()
 
@@ -58,18 +56,10 @@ class MainActivity : RatingActivity() {
     change("Better open source license viewing experience")
   }
 
-  override fun getSystemService(name: String): Any {
-    if (COMPONENT_NAME == name) {
-      return component
-    } else {
-      return super.getSystemService(name)
-    }
-  }
-
   override fun onCreate(savedInstanceState: Bundle?) {
-    component = Injector.obtain<ZapTorchComponent>(applicationContext)
+    Injector.obtain<ZapTorchComponent>(applicationContext)
         .plusMainComponent(getString(R.string.handle_volume_keys_key))
-    component.inject(this)
+        .inject(this)
 
     if (theming.isDarkTheme()) {
       setTheme(R.style.Theme_ZapTorch_Dark)
@@ -146,7 +136,6 @@ class MainActivity : RatingActivity() {
 
   companion object {
 
-    internal const val COMPONENT_NAME = "MainActivity"
     private const val PRIVACY_POLICY_URL =
       "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
   }

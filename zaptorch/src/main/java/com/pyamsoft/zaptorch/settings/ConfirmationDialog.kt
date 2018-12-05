@@ -34,9 +34,7 @@ class ConfirmationDialog : ToolbarDialog() {
         .inject(this)
 
     return AlertDialog.Builder(requireActivity())
-        .setMessage(
-            "Really clear all application settings?"
-        )
+        .setMessage("Really clear all application settings?")
         .setPositiveButton("Yes") { _, _ ->
           publisher.publish(ConfirmEvent)
           dismiss()
