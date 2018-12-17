@@ -28,6 +28,7 @@ import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.util.commit
+import com.pyamsoft.pydroid.ui.widget.resize.FluidContentResizer
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
@@ -67,6 +68,7 @@ class MainActivity : RatingActivity() {
       setTheme(R.style.Theme_ZapTorch_Light)
     }
     super.onCreate(savedInstanceState)
+    FluidContentResizer.listen(this)
     createMainView()
 
     keyPressDisposable = viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }

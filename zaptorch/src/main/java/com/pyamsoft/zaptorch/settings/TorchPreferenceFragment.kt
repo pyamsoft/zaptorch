@@ -75,11 +75,8 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
 
   private fun addScrollListener() {
     scrollListenerDisposable = viewModel.onScrollListenerCreated {
-      Timber.d("Received listener: $TAG")
       settingsView.addScrollListener(listView, it)
     }
-
-    Timber.d("Publisher request: $TAG")
     viewModel.publishScrollListenerCreateRequest()
   }
 

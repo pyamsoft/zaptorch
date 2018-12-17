@@ -38,7 +38,8 @@
     <activity
         android:name=".main.MainActivity"
         android:launchMode="singleTask"
-        android:theme="@style/Theme.ZapTorch.Dark.Splash">
+        android:theme="@style/Theme.ZapTorch.Dark.Splash"
+        android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
@@ -52,7 +53,7 @@
         android:exported="false"
         android:launchMode="singleInstance"
         android:noHistory="true"
-        android:windowSoftInputMode="stateHidden"/>
+        android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
 
     <service
         android:name=".service.VolumeMonitorService"

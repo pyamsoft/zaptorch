@@ -79,9 +79,7 @@ class MainFragment : ToolbarFragment() {
     }
 
     fabScrollRequestDisposable = mainViewModel.onFabScrollListenerCreateRequest { tag: String ->
-      Timber.d("Got create request: $tag")
       mainView.createFabScrollListener { listener ->
-        Timber.d("Created listener: $tag")
         mainViewModel.publishScrollListener(tag, listener)
       }
     }
