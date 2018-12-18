@@ -21,7 +21,6 @@ import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.pydroid.ui.widget.resize.FluidContentResizer
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -44,7 +43,6 @@ class CameraErrorExplanation : ActivityBase() {
       setTheme(R.style.Theme_ZapTorch_Light)
     }
     super.onCreate(savedInstanceState)
-    FluidContentResizer.listen(this)
   }
 
   override fun onPostResume() {
