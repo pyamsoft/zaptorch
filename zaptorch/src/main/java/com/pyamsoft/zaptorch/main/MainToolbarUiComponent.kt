@@ -17,23 +17,23 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.api.MainInteractor
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.ui.arch.BaseUiComponent
+import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class MainViewModel internal constructor(
-  private val handleKeyPressKey: String,
-  private val interactor: MainInteractor
-) {
+internal class MainToolbarUiComponent internal constructor(
+  view: MainToolbarView,
+  owner: LifecycleOwner
+) : BaseUiComponent<MainViewEvent, MainToolbarView>(view, owner) {
 
-  @CheckResult
-  fun onHandleKeyPressChanged(func: (Boolean) -> Unit): Disposable {
-    return interactor.onHandleKeyPressChanged(handleKeyPressKey)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(func)
+  override fun onUiEvent(): ObservableTransformer<in MainViewEvent, out MainViewEvent>? {
+    return ObservableTransformer {
+      return@ObservableTransformer it
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread())
+    }
   }
 
 }

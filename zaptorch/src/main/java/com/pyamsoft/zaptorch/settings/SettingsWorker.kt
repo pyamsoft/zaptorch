@@ -15,37 +15,18 @@
  *
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.settings
 
-import android.content.Intent
-import android.hardware.camera2.CameraAccessException
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.arch.Worker
+import com.pyamsoft.zaptorch.settings.SettingsStateEvent.SignificantScroll
 
-interface CameraInterface {
+internal class SettingsWorker internal constructor(
+  bus: EventBus<SettingsStateEvent>
+) : Worker<SettingsStateEvent>(bus) {
 
-  fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
-
-  fun destroy()
-
-  fun toggleTorch()
-
-  interface OnStateChangedCallback {
-
-    fun onOpened()
-
-    fun onClosed()
-
-    fun onError(error: CameraError)
+  fun significantScroll(visible: Boolean) {
+    publish(SignificantScroll(visible))
   }
 
-  data class CameraError(
-    val exception: CameraAccessException?,
-    val intent: Intent
-  )
-
-  companion object {
-
-    const val TYPE_NONE = -1
-    const val TYPE_ERROR = 0
-    const val DIALOG_WHICH = "dialog"
-  }
 }

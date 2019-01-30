@@ -21,45 +21,39 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.pyamsoft.pydroid.core.bus.Publisher
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.pyamsoft.pydroid.ui.app.fragment.ToolbarFragment
 import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.model.ConfirmEvent
-import com.pyamsoft.zaptorch.service.VolumeServiceViewModel
-import com.pyamsoft.zaptorch.settings.AccessibilityRequestDialog
-import com.pyamsoft.zaptorch.settings.ServiceInfoDialog
+import com.pyamsoft.zaptorch.main.ActionViewEvent.ActionClicked
 import com.pyamsoft.zaptorch.settings.SettingsFragment
-import timber.log.Timber
 
 class MainFragment : ToolbarFragment() {
 
-  internal lateinit var mainView: MainFragmentView
-  internal lateinit var publisher: Publisher<ConfirmEvent>
-  internal lateinit var serviceViewModel: VolumeServiceViewModel
-  internal lateinit var mainViewModel: MainFragmentViewModel
+  private lateinit var layoutRoot: CoordinatorLayout
 
-  private var serviceStateDisposable by singleDisposable()
-  private var fabScrollRequestDisposable by singleDisposable()
+  internal lateinit var frameComponent: MainFrameUiComponent
+  internal lateinit var actionComponent: MainActionUiComponent
 
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
+    val root = inflater.inflate(R.layout.layout_coordinator, container, false)
+    layoutRoot = root.findViewById(R.id.layout_coordinator)
+
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusMainFragmentComponent(viewLifecycleOwner, inflater, container)
+        .plusMainFragmentComponent(layoutRoot, viewLifecycleOwner)
         .inject(this)
 
-    mainView.create()
-    return mainView.root()
+    return root
   }
 
   override fun onViewCreated(
@@ -67,29 +61,28 @@ class MainFragment : ToolbarFragment() {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+    frameComponent.create(savedInstanceState)
+
+    actionComponent.onUiEvent {
+      return@onUiEvent when (it) {
+        is ActionClicked -> onFabClicked(it.runningService)
+      }
+    }
+        .destroy(viewLifecycleOwner)
+
+    actionComponent.create(savedInstanceState)
+
     displayPreferenceFragment()
-
-    serviceStateDisposable = serviceViewModel.onServiceStateChanged { running: Boolean ->
-      mainView.setFabFromServiceState(running) {
-        if (it) {
-          ServiceInfoDialog().show(requireActivity(), "service_info")
-        } else {
-          AccessibilityRequestDialog().show(requireActivity(), "accessibility_request")
-        }
-      }
-    }
-
-    fabScrollRequestDisposable = mainViewModel.onFabScrollListenerCreateRequest { tag: String ->
-      mainView.createFabScrollListener { listener ->
-        mainViewModel.publishScrollListener(tag, listener)
-      }
-    }
   }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    serviceStateDisposable.tryDispose()
-    fabScrollRequestDisposable.tryDispose()
+  private fun onFabClicked(running: Boolean) {
+    if (running) {
+      ServiceInfoDialog()
+          .show(requireActivity(), "service_info")
+    } else {
+      AccessibilityRequestDialog()
+          .show(requireActivity(), "accessibility")
+    }
   }
 
   override fun onResume() {
@@ -104,7 +97,7 @@ class MainFragment : ToolbarFragment() {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .add(R.id.main_container, SettingsFragment(), SettingsFragment.TAG)
+          .add(frameComponent.id(), SettingsFragment(), SettingsFragment.TAG)
           .commit(viewLifecycleOwner)
     }
   }

@@ -17,89 +17,79 @@
 
 package com.pyamsoft.zaptorch.service
 
-import android.content.Context
 import android.content.Intent
+import android.hardware.camera2.CameraAccessException
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.CameraInterface
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
-  protected val context: Context,
   private val interactor: VolumeServiceInteractor
-) : CameraInterface {
+) : CameraInterface, OnStateChangedCallback {
 
   private val errorExplain = Intent()
-  private val permissionExplain = Intent()
   private var callback: OnStateChangedCallback? = null
 
-  private var errorDisposable: Disposable = Disposables.empty()
+  private var errorDisposable by singleDisposable()
 
   init {
-    errorDisposable.dispose()
-
     errorExplain.apply {
       putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
       flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-
-    permissionExplain.apply {
-      putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_PERMISSION)
-      flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
-  }
-
-  override fun startErrorExplanationActivity() {
-    errorDisposable.dispose()
-    errorDisposable = interactor.shouldShowErrorDialog()
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          if (it) {
-            notifyCallbackOnError(errorExplain)
-          }
-        }, { Timber.e(it, "onError startErrorExplanationActivity") })
-  }
-
-  override fun startPermissionExplanationActivity() {
-    notifyCallbackOnError(permissionExplain)
   }
 
   override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
     this.callback = callback
   }
 
-  override fun notifyCallbackOnOpened() {
-    val obj = callback
-    if (obj != null) {
+  override fun onOpened() {
+    callback?.also {
       Timber.d("Notify callback: opened")
-      obj.onOpened()
+      it.onOpened()
     }
   }
 
-  override fun notifyCallbackOnClosed() {
-    val obj = callback
-    if (obj != null) {
+  override fun onClosed() {
+    callback?.also {
       Timber.d("Notify callback: closed")
-      obj.onClosed()
+      it.onClosed()
     }
   }
 
-  private fun notifyCallbackOnError(errorIntent: Intent) {
-    val obj = callback
-    if (obj != null) {
+  private fun notifyCallbackOnError(
+    exception: CameraAccessException?,
+    intent: Intent
+  ) {
+    val error = CameraError(exception, intent)
+    onError(error)
+  }
+
+  override fun onError(error: CameraError) {
+    callback?.also {
       Timber.w("Notify callback: error")
-      obj.onError(errorIntent)
+      it.onError(error)
     }
   }
 
-  // Called from VolumeServiceInteractorImpl
   override fun destroy() {
-    errorDisposable.dispose()
+    errorDisposable.tryDispose()
     release()
   }
+
+  protected fun startErrorExplanationActivity(exception: CameraAccessException?) {
+    errorDisposable = interactor.shouldShowErrorDialog()
+        .filter { it }
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { notifyCallbackOnError(exception, errorExplain) }
+  }
+
+  protected abstract fun release()
 }

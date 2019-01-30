@@ -20,15 +20,13 @@ package com.pyamsoft.zaptorch.settings
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class ConfirmationDialog : ToolbarDialog() {
 
-  internal lateinit var publisher: Publisher<ConfirmEvent>
+  internal lateinit var worker: ClearAllWorker
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
@@ -37,7 +35,7 @@ class ConfirmationDialog : ToolbarDialog() {
     return AlertDialog.Builder(requireActivity())
         .setMessage("Really clear all application settings?")
         .setPositiveButton("Yes") { _, _ ->
-          publisher.publish(ConfirmEvent)
+          worker.clearAll()
           dismiss()
         }
         .setNegativeButton("No") { _, _ -> dismiss() }

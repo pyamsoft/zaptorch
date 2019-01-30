@@ -18,48 +18,50 @@
 package com.pyamsoft.zaptorch.settings
 
 import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.getSystemService
-import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
-import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.app.fragment.requireToolbarActivity
+import com.pyamsoft.pydroid.ui.arch.destroy
+import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.model.ServiceEvent
+import com.pyamsoft.zaptorch.service.ServiceFinishWorker
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ExplainClicked
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import timber.log.Timber
 
-class TorchPreferenceFragment : SettingsPreferenceFragment() {
+class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
-  internal lateinit var publisher: Publisher<ServiceEvent>
-  internal lateinit var viewModel: SettingsViewModel
-  internal lateinit var settingsView: SettingsView
+  internal lateinit var settingsUiComponent: SettingsUiComponent
+  internal lateinit var settingsWorker: SettingsWorker
+  internal lateinit var serviceFinishWorker: ServiceFinishWorker
+  internal lateinit var clearWorker: ClearAllWorker
 
   private var clearDisposable by singleDisposable()
   private var scrollListenerDisposable by singleDisposable()
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
-  override val rootViewContainer: Int = R.id.main_viewport
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
+    val view = requireNotNull(super.onCreateView(inflater, container, savedInstanceState))
+
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(viewLifecycleOwner, preferenceScreen, TAG)
+        .plusSettingsComponent(viewLifecycleOwner, listView, preferenceScreen)
         .inject(this)
 
-    settingsView.create()
-    return super.onCreateView(inflater, container, savedInstanceState)
+    return view
   }
 
   override fun onViewCreated(
@@ -67,18 +69,23 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+    settingsUiComponent.onUiEvent {
+      return@onUiEvent when (it) {
+        is ExplainClicked -> HowToDialog().show(requireActivity(), "howto")
+        is SignificantScroll -> settingsWorker.significantScroll(it.visible)
+      }
+    }
+        .destroy(viewLifecycleOwner)
 
-    settingsView.onExplainClicked { HowToDialog().show(requireActivity(), "howto") }
+    settingsUiComponent.create(savedInstanceState)
 
-    addScrollListener()
-    clearDisposable = viewModel.onClearAllEvent { onClearAll() }
+
+    clearDisposable = clearWorker.onClear { onClearAll() }
   }
 
-  private fun addScrollListener() {
-    scrollListenerDisposable = viewModel.onScrollListenerCreated {
-      settingsView.addScrollListener(listView, it)
-    }
-    viewModel.publishScrollListenerCreateRequest()
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    settingsUiComponent.saveState(outState)
   }
 
   override fun onDestroyView() {
@@ -88,18 +95,22 @@ class TorchPreferenceFragment : SettingsPreferenceFragment() {
   }
 
   private fun onClearAll() {
-    Timber.d("received completed clearAll event. Kill Process")
-    try {
-      publisher.publish(ServiceEvent(ServiceEvent.Type.FINISH))
-    } catch (e: IllegalStateException) {
-      Timber.e(e, "Expected exception when Service is NULL")
-    }
+    requireContext().also {
+      try {
+        serviceFinishWorker.finish()
+      } catch (e: NullPointerException) {
+        Timber.e(e, "Expected exception when Service is NULL")
+      }
 
-    requireNotNull(requireContext().getSystemService<ActivityManager>()).clearApplicationUserData()
+      Timber.d("Clear application data")
+      val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+      activityManager.clearApplicationUserData()
+    }
   }
 
   override fun onClearAllClicked() {
-    ConfirmationDialog().show(requireActivity(), "confirm_dialog")
+    ConfirmationDialog()
+        .show(requireActivity(), "confirm")
   }
 
   override fun onResume() {

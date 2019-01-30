@@ -17,17 +17,27 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.theme.Theming
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowUiComponent
 
 internal class MainComponentImpl internal constructor(
   private val theming: Theming,
+  private val parent: ViewGroup,
+  private val owner: LifecycleOwner,
   private val mainModule: MainModule,
-  private val keyPressKey: String
+  private val mainViewBus: EventBus<MainViewEvent>,
+  private val mainStateBus: EventBus<MainStateEvent>
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
-    activity.viewModel = mainModule.getViewModel(keyPressKey)
-    activity.theming = theming
-    activity.mainView = MainViewImpl(activity, theming)
+    val frame = MainFrameView(parent, owner)
+    val toolbar = MainToolbarView(activity, theming, parent, mainViewBus)
+    activity.frameComponent = MainFrameUiComponent(mainStateBus, frame, owner)
+    activity.dropshadowComponent = DropshadowUiComponent.create(parent, owner)
+    activity.toolbarComponent = MainToolbarUiComponent(toolbar, owner)
+    activity.worker = MainWorker(mainModule.interactor, mainStateBus)
   }
 }

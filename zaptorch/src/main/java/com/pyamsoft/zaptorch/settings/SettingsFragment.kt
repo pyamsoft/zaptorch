@@ -17,12 +17,12 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.ui.app.fragment.AppSettingsFragment
-import com.pyamsoft.pydroid.ui.app.fragment.SettingsPreferenceFragment
+import com.pyamsoft.pydroid.ui.settings.AppSettingsFragment
+import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 
 class SettingsFragment : AppSettingsFragment() {
 
-  override fun provideSettingsFragment(): SettingsPreferenceFragment = TorchPreferenceFragment()
+  override fun provideSettingsFragment(): AppSettingsPreferenceFragment = TorchPreferenceFragment()
 
   override fun provideSettingsTag(): String = TorchPreferenceFragment.TAG
 

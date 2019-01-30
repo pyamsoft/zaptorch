@@ -15,13 +15,13 @@
  *
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.main
 
-import androidx.annotation.CheckResult
-import io.reactivex.Single
+import android.content.ActivityNotFoundException
+import com.pyamsoft.pydroid.ui.arch.StateEvent
 
-interface SettingsPreferenceFragmentInteractor {
+internal sealed class MainStateEvent : StateEvent {
 
-  @CheckResult
-  fun clearAll(): Single<Unit>
+  data class PrivacyPolicyLinkFailed(val error: ActivityNotFoundException) : MainStateEvent()
+
 }

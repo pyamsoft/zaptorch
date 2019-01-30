@@ -17,17 +17,11 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import android.app.Dialog
-import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
+import com.pyamsoft.pydroid.ui.arch.ViewEvent
 
-class ServiceInfoDialog : ToolbarDialog() {
+sealed class SettingsViewEvent : ViewEvent {
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(requireActivity())
-        .setMessage("ZapTorch service is On")
-        .setPositiveButton("Okay") { _, _ -> dismiss() }
-        .create()
-  }
+  object ExplainClicked : SettingsViewEvent()
+
+  data class SignificantScroll(val visible: Boolean) : SettingsViewEvent()
 }

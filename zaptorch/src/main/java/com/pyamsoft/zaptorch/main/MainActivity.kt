@@ -19,38 +19,50 @@ package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.MenuItem
 import android.view.View
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import com.pyamsoft.pydroid.ui.about.AboutFragment
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
-import com.pyamsoft.pydroid.ui.theme.Theming
-import com.pyamsoft.pydroid.ui.util.Snackbreak
+import com.pyamsoft.pydroid.ui.theme.ThemeInjector
 import com.pyamsoft.pydroid.ui.util.commit
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowUiComponent
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.main.MainViewEvent.MenuItemClicked
+import com.pyamsoft.zaptorch.main.MainViewEvent.ToolbarClicked
 import timber.log.Timber
+import kotlin.LazyThreadSafetyMode.NONE
 
 class MainActivity : RatingActivity() {
 
-  internal lateinit var mainView: MainView
-  internal lateinit var viewModel: MainViewModel
-  internal lateinit var theming: Theming
+  internal lateinit var toolbarComponent: MainToolbarUiComponent
+  internal lateinit var frameComponent: MainFrameUiComponent
+  internal lateinit var dropshadowComponent: DropshadowUiComponent
+  internal lateinit var worker: MainWorker
 
   private var handleKeyPress: Boolean = false
-  private var keyPressDisposable by singleDisposable()
+
+  private val layoutRoot by lazy(NONE) {
+    findViewById<ConstraintLayout>(R.id.layout_constraint)
+  }
 
   override val versionName: String = BuildConfig.VERSION_NAME
 
   override val applicationIcon: Int = R.mipmap.ic_launcher
 
-  override val rootView: View
-    get() = mainView.root()
+  override val snackbarRoot: View
+    get() = layoutRoot
+
+  override val fragmentContainerId: Int
+    get() = frameComponent.id()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -58,38 +70,95 @@ class MainActivity : RatingActivity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(getString(R.string.handle_volume_keys_key))
-        .inject(this)
-
-    if (theming.isDarkTheme()) {
+    if (ThemeInjector.obtain(applicationContext).isDarkTheme()) {
       setTheme(R.style.Theme_ZapTorch_Dark)
     } else {
       setTheme(R.style.Theme_ZapTorch_Light)
     }
     super.onCreate(savedInstanceState)
-    createMainView()
+    setContentView(R.layout.layout_constraint)
 
-    keyPressDisposable = viewModel.onHandleKeyPressChanged { onHandleKeyPress(it) }
+    Injector.obtain<ZapTorchComponent>(applicationContext)
+        .plusMainComponent(layoutRoot, this)
+        .inject(this)
+
+    createComponents(savedInstanceState)
+    layoutComponents(layoutRoot)
+    showMainFragment()
+
+    worker.onHandleKeyPressChanged { onHandleKeyPress(it) }
+        .destroy(this)
   }
 
-  private fun createMainView() {
-    mainView.create()
-    mainView.onToolbarNavClicked { onBackPressed() }
-    mainView.onMenuItemClicked { itemId: Int ->
-      if (itemId == R.id.menu_id_privacy_policy) {
-        PRIVACY_POLICY_URL.hyperlink(this)
-            .navigate {
-              Snackbreak.short(rootView, it.localizedMessage)
-                  .show()
-            }
+  private fun createComponents(savedInstanceState: Bundle?) {
+    toolbarComponent.onUiEvent {
+      return@onUiEvent when (it) {
+        is ToolbarClicked -> onBackPressed()
+        is MenuItemClicked -> onMenuItemClicked(it.item)
       }
+    }
+        .destroy(this)
+
+    toolbarComponent.create(savedInstanceState)
+    frameComponent.create(savedInstanceState)
+    dropshadowComponent.create(savedInstanceState)
+  }
+
+  private fun onMenuItemClicked(item: MenuItem) {
+    val itemId = item.itemId
+    if (itemId == R.id.menu_id_privacy_policy) {
+      val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
+      val error = hyperlink.navigate()
+      if (error != null) {
+        worker.publishPrivacyPolicyLinkError(error)
+      }
+    }
+
+  }
+
+  private fun layoutComponents(layoutRoot: ConstraintLayout) {
+    ConstraintSet().apply {
+      clone(layoutRoot)
+
+      toolbarComponent.also {
+        connect(it.id(), ConstraintSet.TOP, layoutRoot.id, ConstraintSet.TOP)
+        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
+
+      frameComponent.also {
+        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.BOTTOM, layoutRoot.id, ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
+        constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
+
+      dropshadowComponent.also {
+        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
+
+      applyTo(layoutRoot)
+    }
+  }
+
+  private fun showMainFragment() {
+    val fm = supportFragmentManager
+    if (fm.findFragmentByTag(MainFragment.TAG) == null && !AboutFragment.isPresent(this)) {
+      fm.beginTransaction()
+          .add(fragmentContainerId, MainFragment(), MainFragment.TAG)
+          .commit(this)
     }
   }
 
   private fun onHandleKeyPress(handle: Boolean) {
-    handleKeyPress = handle
     Timber.d("Handle keypress: %s", handle)
+    handleKeyPress = handle
   }
 
   override fun onKeyUp(
@@ -111,27 +180,6 @@ class MainActivity : RatingActivity() {
       return handleKeyPress
     } else {
       return super.onKeyDown(keyCode, event)
-    }
-  }
-
-  override fun onStart() {
-    super.onStart()
-    showMainFragment()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    keyPressDisposable.tryDispose()
-  }
-
-  private fun showMainFragment() {
-    val fragmentManager = supportFragmentManager
-    if (fragmentManager.findFragmentByTag(MainFragment.TAG) == null
-        && !AboutFragment.isPresent(this)
-    ) {
-      fragmentManager.beginTransaction()
-          .add(R.id.main_viewport, MainFragment(), MainFragment.TAG)
-          .commit(this)
     }
   }
 

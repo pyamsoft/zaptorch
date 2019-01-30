@@ -17,28 +17,34 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.loader.LoaderModule
+import com.pyamsoft.zaptorch.service.ServiceStateWorker
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
-import com.pyamsoft.zaptorch.settings.SettingsModule
+import com.pyamsoft.zaptorch.settings.SettingsStateEvent
 
 internal class MainFragmentComponentImpl internal constructor(
+  private val parent: ViewGroup,
   private val owner: LifecycleOwner,
-  private val inflater: LayoutInflater,
-  private val container: ViewGroup?,
-  private val settingsModule: SettingsModule,
   private val loaderModule: LoaderModule,
   private val serviceModule: VolumeServiceModule,
-  private val mainModule: MainModule
+  private val actionViewBus: EventBus<ActionViewEvent>,
+  private val settingsStateBus: EventBus<SettingsStateEvent>,
+  private val mainStateBus: EventBus<MainStateEvent>
 ) : MainFragmentComponent {
 
-  override fun inject(mainFragment: MainFragment) {
-    mainFragment.publisher = settingsModule.getPublisher()
-    mainFragment.serviceViewModel = serviceModule.getViewModel()
-    mainFragment.mainViewModel = mainModule.getFragmentViewModel()
-    mainFragment.mainView =
-        MainFragmentViewImpl(owner, inflater, container, loaderModule.provideImageLoader())
+  override fun inject(fragment: MainFragment) {
+    val actionView = MainActionView(loaderModule.provideImageLoader(), owner, parent, actionViewBus)
+    val frame = MainFrameView(parent, owner)
+    val serviceStateWorker = ServiceStateWorker(serviceModule.interactor)
+
+    fragment.frameComponent = MainFrameUiComponent(mainStateBus, frame, owner)
+    fragment.actionComponent = MainActionUiComponent(
+        settingsStateBus, serviceStateWorker, actionView, owner
+    )
   }
+
 }
+

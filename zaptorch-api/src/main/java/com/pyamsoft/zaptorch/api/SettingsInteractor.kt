@@ -15,13 +15,13 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.api
 
-import com.pyamsoft.pydroid.ui.app.BaseScreen
+import androidx.annotation.CheckResult
+import io.reactivex.Single
 
-interface MainView : BaseScreen {
+interface SettingsInteractor {
 
-  fun onToolbarNavClicked(onClick: () -> Unit)
-
-  fun onMenuItemClicked(onClick: (itemId: Int) -> Unit)
+  @CheckResult
+  fun clearAll(): Single<Unit>
 }

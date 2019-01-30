@@ -20,20 +20,27 @@ package com.pyamsoft.zaptorch.settings
 import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
-import com.pyamsoft.zaptorch.service.VolumeServiceModule
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.service.ServiceFinishEvent
+import com.pyamsoft.zaptorch.service.ServiceFinishWorker
 
 internal class SettingsComponentImpl internal constructor(
   private val owner: LifecycleOwner,
+  private val recyclerView: RecyclerView,
   private val preferenceScreen: PreferenceScreen,
-  private val tag: String,
   private val settingsModule: SettingsModule,
-  private val serviceModule: VolumeServiceModule
+  private val settingsViewBus: EventBus<SettingsViewEvent>,
+  private val settingsStateBus: EventBus<SettingsStateEvent>,
+  private val serviceFinishBus: EventBus<ServiceFinishEvent>
 ) : SettingsComponent {
 
   override fun inject(fragment: TorchPreferenceFragment) {
-    fragment.publisher = serviceModule.getPublisher()
-    fragment.viewModel = settingsModule.getViewModel(tag)
-    fragment.settingsView = SettingsViewImpl(owner, preferenceScreen)
+    fragment.clearWorker = ClearAllWorker(settingsModule.interactor, settingsStateBus)
+    fragment.serviceFinishWorker = ServiceFinishWorker(serviceFinishBus)
+    fragment.settingsWorker = SettingsWorker(settingsStateBus)
+
+    val view = SettingsView(recyclerView, preferenceScreen, settingsViewBus)
+    fragment.settingsUiComponent = SettingsUiComponent(view, owner)
   }
 
 }

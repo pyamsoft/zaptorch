@@ -15,7 +15,7 @@
  *
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.main
 
 import android.app.Dialog
 import android.content.Intent

@@ -25,11 +25,12 @@ import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 
 internal class MainInteractorImpl internal constructor(
+  private val handleKeyPressKey: String,
   private val enforcer: Enforcer,
   private val preferences: UIPreferences
 ) : MainInteractor {
 
-  override fun onHandleKeyPressChanged(handleKeyPressKey: String): Observable<Boolean> {
+  override fun onHandleKeyPressChanged(): Observable<Boolean> {
     return Observable.create {
       val listener = OnSharedPreferenceChangeListener { _, key ->
         if (key == handleKeyPressKey) {

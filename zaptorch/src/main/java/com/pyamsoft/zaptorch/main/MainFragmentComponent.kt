@@ -19,6 +19,6 @@ package com.pyamsoft.zaptorch.main
 
 interface MainFragmentComponent {
 
-  fun inject(mainFragment: MainFragment)
+  fun inject(fragment: MainFragment)
 
 }

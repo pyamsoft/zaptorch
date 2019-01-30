@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
@@ -27,13 +26,10 @@ import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
-import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 
 interface ZapTorchComponent {
-
-  fun inject(activity: CameraErrorExplanation)
 
   fun inject(dialog: ConfirmationDialog)
 
@@ -42,19 +38,22 @@ interface ZapTorchComponent {
   fun inject(service: VolumeMonitorService)
 
   @CheckResult
-  fun plusMainComponent(key: String): MainComponent
+  fun plusMainComponent(
+    parent: ViewGroup,
+    owner: LifecycleOwner
+  ): MainComponent
 
   @CheckResult
   fun plusMainFragmentComponent(
-    owner: LifecycleOwner,
-    inflater: LayoutInflater,
-    container: ViewGroup?
+    parent: ViewGroup,
+    owner: LifecycleOwner
   ): MainFragmentComponent
 
   @CheckResult
   fun plusSettingsComponent(
     owner: LifecycleOwner,
-    preferenceScreen: PreferenceScreen,
-    tag: String
+    recyclerView: RecyclerView,
+    preferenceScreen: PreferenceScreen
   ): SettingsComponent
+
 }

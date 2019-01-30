@@ -22,8 +22,6 @@ import android.app.IntentService
 import android.content.Context
 import androidx.annotation.CheckResult
 import androidx.annotation.ColorRes
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.zaptorch.model.FabScrollListenerRequestEvent
 
 interface ZapTorchModule {
 
@@ -48,7 +46,4 @@ interface ZapTorchModule {
   @ColorRes
   @CheckResult
   fun provideNotificationColor(): Int
-
-  @CheckResult
-  fun provideFabScrollRequestBus(): EventBus<FabScrollListenerRequestEvent>
 }

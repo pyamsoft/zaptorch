@@ -30,7 +30,7 @@ buildscript {
 
   ext {
 
-    minSdk = 21
+    minSdk = 23
     maxSdk = 28
 
     // AndroidX
@@ -38,7 +38,7 @@ buildscript {
     preference = "1.0.0"
     recyclerView = "1.0.0"
 
-    pydroid = "18.2.2-SNAPSHOT"
+    pydroid = "18.3.0-SNAPSHOT"
     leakCanary = "1.6.2"
   }
 

@@ -15,38 +15,29 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
-import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.zaptorch.model.FabScrollListenerRequestEvent
+import com.pyamsoft.pydroid.ui.arch.Worker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class MainFragmentViewModel internal constructor(
-  private val fabScrollRequestBus: EventBus<FabScrollListenerRequestEvent>
-) {
+internal class ServiceFinishWorker internal constructor(
+  bus: EventBus<ServiceFinishEvent>
+) : Worker<ServiceFinishEvent>(bus) {
 
   @CheckResult
-  fun onFabScrollListenerCreateRequest(func: (tag: String) -> Unit): Disposable {
-    return fabScrollRequestBus.listen()
-        // Do not listen to create results, only requests for new creations
-        .filter { it.listenerResult == null }
-        // Just need the tag
-        .map { it.requestTag }
+  fun onFinishEvent(func: () -> Unit): Disposable {
+    return listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(func)
+        .subscribe { func() }
   }
 
-  fun publishScrollListener(
-    tag: String,
-    listener: RecyclerView.OnScrollListener
-  ) {
-    fabScrollRequestBus.publish(
-        FabScrollListenerRequestEvent(tag, listener)
-    )
+  fun finish() {
+    publish(ServiceFinishEvent)
   }
+
 }

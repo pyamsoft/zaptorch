@@ -23,5 +23,5 @@ import io.reactivex.Observable
 interface MainInteractor {
 
   @CheckResult
-  fun onHandleKeyPressChanged(handleKeyPressKey: String): Observable<Boolean>
+  fun onHandleKeyPressChanged(): Observable<Boolean>
 }

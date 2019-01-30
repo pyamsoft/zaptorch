@@ -15,6 +15,19 @@
  *
  */
 
-package com.pyamsoft.zaptorch.model
+package com.pyamsoft.zaptorch.main
 
-object ConfirmEvent
+import android.app.Dialog
+import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
+
+class ServiceInfoDialog : ToolbarDialog() {
+
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    return AlertDialog.Builder(requireActivity())
+        .setMessage("ZapTorch service is On")
+        .setPositiveButton("Okay") { _, _ -> dismiss() }
+        .create()
+  }
+}

@@ -17,16 +17,46 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import android.os.Bundle
+import androidx.preference.Preference
+import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
-import com.pyamsoft.pydroid.ui.app.BaseView
+import com.pyamsoft.zaptorch.R
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.arch.PrefUiView
+import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ExplainClicked
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 
-interface SettingsView : BaseView {
+internal class SettingsView internal constructor(
+  private val recyclerView: RecyclerView,
+  parent: PreferenceScreen,
+  bus: EventBus<SettingsViewEvent>
+) : PrefUiView<SettingsViewEvent>(parent, bus) {
 
-  fun onExplainClicked(onClick: () -> Unit)
+  private val explain by lazyPref<Preference>(R.string.zaptorch_explain_key)
 
-  fun addScrollListener(
-    listView: RecyclerView,
-    listener: RecyclerView.OnScrollListener
-  )
+  private var scrollListener: RecyclerView.OnScrollListener? = null
+
+  override fun inflate(savedInstanceState: Bundle?) {
+    explain.setOnPreferenceClickListener {
+      publish(ExplainClicked)
+      return@setOnPreferenceClickListener true
+    }
+
+    val listener = HideOnScrollListener.create(true) {
+      publish(SignificantScroll(it))
+    }
+    recyclerView.addOnScrollListener(listener)
+    scrollListener = listener
+  }
+
+  override fun teardown() {
+    explain.onPreferenceClickListener = null
+
+    scrollListener?.also { recyclerView.removeOnScrollListener(it) }
+    scrollListener = null
+  }
 
 }
+

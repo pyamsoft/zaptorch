@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -40,6 +41,9 @@ interface VolumeServiceInteractor {
 
   @CheckResult
   fun observeServiceState(): Observable<Boolean>
+
+  @CheckResult
+  fun observeCameraState(): Observable<CameraError>
 
   fun setServiceState(changed: Boolean)
 }

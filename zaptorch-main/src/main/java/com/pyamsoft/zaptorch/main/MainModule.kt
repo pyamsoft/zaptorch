@@ -17,25 +17,19 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
 
 class MainModule(
+  key: String,
   enforcer: Enforcer,
-  private val module: ZapTorchModule
+  module: ZapTorchModule
 ) {
 
-  private val interactor: MainInteractor
+  val interactor: MainInteractor
 
   init {
-    interactor = MainInteractorImpl(enforcer, module.provideUiPreferences())
+    interactor = MainInteractorImpl(key, enforcer, module.provideUiPreferences())
   }
-
-  @CheckResult
-  fun getViewModel(keyPressKey: String) = MainViewModel(keyPressKey, interactor)
-
-  @CheckResult
-  fun getFragmentViewModel() = MainFragmentViewModel(module.provideFabScrollRequestBus())
 }

@@ -17,31 +17,31 @@
 
 package com.pyamsoft.zaptorch.service
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
-import android.os.Build
-import androidx.annotation.CheckResult
+import androidx.core.content.getSystemService
+import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import timber.log.Timber
 
-@TargetApi(Build.VERSION_CODES.M)
 internal class MarshmallowCamera internal constructor(
   context: Context,
   interactor: VolumeServiceInteractor
-) : CameraCommon(context, interactor) {
+) : CameraCommon(interactor) {
 
-  private val cameraManager: CameraManager =
-    context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+  private val cameraManager = requireNotNull(context.getSystemService<CameraManager>())
   private val torchCallback = TorchCallback(this)
 
   init {
+    Timber.d("INIT")
     setupCamera()
   }
 
   override fun toggleTorch() {
-    setTorch(torchCallback.isEnabled.not())
+    val toggle = !torchCallback.isEnabled
+    Timber.d("Toggle torch: $toggle")
+    setTorch(toggle)
   }
 
   private fun setTorch(enable: Boolean) {
@@ -52,11 +52,11 @@ internal class MarshmallowCamera internal constructor(
         cameraManager.setTorchMode(cameraId, enable)
       } catch (e: CameraAccessException) {
         Timber.e(e, "toggleTorch ERROR")
-        startErrorExplanationActivity()
+        startErrorExplanationActivity(e)
       }
     } else {
       Timber.e("Torch unavailable")
-      startErrorExplanationActivity()
+      startErrorExplanationActivity(null)
     }
   }
 
@@ -75,13 +75,11 @@ internal class MarshmallowCamera internal constructor(
   }
 
   internal class TorchCallback internal constructor(
-    private val cameraCommon: CameraCommon
+    private val callback: CameraInterface.OnStateChangedCallback
   ) : CameraManager.TorchCallback() {
 
-    var cameraId: String? = null
-      @CheckResult get
-    var isEnabled: Boolean = false
-      @CheckResult get
+    internal var cameraId: String? = null
+    internal var isEnabled = false
 
     override fun onTorchModeChanged(
       cameraId: String,
@@ -93,9 +91,9 @@ internal class MarshmallowCamera internal constructor(
       this.isEnabled = enabled
 
       if (enabled) {
-        cameraCommon.notifyCallbackOnOpened()
+        callback.onOpened()
       } else {
-        cameraCommon.notifyCallbackOnClosed()
+        callback.onClosed()
       }
     }
 
@@ -104,8 +102,7 @@ internal class MarshmallowCamera internal constructor(
       Timber.e("Torch unavailable")
       this.cameraId = null
       this.isEnabled = false
-
-      cameraCommon.notifyCallbackOnClosed()
+      callback.onClosed()
     }
   }
 }

@@ -17,44 +17,41 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
+import com.pyamsoft.pydroid.ui.arch.BaseUiView
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.databinding.ActivityMainBinding
+import com.pyamsoft.zaptorch.main.MainViewEvent.MenuItemClicked
+import com.pyamsoft.zaptorch.main.MainViewEvent.ToolbarClicked
 
-internal class MainViewImpl internal constructor(
+internal class MainToolbarView internal constructor(
   private val activity: ActivityBase,
-  private val theming: Theming
-) : MainView, LifecycleObserver {
+  private val theming: Theming,
+  parent: ViewGroup,
+  bus: EventBus<MainViewEvent>
+) : BaseUiView<MainViewEvent>(parent, bus) {
 
-  private lateinit var binding: ActivityMainBinding
+  private val toolbar by lazyView<Toolbar>(R.id.toolbar)
 
-  init {
-    activity.lifecycle.addObserver(this)
+  override val layout: Int = R.layout.toolbar
+
+  override fun id(): Int {
+    return toolbar.id
   }
 
-  override fun create() {
-    binding = DataBindingUtil.setContentView(activity, R.layout.activity_main)
+  override fun onInflated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
     setupToolbar()
-  }
-
-  @Suppress("unused")
-  @OnLifecycleEvent(ON_DESTROY)
-  internal fun destroy() {
-    activity.lifecycle.removeObserver(this)
-    binding.unbind()
-  }
-
-  override fun root(): View {
-    return binding.root
   }
 
   private fun setupToolbar() {
@@ -64,26 +61,27 @@ internal class MainViewImpl internal constructor(
     } else {
       theme = R.style.ThemeOverlay_AppCompat_Light
     }
-    binding.toolbar.apply {
+
+    toolbar.apply {
       popupTheme = theme
       activity.setToolbar(this)
       setTitle(R.string.app_name)
-      ViewCompat.setElevation(this, 4f.toDp(context).toFloat())
+      ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
       inflateMenu(R.menu.menu)
+
+      setNavigationOnClickListener(DebouncedOnClickListener.create {
+        publish(ToolbarClicked)
+      })
+
+      toolbar.setOnMenuItemClickListener { item ->
+        publish(MenuItemClicked(item))
+        return@setOnMenuItemClickListener true
+      }
     }
   }
 
-  override fun onToolbarNavClicked(onClick: () -> Unit) {
-    binding.toolbar.setNavigationOnClickListener(DebouncedOnClickListener.create {
-      onClick()
-    })
-  }
-
-  override fun onMenuItemClicked(onClick: (itemId: Int) -> Unit) {
-    binding.toolbar.setOnMenuItemClickListener { item ->
-      onClick(item.itemId)
-      return@setOnMenuItemClickListener true
-    }
+  override fun teardown() {
+    toolbar.setNavigationOnClickListener(null)
   }
 
 }

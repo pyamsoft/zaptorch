@@ -32,10 +32,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.pyamsoft.pydroid.core.bus.Publisher
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.Observable
@@ -45,18 +45,20 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 
 internal class VolumeServiceInteractorImpl internal constructor(
   private val enforcer: Enforcer,
-  private val errorBus: Publisher<Intent>,
   private val context: Context,
   private val preferences: CameraPreferences,
   torchOffServiceClass: Class<out IntentService>,
-  @ColorRes private val notificationColor: Int
+  @ColorRes notificationColor: Int
 ) : VolumeServiceInteractor {
 
   private val notificationManagerCompat = NotificationManagerCompat.from(context)
   private val notification: Notification
-  private val onStateChangedCallback: CameraInterface.OnStateChangedCallback
+
   private var pressed: Boolean = false
+
   private var cameraInterface: CameraInterface? = null
+  private val cameraErrorBus = RxBus.create<CameraError>()
+
   private var running = false
   private val runningStateBus = RxBus.create<Boolean>()
 
@@ -84,31 +86,7 @@ internal class VolumeServiceInteractorImpl internal constructor(
         }
         .build()
 
-    onStateChangedCallback = object : CameraInterface.OnStateChangedCallback {
-      override fun onOpened() {
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification)
-      }
-
-      override fun onClosed() {
-        notificationManagerCompat.cancel(NOTIFICATION_ID)
-      }
-
-      override fun onError(errorIntent: Intent) {
-        throw RuntimeException("Not handled!")
-      }
-    }
-
     pressed = false
-  }
-
-  override fun setServiceState(changed: Boolean) {
-    running = changed
-    runningStateBus.publish(changed)
-  }
-
-  override fun observeServiceState(): Observable<Boolean> {
-    return runningStateBus.listen()
-        .startWith(running)
   }
 
   @RequiresApi(VERSION_CODES.O)
@@ -131,26 +109,51 @@ internal class VolumeServiceInteractorImpl internal constructor(
     notificationManager.createNotificationChannel(notificationChannel)
   }
 
+  override fun setServiceState(changed: Boolean) {
+    running = changed
+    runningStateBus.publish(changed)
+  }
+
+  override fun observeServiceState(): Observable<Boolean> {
+    return Observable.defer {
+      enforcer.assertNotOnMainThread()
+      return@defer runningStateBus.listen()
+          .startWith(running)
+    }
+  }
+
+  override fun observeCameraState(): Observable<CameraError> {
+    return Observable.defer {
+      enforcer.assertNotOnMainThread()
+      return@defer cameraErrorBus.listen()
+    }
+  }
+
   override fun handleKeyPress(
     action: Int,
     keyCode: Int
   ): Single<Long> {
     return Single.defer {
       enforcer.assertNotOnMainThread()
-      var keyPressSingle = Single.never<Long>()
+      var keyPressSingle: Single<Long> = Single.never<Long>()
       if (action == KeyEvent.ACTION_UP) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+          var result: Single<Long>? = null
           if (pressed) {
             Timber.d("Key has been double pressed")
             pressed = false
             toggleTorch()
           } else {
             pressed = true
-            keyPressSingle = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
+            result = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
                 .doOnSuccess {
                   Timber.d("Set pressed back to false")
                   pressed = false
                 }
+          }
+
+          if (result != null) {
+            keyPressSingle = result
           }
         }
       }
@@ -159,32 +162,27 @@ internal class VolumeServiceInteractorImpl internal constructor(
     }
   }
 
-  override fun shouldShowErrorDialog(): Single<Boolean> =
-    Single.fromCallable { preferences.shouldShowErrorDialog() }
+  override fun shouldShowErrorDialog(): Single<Boolean> = Single.fromCallable {
+    enforcer.assertNotOnMainThread()
+    return@fromCallable preferences.shouldShowErrorDialog()
+  }
 
   override fun setupCamera() {
-    val camera: CameraCommon
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      // Assign
-      camera = MarshmallowCamera(context, this)
-    } else {
-      // Assign
-      camera = LollipopCamera(context, this)
+    val camera: CameraCommon = MarshmallowCamera(context, this).apply {
+      setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
+        override fun onOpened() {
+          notificationManagerCompat.notify(NOTIFICATION_ID, notification)
+        }
+
+        override fun onClosed() {
+          notificationManagerCompat.cancel(NOTIFICATION_ID)
+        }
+
+        override fun onError(error: CameraError) {
+          cameraErrorBus.publish(error)
+        }
+      })
     }
-
-    camera.setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
-      override fun onOpened() {
-        onStateChangedCallback.onOpened()
-      }
-
-      override fun onClosed() {
-        onStateChangedCallback.onClosed()
-      }
-
-      override fun onError(errorIntent: Intent) {
-        errorBus.publish(errorIntent)
-      }
-    })
 
     releaseCamera()
     cameraInterface = camera
@@ -195,12 +193,11 @@ internal class VolumeServiceInteractorImpl internal constructor(
   }
 
   override fun releaseCamera() {
-    val obj = cameraInterface
-    if (obj != null) {
-      obj.destroy()
-      obj.setOnStateChangedCallback(null)
-      cameraInterface = null
+    cameraInterface?.also {
+      it.destroy()
+      it.setOnStateChangedCallback(null)
     }
+    cameraInterface = null
   }
 
   companion object {

@@ -15,11 +15,8 @@
  *
  */
 
-package com.pyamsoft.zaptorch.model
+package com.pyamsoft.zaptorch.service
 
-import androidx.recyclerview.widget.RecyclerView
+import com.pyamsoft.pydroid.ui.arch.StateEvent
 
-data class FabScrollListenerRequestEvent(
-  val requestTag: String,
-  val listenerResult: RecyclerView.OnScrollListener? = null
-)
+internal object ServiceFinishEvent : StateEvent

@@ -17,16 +17,9 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.recyclerview.widget.RecyclerView
-import com.pyamsoft.pydroid.ui.app.BaseScreen
+import com.pyamsoft.pydroid.ui.arch.ViewEvent
 
-interface MainFragmentView : BaseScreen {
+sealed class ActionViewEvent : ViewEvent {
 
-  fun setFabFromServiceState(
-    running: Boolean,
-    onClick: (running: Boolean) -> Unit
-  )
-
-  fun createFabScrollListener(onCreate: (listener: RecyclerView.OnScrollListener) -> Unit)
-
+  data class ActionClicked(val runningService: Boolean) : ActionViewEvent()
 }

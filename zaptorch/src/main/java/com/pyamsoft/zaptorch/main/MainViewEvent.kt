@@ -15,12 +15,15 @@
  *
  */
 
-package com.pyamsoft.zaptorch.model
+package com.pyamsoft.zaptorch.main
 
-data class ServiceEvent(val type: Type) {
+import android.view.MenuItem
+import com.pyamsoft.pydroid.ui.arch.ViewEvent
 
-  enum class Type {
-    FINISH,
-    TORCH
-  }
+internal sealed class MainViewEvent : ViewEvent {
+
+  object ToolbarClicked : MainViewEvent()
+
+  data class MenuItemClicked(val item: MenuItem) : MainViewEvent()
+
 }

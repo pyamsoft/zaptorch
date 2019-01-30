@@ -17,35 +17,18 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.core.bus.Publisher
-import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.threads.Enforcer
-import com.pyamsoft.zaptorch.api.SettingsPreferenceFragmentInteractor
+import com.pyamsoft.zaptorch.api.SettingsInteractor
 import com.pyamsoft.zaptorch.api.ZapTorchModule
-import com.pyamsoft.zaptorch.model.ConfirmEvent
 
 class SettingsModule(
-  private val enforcer: Enforcer,
-  private val module: ZapTorchModule
+  enforcer: Enforcer,
+  module: ZapTorchModule
 ) {
 
-  private val interactor: SettingsPreferenceFragmentInteractor
-  private val bus = RxBus.create<ConfirmEvent>()
+  val interactor: SettingsInteractor
 
   init {
     interactor = SettingsInteractorImpl(enforcer, module.provideClearPreferences())
   }
-
-  @CheckResult
-  fun getViewModel(tag: String) = SettingsViewModel(
-      enforcer,
-      bus,
-      interactor,
-      module.provideFabScrollRequestBus(),
-      tag
-  )
-
-  @CheckResult
-  fun getPublisher(): Publisher<ConfirmEvent> = bus
 }
