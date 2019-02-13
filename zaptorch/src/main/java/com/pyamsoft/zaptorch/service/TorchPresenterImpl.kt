@@ -17,29 +17,35 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.Worker
-import com.pyamsoft.zaptorch.service.ServiceStateEvent.TorchToggle
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-internal class TorchWorker internal constructor(
-  bus: EventBus<ServiceStateEvent>
-) : Worker<ServiceStateEvent>(bus) {
+internal class TorchPresenterImpl internal constructor(
+  private val interactor: VolumeServiceInteractor,
+  owner: LifecycleOwner,
+  bus: EventBus<TorchToggleEvent>
+) : BasePresenter<TorchToggleEvent, TorchPresenter.Callback>(owner, bus),
+    TorchPresenter {
 
-  @CheckResult
-  fun onRequest(func: () -> Unit): Disposable {
-    return listen()
-        .ofType(TorchToggle::class.java)
+  override fun onBind() {
+    listen()
+        .ofType(TorchToggleEvent::class.java)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { func() }
+        .subscribe { interactor.toggleTorch() }
+        .destroy(owner)
   }
 
-  fun publish() {
-    publish(TorchToggle)
+  override fun onUnbind() {
+  }
+
+  override fun toggle() {
+    publish(TorchToggleEvent)
   }
 
 }

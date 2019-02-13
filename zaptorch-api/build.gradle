@@ -42,6 +42,11 @@ android {
   libraryVariants.all {
     it.generateBuildConfig.enabled = false
   }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 
 // Kapt flags
@@ -60,7 +65,6 @@ kapt {
 dependencies {
   // PYDroid
   api "com.pyamsoft.pydroid:loader:$pydroid"
-
-  api project(":zaptorch-model")
+  api project(':zaptorch-model')
 }
 

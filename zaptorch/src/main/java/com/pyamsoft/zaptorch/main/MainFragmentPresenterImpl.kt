@@ -17,31 +17,37 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.core.bus.Listener
-import com.pyamsoft.pydroid.ui.arch.BaseUiComponent
-import com.pyamsoft.pydroid.ui.arch.ViewEvent.EMPTY
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
 import com.pyamsoft.pydroid.ui.arch.destroy
-import com.pyamsoft.zaptorch.main.MainStateEvent.PrivacyPolicyLinkFailed
+import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-internal class MainFrameUiComponent internal constructor(
-  private val controllerBus: Listener<MainStateEvent>,
-  view: MainFrameView,
-  owner: LifecycleOwner
-) : BaseUiComponent<EMPTY, MainFrameView>(view, owner) {
+internal class MainFragmentPresenterImpl internal constructor(
+  owner: LifecycleOwner,
+  bus: EventBus<SignificantScrollEvent>
+) : BasePresenter<SignificantScrollEvent, MainFragmentPresenter.Callback>(owner, bus),
+    MainFragmentPresenter,
+    MainActionView.Callback {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    controllerBus.listen()
-        .subscribeOn(Schedulers.io())
+  override fun onActionButtonClicked(running: Boolean) {
+    if (running) {
+      callback.onServiceRunningAction()
+    } else {
+      callback.onServiceStoppedAction()
+    }
+  }
+
+  override fun onBind() {
+    listen().subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-          return@subscribe when (it) {
-            is PrivacyPolicyLinkFailed -> view.showPrivacyPolicyError(it.error)
-          }
-        }
+        .subscribe { callback.onSignificantScrollEvent(it.visible) }
         .destroy(owner)
   }
+
+  override fun onUnbind() {
+  }
+
 }

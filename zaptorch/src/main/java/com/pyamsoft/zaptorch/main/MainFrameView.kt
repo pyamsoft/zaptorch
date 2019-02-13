@@ -17,20 +17,14 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.content.ActivityNotFoundException
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.ui.arch.BaseUiView
-import com.pyamsoft.pydroid.ui.arch.ViewEvent.EMPTY
-import com.pyamsoft.pydroid.ui.arch.ViewEvent.EmptyBus
-import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.zaptorch.R
 
 internal class MainFrameView internal constructor(
-  parent: ViewGroup,
-  private val owner: LifecycleOwner
-) : BaseUiView<EMPTY>(parent, EmptyBus) {
+  parent: ViewGroup
+) : BaseUiView<Unit>(parent, Unit) {
 
   private val frameLayout by lazyView<FrameLayout>(R.id.layout_frame)
 
@@ -38,15 +32,6 @@ internal class MainFrameView internal constructor(
 
   override fun id(): Int {
     return frameLayout.id
-  }
-
-  fun showPrivacyPolicyError(error: ActivityNotFoundException) {
-    Snackbreak.bindTo(owner)
-        .short(
-            frameLayout,
-            error.message ?: "An error occurred while trying to open the Privacy Policy."
-        )
-        .show()
   }
 
 }

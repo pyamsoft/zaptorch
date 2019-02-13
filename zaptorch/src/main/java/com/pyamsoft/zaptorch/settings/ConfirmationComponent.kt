@@ -17,16 +17,8 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.Worker
-import com.pyamsoft.zaptorch.settings.SettingsStateEvent.SignificantScroll
+interface ConfirmationComponent {
 
-internal class SettingsWorker internal constructor(
-  bus: EventBus<SettingsStateEvent>
-) : Worker<SettingsStateEvent>(bus) {
-
-  fun significantScroll(visible: Boolean) {
-    publish(SignificantScroll(visible))
-  }
+  fun inject(dialog: ConfirmationDialog)
 
 }

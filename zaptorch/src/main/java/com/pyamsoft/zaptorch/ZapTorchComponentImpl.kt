@@ -26,30 +26,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.ui.ModuleProvider
 import com.pyamsoft.zaptorch.base.ZapTorchModuleImpl
-import com.pyamsoft.zaptorch.main.ActionViewEvent
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponentImpl
 import com.pyamsoft.zaptorch.main.MainModule
-import com.pyamsoft.zaptorch.main.MainStateEvent
-import com.pyamsoft.zaptorch.main.MainViewEvent
+import com.pyamsoft.zaptorch.service.ServiceComponent
+import com.pyamsoft.zaptorch.service.ServiceComponentImpl
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
-import com.pyamsoft.zaptorch.service.ServiceFinishWorker
-import com.pyamsoft.zaptorch.service.ServiceStateEvent
-import com.pyamsoft.zaptorch.service.ServiceStateWorker
-import com.pyamsoft.zaptorch.service.ServiceWorker
-import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.TorchWorker
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
+import com.pyamsoft.zaptorch.service.TorchToggleEvent
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
-import com.pyamsoft.zaptorch.settings.ClearAllWorker
-import com.pyamsoft.zaptorch.settings.ConfirmationDialog
+import com.pyamsoft.zaptorch.settings.ClearAllEvent
+import com.pyamsoft.zaptorch.settings.ConfirmationComponent
+import com.pyamsoft.zaptorch.settings.ConfirmationComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsModule
-import com.pyamsoft.zaptorch.settings.SettingsStateEvent
-import com.pyamsoft.zaptorch.settings.SettingsViewEvent
+import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 
 internal class ZapTorchComponentImpl internal constructor(
   application: Application,
@@ -59,17 +52,13 @@ internal class ZapTorchComponentImpl internal constructor(
   notificationColor: Int
 ) : ZapTorchComponent {
 
-  private val mainViewBus = RxBus.create<MainViewEvent>()
-  private val mainStateBus = RxBus.create<MainStateEvent>()
+  private val clearAllBus = RxBus.create<ClearAllEvent>()
+  private val significantScrollBus = RxBus.create<SignificantScrollEvent>()
 
-  private val actionViewBus = RxBus.create<ActionViewEvent>()
-
-  private val settingsViewBus = RxBus.create<SettingsViewEvent>()
-  private val settingsStateBus = RxBus.create<SettingsStateEvent>()
-
+  private val torchBus = RxBus.create<TorchToggleEvent>()
   private val serviceFinishBus = RxBus.create<ServiceFinishEvent>()
-  private val serviceStateBus = RxBus.create<ServiceStateEvent>()
 
+  private val navModule = moduleProvider.failedNavigationModule()
   private val theming = moduleProvider.theming()
   private val loaderModule = moduleProvider.loaderModule()
   private val zapTorchModule = ZapTorchModuleImpl(application, serviceClass, notificationColor)
@@ -79,33 +68,19 @@ internal class ZapTorchComponentImpl internal constructor(
       handleVolumeKeysKey, moduleProvider.enforcer(), zapTorchModule
   )
 
-  override fun inject(dialog: ConfirmationDialog) {
-    dialog.worker = ClearAllWorker(settingsModule.interactor, settingsStateBus)
-  }
-
-  override fun inject(service: TorchOffService) {
-    service.worker = TorchWorker(serviceStateBus)
-  }
-
-  override fun inject(service: VolumeMonitorService) {
-    service.serviceWorker = ServiceWorker(serviceModule.interactor)
-    service.stateWorker = ServiceStateWorker(serviceModule.interactor)
-    service.finishWorker = ServiceFinishWorker(serviceFinishBus)
-    service.torchWorker = TorchWorker(serviceStateBus)
-  }
-
   override fun plusMainComponent(
     parent: ViewGroup,
     owner: LifecycleOwner
   ): MainComponent = MainComponentImpl(
-      theming, parent, owner, mainModule, mainViewBus, mainStateBus
+      theming, parent, owner, mainModule.interactor, navModule.bus
   )
 
   override fun plusMainFragmentComponent(
     parent: ViewGroup,
     owner: LifecycleOwner
   ): MainFragmentComponent = MainFragmentComponentImpl(
-      parent, owner, loaderModule, serviceModule, actionViewBus, settingsStateBus, mainStateBus
+      parent, owner, loaderModule.provideImageLoader(),
+      serviceModule.interactor, significantScrollBus
   )
 
   override fun plusSettingsComponent(
@@ -113,7 +88,14 @@ internal class ZapTorchComponentImpl internal constructor(
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent = SettingsComponentImpl(
-      owner, recyclerView, preferenceScreen, settingsModule,
-      settingsViewBus, settingsStateBus, serviceFinishBus
+      owner, recyclerView, preferenceScreen, settingsModule.interactor,
+      clearAllBus, significantScrollBus, serviceFinishBus
   )
+
+  override fun plusConfirmComponent(owner: LifecycleOwner): ConfirmationComponent =
+    ConfirmationComponentImpl(settingsModule.interactor, owner, clearAllBus)
+
+  override fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent =
+    ServiceComponentImpl(owner, serviceModule.interactor, torchBus, serviceFinishBus)
+
 }

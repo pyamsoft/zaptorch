@@ -15,34 +15,32 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.service
 
-import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.service.ServiceStatePresenterImpl
-import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 
-internal class MainFragmentComponentImpl internal constructor(
-  private val parent: ViewGroup,
+internal class ServiceComponentImpl internal constructor(
   private val owner: LifecycleOwner,
-  private val imageLoader: ImageLoader,
   private val interactor: VolumeServiceInteractor,
-  private val scrollBus: EventBus<SignificantScrollEvent>
-) : MainFragmentComponent {
+  private val torchBus: EventBus<TorchToggleEvent>,
+  private val serviceFinishBus: EventBus<ServiceFinishEvent>
+) : ServiceComponent {
 
-  override fun inject(fragment: MainFragment) {
-    val mainPresenter = MainFragmentPresenterImpl(owner, scrollBus)
+  override fun inject(service: TorchOffService) {
+    service.apply {
+      this.presenter = TorchPresenterImpl(interactor, owner, torchBus)
+    }
+  }
 
-    fragment.apply {
-      this.actionView = MainActionView(imageLoader, owner, parent, mainPresenter)
-      this.frameView = MainFrameView(parent)
-      this.presenter = mainPresenter
-      this.serviceStatePresenter = ServiceStatePresenterImpl(interactor, owner)
+  override fun inject(service: VolumeMonitorService) {
+    service.apply {
+      this.finishPresenter = ServiceFinishPresenterImpl(owner, serviceFinishBus)
+      this.servicePresenter = ServicePresenterImpl(interactor, owner)
+      this.statePresenter = ServiceStatePresenterImpl(interactor, owner)
+      this.torchPresenter = TorchPresenterImpl(interactor, owner, torchBus)
     }
   }
 
 }
-

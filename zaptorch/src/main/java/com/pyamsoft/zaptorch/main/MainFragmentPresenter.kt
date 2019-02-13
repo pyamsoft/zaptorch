@@ -17,9 +17,17 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.ui.arch.ViewEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
 
-sealed class ActionViewEvent : ViewEvent {
+internal interface MainFragmentPresenter : Presenter<MainFragmentPresenter.Callback> {
 
-  data class ActionClicked(val runningService: Boolean) : ActionViewEvent()
+  interface Callback {
+
+    fun onServiceRunningAction()
+
+    fun onServiceStoppedAction()
+
+    fun onSignificantScrollEvent(visible: Boolean)
+  }
+
 }

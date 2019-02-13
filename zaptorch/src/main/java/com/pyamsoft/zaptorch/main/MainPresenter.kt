@@ -15,13 +15,20 @@
  *
  */
 
-package com.pyamsoft.zaptorch.settings
+package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.ui.arch.StateEvent
+import android.view.MenuItem
+import com.pyamsoft.pydroid.ui.arch.Presenter
 
-sealed class SettingsStateEvent : StateEvent {
+internal interface MainPresenter : Presenter<MainPresenter.Callback> {
 
-  object ClearAllEvent : SettingsStateEvent()
+  interface Callback {
 
-  data class SignificantScroll(val visible: Boolean) : SettingsStateEvent()
+    fun onHandleKeyPressChanged(handle: Boolean)
+
+    fun onMenuItemSelected(item: MenuItem)
+
+    fun onToolbarNavEvent()
+  }
+
 }

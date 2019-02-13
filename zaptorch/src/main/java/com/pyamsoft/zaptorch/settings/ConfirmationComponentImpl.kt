@@ -15,24 +15,21 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.settings
 
 import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.ui.arch.BaseUiComponent
-import io.reactivex.ObservableTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.api.SettingsInteractor
 
-internal class MainToolbarUiComponent internal constructor(
-  view: MainToolbarView,
-  owner: LifecycleOwner
-) : BaseUiComponent<MainViewEvent, MainToolbarView>(view, owner) {
+internal class ConfirmationComponentImpl internal constructor(
+  private val interactor: SettingsInteractor,
+  private val owner: LifecycleOwner,
+  private val bus: EventBus<ClearAllEvent>
+) : ConfirmationComponent {
 
-  override fun onUiEvent(): ObservableTransformer<in MainViewEvent, out MainViewEvent>? {
-    return ObservableTransformer {
-      return@ObservableTransformer it
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
+  override fun inject(dialog: ConfirmationDialog) {
+    dialog.apply {
+      this.presenter = ClearAllPresenterImpl(interactor, owner, bus)
     }
   }
 

@@ -18,26 +18,24 @@
 package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
+import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.arch.BaseUiView
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.main.MainViewEvent.MenuItemClicked
-import com.pyamsoft.zaptorch.main.MainViewEvent.ToolbarClicked
 
 internal class MainToolbarView internal constructor(
-  private val activity: ActivityBase,
+  private val toolbarActivityProvider: ToolbarActivityProvider,
   private val theming: Theming,
   parent: ViewGroup,
-  bus: EventBus<MainViewEvent>
-) : BaseUiView<MainViewEvent>(parent, bus) {
+  callback: MainToolbarView.Callback
+) : BaseUiView<MainToolbarView.Callback>(parent, callback) {
 
   private val toolbar by lazyView<Toolbar>(R.id.toolbar)
 
@@ -64,17 +62,17 @@ internal class MainToolbarView internal constructor(
 
     toolbar.apply {
       popupTheme = theme
-      activity.setToolbar(this)
+      toolbarActivityProvider.setToolbar(this)
       setTitle(R.string.app_name)
       ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
       inflateMenu(R.menu.menu)
 
       setNavigationOnClickListener(DebouncedOnClickListener.create {
-        publish(ToolbarClicked)
+        callback.onToolbarNavClicked()
       })
 
       toolbar.setOnMenuItemClickListener { item ->
-        publish(MenuItemClicked(item))
+        callback.onToolbarMenuClicked(item)
         return@setOnMenuItemClickListener true
       }
     }
@@ -82,6 +80,14 @@ internal class MainToolbarView internal constructor(
 
   override fun teardown() {
     toolbar.setNavigationOnClickListener(null)
+  }
+
+  interface Callback {
+
+    fun onToolbarMenuClicked(item: MenuItem)
+
+    fun onToolbarNavClicked()
+
   }
 
 }

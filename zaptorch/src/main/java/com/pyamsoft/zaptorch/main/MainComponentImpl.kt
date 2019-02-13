@@ -20,24 +20,32 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.navigation.FailedNavigationEvent
+import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenterImpl
 import com.pyamsoft.pydroid.ui.theme.Theming
-import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowUiComponent
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
+import com.pyamsoft.zaptorch.api.MainInteractor
 
 internal class MainComponentImpl internal constructor(
   private val theming: Theming,
   private val parent: ViewGroup,
   private val owner: LifecycleOwner,
-  private val mainModule: MainModule,
-  private val mainViewBus: EventBus<MainViewEvent>,
-  private val mainStateBus: EventBus<MainStateEvent>
+  private val interactor: MainInteractor,
+  private val failedBus: EventBus<FailedNavigationEvent>
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
-    val frame = MainFrameView(parent, owner)
-    val toolbar = MainToolbarView(activity, theming, parent, mainViewBus)
-    activity.frameComponent = MainFrameUiComponent(mainStateBus, frame, owner)
-    activity.dropshadowComponent = DropshadowUiComponent.create(parent, owner)
-    activity.toolbarComponent = MainToolbarUiComponent(toolbar, owner)
-    activity.worker = MainWorker(mainModule.interactor, mainStateBus)
+    val dropshadowView = DropshadowView(parent)
+    val mainFrame = MainFrameView(parent)
+    val mainPresenter = MainPresenterImpl(interactor, owner)
+    val toolbarView = MainToolbarView(activity, theming, parent, mainPresenter)
+
+    activity.apply {
+      this.dropshadow = dropshadowView
+      this.failedNavigationPresenter = FailedNavigationPresenterImpl(owner, failedBus)
+      this.frameView = mainFrame
+      this.presenter = mainPresenter
+      this.toolbar = toolbarView
+    }
   }
 }

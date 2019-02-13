@@ -20,9 +20,9 @@ package com.pyamsoft.zaptorch.main
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
+import androidx.fragment.app.DialogFragment
 
-class ServiceInfoDialog : ToolbarDialog() {
+class ServiceInfoDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())

@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch.service.error
 
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import com.pyamsoft.pydroid.ui.app.activity.ActivityBase
+import com.pyamsoft.pydroid.ui.app.ActivityBase
 import com.pyamsoft.pydroid.ui.theme.ThemeInjector
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R

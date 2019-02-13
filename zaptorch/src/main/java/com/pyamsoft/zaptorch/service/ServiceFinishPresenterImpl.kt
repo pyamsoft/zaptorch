@@ -17,26 +17,31 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.Worker
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-internal class ServiceFinishWorker internal constructor(
+internal class ServiceFinishPresenterImpl internal constructor(
+  owner: LifecycleOwner,
   bus: EventBus<ServiceFinishEvent>
-) : Worker<ServiceFinishEvent>(bus) {
+) : BasePresenter<ServiceFinishEvent, ServiceFinishPresenter.Callback>(owner, bus),
+    ServiceFinishPresenter {
 
-  @CheckResult
-  fun onFinishEvent(func: () -> Unit): Disposable {
-    return listen()
+  override fun onBind() {
+    listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { func() }
+        .subscribe { callback.onServiceFinished() }
+        .destroy(owner)
   }
 
-  fun finish() {
+  override fun onUnbind() {
+  }
+
+  override fun finish() {
     publish(ServiceFinishEvent)
   }
 

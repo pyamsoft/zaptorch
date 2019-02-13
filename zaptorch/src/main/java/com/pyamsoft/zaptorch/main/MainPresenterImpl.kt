@@ -17,31 +17,39 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.content.ActivityNotFoundException
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.Worker
+import android.view.MenuItem
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.core.bus.RxBus
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.zaptorch.api.MainInteractor
-import com.pyamsoft.zaptorch.main.MainStateEvent.PrivacyPolicyLinkFailed
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-internal class MainWorker internal constructor(
+internal class MainPresenterImpl internal constructor(
   private val interactor: MainInteractor,
-  bus: EventBus<MainStateEvent>
-) : Worker<MainStateEvent>(bus) {
+  owner: LifecycleOwner
+) : BasePresenter<Unit, MainPresenter.Callback>(owner, RxBus.empty()),
+    MainPresenter,
+    MainToolbarView.Callback {
 
-  @CheckResult
-  fun onHandleKeyPressChanged(func: (Boolean) -> Unit): Disposable {
-    return interactor.onHandleKeyPressChanged()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(func)
+  override fun onToolbarMenuClicked(item: MenuItem) {
+    callback.onMenuItemSelected(item)
   }
 
-  fun publishPrivacyPolicyLinkError(error: ActivityNotFoundException) {
-    publish(PrivacyPolicyLinkFailed(error))
+  override fun onToolbarNavClicked() {
+    callback.onToolbarNavEvent()
+  }
+
+  override fun onBind() {
+    interactor.onHandleKeyPressChanged()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { callback.onHandleKeyPressChanged(it) }
+        .destroy(owner)
+  }
+
+  override fun onUnbind() {
   }
 
 }

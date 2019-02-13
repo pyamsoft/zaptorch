@@ -18,24 +18,28 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.ui.arch.BaseUiComponent
-import io.reactivex.ObservableTransformer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
 
-internal class SettingsUiComponent internal constructor(
-  view: SettingsView,
-  owner: LifecycleOwner
-) : BaseUiComponent<SettingsViewEvent, SettingsView>(view, owner) {
+internal class SettingsPresenterImpl internal constructor(
+  owner: LifecycleOwner,
+  bus: EventBus<SignificantScrollEvent>
+) : BasePresenter<SignificantScrollEvent, SettingsPresenter.Callback>(owner, bus),
+    SettingsView.Callback,
+    SettingsPresenter {
 
-  override fun onUiEvent(): ObservableTransformer<in SettingsViewEvent, out SettingsViewEvent>? {
-    return ObservableTransformer {
-      return@ObservableTransformer it
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-    }
+  override fun onExplainClicked() {
+    callback.onShowExplanation()
+  }
+
+  override fun onSignificantScrollEvent(visible: Boolean) {
+    publish(SignificantScrollEvent(visible))
+  }
+
+  override fun onBind() {
+  }
+
+  override fun onUnbind() {
   }
 
 }
-
-

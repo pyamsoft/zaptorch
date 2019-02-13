@@ -17,4 +17,19 @@
 
 package com.pyamsoft.zaptorch.service
 
-internal object ServiceFinishEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
+
+internal interface ServiceStatePresenter : Presenter<ServiceStatePresenter.Callback> {
+
+  fun start()
+
+  fun stop()
+
+  interface Callback {
+
+    fun onServiceStarted()
+
+    fun onServiceStopped()
+  }
+
+}

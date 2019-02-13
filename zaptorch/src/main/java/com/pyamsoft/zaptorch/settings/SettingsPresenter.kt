@@ -17,11 +17,13 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.ui.arch.ViewEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
 
-sealed class SettingsViewEvent : ViewEvent {
+internal interface SettingsPresenter : Presenter<SettingsPresenter.Callback> {
 
-  object ExplainClicked : SettingsViewEvent()
+  interface Callback {
 
-  data class SignificantScroll(val visible: Boolean) : SettingsViewEvent()
+    fun onShowExplanation()
+  }
+
 }

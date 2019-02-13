@@ -20,9 +20,9 @@ package com.pyamsoft.zaptorch.service.error
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
-import com.pyamsoft.pydroid.ui.app.fragment.ToolbarDialog
+import androidx.fragment.app.DialogFragment
 
-class CameraErrorDialog : ToolbarDialog() {
+class CameraErrorDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())

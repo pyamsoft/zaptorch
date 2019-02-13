@@ -24,18 +24,11 @@ import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
-import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
-import com.pyamsoft.zaptorch.settings.ConfirmationDialog
+import com.pyamsoft.zaptorch.service.ServiceComponent
+import com.pyamsoft.zaptorch.settings.ConfirmationComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 
 interface ZapTorchComponent {
-
-  fun inject(dialog: ConfirmationDialog)
-
-  fun inject(service: TorchOffService)
-
-  fun inject(service: VolumeMonitorService)
 
   @CheckResult
   fun plusMainComponent(
@@ -55,5 +48,11 @@ interface ZapTorchComponent {
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent
+
+  @CheckResult
+  fun plusConfirmComponent(owner: LifecycleOwner): ConfirmationComponent
+
+  @CheckResult
+  fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent
 
 }

@@ -17,40 +17,43 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.ui.arch.StateEvent.EMPTY
-import com.pyamsoft.pydroid.ui.arch.StateEvent.EmptyBus
-import com.pyamsoft.pydroid.ui.arch.Worker
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.core.bus.RxBus
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-internal class ServiceWorker internal constructor(
-  private val interactor: VolumeServiceInteractor
-) : Worker<EMPTY>(EmptyBus) {
+internal class ServicePresenterImpl internal constructor(
+  private val interactor: VolumeServiceInteractor,
+  owner: LifecycleOwner
+) : BasePresenter<Unit, ServicePresenter.Callback>(owner, RxBus.empty()),
+    ServicePresenter {
 
-  @CheckResult
-  fun onCameraError(func: (error: CameraError) -> Unit): Disposable {
-    return interactor.observeCameraState()
+  private var keyEventDisposable by singleDisposable()
+
+  override fun onBind() {
+    interactor.observeCameraState()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { interactor.setupCamera() }
         .doAfterTerminate { interactor.releaseCamera() }
-        .subscribe(func)
+        .subscribe { callback.onCameraError(it) }
+        .destroy(owner)
   }
 
-  fun toggleTorch() {
-    interactor.toggleTorch()
+  override fun onUnbind() {
+    keyEventDisposable.tryDispose()
   }
 
-  @CheckResult
-  fun handleKeyEvent(
+  override fun handleKeyEvent(
     action: Int,
     keyCode: Int
-  ): Disposable {
-    return interactor.handleKeyPress(action, keyCode)
+  ) {
+    keyEventDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe()

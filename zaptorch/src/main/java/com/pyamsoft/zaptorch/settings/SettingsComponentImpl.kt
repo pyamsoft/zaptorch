@@ -21,26 +21,30 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.api.SettingsInteractor
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
-import com.pyamsoft.zaptorch.service.ServiceFinishWorker
+import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
 
 internal class SettingsComponentImpl internal constructor(
   private val owner: LifecycleOwner,
   private val recyclerView: RecyclerView,
   private val preferenceScreen: PreferenceScreen,
-  private val settingsModule: SettingsModule,
-  private val settingsViewBus: EventBus<SettingsViewEvent>,
-  private val settingsStateBus: EventBus<SettingsStateEvent>,
+  private val interactor: SettingsInteractor,
+  private val clearAllBus: EventBus<ClearAllEvent>,
+  private val significantScrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>
 ) : SettingsComponent {
 
   override fun inject(fragment: TorchPreferenceFragment) {
-    fragment.clearWorker = ClearAllWorker(settingsModule.interactor, settingsStateBus)
-    fragment.serviceFinishWorker = ServiceFinishWorker(serviceFinishBus)
-    fragment.settingsWorker = SettingsWorker(settingsStateBus)
+    val settingsPresenter = SettingsPresenterImpl(owner, significantScrollBus)
+    val view = SettingsView(recyclerView, preferenceScreen, settingsPresenter)
 
-    val view = SettingsView(recyclerView, preferenceScreen, settingsViewBus)
-    fragment.settingsUiComponent = SettingsUiComponent(view, owner)
+    fragment.apply {
+      this.clearPresenter = ClearAllPresenterImpl(interactor, owner, clearAllBus)
+      this.serviceFinishPresenter = ServiceFinishPresenterImpl(owner, serviceFinishBus)
+      this.presenter = settingsPresenter
+      this.settingsView = view
+    }
   }
 
 }

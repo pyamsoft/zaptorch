@@ -17,10 +17,14 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.ui.arch.StateEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
 
-sealed class ServiceStateEvent : StateEvent {
+interface ServiceFinishPresenter : Presenter<ServiceFinishPresenter.Callback> {
 
-  object TorchToggle : ServiceStateEvent()
+  fun finish()
 
+  interface Callback {
+
+    fun onServiceFinished()
+  }
 }

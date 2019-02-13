@@ -24,29 +24,29 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.pyamsoft.pydroid.ui.about.AboutFragment
-import com.pyamsoft.pydroid.ui.arch.destroy
+import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenter
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.theme.ThemeInjector
 import com.pyamsoft.pydroid.ui.util.commit
-import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowUiComponent
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.main.MainViewEvent.MenuItemClicked
-import com.pyamsoft.zaptorch.main.MainViewEvent.ToolbarClicked
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
-class MainActivity : RatingActivity() {
+class MainActivity : RatingActivity(), MainPresenter.Callback {
 
-  internal lateinit var toolbarComponent: MainToolbarUiComponent
-  internal lateinit var frameComponent: MainFrameUiComponent
-  internal lateinit var dropshadowComponent: DropshadowUiComponent
-  internal lateinit var worker: MainWorker
+  internal lateinit var toolbar: MainToolbarView
+  internal lateinit var frameView: MainFrameView
+  internal lateinit var dropshadow: DropshadowView
+
+  internal lateinit var presenter: MainPresenter
+  internal lateinit var failedNavigationPresenter: FailedNavigationPresenter
 
   private var handleKeyPress: Boolean = false
 
@@ -62,7 +62,7 @@ class MainActivity : RatingActivity() {
     get() = layoutRoot
 
   override val fragmentContainerId: Int
-    get() = frameComponent.id()
+    get() = frameView.id()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -86,49 +86,62 @@ class MainActivity : RatingActivity() {
     layoutComponents(layoutRoot)
     showMainFragment()
 
-    worker.onHandleKeyPressChanged { onHandleKeyPress(it) }
-        .destroy(this)
+    presenter.bind(this)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    toolbar.teardown()
+    frameView.teardown()
+    dropshadow.teardown()
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    toolbar.saveState(outState)
+    frameView.saveState(outState)
+    dropshadow.saveState(outState)
+  }
+
+  override fun onHandleKeyPressChanged(handle: Boolean) {
+    Timber.d("Handle keypress: $handle")
+    handleKeyPress = handle
   }
 
   private fun createComponents(savedInstanceState: Bundle?) {
-    toolbarComponent.onUiEvent {
-      return@onUiEvent when (it) {
-        is ToolbarClicked -> onBackPressed()
-        is MenuItemClicked -> onMenuItemClicked(it.item)
-      }
-    }
-        .destroy(this)
-
-    toolbarComponent.create(savedInstanceState)
-    frameComponent.create(savedInstanceState)
-    dropshadowComponent.create(savedInstanceState)
+    toolbar.inflate(savedInstanceState)
+    frameView.inflate(savedInstanceState)
+    dropshadow.inflate(savedInstanceState)
   }
 
-  private fun onMenuItemClicked(item: MenuItem) {
+  override fun onMenuItemSelected(item: MenuItem) {
     val itemId = item.itemId
     if (itemId == R.id.menu_id_privacy_policy) {
       val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
       val error = hyperlink.navigate()
       if (error != null) {
-        worker.publishPrivacyPolicyLinkError(error)
+        failedNavigationPresenter.failedNavigation(error)
       }
     }
+  }
 
+  override fun onToolbarNavEvent() {
+    onBackPressed()
   }
 
   private fun layoutComponents(layoutRoot: ConstraintLayout) {
     ConstraintSet().apply {
       clone(layoutRoot)
 
-      toolbarComponent.also {
+      toolbar.also {
         connect(it.id(), ConstraintSet.TOP, layoutRoot.id, ConstraintSet.TOP)
         connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
         connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
         constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
       }
 
-      frameComponent.also {
-        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+      frameView.also {
+        connect(it.id(), ConstraintSet.TOP, toolbar.id(), ConstraintSet.BOTTOM)
         connect(it.id(), ConstraintSet.BOTTOM, layoutRoot.id, ConstraintSet.BOTTOM)
         connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
         connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
@@ -136,8 +149,8 @@ class MainActivity : RatingActivity() {
         constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
       }
 
-      dropshadowComponent.also {
-        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+      dropshadow.also {
+        connect(it.id(), ConstraintSet.TOP, toolbar.id(), ConstraintSet.BOTTOM)
         connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
         connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
         constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
@@ -154,11 +167,6 @@ class MainActivity : RatingActivity() {
           .add(fragmentContainerId, MainFragment(), MainFragment.TAG)
           .commit(this)
     }
-  }
-
-  private fun onHandleKeyPress(handle: Boolean) {
-    Timber.d("Handle keypress: %s", handle)
-    handleKeyPress = handle
   }
 
   override fun onKeyUp(

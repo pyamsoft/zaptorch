@@ -15,15 +15,6 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.settings
 
-import android.view.MenuItem
-import com.pyamsoft.pydroid.ui.arch.ViewEvent
-
-internal sealed class MainViewEvent : ViewEvent {
-
-  object ToolbarClicked : MainViewEvent()
-
-  data class MenuItemClicked(val item: MenuItem) : MainViewEvent()
-
-}
+data class SignificantScrollEvent(val visible: Boolean)

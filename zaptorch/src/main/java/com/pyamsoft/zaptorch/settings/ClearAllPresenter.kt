@@ -15,6 +15,16 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.settings
 
-internal object ServiceFinishEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
+
+interface ClearAllPresenter : Presenter<ClearAllPresenter.Callback> {
+
+  fun clearAll()
+
+  interface Callback {
+
+    fun onClearAll()
+  }
+}

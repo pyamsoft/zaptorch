@@ -17,29 +17,43 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.ui.arch.StateEvent.EMPTY
-import com.pyamsoft.pydroid.ui.arch.StateEvent.EmptyBus
-import com.pyamsoft.pydroid.ui.arch.Worker
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.core.bus.RxBus
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-internal class ServiceStateWorker internal constructor(
-  private val interactor: VolumeServiceInteractor
-) : Worker<EMPTY>(EmptyBus) {
+internal class ServiceStatePresenterImpl internal constructor(
+  private val interactor: VolumeServiceInteractor,
+  owner: LifecycleOwner
+) : BasePresenter<Unit, ServiceStatePresenter.Callback>(owner, RxBus.empty()),
+    ServiceStatePresenter {
 
-  @CheckResult
-  fun onStateEvent(func: (started: Boolean) -> Unit): Disposable {
-    return interactor.observeServiceState()
+  override fun onBind() {
+    interactor.observeServiceState()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(func)
+        .subscribe {
+          if (it) {
+            callback.onServiceStarted()
+          } else {
+            callback.onServiceStopped()
+          }
+        }
+        .destroy(owner)
   }
 
-  fun setServiceState(start: Boolean) {
-    interactor.setServiceState(start)
+  override fun onUnbind() {
+  }
+
+  override fun start() {
+    interactor.setServiceState(true)
+  }
+
+  override fun stop() {
+    interactor.setServiceState(false)
   }
 
 }

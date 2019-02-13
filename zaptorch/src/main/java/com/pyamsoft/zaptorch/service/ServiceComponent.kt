@@ -17,4 +17,10 @@
 
 package com.pyamsoft.zaptorch.service
 
-internal object ServiceFinishEvent
+interface ServiceComponent {
+
+  fun inject(service: TorchOffService)
+
+  fun inject(service: VolumeMonitorService)
+
+}

@@ -15,13 +15,14 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.service
 
-import android.content.ActivityNotFoundException
-import com.pyamsoft.pydroid.ui.arch.StateEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
 
-internal sealed class MainStateEvent : StateEvent {
+internal interface TorchPresenter : Presenter<TorchPresenter.Callback> {
 
-  data class PrivacyPolicyLinkFailed(val error: ActivityNotFoundException) : MainStateEvent()
+  fun toggle()
+
+  interface Callback
 
 }

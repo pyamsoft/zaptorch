@@ -17,4 +17,19 @@
 
 package com.pyamsoft.zaptorch.service
 
-internal object ServiceFinishEvent
+import com.pyamsoft.pydroid.ui.arch.Presenter
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+
+internal interface ServicePresenter : Presenter<ServicePresenter.Callback> {
+
+  fun handleKeyEvent(
+    action: Int,
+    keyCode: Int
+  )
+
+  interface Callback {
+
+    fun onCameraError(error: CameraError)
+
+  }
+}

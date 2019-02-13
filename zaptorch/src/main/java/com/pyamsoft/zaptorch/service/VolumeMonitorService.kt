@@ -25,36 +25,36 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
-import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.pydroid.util.fakeBind
 import com.pyamsoft.pydroid.util.fakeUnbind
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
+class VolumeMonitorService : AccessibilityService(), LifecycleOwner,
+    ServiceFinishPresenter.Callback,
+    ServicePresenter.Callback,
+    TorchPresenter.Callback,
+    ServiceStatePresenter.Callback {
 
   private val registry = LifecycleRegistry(this)
+
+  internal lateinit var statePresenter: ServiceStatePresenter
+  internal lateinit var finishPresenter: ServiceFinishPresenter
+  internal lateinit var torchPresenter: TorchPresenter
+  internal lateinit var servicePresenter: ServicePresenter
 
   override fun getLifecycle(): Lifecycle {
     return registry
   }
 
-  internal lateinit var stateWorker: ServiceStateWorker
-  internal lateinit var finishWorker: ServiceFinishWorker
-  internal lateinit var torchWorker: TorchWorker
-  internal lateinit var serviceWorker: ServiceWorker
-
-  private var handleKeyDisposable by singleDisposable()
-
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    handleKeyDisposable = serviceWorker.handleKeyEvent(action, keyCode)
+    servicePresenter.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -71,50 +71,50 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
+        .plusServiceComponent(this)
         .inject(this)
 
-    serviceWorker.onCameraError { onCameraError(it.intent) }
-        .destroy(this)
-
-    torchWorker.onRequest {
-      Timber.d("Toggling torch")
-      serviceWorker.toggleTorch()
-    }
-        .destroy(this)
-
-    finishWorker.onFinishEvent { onServiceFinishRequested() }
-        .destroy(this)
+    statePresenter.bind(this)
+    torchPresenter.bind(this)
+    servicePresenter.bind(this)
+    finishPresenter.bind(this)
 
     registry.fakeBind()
   }
 
-  override fun onServiceConnected() {
-    super.onServiceConnected()
-    stateWorker.setServiceState(true)
-  }
-
-  private fun onServiceFinishRequested() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      disableSelf()
-    }
-  }
-
-  private fun onCameraError(intent: Intent) {
+  override fun onCameraError(error: CameraError) {
     applicationContext.also {
+      val intent = error.intent
       intent.setClass(it, CameraErrorExplanation::class.java)
       it.startActivity(intent)
     }
   }
 
+  override fun onServiceFinished() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      disableSelf()
+    }
+  }
+
+  override fun onServiceConnected() {
+    super.onServiceConnected()
+    statePresenter.start()
+  }
+
   override fun onUnbind(intent: Intent): Boolean {
-    stateWorker.setServiceState(false)
+    statePresenter.stop()
     return super.onUnbind(intent)
+  }
+
+  override fun onServiceStarted() {
+  }
+
+  override fun onServiceStopped() {
   }
 
   override fun onDestroy() {
     super.onDestroy()
     registry.fakeUnbind()
-    handleKeyDisposable.tryDispose()
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

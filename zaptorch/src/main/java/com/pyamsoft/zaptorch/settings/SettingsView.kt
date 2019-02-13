@@ -21,18 +21,15 @@ import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
-import com.pyamsoft.zaptorch.R
-import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.arch.PrefUiView
 import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
-import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ExplainClicked
-import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
+import com.pyamsoft.zaptorch.R
 
 internal class SettingsView internal constructor(
   private val recyclerView: RecyclerView,
   parent: PreferenceScreen,
-  bus: EventBus<SettingsViewEvent>
-) : PrefUiView<SettingsViewEvent>(parent, bus) {
+  callback: SettingsView.Callback
+) : PrefUiView<SettingsView.Callback>(parent, callback) {
 
   private val explain by lazyPref<Preference>(R.string.zaptorch_explain_key)
 
@@ -40,12 +37,12 @@ internal class SettingsView internal constructor(
 
   override fun inflate(savedInstanceState: Bundle?) {
     explain.setOnPreferenceClickListener {
-      publish(ExplainClicked)
+      callback.onExplainClicked()
       return@setOnPreferenceClickListener true
     }
 
     val listener = HideOnScrollListener.create(true) {
-      publish(SignificantScroll(it))
+      callback.onSignificantScrollEvent(it)
     }
     recyclerView.addOnScrollListener(listener)
     scrollListener = listener
@@ -58,5 +55,12 @@ internal class SettingsView internal constructor(
     scrollListener = null
   }
 
+  interface Callback {
+
+    fun onExplainClicked()
+
+    fun onSignificantScrollEvent(visible: Boolean)
+
+  }
 }
 

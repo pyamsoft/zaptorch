@@ -17,4 +17,5 @@
 
 package com.pyamsoft.zaptorch.service
 
-internal object ServiceFinishEvent
+object TorchToggleEvent
+

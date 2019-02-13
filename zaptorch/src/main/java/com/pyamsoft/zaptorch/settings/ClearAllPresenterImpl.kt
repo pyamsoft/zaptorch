@@ -17,23 +17,22 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.Worker
+import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.ui.arch.destroy
 import com.pyamsoft.zaptorch.api.SettingsInteractor
-import com.pyamsoft.zaptorch.settings.SettingsStateEvent.ClearAllEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class ClearAllWorker internal constructor(
+class ClearAllPresenterImpl internal constructor(
   private val interactor: SettingsInteractor,
-  bus: EventBus<SettingsStateEvent>
-) : Worker<SettingsStateEvent>(bus) {
+  owner: LifecycleOwner,
+  bus: EventBus<ClearAllEvent>
+) : BasePresenter<ClearAllEvent, ClearAllPresenter.Callback>(owner, bus), ClearAllPresenter {
 
-  @CheckResult
-  fun onClear(func: () -> Unit): Disposable {
-    return listen()
+  override fun onBind() {
+    listen()
         .ofType(ClearAllEvent::class.java)
         .observeOn(Schedulers.io())
         .flatMapSingle {
@@ -43,10 +42,14 @@ class ClearAllWorker internal constructor(
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { func() }
+        .subscribe { callback.onClearAll() }
+        .destroy(owner)
   }
 
-  fun clearAll() {
+  override fun onUnbind() {
+  }
+
+  override fun clearAll() {
     publish(ClearAllEvent)
   }
 }
