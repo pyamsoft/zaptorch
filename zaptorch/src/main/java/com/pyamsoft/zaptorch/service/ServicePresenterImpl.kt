@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
@@ -28,9 +27,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 internal class ServicePresenterImpl internal constructor(
-  private val interactor: VolumeServiceInteractor,
-  owner: LifecycleOwner
-) : BasePresenter<Unit, ServicePresenter.Callback>(owner, RxBus.empty()),
+  private val interactor: VolumeServiceInteractor
+) : BasePresenter<Unit, ServicePresenter.Callback>(RxBus.empty()),
     ServicePresenter {
 
   private var keyEventDisposable by singleDisposable()

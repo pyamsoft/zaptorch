@@ -79,14 +79,14 @@ class MainActivity : RatingActivity(), MainPresenter.Callback {
     setContentView(R.layout.layout_constraint)
 
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(layoutRoot, this)
+        .plusMainComponent(layoutRoot)
         .inject(this)
 
     createComponents(savedInstanceState)
     layoutComponents(layoutRoot)
     showMainFragment()
 
-    presenter.bind(this)
+    presenter.bind(this, this)
   }
 
   override fun onDestroy() {

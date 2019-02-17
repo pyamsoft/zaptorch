@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
@@ -27,20 +26,19 @@ import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 
 internal class MainFragmentComponentImpl internal constructor(
   private val parent: ViewGroup,
-  private val owner: LifecycleOwner,
   private val imageLoader: ImageLoader,
   private val interactor: VolumeServiceInteractor,
   private val scrollBus: EventBus<SignificantScrollEvent>
 ) : MainFragmentComponent {
 
   override fun inject(fragment: MainFragment) {
-    val mainPresenter = MainFragmentPresenterImpl(owner, scrollBus)
+    val mainPresenter = MainFragmentPresenterImpl(scrollBus)
 
     fragment.apply {
-      this.actionView = MainActionView(imageLoader, owner, parent, mainPresenter)
+      this.actionView = MainActionView(imageLoader, parent, mainPresenter)
       this.frameView = MainFrameView(parent)
       this.presenter = mainPresenter
-      this.serviceStatePresenter = ServiceStatePresenterImpl(interactor, owner)
+      this.serviceStatePresenter = ServiceStatePresenterImpl(interactor)
     }
   }
 

@@ -38,10 +38,6 @@ android {
     resConfigs "en"
   }
 
-  dataBinding {
-    enabled true
-  }
-
   signingConfigs {
     release {
       //noinspection GroovyAssignabilityCheck

@@ -17,14 +17,12 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.arch.BasePresenter
 
 internal class SettingsPresenterImpl internal constructor(
-  owner: LifecycleOwner,
   bus: EventBus<SignificantScrollEvent>
-) : BasePresenter<SignificantScrollEvent, SettingsPresenter.Callback>(owner, bus),
+) : BasePresenter<SignificantScrollEvent, SettingsPresenter.Callback>(bus),
     SettingsView.Callback,
     SettingsPresenter {
 

@@ -20,7 +20,6 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.app.IntentService
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.RxBus
@@ -31,14 +30,18 @@ import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponentImpl
 import com.pyamsoft.zaptorch.main.MainModule
-import com.pyamsoft.zaptorch.service.ServiceComponent
-import com.pyamsoft.zaptorch.service.ServiceComponentImpl
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
+import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
+import com.pyamsoft.zaptorch.service.ServicePresenterImpl
+import com.pyamsoft.zaptorch.service.ServiceStatePresenterImpl
+import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.TorchPresenterImpl
 import com.pyamsoft.zaptorch.service.TorchToggleEvent
+import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.ClearAllEvent
-import com.pyamsoft.zaptorch.settings.ConfirmationComponent
-import com.pyamsoft.zaptorch.settings.ConfirmationComponentImpl
+import com.pyamsoft.zaptorch.settings.ClearAllPresenterImpl
+import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
 import com.pyamsoft.zaptorch.settings.SettingsModule
@@ -68,34 +71,41 @@ internal class ZapTorchComponentImpl internal constructor(
       handleVolumeKeysKey, moduleProvider.enforcer(), zapTorchModule
   )
 
-  override fun plusMainComponent(
-    parent: ViewGroup,
-    owner: LifecycleOwner
-  ): MainComponent = MainComponentImpl(
-      theming, parent, owner, mainModule.interactor, navModule.bus
-  )
+  override fun inject(dialog: ConfirmationDialog) {
+    dialog.apply {
+      this.presenter = ClearAllPresenterImpl(settingsModule.interactor, clearAllBus)
+    }
+  }
 
-  override fun plusMainFragmentComponent(
-    parent: ViewGroup,
-    owner: LifecycleOwner
-  ): MainFragmentComponent = MainFragmentComponentImpl(
-      parent, owner, loaderModule.provideImageLoader(),
-      serviceModule.interactor, significantScrollBus
-  )
+  override fun inject(service: TorchOffService) {
+    service.apply {
+      this.presenter = TorchPresenterImpl(serviceModule.interactor, torchBus)
+    }
+  }
+
+  override fun inject(service: VolumeMonitorService) {
+    service.apply {
+      this.finishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
+      this.servicePresenter = ServicePresenterImpl(serviceModule.interactor)
+      this.statePresenter = ServiceStatePresenterImpl(serviceModule.interactor)
+      this.torchPresenter = TorchPresenterImpl(serviceModule.interactor, torchBus)
+    }
+  }
+
+  override fun plusMainComponent(parent: ViewGroup): MainComponent =
+    MainComponentImpl(theming, parent, mainModule.interactor, navModule.bus)
+
+  override fun plusMainFragmentComponent(parent: ViewGroup): MainFragmentComponent =
+    MainFragmentComponentImpl(
+        parent, loaderModule.provideImageLoader(), serviceModule.interactor, significantScrollBus
+    )
 
   override fun plusSettingsComponent(
-    owner: LifecycleOwner,
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent = SettingsComponentImpl(
-      owner, recyclerView, preferenceScreen, settingsModule.interactor,
+      recyclerView, preferenceScreen, settingsModule.interactor,
       clearAllBus, significantScrollBus, serviceFinishBus
   )
-
-  override fun plusConfirmComponent(owner: LifecycleOwner): ConfirmationComponent =
-    ConfirmationComponentImpl(settingsModule.interactor, owner, clearAllBus)
-
-  override fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent =
-    ServiceComponentImpl(owner, serviceModule.interactor, torchBus, serviceFinishBus)
 
 }

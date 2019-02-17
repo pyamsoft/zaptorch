@@ -30,7 +30,6 @@ class ConfirmationDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusConfirmComponent(viewLifecycleOwner)
         .inject(this)
 
     return AlertDialog.Builder(requireActivity())

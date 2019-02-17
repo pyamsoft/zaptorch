@@ -42,7 +42,6 @@ class TorchOffService : IntentService(TorchOffService::class.java.name), Lifecyc
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusServiceComponent(this)
         .inject(this)
 
     registry.fakeBind()

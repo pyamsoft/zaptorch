@@ -19,40 +19,33 @@ package com.pyamsoft.zaptorch
 
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
-import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
-import com.pyamsoft.zaptorch.service.ServiceComponent
-import com.pyamsoft.zaptorch.settings.ConfirmationComponent
+import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.VolumeMonitorService
+import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 
 interface ZapTorchComponent {
 
-  @CheckResult
-  fun plusMainComponent(
-    parent: ViewGroup,
-    owner: LifecycleOwner
-  ): MainComponent
+  fun inject(dialog: ConfirmationDialog)
+
+  fun inject(service: TorchOffService)
+
+  fun inject(service: VolumeMonitorService)
 
   @CheckResult
-  fun plusMainFragmentComponent(
-    parent: ViewGroup,
-    owner: LifecycleOwner
-  ): MainFragmentComponent
+  fun plusMainComponent(parent: ViewGroup): MainComponent
+
+  @CheckResult
+  fun plusMainFragmentComponent(parent: ViewGroup): MainFragmentComponent
 
   @CheckResult
   fun plusSettingsComponent(
-    owner: LifecycleOwner,
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent
-
-  @CheckResult
-  fun plusConfirmComponent(owner: LifecycleOwner): ConfirmationComponent
-
-  @CheckResult
-  fun plusServiceComponent(owner: LifecycleOwner): ServiceComponent
 
 }

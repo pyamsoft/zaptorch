@@ -23,8 +23,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
@@ -32,7 +30,7 @@ import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
+import com.pyamsoft.zaptorch.service.ServiceFinishPresenter
 import com.pyamsoft.zaptorch.settings.SettingsPresenter.Callback
 import timber.log.Timber
 
@@ -41,7 +39,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
 
   internal lateinit var settingsView: SettingsView
   internal lateinit var presenter: SettingsPresenter
-  internal lateinit var serviceFinishPresenter: ServiceFinishPresenterImpl
+  internal lateinit var serviceFinishPresenter: ServiceFinishPresenter
   internal lateinit var clearPresenter: ClearAllPresenter
 
   override val preferenceXmlResId: Int = R.xml.preferences
@@ -54,7 +52,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
     val view = requireNotNull(super.onCreateView(inflater, container, savedInstanceState))
 
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(viewLifecycleOwner, listView, preferenceScreen)
+        .plusSettingsComponent(listView, preferenceScreen)
         .inject(this)
 
     return view
@@ -66,8 +64,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
   ) {
     super.onViewCreated(view, savedInstanceState)
     settingsView.inflate(savedInstanceState)
-    presenter.bind(this)
-    clearPresenter.bind(this)
+    presenter.bind(viewLifecycleOwner, this)
+    clearPresenter.bind(viewLifecycleOwner, this)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

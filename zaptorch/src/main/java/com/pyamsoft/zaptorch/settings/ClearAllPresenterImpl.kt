@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.arch.BasePresenter
 import com.pyamsoft.pydroid.ui.arch.destroy
@@ -27,9 +26,8 @@ import io.reactivex.schedulers.Schedulers
 
 class ClearAllPresenterImpl internal constructor(
   private val interactor: SettingsInteractor,
-  owner: LifecycleOwner,
   bus: EventBus<ClearAllEvent>
-) : BasePresenter<ClearAllEvent, ClearAllPresenter.Callback>(owner, bus), ClearAllPresenter {
+) : BasePresenter<ClearAllEvent, ClearAllPresenter.Callback>(bus), ClearAllPresenter {
 
   override fun onBind() {
     listen()

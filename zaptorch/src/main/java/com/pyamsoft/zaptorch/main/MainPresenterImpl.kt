@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.MenuItem
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.ui.arch.BasePresenter
 import com.pyamsoft.pydroid.ui.arch.destroy
@@ -27,9 +26,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 internal class MainPresenterImpl internal constructor(
-  private val interactor: MainInteractor,
-  owner: LifecycleOwner
-) : BasePresenter<Unit, MainPresenter.Callback>(owner, RxBus.empty()),
+  private val interactor: MainInteractor
+) : BasePresenter<Unit, MainPresenter.Callback>(RxBus.empty()),
     MainPresenter,
     MainToolbarView.Callback {
 

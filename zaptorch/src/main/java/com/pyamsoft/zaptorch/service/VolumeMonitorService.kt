@@ -71,13 +71,12 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner,
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusServiceComponent(this)
         .inject(this)
 
-    statePresenter.bind(this)
-    torchPresenter.bind(this)
-    servicePresenter.bind(this)
-    finishPresenter.bind(this)
+    statePresenter.bind(this, this)
+    torchPresenter.bind(this, this)
+    servicePresenter.bind(this, this)
+    finishPresenter.bind(this, this)
 
     registry.fakeBind()
   }

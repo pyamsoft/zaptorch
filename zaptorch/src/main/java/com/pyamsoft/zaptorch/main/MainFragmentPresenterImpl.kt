@@ -26,9 +26,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 internal class MainFragmentPresenterImpl internal constructor(
-  owner: LifecycleOwner,
   bus: EventBus<SignificantScrollEvent>
-) : BasePresenter<SignificantScrollEvent, MainFragmentPresenter.Callback>(owner, bus),
+) : BasePresenter<SignificantScrollEvent, MainFragmentPresenter.Callback>(bus),
     MainFragmentPresenter,
     MainActionView.Callback {
 

@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.arch.BasePresenter
 import com.pyamsoft.pydroid.ui.arch.destroy
@@ -27,9 +26,8 @@ import io.reactivex.schedulers.Schedulers
 
 internal class TorchPresenterImpl internal constructor(
   private val interactor: VolumeServiceInteractor,
-  owner: LifecycleOwner,
   bus: EventBus<TorchToggleEvent>
-) : BasePresenter<TorchToggleEvent, TorchPresenter.Callback>(owner, bus),
+) : BasePresenter<TorchToggleEvent, TorchPresenter.Callback>(bus),
     TorchPresenter {
 
   override fun onBind() {

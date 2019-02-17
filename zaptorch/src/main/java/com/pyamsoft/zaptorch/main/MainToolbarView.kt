@@ -71,7 +71,7 @@ internal class MainToolbarView internal constructor(
         callback.onToolbarNavClicked()
       })
 
-      toolbar.setOnMenuItemClickListener { item ->
+      setOnMenuItemClickListener { item ->
         callback.onToolbarMenuClicked(item)
         return@setOnMenuItemClickListener true
       }

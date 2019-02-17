@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.service
 
-import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.ui.arch.BasePresenter
 import com.pyamsoft.pydroid.ui.arch.destroy
@@ -26,9 +25,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 internal class ServiceStatePresenterImpl internal constructor(
-  private val interactor: VolumeServiceInteractor,
-  owner: LifecycleOwner
-) : BasePresenter<Unit, ServiceStatePresenter.Callback>(owner, RxBus.empty()),
+  private val interactor: VolumeServiceInteractor
+) : BasePresenter<Unit, ServiceStatePresenter.Callback>(RxBus.empty()),
     ServiceStatePresenter {
 
   override fun onBind() {
