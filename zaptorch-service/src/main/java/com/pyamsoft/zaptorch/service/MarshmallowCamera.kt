@@ -20,7 +20,6 @@ package com.pyamsoft.zaptorch.service
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
-import androidx.core.content.getSystemService
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import timber.log.Timber
@@ -30,7 +29,7 @@ internal class MarshmallowCamera internal constructor(
   interactor: VolumeServiceInteractor
 ) : CameraCommon(interactor) {
 
-  private val cameraManager = requireNotNull(context.getSystemService<CameraManager>())
+  private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
   private val torchCallback = TorchCallback(this)
 
   init {

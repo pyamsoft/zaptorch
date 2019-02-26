@@ -19,8 +19,8 @@ package com.pyamsoft.zaptorch.main
 
 import android.view.MenuItem
 import com.pyamsoft.pydroid.core.bus.RxBus
-import com.pyamsoft.pydroid.ui.arch.BasePresenter
-import com.pyamsoft.pydroid.ui.arch.destroy
+import com.pyamsoft.pydroid.arch.BasePresenter
+import com.pyamsoft.pydroid.arch.destroy
 import com.pyamsoft.zaptorch.api.MainInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

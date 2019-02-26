@@ -18,7 +18,7 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.MenuItem
-import com.pyamsoft.pydroid.ui.arch.Presenter
+import com.pyamsoft.pydroid.arch.Presenter
 
 internal interface MainPresenter : Presenter<MainPresenter.Callback> {
 

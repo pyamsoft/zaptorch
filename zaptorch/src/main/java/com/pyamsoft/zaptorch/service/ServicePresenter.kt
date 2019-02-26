@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.ui.arch.Presenter
+import com.pyamsoft.pydroid.arch.Presenter
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 
 internal interface ServicePresenter : Presenter<ServicePresenter.Callback> {

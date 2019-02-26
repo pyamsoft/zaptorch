@@ -86,7 +86,7 @@ internal abstract class CameraCommon protected constructor(
   protected fun startErrorExplanationActivity(exception: CameraAccessException?) {
     errorDisposable = interactor.shouldShowErrorDialog()
         .filter { it }
-        .subscribeOn(Schedulers.computation())
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { notifyCallbackOnError(exception, errorExplain) }
   }

@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.ui.arch.Presenter
+import com.pyamsoft.pydroid.arch.Presenter
 
 internal interface SettingsPresenter : Presenter<SettingsPresenter.Callback> {
 

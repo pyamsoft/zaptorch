@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.ui.arch.Presenter
+import com.pyamsoft.pydroid.arch.Presenter
 
 internal interface MainFragmentPresenter : Presenter<MainFragmentPresenter.Callback> {
 

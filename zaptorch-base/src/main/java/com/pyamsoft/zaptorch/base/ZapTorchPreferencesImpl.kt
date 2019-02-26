@@ -21,7 +21,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.CheckResult
-import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
@@ -67,9 +66,9 @@ internal class ZapTorchPreferencesImpl(
   @SuppressLint("ApplySharedPref")
   override fun clearAll() {
     // Commit because we must be sure transaction takes place before we continue
-    preferences.edit(commit = true) {
-      clear()
-    }
+    preferences.edit()
+        .clear()
+        .commit()
   }
 
   override fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener) {

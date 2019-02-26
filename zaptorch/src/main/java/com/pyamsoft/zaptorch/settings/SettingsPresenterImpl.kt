@@ -18,7 +18,7 @@
 package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.ui.arch.BasePresenter
+import com.pyamsoft.pydroid.arch.BasePresenter
 
 internal class SettingsPresenterImpl internal constructor(
   bus: EventBus<SignificantScrollEvent>
