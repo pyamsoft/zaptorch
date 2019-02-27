@@ -17,12 +17,10 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.arch.BasePresenter
 import com.pyamsoft.pydroid.arch.destroy
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 internal class TorchPresenterImpl internal constructor(
   private val interactor: VolumeServiceInteractor,
@@ -31,10 +29,7 @@ internal class TorchPresenterImpl internal constructor(
     TorchPresenter {
 
   override fun onBind() {
-    listen()
-        .ofType(TorchToggleEvent::class.java)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+    listen().ofType(TorchToggleEvent::class.java)
         .subscribe { interactor.toggleTorch() }
         .destroy(owner)
   }

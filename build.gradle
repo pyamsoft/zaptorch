@@ -38,7 +38,7 @@ buildscript {
     preference = "1.0.0"
     recyclerView = "1.0.0"
 
-    pydroid = "19.0.1"
+    pydroid = "19.0.2"
     leakCanary = "1.6.3"
   }
 

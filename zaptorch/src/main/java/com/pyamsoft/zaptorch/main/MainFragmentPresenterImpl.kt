@@ -17,13 +17,10 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.arch.BasePresenter
 import com.pyamsoft.pydroid.arch.destroy
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 internal class MainFragmentPresenterImpl internal constructor(
   bus: EventBus<SignificantScrollEvent>
@@ -40,9 +37,7 @@ internal class MainFragmentPresenterImpl internal constructor(
   }
 
   override fun onBind() {
-    listen().subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.onSignificantScrollEvent(it.visible) }
+    listen().subscribe { callback.onSignificantScrollEvent(it.visible) }
         .destroy(owner)
   }
 

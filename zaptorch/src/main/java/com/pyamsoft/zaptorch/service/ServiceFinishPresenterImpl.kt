@@ -17,11 +17,9 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.arch.BasePresenter
 import com.pyamsoft.pydroid.arch.destroy
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.pyamsoft.pydroid.core.bus.EventBus
 
 internal class ServiceFinishPresenterImpl internal constructor(
   bus: EventBus<ServiceFinishEvent>
@@ -29,10 +27,7 @@ internal class ServiceFinishPresenterImpl internal constructor(
     ServiceFinishPresenter {
 
   override fun onBind() {
-    listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.onServiceFinished() }
+    listen().subscribe { callback.onServiceFinished() }
         .destroy(owner)
   }
 
