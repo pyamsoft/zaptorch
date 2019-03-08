@@ -17,12 +17,14 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.arch.BasePresenter
 import com.pyamsoft.pydroid.arch.destroy
 import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.SettingsInteractor
-import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 
 class ClearAllPresenterImpl internal constructor(
@@ -30,27 +32,25 @@ class ClearAllPresenterImpl internal constructor(
   bus: EventBus<ClearAllEvent>
 ) : BasePresenter<ClearAllEvent, ClearAllPresenter.Callback>(bus), ClearAllPresenter {
 
-  @CheckResult
-  private fun clear(): Single<Unit> {
-    return interactor.clearAll()
-        .subscribeOn(Schedulers.io())
-        .observeOn(Schedulers.io())
-  }
+  private var clearDisposable by singleDisposable()
 
   override fun onBind() {
-    listen().ofType(ClearAllEvent::class.java)
-        .flatMapSingle { clear() }
-        .subscribeOn(Schedulers.trampoline())
-        .observeOn(Schedulers.trampoline())
+    listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { callback.onClearAll() }
         .destroy(owner)
   }
 
   override fun onUnbind() {
+    clearDisposable.tryDispose()
   }
 
   override fun clearAll() {
-    publish(ClearAllEvent)
+    clearDisposable = interactor.clearAll()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(Consumer { publish(ClearAllEvent) })
   }
 }
 

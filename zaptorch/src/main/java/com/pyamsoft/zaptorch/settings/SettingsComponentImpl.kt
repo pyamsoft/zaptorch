@@ -20,9 +20,11 @@ package com.pyamsoft.zaptorch.settings
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.zaptorch.api.SettingsInteractor
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
+import com.pyamsoft.zaptorch.widget.ToolbarView
 
 internal class SettingsComponentImpl internal constructor(
   private val recyclerView: RecyclerView,
@@ -42,6 +44,7 @@ internal class SettingsComponentImpl internal constructor(
       this.serviceFinishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
       this.presenter = settingsPresenter
       this.settingsView = view
+      this.toolbarView = ToolbarView(fragment.requireToolbarActivity())
     }
   }
 

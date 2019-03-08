@@ -18,27 +18,22 @@
 package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.arch.destroy
-import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 
 internal class TorchPresenterImpl internal constructor(
-  private val interactor: VolumeServiceInteractor,
-  bus: EventBus<TorchToggleEvent>
-) : BasePresenter<TorchToggleEvent, TorchPresenter.Callback>(bus),
+  private val interactor: VolumeServiceInteractor
+) : BasePresenter<Unit, TorchPresenter.Callback>(RxBus.empty()),
     TorchPresenter {
 
   override fun onBind() {
-    listen().ofType(TorchToggleEvent::class.java)
-        .subscribe { interactor.toggleTorch() }
-        .destroy(owner)
   }
 
   override fun onUnbind() {
   }
 
   override fun toggle() {
-    publish(TorchToggleEvent)
+    interactor.toggleTorch()
   }
 
 }

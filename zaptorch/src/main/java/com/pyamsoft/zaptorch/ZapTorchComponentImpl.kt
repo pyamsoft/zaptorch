@@ -80,7 +80,7 @@ internal class ZapTorchComponentImpl internal constructor(
 
   override fun inject(service: TorchOffService) {
     service.apply {
-      this.presenter = TorchPresenterImpl(serviceModule.interactor, torchBus)
+      this.presenter = TorchPresenterImpl(serviceModule.interactor)
     }
   }
 
@@ -89,7 +89,7 @@ internal class ZapTorchComponentImpl internal constructor(
       this.finishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
       this.servicePresenter = ServicePresenterImpl(serviceModule.interactor)
       this.statePresenter = ServiceStatePresenterImpl(serviceModule.interactor)
-      this.torchPresenter = TorchPresenterImpl(serviceModule.interactor, torchBus)
+      this.torchPresenter = TorchPresenterImpl(serviceModule.interactor)
     }
   }
 
