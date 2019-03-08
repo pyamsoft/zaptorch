@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
+import com.pyamsoft.pydroid.bootstrap.SchedulerProvider
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.navigation.FailedNavigationEvent
 import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenterImpl
@@ -29,7 +30,8 @@ internal class MainComponentImpl internal constructor(
   private val theming: Theming,
   private val parent: ViewGroup,
   private val interactor: MainInteractor,
-  private val failedBus: EventBus<FailedNavigationEvent>
+  private val failedBus: EventBus<FailedNavigationEvent>,
+  private val schedulerProvider: SchedulerProvider
 ) : MainComponent {
 
   override fun inject(activity: MainActivity) {
@@ -40,7 +42,7 @@ internal class MainComponentImpl internal constructor(
 
     activity.apply {
       this.dropshadow = dropshadowView
-      this.failedNavigationPresenter = FailedNavigationPresenterImpl(failedBus)
+      this.failedNavigationPresenter = FailedNavigationPresenterImpl(schedulerProvider, failedBus)
       this.frameView = mainFrame
       this.presenter = mainPresenter
       this.toolbar = toolbarView

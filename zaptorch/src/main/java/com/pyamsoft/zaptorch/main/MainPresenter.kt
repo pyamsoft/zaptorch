@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.view.MenuItem
 import com.pyamsoft.pydroid.arch.Presenter
 
 internal interface MainPresenter : Presenter<MainPresenter.Callback> {
@@ -26,9 +25,7 @@ internal interface MainPresenter : Presenter<MainPresenter.Callback> {
 
     fun onHandleKeyPressChanged(handle: Boolean)
 
-    fun onMenuItemSelected(item: MenuItem)
-
-    fun onToolbarNavEvent()
+    fun onShowPrivacyPolicy()
   }
 
 }

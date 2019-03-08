@@ -18,15 +18,13 @@
 package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
-import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.arch.BaseUiView
+import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.theme.Theming
-import com.pyamsoft.pydroid.ui.util.DebouncedOnClickListener
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
 
@@ -67,26 +65,23 @@ internal class MainToolbarView internal constructor(
       ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
       inflateMenu(R.menu.menu)
 
-      setNavigationOnClickListener(DebouncedOnClickListener.create {
-        callback.onToolbarNavClicked()
-      })
-
       setOnMenuItemClickListener { item ->
-        callback.onToolbarMenuClicked(item)
+        if (item.itemId == R.id.menu_id_privacy_policy) {
+          callback.onPrivacyPolicyClicked()
+        }
         return@setOnMenuItemClickListener true
       }
     }
   }
 
   override fun teardown() {
-    toolbar.setNavigationOnClickListener(null)
+    toolbar.setOnMenuItemClickListener(null)
+    toolbarActivityProvider.setToolbar(null)
   }
 
   interface Callback {
 
-    fun onToolbarMenuClicked(item: MenuItem)
-
-    fun onToolbarNavClicked()
+    fun onPrivacyPolicyClicked()
 
   }
 

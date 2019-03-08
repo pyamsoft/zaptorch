@@ -19,7 +19,6 @@ package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.MenuItem
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -114,19 +113,12 @@ class MainActivity : RatingActivity(), MainPresenter.Callback {
     dropshadow.inflate(savedInstanceState)
   }
 
-  override fun onMenuItemSelected(item: MenuItem) {
-    val itemId = item.itemId
-    if (itemId == R.id.menu_id_privacy_policy) {
-      val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
-      val error = hyperlink.navigate()
-      if (error != null) {
-        failedNavigationPresenter.failedNavigation(error)
-      }
+  override fun onShowPrivacyPolicy() {
+    val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
+    val error = hyperlink.navigate()
+    if (error != null) {
+      failedNavigationPresenter.failedNavigation(error)
     }
-  }
-
-  override fun onToolbarNavEvent() {
-    onBackPressed()
   }
 
   private fun layoutComponents(layoutRoot: ConstraintLayout) {

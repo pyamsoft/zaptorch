@@ -61,6 +61,7 @@ internal class ZapTorchComponentImpl internal constructor(
   private val torchBus = RxBus.create<TorchToggleEvent>()
   private val serviceFinishBus = RxBus.create<ServiceFinishEvent>()
 
+  private val schedulerProvider = moduleProvider.schedulerProvider()
   private val navModule = moduleProvider.failedNavigationModule()
   private val theming = moduleProvider.theming()
   private val loaderModule = moduleProvider.loaderModule()
@@ -93,7 +94,7 @@ internal class ZapTorchComponentImpl internal constructor(
   }
 
   override fun plusMainComponent(parent: ViewGroup): MainComponent =
-    MainComponentImpl(theming, parent, mainModule.interactor, navModule.bus)
+    MainComponentImpl(theming, parent, mainModule.interactor, navModule.bus, schedulerProvider)
 
   override fun plusMainFragmentComponent(parent: ViewGroup): MainFragmentComponent =
     MainFragmentComponentImpl(

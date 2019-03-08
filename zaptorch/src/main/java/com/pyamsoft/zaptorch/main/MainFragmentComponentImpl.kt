@@ -20,9 +20,11 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
+import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.ServiceStatePresenterImpl
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
+import com.pyamsoft.zaptorch.widget.ToolbarView
 
 internal class MainFragmentComponentImpl internal constructor(
   private val parent: ViewGroup,
@@ -37,6 +39,7 @@ internal class MainFragmentComponentImpl internal constructor(
     fragment.apply {
       this.actionView = MainActionView(imageLoader, parent, mainPresenter)
       this.frameView = MainFrameView(parent)
+      this.toolbarView = ToolbarView(fragment.requireToolbarActivity())
       this.presenter = mainPresenter
       this.serviceStatePresenter = ServiceStatePresenterImpl(interactor)
     }

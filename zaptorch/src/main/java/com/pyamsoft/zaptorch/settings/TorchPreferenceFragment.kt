@@ -20,61 +20,55 @@ package com.pyamsoft.zaptorch.settings
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
-import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.ServiceFinishPresenter
 import com.pyamsoft.zaptorch.settings.SettingsPresenter.Callback
+import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
     ClearAllPresenter.Callback {
 
+  internal lateinit var toolbarView: ToolbarView
   internal lateinit var settingsView: SettingsView
+
   internal lateinit var presenter: SettingsPresenter
   internal lateinit var serviceFinishPresenter: ServiceFinishPresenter
   internal lateinit var clearPresenter: ClearAllPresenter
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    val view = requireNotNull(super.onCreateView(inflater, container, savedInstanceState))
-
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(listView, preferenceScreen)
-        .inject(this)
-
-    return view
-  }
-
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusSettingsComponent(listView, preferenceScreen)
+        .inject(this)
+
     settingsView.inflate(savedInstanceState)
+    toolbarView.inflate(savedInstanceState)
+
     presenter.bind(viewLifecycleOwner, this)
     clearPresenter.bind(viewLifecycleOwner, this)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
+    toolbarView.saveState(outState)
     settingsView.saveState(outState)
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
+    toolbarView.teardown()
     settingsView.teardown()
   }
 
@@ -101,14 +95,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
     super.onClearAllClicked()
     ConfirmationDialog()
         .show(requireActivity(), "confirm")
-  }
-
-  override fun onResume() {
-    super.onResume()
-    requireToolbarActivity().withToolbar {
-      it.setTitle(R.string.app_name)
-      it.setUpEnabled(false)
-    }
   }
 
   companion object {

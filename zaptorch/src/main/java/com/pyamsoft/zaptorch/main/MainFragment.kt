@@ -23,38 +23,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.commit
-import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.ServiceStatePresenter
 import com.pyamsoft.zaptorch.settings.SettingsFragment
+import com.pyamsoft.zaptorch.widget.ToolbarView
 
 class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPresenter.Callback {
 
-  private lateinit var layoutRoot: CoordinatorLayout
-
   internal lateinit var presenter: MainFragmentPresenter
   internal lateinit var serviceStatePresenter: ServiceStatePresenter
+
   internal lateinit var frameView: MainFrameView
   internal lateinit var actionView: MainActionView
+  internal lateinit var toolbarView: ToolbarView
 
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val root = inflater.inflate(R.layout.layout_coordinator, container, false)
-    layoutRoot = root.findViewById(R.id.layout_coordinator)
-
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusMainFragmentComponent(layoutRoot)
-        .inject(this)
-
-    return root
+    return inflater.inflate(R.layout.layout_coordinator, container, false)
   }
 
   override fun onViewCreated(
@@ -62,8 +54,15 @@ class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPre
     savedInstanceState: Bundle?
   ) {
     super.onViewCreated(view, savedInstanceState)
+
+    val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
+    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        .plusMainFragmentComponent(layoutRoot)
+        .inject(this)
+
     frameView.inflate(savedInstanceState)
     actionView.inflate(savedInstanceState)
+    toolbarView.inflate(savedInstanceState)
 
     displayPreferenceFragment()
 
@@ -73,8 +72,16 @@ class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPre
 
   override fun onDestroyView() {
     super.onDestroyView()
+    toolbarView.teardown()
     frameView.teardown()
     actionView.teardown()
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    toolbarView.saveState(outState)
+    frameView.saveState(outState)
+    actionView.saveState(outState)
   }
 
   override fun onServiceStarted() {
@@ -97,14 +104,6 @@ class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPre
 
   override fun onSignificantScrollEvent(visible: Boolean) {
     actionView.toggleVisibility(visible)
-  }
-
-  override fun onResume() {
-    super.onResume()
-    requireToolbarActivity().withToolbar {
-      it.setTitle(R.string.app_name)
-      it.setUpEnabled(false)
-    }
   }
 
   private fun displayPreferenceFragment() {
