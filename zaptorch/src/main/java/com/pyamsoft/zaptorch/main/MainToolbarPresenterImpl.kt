@@ -15,31 +15,24 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.core.bus.EventBus
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.pyamsoft.pydroid.core.bus.RxBus
 
-internal class ServiceFinishPresenterImpl internal constructor(
-  bus: EventBus<ServiceFinishEvent>
-) : BasePresenter<ServiceFinishEvent, ServiceFinishPresenter.Callback>(bus),
-    ServiceFinishPresenter {
+internal class MainToolbarPresenterImpl internal constructor(
+) : BasePresenter<Unit, MainToolbarPresenter.Callback>(RxBus.empty()),
+    MainToolbarPresenter,
+    MainToolbarView.Callback {
+
+  override fun onPrivacyPolicyClicked() {
+    callback.onShowPrivacyPolicy()
+  }
 
   override fun onBind() {
-    listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.onServiceFinished() }
-        .destroy()
   }
 
   override fun onUnbind() {
-  }
-
-  override fun finish() {
-    publish(ServiceFinishEvent)
   }
 
 }

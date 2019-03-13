@@ -26,13 +26,9 @@ internal class MainFrameView internal constructor(
   parent: ViewGroup
 ) : BaseUiView<Unit>(parent, Unit) {
 
-  private val frameLayout by lazyView<FrameLayout>(R.id.layout_frame)
+  override val layoutRoot by lazyView<FrameLayout>(R.id.layout_frame)
 
   override val layout: Int = R.layout.layout_frame
-
-  override fun id(): Int {
-    return frameLayout.id
-  }
 
 }
 

@@ -22,11 +22,6 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import com.pyamsoft.pydroid.util.fakeBind
-import com.pyamsoft.pydroid.util.fakeUnbind
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -34,22 +29,16 @@ import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
-class VolumeMonitorService : AccessibilityService(), LifecycleOwner,
+class VolumeMonitorService : AccessibilityService(),
     ServiceFinishPresenter.Callback,
     ServicePresenter.Callback,
     TorchPresenter.Callback,
     ServiceStatePresenter.Callback {
 
-  private val registry = LifecycleRegistry(this)
-
   internal lateinit var statePresenter: ServiceStatePresenter
   internal lateinit var finishPresenter: ServiceFinishPresenter
   internal lateinit var torchPresenter: TorchPresenter
   internal lateinit var servicePresenter: ServicePresenter
-
-  override fun getLifecycle(): Lifecycle {
-    return registry
-  }
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
@@ -73,12 +62,10 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner,
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    statePresenter.bind(this, this)
-    torchPresenter.bind(this, this)
-    servicePresenter.bind(this, this)
-    finishPresenter.bind(this, this)
-
-    registry.fakeBind()
+    statePresenter.bind(this)
+    torchPresenter.bind(this)
+    servicePresenter.bind(this)
+    finishPresenter.bind(this)
   }
 
   override fun onCameraError(error: CameraError) {
@@ -113,7 +100,11 @@ class VolumeMonitorService : AccessibilityService(), LifecycleOwner,
 
   override fun onDestroy() {
     super.onDestroy()
-    registry.fakeUnbind()
+
+    statePresenter.unbind()
+    torchPresenter.unbind()
+    servicePresenter.unbind()
+    finishPresenter.unbind()
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

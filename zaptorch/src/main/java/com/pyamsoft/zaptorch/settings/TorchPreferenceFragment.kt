@@ -26,20 +26,14 @@ import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.ServiceFinishPresenter
-import com.pyamsoft.zaptorch.settings.SettingsPresenter.Callback
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 
-class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
-    ClearAllPresenter.Callback {
+class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
+    SettingsUiComponent.Callback {
 
+  internal lateinit var component: SettingsUiComponent
   internal lateinit var toolbarView: ToolbarView
-  internal lateinit var settingsView: SettingsView
-
-  internal lateinit var presenter: SettingsPresenter
-  internal lateinit var serviceFinishPresenter: ServiceFinishPresenter
-  internal lateinit var clearPresenter: ClearAllPresenter
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -53,42 +47,31 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(), Callback,
         .plusSettingsComponent(listView, preferenceScreen)
         .inject(this)
 
-    settingsView.inflate(savedInstanceState)
+    component.bind(viewLifecycleOwner, savedInstanceState, this)
     toolbarView.inflate(savedInstanceState)
-
-    presenter.bind(viewLifecycleOwner, this)
-    clearPresenter.bind(viewLifecycleOwner, this)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     toolbarView.saveState(outState)
-    settingsView.saveState(outState)
+    component.saveState(outState)
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
     toolbarView.teardown()
-    settingsView.teardown()
   }
 
-  override fun onClearAll() {
+  override fun onKillApplication() {
     requireContext().also {
-      try {
-        serviceFinishPresenter.finish()
-      } catch (e: NullPointerException) {
-        Timber.e(e, "Expected exception when Service is NULL")
-      }
-
       Timber.d("Clear application data")
       val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
       activityManager.clearApplicationUserData()
     }
   }
 
-  override fun onShowExplanation() {
-    HowToDialog()
-        .show(requireActivity(), "howto")
+  override fun showHowTo() {
+    HowToDialog().show(requireActivity(), "howto")
   }
 
   override fun onClearAllClicked() {

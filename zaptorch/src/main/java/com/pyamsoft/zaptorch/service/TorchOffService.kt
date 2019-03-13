@@ -19,40 +19,25 @@ package com.pyamsoft.zaptorch.service
 
 import android.app.IntentService
 import android.content.Intent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import com.pyamsoft.pydroid.util.fakeBind
-import com.pyamsoft.pydroid.util.fakeUnbind
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
 
-class TorchOffService : IntentService(TorchOffService::class.java.name), LifecycleOwner {
-
-  private val registry = LifecycleRegistry(this)
+class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
   internal lateinit var presenter: TorchPresenter
-
-  override fun getLifecycle(): Lifecycle {
-    return registry
-  }
 
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
-
-    registry.fakeBind()
   }
 
   override fun onDestroy() {
     super.onDestroy()
     ZapTorch.getRefWatcher(this)
         .watch(this)
-
-    registry.fakeUnbind()
   }
 
   override fun onHandleIntent(intent: Intent?) {

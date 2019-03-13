@@ -28,17 +28,12 @@ import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.ServiceStatePresenter
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
 
-class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPresenter.Callback {
+class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
 
-  internal lateinit var presenter: MainFragmentPresenter
-  internal lateinit var serviceStatePresenter: ServiceStatePresenter
-
-  internal lateinit var frameView: MainFrameView
-  internal lateinit var actionView: MainActionView
+  internal lateinit var component: MainFragmentUiComponent
   internal lateinit var toolbarView: ToolbarView
 
   override fun onCreateView(
@@ -60,57 +55,38 @@ class MainFragment : Fragment(), ServiceStatePresenter.Callback, MainFragmentPre
         .plusMainFragmentComponent(layoutRoot)
         .inject(this)
 
-    frameView.inflate(savedInstanceState)
-    actionView.inflate(savedInstanceState)
+    component.bind(viewLifecycleOwner, savedInstanceState, this)
     toolbarView.inflate(savedInstanceState)
 
     displayPreferenceFragment()
-
-    presenter.bind(viewLifecycleOwner, this)
-    serviceStatePresenter.bind(viewLifecycleOwner, this)
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
     toolbarView.teardown()
-    frameView.teardown()
-    actionView.teardown()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     toolbarView.saveState(outState)
-    frameView.saveState(outState)
-    actionView.saveState(outState)
+    component.saveState(outState)
   }
 
-  override fun onServiceStarted() {
-    actionView.setFabFromServiceState(true)
-  }
-
-  override fun onServiceStopped() {
-    actionView.setFabFromServiceState(false)
-  }
-
-  override fun onServiceRunningAction() {
-    ServiceInfoDialog()
-        .show(requireActivity(), "service_info")
-  }
-
-  override fun onServiceStoppedAction() {
+  override fun showUsageAccessRequestDialog() {
     AccessibilityRequestDialog()
         .show(requireActivity(), "accessibility")
   }
 
-  override fun onSignificantScrollEvent(visible: Boolean) {
-    actionView.toggleVisibility(visible)
+  override fun showInfoDialog() {
+    ServiceInfoDialog()
+        .show(requireActivity(), "service_info")
   }
 
   private fun displayPreferenceFragment() {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .add(frameView.id(), SettingsFragment(), SettingsFragment.TAG)
+          .add(component.id(), SettingsFragment(), SettingsFragment.TAG)
           .commit(viewLifecycleOwner)
     }
   }

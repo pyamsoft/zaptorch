@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.arch.destroy
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.zaptorch.api.MainInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,19 +26,14 @@ import io.reactivex.schedulers.Schedulers
 internal class MainPresenterImpl internal constructor(
   private val interactor: MainInteractor
 ) : BasePresenter<Unit, MainPresenter.Callback>(RxBus.empty()),
-    MainPresenter,
-    MainToolbarView.Callback {
-
-  override fun onPrivacyPolicyClicked() {
-    callback.onShowPrivacyPolicy()
-  }
+    MainPresenter {
 
   override fun onBind() {
     interactor.onHandleKeyPressChanged()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { callback.onHandleKeyPressChanged(it) }
-        .destroy(owner)
+        .destroy()
   }
 
   override fun onUnbind() {

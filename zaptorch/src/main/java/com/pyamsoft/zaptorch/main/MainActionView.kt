@@ -18,11 +18,10 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
-import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
@@ -34,23 +33,19 @@ internal class MainActionView internal constructor(
   callback: MainActionView.Callback
 ) : BaseUiView<MainActionView.Callback>(parent, callback) {
 
-  private val actionButton by lazyView<FloatingActionButton>(R.id.fab)
+  override val layoutRoot by lazyView<FloatingActionButton>(R.id.fab)
 
   private var actionIconLoaded: Loaded? = null
 
   override val layout: Int = R.layout.floating_action_button
 
-  override fun id(): Int {
-    return actionButton.id
-  }
-
-  override fun teardown() {
-    actionButton.setOnDebouncedClickListener(null)
+  override fun onTeardown() {
+    layoutRoot.setOnDebouncedClickListener(null)
     actionIconLoaded?.dispose()
   }
 
   fun setFabFromServiceState(running: Boolean) {
-    actionButton.setOnDebouncedClickListener {
+    layoutRoot.setOnDebouncedClickListener {
       callback.onActionButtonClicked(running)
     }
 
@@ -63,14 +58,14 @@ internal class MainActionView internal constructor(
 
     actionIconLoaded?.dispose()
     actionIconLoaded = imageLoader.load(icon)
-        .into(actionButton)
+        .into(layoutRoot)
   }
 
   fun toggleVisibility(visible: Boolean) {
     if (visible) {
-      actionButton.popShow()
+      layoutRoot.popShow()
     } else {
-      actionButton.popHide()
+      layoutRoot.popHide()
     }
   }
 

@@ -35,13 +35,16 @@ internal class MainFragmentComponentImpl internal constructor(
 
   override fun inject(fragment: MainFragment) {
     val mainPresenter = MainFragmentPresenterImpl(scrollBus)
+    val actionView = MainActionView(imageLoader, parent, mainPresenter)
+    val frameView = MainFrameView(parent)
+    val toolbarView = ToolbarView(fragment.requireToolbarActivity())
+    val serviceStatePresenter = ServiceStatePresenterImpl(interactor)
 
     fragment.apply {
-      this.actionView = MainActionView(imageLoader, parent, mainPresenter)
-      this.frameView = MainFrameView(parent)
-      this.toolbarView = ToolbarView(fragment.requireToolbarActivity())
-      this.presenter = mainPresenter
-      this.serviceStatePresenter = ServiceStatePresenterImpl(interactor)
+      this.component = MainFragmentUiComponentImpl(
+          mainPresenter, serviceStatePresenter, frameView, actionView
+      )
+      this.toolbarView = toolbarView
     }
   }
 

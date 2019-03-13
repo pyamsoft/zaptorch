@@ -19,12 +19,11 @@ package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.Presenter
 
-internal interface MainPresenter : Presenter<MainPresenter.Callback> {
+internal interface MainToolbarPresenter : Presenter<MainToolbarPresenter.Callback> {
 
   interface Callback {
 
-    fun onHandleKeyPressChanged(handle: Boolean)
-
+    fun onShowPrivacyPolicy()
   }
 
 }

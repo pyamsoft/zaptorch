@@ -38,12 +38,13 @@ internal class SettingsComponentImpl internal constructor(
   override fun inject(fragment: TorchPreferenceFragment) {
     val settingsPresenter = SettingsPresenterImpl(significantScrollBus)
     val view = SettingsView(recyclerView, preferenceScreen, settingsPresenter)
+    val clearPresenter = ClearAllPresenterImpl(interactor, clearAllBus)
+    val serviceFinishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
 
     fragment.apply {
-      this.clearPresenter = ClearAllPresenterImpl(interactor, clearAllBus)
-      this.serviceFinishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
-      this.presenter = settingsPresenter
-      this.settingsView = view
+      this.component = SettingsUiComponentImpl(
+          view, settingsPresenter, serviceFinishPresenter, clearPresenter
+      )
       this.toolbarView = ToolbarView(fragment.requireToolbarActivity())
     }
   }

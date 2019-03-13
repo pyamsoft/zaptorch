@@ -17,11 +17,10 @@
 
 package com.pyamsoft.zaptorch.service
 
+import com.pyamsoft.pydroid.arch.BasePresenter
 import com.pyamsoft.pydroid.core.bus.RxBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
-import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.arch.destroy
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -40,7 +39,7 @@ internal class ServicePresenterImpl internal constructor(
         .doOnSubscribe { interactor.setupCamera() }
         .doAfterTerminate { interactor.releaseCamera() }
         .subscribe { callback.onCameraError(it) }
-        .destroy(owner)
+        .destroy()
   }
 
   override fun onUnbind() {

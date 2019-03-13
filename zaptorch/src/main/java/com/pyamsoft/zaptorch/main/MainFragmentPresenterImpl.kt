@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.arch.destroy
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,7 +42,7 @@ internal class MainFragmentPresenterImpl internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { callback.onSignificantScrollEvent(it.visible) }
-        .destroy(owner)
+        .destroy()
   }
 
   override fun onUnbind() {

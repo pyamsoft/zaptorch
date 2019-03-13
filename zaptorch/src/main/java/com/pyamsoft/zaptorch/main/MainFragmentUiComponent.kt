@@ -17,14 +17,21 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.Presenter
+import androidx.annotation.CheckResult
+import androidx.annotation.IdRes
+import com.pyamsoft.pydroid.arch.UiComponent
 
-internal interface MainPresenter : Presenter<MainPresenter.Callback> {
+internal interface MainFragmentUiComponent : UiComponent<MainFragmentUiComponent.Callback> {
+
+  @IdRes
+  @CheckResult
+  fun id(): Int
 
   interface Callback {
 
-    fun onHandleKeyPressChanged(handle: Boolean)
+    fun showInfoDialog()
+
+    fun showUsageAccessRequestDialog()
 
   }
-
 }

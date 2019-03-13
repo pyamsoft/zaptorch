@@ -15,16 +15,17 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.Presenter
+import com.pyamsoft.pydroid.arch.UiComponent
 
-internal interface MainPresenter : Presenter<MainPresenter.Callback> {
+internal interface SettingsUiComponent : UiComponent<SettingsUiComponent.Callback> {
 
   interface Callback {
 
-    fun onHandleKeyPressChanged(handle: Boolean)
+    fun onKillApplication()
+
+    fun showHowTo()
 
   }
-
 }

@@ -17,14 +17,22 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.Presenter
+import androidx.annotation.CheckResult
+import androidx.annotation.IdRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.pyamsoft.pydroid.arch.UiComponent
 
-internal interface MainPresenter : Presenter<MainPresenter.Callback> {
+internal interface MainToolbarUiComponent : UiComponent<MainToolbarUiComponent.Callback> {
+
+  @IdRes
+  @CheckResult
+  fun id(): Int
+
+  fun layout(constraintLayout: ConstraintLayout)
 
   interface Callback {
 
-    fun onHandleKeyPressChanged(handle: Boolean)
+    fun onShowPrivacyPolicy()
 
   }
-
 }

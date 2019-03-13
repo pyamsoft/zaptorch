@@ -23,13 +23,11 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.pyamsoft.pydroid.ui.about.AboutFragment
-import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenter
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.theme.ThemeInjector
 import com.pyamsoft.pydroid.ui.util.commit
-import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.Injector
@@ -38,17 +36,14 @@ import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
 import kotlin.LazyThreadSafetyMode.NONE
 
-class MainActivity : RatingActivity(), MainPresenter.Callback {
+class MainActivity : RatingActivity(),
+    MainUiComponent.Callback,
+    MainToolbarUiComponent.Callback {
 
-  internal lateinit var toolbar: MainToolbarView
-  internal lateinit var frameView: MainFrameView
-  internal lateinit var dropshadow: DropshadowView
-
-  internal lateinit var presenter: MainPresenter
-  internal lateinit var failedNavigationPresenter: FailedNavigationPresenter
+  internal lateinit var toolbarComponent: MainToolbarUiComponent
+  internal lateinit var component: MainUiComponent
 
   private var handleKeyPress: Boolean = false
-
   private val layoutRoot by lazy(NONE) {
     findViewById<ConstraintLayout>(R.id.layout_constraint)
   }
@@ -61,7 +56,7 @@ class MainActivity : RatingActivity(), MainPresenter.Callback {
     get() = layoutRoot
 
   override val fragmentContainerId: Int
-    get() = frameView.id()
+    get() = component.id()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -81,25 +76,19 @@ class MainActivity : RatingActivity(), MainPresenter.Callback {
         .plusMainComponent(layoutRoot)
         .inject(this)
 
-    createComponents(savedInstanceState)
-    layoutComponents(layoutRoot)
+    component.bind(this, savedInstanceState, this)
+    toolbarComponent.bind(this, savedInstanceState, this)
+
+    toolbarComponent.layout(layoutRoot)
+    component.layout(layoutRoot, toolbarComponent.id())
+
     showMainFragment()
-
-    presenter.bind(this, this)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    toolbar.teardown()
-    frameView.teardown()
-    dropshadow.teardown()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    toolbar.saveState(outState)
-    frameView.saveState(outState)
-    dropshadow.saveState(outState)
+    toolbarComponent.saveState(outState)
+    component.saveState(outState)
   }
 
   override fun onHandleKeyPressChanged(handle: Boolean) {
@@ -107,48 +96,12 @@ class MainActivity : RatingActivity(), MainPresenter.Callback {
     handleKeyPress = handle
   }
 
-  private fun createComponents(savedInstanceState: Bundle?) {
-    toolbar.inflate(savedInstanceState)
-    frameView.inflate(savedInstanceState)
-    dropshadow.inflate(savedInstanceState)
-  }
-
   override fun onShowPrivacyPolicy() {
     val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
     val error = hyperlink.navigate()
+
     if (error != null) {
-      failedNavigationPresenter.failedNavigation(error)
-    }
-  }
-
-  private fun layoutComponents(layoutRoot: ConstraintLayout) {
-    ConstraintSet().apply {
-      clone(layoutRoot)
-
-      toolbar.also {
-        connect(it.id(), ConstraintSet.TOP, layoutRoot.id, ConstraintSet.TOP)
-        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
-
-      frameView.also {
-        connect(it.id(), ConstraintSet.TOP, toolbar.id(), ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.BOTTOM, layoutRoot.id, ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
-        constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
-
-      dropshadow.also {
-        connect(it.id(), ConstraintSet.TOP, toolbar.id(), ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.START, layoutRoot.id, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, layoutRoot.id, ConstraintSet.END)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
-
-      applyTo(layoutRoot)
+      component.failedNavigation(error)
     }
   }
 

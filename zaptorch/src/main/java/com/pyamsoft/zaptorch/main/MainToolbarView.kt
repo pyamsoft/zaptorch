@@ -35,13 +35,9 @@ internal class MainToolbarView internal constructor(
   callback: MainToolbarView.Callback
 ) : BaseUiView<MainToolbarView.Callback>(parent, callback) {
 
-  private val toolbar by lazyView<Toolbar>(R.id.toolbar)
+  override val layoutRoot by lazyView<Toolbar>(R.id.toolbar)
 
   override val layout: Int = R.layout.toolbar
-
-  override fun id(): Int {
-    return toolbar.id
-  }
 
   override fun onInflated(
     view: View,
@@ -58,7 +54,7 @@ internal class MainToolbarView internal constructor(
       theme = R.style.ThemeOverlay_AppCompat_Light
     }
 
-    toolbar.apply {
+    layoutRoot.apply {
       popupTheme = theme
       toolbarActivityProvider.setToolbar(this)
       setTitle(R.string.app_name)
@@ -74,8 +70,9 @@ internal class MainToolbarView internal constructor(
     }
   }
 
-  override fun teardown() {
-    toolbar.setOnMenuItemClickListener(null)
+  override fun onTeardown() {
+    layoutRoot.setOnMenuItemClickListener(null)
+    layoutRoot.menu.removeItem(R.id.menu_id_privacy_policy)
     toolbarActivityProvider.setToolbar(null)
   }
 

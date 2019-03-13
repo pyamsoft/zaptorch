@@ -38,14 +38,15 @@ internal class MainComponentImpl internal constructor(
     val dropshadowView = DropshadowView(parent)
     val mainFrame = MainFrameView(parent)
     val mainPresenter = MainPresenterImpl(interactor)
-    val toolbarView = MainToolbarView(activity, theming, parent, mainPresenter)
+    val toolbarPresenter = MainToolbarPresenterImpl()
+    val toolbarView = MainToolbarView(activity, theming, parent, toolbarPresenter)
+    val failed = FailedNavigationPresenterImpl(schedulerProvider, failedBus)
 
     activity.apply {
-      this.dropshadow = dropshadowView
-      this.failedNavigationPresenter = FailedNavigationPresenterImpl(schedulerProvider, failedBus)
-      this.frameView = mainFrame
-      this.presenter = mainPresenter
-      this.toolbar = toolbarView
+      this.component = MainUiComponentImpl(mainFrame, mainPresenter, failed)
+      this.toolbarComponent = MainToolbarUiComponentImpl(
+          toolbarView, dropshadowView, toolbarPresenter
+      )
     }
   }
 }
