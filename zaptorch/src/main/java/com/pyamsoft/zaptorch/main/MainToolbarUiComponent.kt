@@ -24,12 +24,6 @@ import com.pyamsoft.pydroid.arch.UiComponent
 
 internal interface MainToolbarUiComponent : UiComponent<MainToolbarUiComponent.Callback> {
 
-  @IdRes
-  @CheckResult
-  fun id(): Int
-
-  fun layout(constraintLayout: ConstraintLayout)
-
   interface Callback {
 
     fun onShowPrivacyPolicy()

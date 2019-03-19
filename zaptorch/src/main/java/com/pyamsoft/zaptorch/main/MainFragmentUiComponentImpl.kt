@@ -54,7 +54,7 @@ internal class MainFragmentUiComponentImpl internal constructor(
     serviceStatePresenter.bind(this)
   }
 
-  override fun saveState(outState: Bundle) {
+  override fun onSaveState(outState: Bundle) {
     frameView.saveState(outState)
     actionView.saveState(outState)
   }

@@ -21,6 +21,7 @@ import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
+import com.pyamsoft.pydroid.ui.arch.InvalidIdException
 import com.pyamsoft.zaptorch.service.ServiceFinishPresenter
 import com.pyamsoft.zaptorch.settings.SettingsUiComponent.Callback
 import timber.log.Timber
@@ -34,6 +35,10 @@ internal class SettingsUiComponentImpl internal constructor(
     SettingsUiComponent,
     SettingsPresenter.Callback,
     ClearAllPresenter.Callback {
+
+  override fun id(): Int {
+    throw InvalidIdException
+  }
 
   override fun onBind(
     owner: LifecycleOwner,
@@ -51,7 +56,7 @@ internal class SettingsUiComponentImpl internal constructor(
     clearPresenter.bind(this)
   }
 
-  override fun saveState(outState: Bundle) {
+  override fun onSaveState(outState: Bundle) {
     settingsView.saveState(outState)
   }
 

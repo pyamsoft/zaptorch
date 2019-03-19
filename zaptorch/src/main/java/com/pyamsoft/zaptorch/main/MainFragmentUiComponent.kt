@@ -17,15 +17,9 @@
 
 package com.pyamsoft.zaptorch.main
 
-import androidx.annotation.CheckResult
-import androidx.annotation.IdRes
 import com.pyamsoft.pydroid.arch.UiComponent
 
 internal interface MainFragmentUiComponent : UiComponent<MainFragmentUiComponent.Callback> {
-
-  @IdRes
-  @CheckResult
-  fun id(): Int
 
   interface Callback {
 

@@ -18,21 +18,9 @@
 package com.pyamsoft.zaptorch.main
 
 import android.content.ActivityNotFoundException
-import androidx.annotation.CheckResult
-import androidx.annotation.IdRes
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.pyamsoft.pydroid.arch.UiComponent
 
 internal interface MainUiComponent : UiComponent<MainUiComponent.Callback> {
-
-  @IdRes
-  @CheckResult
-  fun id(): Int
-
-  fun layout(
-    constraintLayout: ConstraintLayout,
-    aboveId: Int
-  )
 
   fun failedNavigation(error: ActivityNotFoundException)
 
