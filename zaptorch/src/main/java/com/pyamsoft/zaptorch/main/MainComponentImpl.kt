@@ -20,8 +20,8 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import com.pyamsoft.pydroid.bootstrap.SchedulerProvider
 import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.ui.navigation.FailedNavigationBinder
 import com.pyamsoft.pydroid.ui.navigation.FailedNavigationEvent
-import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenterImpl
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
 import com.pyamsoft.zaptorch.api.MainInteractor
@@ -37,10 +37,10 @@ internal class MainComponentImpl internal constructor(
   override fun inject(activity: MainActivity) {
     val dropshadowView = DropshadowView(parent)
     val mainFrame = MainFrameView(parent)
-    val mainPresenter = MainPresenterImpl(interactor)
-    val toolbarPresenter = MainToolbarPresenterImpl()
+    val mainPresenter = MainBinder(interactor)
+    val toolbarPresenter = MainToolbarBinder()
     val toolbarView = MainToolbarView(activity, theming, parent, toolbarPresenter)
-    val failed = FailedNavigationPresenterImpl(schedulerProvider, failedBus)
+    val failed = FailedNavigationBinder(schedulerProvider, failedBus)
 
     activity.apply {
       this.component = MainUiComponentImpl(mainFrame, mainPresenter, failed)

@@ -15,31 +15,31 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.zaptorch.api.MainInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-internal class ServiceFinishPresenterImpl internal constructor(
-  bus: EventBus<ServiceFinishEvent>
-) : BasePresenter<ServiceFinishEvent, ServiceFinishPresenter.Callback>(bus),
-    ServiceFinishPresenter {
+internal class MainBinder internal constructor(
+  private val interactor: MainInteractor
+) : UiBinder<MainBinder.Callback>() {
 
   override fun onBind() {
-    listen()
+    interactor.onHandleKeyPressChanged()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.onServiceFinished() }
+        .subscribe { callback.handleKeypressChanged(it) }
         .destroy()
   }
 
   override fun onUnbind() {
   }
 
-  override fun finish() {
-    publish(ServiceFinishEvent)
+  interface Callback : UiBinder.Callback {
+
+    fun handleKeypressChanged(handle: Boolean)
   }
 
 }

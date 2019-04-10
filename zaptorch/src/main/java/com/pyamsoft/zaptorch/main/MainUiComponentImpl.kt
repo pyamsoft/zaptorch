@@ -22,16 +22,16 @@ import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
-import com.pyamsoft.pydroid.ui.navigation.FailedNavigationPresenter
+import com.pyamsoft.pydroid.ui.navigation.FailedNavigationBinder
 import com.pyamsoft.zaptorch.main.MainUiComponent.Callback
 
 internal class MainUiComponentImpl internal constructor(
   private val frameView: MainFrameView,
-  private val presenter: MainPresenter,
-  private val failedNavigationPresenter: FailedNavigationPresenter
+  private val binder: MainBinder,
+  private val failedNavigation: FailedNavigationBinder
 ) : BaseUiComponent<MainUiComponent.Callback>(),
     MainUiComponent,
-    MainPresenter.Callback {
+    MainBinder.Callback {
 
   override fun id(): Int {
     return frameView.id()
@@ -44,11 +44,11 @@ internal class MainUiComponentImpl internal constructor(
   ) {
     owner.doOnDestroy {
       frameView.teardown()
-      presenter.unbind()
+      binder.unbind()
     }
 
     frameView.inflate(savedInstanceState)
-    presenter.bind(this)
+    binder.bind(this)
   }
 
   override fun onSaveState(outState: Bundle) {
@@ -56,10 +56,10 @@ internal class MainUiComponentImpl internal constructor(
   }
 
   override fun failedNavigation(error: ActivityNotFoundException) {
-    failedNavigationPresenter.failedNavigation(error)
+    failedNavigation.failedNavigation(error)
   }
 
-  override fun onHandleKeyPressChanged(handle: Boolean) {
+  override fun handleKeypressChanged(handle: Boolean) {
     callback.onHandleKeyPressChanged(handle)
   }
 

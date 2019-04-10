@@ -22,7 +22,7 @@ import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.service.ServiceStatePresenterImpl
+import com.pyamsoft.zaptorch.service.ServiceStateBinder
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import com.pyamsoft.zaptorch.widget.ToolbarView
 
@@ -34,16 +34,14 @@ internal class MainFragmentComponentImpl internal constructor(
 ) : MainFragmentComponent {
 
   override fun inject(fragment: MainFragment) {
-    val mainPresenter = MainFragmentPresenterImpl(scrollBus)
-    val actionView = MainActionView(imageLoader, parent, mainPresenter)
+    val binder = MainFragmentPresenter(scrollBus)
+    val actionView = MainActionView(imageLoader, parent, binder)
     val frameView = MainFrameView(parent)
     val toolbarView = ToolbarView(fragment.requireToolbarActivity())
-    val serviceStatePresenter = ServiceStatePresenterImpl(interactor)
+    val stateBinder = ServiceStateBinder(interactor)
 
     fragment.apply {
-      this.component = MainFragmentUiComponentImpl(
-          mainPresenter, serviceStatePresenter, frameView, actionView
-      )
+      this.component = MainFragmentUiComponentImpl(binder, stateBinder, frameView, actionView)
       this.toolbarView = toolbarView
     }
   }

@@ -17,13 +17,33 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.Presenter
+import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.pydroid.core.bus.EventBus
 
-internal interface SettingsPresenter : Presenter<SettingsPresenter.Callback> {
+internal class SettingsBinder internal constructor(
+  private val bus: EventBus<SignificantScrollEvent>
+) : UiBinder<SettingsBinder.Callback>(),
+    SettingsView.Callback {
 
-  interface Callback {
+  override fun onExplainClicked() {
+    callback.onShowExplanation()
+  }
+
+  override fun onSignificantScrollEvent(visible: Boolean) {
+    bus.publish(SignificantScrollEvent(visible))
+  }
+
+  override fun onBind() {
+  }
+
+  override fun onUnbind() {
+  }
+
+  interface Callback : UiBinder.Callback {
 
     fun onShowExplanation()
+
   }
 
 }
+

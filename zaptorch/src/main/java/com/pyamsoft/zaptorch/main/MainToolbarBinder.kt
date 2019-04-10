@@ -15,16 +15,27 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.Presenter
+import com.pyamsoft.pydroid.arch.UiBinder
 
-interface ServiceFinishPresenter : Presenter<ServiceFinishPresenter.Callback> {
+internal class MainToolbarBinder internal constructor(
+) : UiBinder<MainToolbarBinder.Callback>(),
+    MainToolbarView.Callback {
 
-  fun finish()
-
-  interface Callback {
-
-    fun onServiceFinished()
+  override fun onPrivacyPolicyClicked() {
+    callback.handleShowPrivacyPolicy()
   }
+
+  override fun onBind() {
+  }
+
+  override fun onUnbind() {
+  }
+
+  interface Callback : UiBinder.Callback {
+
+    fun handleShowPrivacyPolicy()
+  }
+
 }

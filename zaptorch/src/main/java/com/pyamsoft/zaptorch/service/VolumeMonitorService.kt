@@ -30,20 +30,20 @@ import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService(),
-    ServiceFinishPresenter.Callback,
-    ServicePresenter.Callback,
-    TorchPresenter.Callback,
-    ServiceStatePresenter.Callback {
+    ServiceFinishBinder.Callback,
+    ServiceBinder.Callback,
+    TorchBinder.Callback,
+    ServiceStateBinder.Callback {
 
-  internal lateinit var statePresenter: ServiceStatePresenter
-  internal lateinit var finishPresenter: ServiceFinishPresenter
-  internal lateinit var torchPresenter: TorchPresenter
-  internal lateinit var servicePresenter: ServicePresenter
+  internal lateinit var stateBinder: ServiceStateBinder
+  internal lateinit var finishBinder: ServiceFinishBinder
+  internal lateinit var torchBinder: TorchBinder
+  internal lateinit var serviceBinder: ServiceBinder
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    servicePresenter.handleKeyEvent(action, keyCode)
+    serviceBinder.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -62,13 +62,13 @@ class VolumeMonitorService : AccessibilityService(),
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    statePresenter.bind(this)
-    torchPresenter.bind(this)
-    servicePresenter.bind(this)
-    finishPresenter.bind(this)
+    stateBinder.bind(this)
+    torchBinder.bind(this)
+    serviceBinder.bind(this)
+    finishBinder.bind(this)
   }
 
-  override fun onCameraError(error: CameraError) {
+  override fun handleCameraError(error: CameraError) {
     applicationContext.also {
       val intent = error.intent
       intent.setClass(it, CameraErrorExplanation::class.java)
@@ -84,11 +84,11 @@ class VolumeMonitorService : AccessibilityService(),
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    statePresenter.start()
+    stateBinder.start()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    statePresenter.stop()
+    stateBinder.stop()
     return super.onUnbind(intent)
   }
 
@@ -101,10 +101,10 @@ class VolumeMonitorService : AccessibilityService(),
   override fun onDestroy() {
     super.onDestroy()
 
-    statePresenter.unbind()
-    torchPresenter.unbind()
-    servicePresenter.unbind()
-    finishPresenter.unbind()
+    stateBinder.unbind()
+    torchBinder.unbind()
+    serviceBinder.unbind()
+    finishBinder.unbind()
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

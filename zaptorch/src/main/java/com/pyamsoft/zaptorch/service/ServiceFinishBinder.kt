@@ -15,28 +15,37 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.core.bus.RxBus
-import com.pyamsoft.zaptorch.api.MainInteractor
+import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.service.ServiceFinishBinder.Callback
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-internal class MainPresenterImpl internal constructor(
-  private val interactor: MainInteractor
-) : BasePresenter<Unit, MainPresenter.Callback>(RxBus.empty()),
-    MainPresenter {
+internal class ServiceFinishBinder internal constructor(
+  private val bus: EventBus<ServiceFinishEvent>
+) : UiBinder<Callback>() {
 
   override fun onBind() {
-    interactor.onHandleKeyPressChanged()
+    bus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.onHandleKeyPressChanged(it) }
+        .subscribe { callback.onServiceFinished() }
         .destroy()
   }
 
   override fun onUnbind() {
   }
 
+  fun finish() {
+    bus.publish(ServiceFinishEvent)
+  }
+
+  interface Callback : UiBinder.Callback {
+
+    fun onServiceFinished()
+  }
+
 }
+

@@ -17,16 +17,15 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.BasePresenter
-import com.pyamsoft.pydroid.core.bus.RxBus
+import com.pyamsoft.pydroid.arch.UiBinder
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.service.ServiceStateBinder.Callback
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-internal class ServiceStatePresenterImpl internal constructor(
+internal class ServiceStateBinder internal constructor(
   private val interactor: VolumeServiceInteractor
-) : BasePresenter<Unit, ServiceStatePresenter.Callback>(RxBus.empty()),
-    ServiceStatePresenter {
+) : UiBinder<Callback>() {
 
   override fun onBind() {
     interactor.observeServiceState()
@@ -45,12 +44,21 @@ internal class ServiceStatePresenterImpl internal constructor(
   override fun onUnbind() {
   }
 
-  override fun start() {
+  fun start() {
     interactor.setServiceState(true)
   }
 
-  override fun stop() {
+  fun stop() {
     interactor.setServiceState(false)
   }
 
+  interface Callback : UiBinder.Callback {
+
+    fun onServiceStarted()
+
+    fun onServiceStopped()
+
+  }
+
 }
+

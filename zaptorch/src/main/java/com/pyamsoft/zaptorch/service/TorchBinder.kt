@@ -17,19 +17,22 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.Presenter
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 
-internal interface ServicePresenter : Presenter<ServicePresenter.Callback> {
+internal class TorchBinder internal constructor(
+  private val interactor: VolumeServiceInteractor
+) : UiBinder<TorchBinder.Callback>() {
 
-  fun handleKeyEvent(
-    action: Int,
-    keyCode: Int
-  )
-
-  interface Callback {
-
-    fun onCameraError(error: CameraError)
-
+  override fun onBind() {
   }
+
+  override fun onUnbind() {
+  }
+
+  fun toggle() {
+    interactor.toggleTorch()
+  }
+
+  interface Callback : UiBinder.Callback
 }

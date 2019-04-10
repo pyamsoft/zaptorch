@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch
 
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.zaptorch.main.MainComponent
@@ -44,6 +45,7 @@ interface ZapTorchComponent {
 
   @CheckResult
   fun plusSettingsComponent(
+    owner: LifecycleOwner,
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent

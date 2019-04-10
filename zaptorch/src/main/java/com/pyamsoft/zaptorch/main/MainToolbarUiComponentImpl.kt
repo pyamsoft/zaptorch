@@ -28,10 +28,10 @@ import com.pyamsoft.zaptorch.main.MainToolbarUiComponent.Callback
 internal class MainToolbarUiComponentImpl internal constructor(
   private val toolbar: MainToolbarView,
   private val dropshadow: DropshadowView,
-  private val presenter: MainToolbarPresenter
+  private val presenter: MainToolbarBinder
 ) : BaseUiComponent<MainToolbarUiComponent.Callback>(),
     MainToolbarUiComponent,
-    MainToolbarPresenter.Callback {
+    MainToolbarBinder.Callback {
 
   override fun id(): Int {
     return toolbar.id()
@@ -67,7 +67,7 @@ internal class MainToolbarUiComponentImpl internal constructor(
     }
   }
 
-  override fun onShowPrivacyPolicy() {
+  override fun handleShowPrivacyPolicy() {
     callback.onShowPrivacyPolicy()
   }
 }

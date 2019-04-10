@@ -20,6 +20,7 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import android.app.IntentService
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.RxBus
@@ -30,17 +31,16 @@ import com.pyamsoft.zaptorch.main.MainComponentImpl
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponentImpl
 import com.pyamsoft.zaptorch.main.MainModule
+import com.pyamsoft.zaptorch.service.ServiceBinder
+import com.pyamsoft.zaptorch.service.ServiceFinishBinder
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
-import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
-import com.pyamsoft.zaptorch.service.ServicePresenterImpl
-import com.pyamsoft.zaptorch.service.ServiceStatePresenterImpl
+import com.pyamsoft.zaptorch.service.ServiceStateBinder
+import com.pyamsoft.zaptorch.service.TorchBinder
 import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.TorchPresenterImpl
-import com.pyamsoft.zaptorch.service.TorchToggleEvent
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.service.VolumeServiceModule
 import com.pyamsoft.zaptorch.settings.ClearAllEvent
-import com.pyamsoft.zaptorch.settings.ClearAllPresenterImpl
+import com.pyamsoft.zaptorch.settings.ClearAllPresenter
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SettingsComponentImpl
@@ -58,7 +58,6 @@ internal class ZapTorchComponentImpl internal constructor(
   private val clearAllBus = RxBus.create<ClearAllEvent>()
   private val significantScrollBus = RxBus.create<SignificantScrollEvent>()
 
-  private val torchBus = RxBus.create<TorchToggleEvent>()
   private val serviceFinishBus = RxBus.create<ServiceFinishEvent>()
 
   private val schedulerProvider = moduleProvider.schedulerProvider()
@@ -74,22 +73,22 @@ internal class ZapTorchComponentImpl internal constructor(
 
   override fun inject(dialog: ConfirmationDialog) {
     dialog.apply {
-      this.presenter = ClearAllPresenterImpl(settingsModule.interactor, clearAllBus)
+      this.presenter = ClearAllPresenter(settingsModule.interactor, clearAllBus)
     }
   }
 
   override fun inject(service: TorchOffService) {
     service.apply {
-      this.presenter = TorchPresenterImpl(serviceModule.interactor)
+      this.torchBinder = TorchBinder(serviceModule.interactor)
     }
   }
 
   override fun inject(service: VolumeMonitorService) {
     service.apply {
-      this.finishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
-      this.servicePresenter = ServicePresenterImpl(serviceModule.interactor)
-      this.statePresenter = ServiceStatePresenterImpl(serviceModule.interactor)
-      this.torchPresenter = TorchPresenterImpl(serviceModule.interactor)
+      this.finishBinder = ServiceFinishBinder(serviceFinishBus)
+      this.serviceBinder = ServiceBinder(serviceModule.interactor)
+      this.stateBinder = ServiceStateBinder(serviceModule.interactor)
+      this.torchBinder = TorchBinder(serviceModule.interactor)
     }
   }
 
@@ -102,10 +101,11 @@ internal class ZapTorchComponentImpl internal constructor(
     )
 
   override fun plusSettingsComponent(
+    owner: LifecycleOwner,
     recyclerView: RecyclerView,
     preferenceScreen: PreferenceScreen
   ): SettingsComponent = SettingsComponentImpl(
-      recyclerView, preferenceScreen, settingsModule.interactor,
+      owner, recyclerView, preferenceScreen, settingsModule.interactor,
       clearAllBus, significantScrollBus, serviceFinishBus
   )
 

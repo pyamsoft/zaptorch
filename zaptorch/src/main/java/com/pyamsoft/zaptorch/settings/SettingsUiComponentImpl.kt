@@ -22,18 +22,19 @@ import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.arch.InvalidIdException
-import com.pyamsoft.zaptorch.service.ServiceFinishPresenter
+import com.pyamsoft.zaptorch.service.ServiceFinishBinder
+import com.pyamsoft.zaptorch.settings.ClearAllPresenter.ClearState
 import com.pyamsoft.zaptorch.settings.SettingsUiComponent.Callback
 import timber.log.Timber
 
 internal class SettingsUiComponentImpl internal constructor(
   private val settingsView: SettingsView,
-  private val presenter: SettingsPresenter,
-  private val serviceFinishPresenter: ServiceFinishPresenter,
+  private val binder: SettingsBinder,
+  private val serviceFinishBinder: ServiceFinishBinder,
   private val clearPresenter: ClearAllPresenter
 ) : BaseUiComponent<SettingsUiComponent.Callback>(),
     SettingsUiComponent,
-    SettingsPresenter.Callback,
+    SettingsBinder.Callback,
     ClearAllPresenter.Callback {
 
   override fun id(): Int {
@@ -47,12 +48,12 @@ internal class SettingsUiComponentImpl internal constructor(
   ) {
     owner.doOnDestroy {
       settingsView.teardown()
-      presenter.unbind()
+      binder.unbind()
       clearPresenter.unbind()
     }
 
     settingsView.inflate(savedInstanceState)
-    presenter.bind(this)
+    binder.bind(this)
     clearPresenter.bind(this)
   }
 
@@ -64,14 +65,35 @@ internal class SettingsUiComponentImpl internal constructor(
     callback.showHowTo()
   }
 
-  override fun onClearAll() {
+  override fun handleClearAll() {
     try {
-      serviceFinishPresenter.finish()
+      serviceFinishBinder.finish()
     } catch (e: NullPointerException) {
       Timber.e(e, "Expected exception when Service is NULL")
     }
 
     callback.onKillApplication()
+  }
 
+  override fun onRender(
+    state: ClearState,
+    oldState: ClearState?
+  ) {
+    renderError(state, oldState)
+  }
+
+  private fun renderError(
+    state: ClearState,
+    oldState: ClearState?
+  ) {
+    state.throwable.let { throwable ->
+      if (oldState == null || oldState.throwable != throwable) {
+        if (throwable == null) {
+          settingsView.clearError()
+        } else {
+          settingsView.showError("Error resetting settings, please try again later")
+        }
+      }
+    }
   }
 }

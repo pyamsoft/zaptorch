@@ -17,16 +17,18 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.zaptorch.api.SettingsInteractor
+import com.pyamsoft.zaptorch.service.ServiceFinishBinder
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
-import com.pyamsoft.zaptorch.service.ServiceFinishPresenterImpl
 import com.pyamsoft.zaptorch.widget.ToolbarView
 
 internal class SettingsComponentImpl internal constructor(
+  private val owner: LifecycleOwner,
   private val recyclerView: RecyclerView,
   private val preferenceScreen: PreferenceScreen,
   private val interactor: SettingsInteractor,
@@ -36,15 +38,13 @@ internal class SettingsComponentImpl internal constructor(
 ) : SettingsComponent {
 
   override fun inject(fragment: TorchPreferenceFragment) {
-    val settingsPresenter = SettingsPresenterImpl(significantScrollBus)
-    val view = SettingsView(recyclerView, preferenceScreen, settingsPresenter)
-    val clearPresenter = ClearAllPresenterImpl(interactor, clearAllBus)
-    val serviceFinishPresenter = ServiceFinishPresenterImpl(serviceFinishBus)
+    val binder = SettingsBinder(significantScrollBus)
+    val view = SettingsView(owner, recyclerView, preferenceScreen, binder)
+    val clearPresenter = ClearAllPresenter(interactor, clearAllBus)
+    val finishBinder = ServiceFinishBinder(serviceFinishBus)
 
     fragment.apply {
-      this.component = SettingsUiComponentImpl(
-          view, settingsPresenter, serviceFinishPresenter, clearPresenter
-      )
+      this.component = SettingsUiComponentImpl(view, binder, finishBinder, clearPresenter)
       this.toolbarView = ToolbarView(fragment.requireToolbarActivity())
     }
   }

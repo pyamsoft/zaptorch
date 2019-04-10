@@ -26,7 +26,7 @@ import timber.log.Timber
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  internal lateinit var presenter: TorchPresenter
+  internal lateinit var torchBinder: TorchBinder
 
   override fun onCreate() {
     super.onCreate()
@@ -42,7 +42,7 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
   override fun onHandleIntent(intent: Intent?) {
     try {
-      presenter.toggle()
+      torchBinder.toggle()
     } catch (e: IllegalStateException) {
       Timber.e(e, "onError")
     }
