@@ -99,6 +99,9 @@ dependencies {
   // PYDroid
   implementation "com.pyamsoft.pydroid:ui:$pydroid"
 
+  implementation "com.google.dagger:dagger:$dagger"
+  kapt "com.google.dagger:dagger-compiler:$dagger"
+
   implementation project(":zaptorch-base")
   implementation project(":zaptorch-main")
   implementation project(":zaptorch-service")

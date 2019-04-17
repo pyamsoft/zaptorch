@@ -15,27 +15,23 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.base
 
-import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.zaptorch.api.ClearPreferences
+import com.pyamsoft.zaptorch.api.SettingsInteractor
+import io.reactivex.Single
+import javax.inject.Inject
 
-internal class MainToolbarBinder internal constructor(
-) : UiBinder<MainToolbarBinder.Callback>(),
-    MainToolbarView.Callback {
+internal class SettingsInteractorImpl @Inject internal constructor(
+  private val enforcer: Enforcer,
+  private val clearPreferences: ClearPreferences
+) : SettingsInteractor {
 
-  override fun onPrivacyPolicyClicked() {
-    callback.handleShowPrivacyPolicy()
+  override fun clearAll(): Single<Unit> {
+    return Single.fromCallable {
+      enforcer.assertNotOnMainThread()
+      clearPreferences.clearAll()
+    }
   }
-
-  override fun onBind() {
-  }
-
-  override fun onUnbind() {
-  }
-
-  interface Callback : UiBinder.Callback {
-
-    fun handleShowPrivacyPolicy()
-  }
-
 }

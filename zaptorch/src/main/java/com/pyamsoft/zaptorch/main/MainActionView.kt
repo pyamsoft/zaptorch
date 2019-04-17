@@ -26,12 +26,14 @@ import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.main.MainActionView.Callback
+import javax.inject.Inject
 
-internal class MainActionView internal constructor(
+internal class MainActionView @Inject internal constructor(
   private val imageLoader: ImageLoader,
   parent: ViewGroup,
-  callback: MainActionView.Callback
-) : BaseUiView<MainActionView.Callback>(parent, callback) {
+  callback: Callback
+) : BaseUiView<Callback>(parent, callback) {
 
   override val layoutRoot by lazyView<FloatingActionButton>(R.id.fab)
 

@@ -23,8 +23,9 @@ import com.pyamsoft.pydroid.ui.app.ToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.InvalidIdException
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.R
+import javax.inject.Inject
 
-internal class ToolbarView internal constructor(
+internal class ToolbarView @Inject internal constructor(
   private val toolbarActivity: ToolbarActivity
 ) : UiView {
 

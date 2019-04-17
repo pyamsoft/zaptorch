@@ -27,13 +27,15 @@ import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.main.MainToolbarView.Callback
+import javax.inject.Inject
 
-internal class MainToolbarView internal constructor(
+internal class MainToolbarView @Inject internal constructor(
   private val toolbarActivityProvider: ToolbarActivityProvider,
   private val theming: Theming,
   parent: ViewGroup,
-  callback: MainToolbarView.Callback
-) : BaseUiView<MainToolbarView.Callback>(parent, callback) {
+  callback: Callback
+) : BaseUiView<Callback>(parent, callback) {
 
   override val layoutRoot by lazyView<Toolbar>(R.id.toolbar)
 

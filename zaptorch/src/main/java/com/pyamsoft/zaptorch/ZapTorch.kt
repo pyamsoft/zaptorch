@@ -21,16 +21,13 @@ import android.app.Application
 import android.app.Service
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.ui.PYDroid
-import com.pyamsoft.pydroid.ui.theme.ThemeInjector
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 
-class ZapTorch : Application(), PYDroid.Instance {
+class ZapTorch : Application() {
 
-  private var pyDroid: PYDroid? = null
-  private lateinit var theming: Theming
   private lateinit var component: ZapTorchComponent
   private lateinit var refWatcher: RefWatcher
 
@@ -49,36 +46,35 @@ class ZapTorch : Application(), PYDroid.Instance {
     Theming.IS_DEFAULT_DARK_THEME = true
     PYDroid.init(
         this,
-        this,
         getString(R.string.app_name),
         "https://github.com/pyamsoft/zaptorch/issues",
         BuildConfig.VERSION_CODE,
         BuildConfig.DEBUG
-    )
-  }
-
-  override fun getPydroid(): PYDroid? = pyDroid
-
-  override fun setPydroid(instance: PYDroid) {
-    pyDroid = instance.also {
-      component = ZapTorchComponentImpl(
-          this,
-          it.modules(),
-          TorchOffService::class.java,
-          getString(R.string.handle_volume_keys_key),
-          R.color.purple500
-      )
-      theming = it.modules()
-          .theming()
+    ) { provider ->
+      component = DaggerZapTorchComponent.factory()
+          .create(
+              this,
+              provider.theming(),
+              provider.enforcer(),
+              provider.imageLoader(),
+              TorchOffService::class.java,
+              R.color.primary,
+              getString(R.string.handle_volume_keys_key)
+          )
     }
   }
 
   override fun getSystemService(name: String): Any {
-    when (name) {
-      Injector.name -> return component
-      ThemeInjector.name -> return theming
-      else -> return super.getSystemService(name)
+    val service = PYDroid.getSystemService(name)
+    if (service != null) {
+      return service
     }
+
+    if (ZapTorchComponent::class.java.name == name) {
+      return component
+    }
+
+    return super.getSystemService(name)
   }
 
   companion object {

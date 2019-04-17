@@ -22,28 +22,26 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.pydroid.arch.renderOnChange
+import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+import com.pyamsoft.zaptorch.service.CameraViewModel.ServiceState
+import com.pyamsoft.zaptorch.service.ServiceFinishViewModel.FinishState
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
+import javax.inject.Inject
 
-class VolumeMonitorService : AccessibilityService(),
-    ServiceFinishBinder.Callback,
-    ServiceBinder.Callback,
-    TorchBinder.Callback,
-    ServiceStateBinder.Callback {
+class VolumeMonitorService : AccessibilityService() {
 
-  internal lateinit var stateBinder: ServiceStateBinder
-  internal lateinit var finishBinder: ServiceFinishBinder
-  internal lateinit var torchBinder: TorchBinder
-  internal lateinit var serviceBinder: ServiceBinder
+  @field:Inject internal lateinit var stateViewModel: ServiceStateViewModel
+  @field:Inject internal lateinit var finishViewModel: ServiceFinishViewModel
+  @field:Inject internal lateinit var cameraViewModel: CameraViewModel
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    serviceBinder.handleKeyEvent(action, keyCode)
+    cameraViewModel.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -62,49 +60,57 @@ class VolumeMonitorService : AccessibilityService(),
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    stateBinder.bind(this)
-    torchBinder.bind(this)
-    serviceBinder.bind(this)
-    finishBinder.bind(this)
-  }
-
-  override fun handleCameraError(error: CameraError) {
-    applicationContext.also {
-      val intent = error.intent
-      intent.setClass(it, CameraErrorExplanation::class.java)
-      it.startActivity(intent)
+    cameraViewModel.bind { state, oldState ->
+      renderError(state, oldState)
+    }
+    finishViewModel.bind { state, oldState ->
+      renderFinish(state, oldState)
     }
   }
 
-  override fun onServiceFinished() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      disableSelf()
+  private fun renderError(
+    state: ServiceState,
+    oldState: ServiceState?
+  ) {
+    state.renderOnChange(oldState, value = { it.throwable }) { throwable ->
+      if (throwable != null) {
+        applicationContext.also {
+          val intent = throwable.intent
+          intent.setClass(it, CameraErrorExplanation::class.java)
+          it.startActivity(intent)
+        }
+      }
+    }
+  }
+
+  private fun renderFinish(
+    state: FinishState,
+    oldState: FinishState?
+  ) {
+    state.renderOnChange(oldState, value = { it.isFinished }) { finished ->
+      if (finished) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          disableSelf()
+        }
+      }
     }
   }
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    stateBinder.start()
+    stateViewModel.start()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    stateBinder.stop()
+    stateViewModel.stop()
     return super.onUnbind(intent)
-  }
-
-  override fun onServiceStarted() {
-  }
-
-  override fun onServiceStopped() {
   }
 
   override fun onDestroy() {
     super.onDestroy()
 
-    stateBinder.unbind()
-    torchBinder.unbind()
-    serviceBinder.unbind()
-    finishBinder.unbind()
+    finishViewModel.unbind()
+    cameraViewModel.unbind()
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

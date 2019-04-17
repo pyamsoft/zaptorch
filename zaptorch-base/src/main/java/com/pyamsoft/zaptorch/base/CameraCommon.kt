@@ -15,7 +15,7 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.base
 
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException

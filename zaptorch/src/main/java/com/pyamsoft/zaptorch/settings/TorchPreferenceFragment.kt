@@ -21,19 +21,21 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.pyamsoft.pydroid.ui.Injector
+import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
+import javax.inject.Inject
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
     SettingsUiComponent.Callback {
 
-  internal lateinit var component: SettingsUiComponent
-  internal lateinit var toolbarView: ToolbarView
+  @field:Inject internal lateinit var component: SettingsUiComponent
+  @field:Inject internal lateinit var toolbarView: ToolbarView
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -44,7 +46,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
     super.onViewCreated(view, savedInstanceState)
 
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent(viewLifecycleOwner, listView, preferenceScreen)
+        .plusSettingsComponent()
+        .create(viewLifecycleOwner, requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
     component.bind(viewLifecycleOwner, savedInstanceState, this)

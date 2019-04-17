@@ -23,18 +23,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.pyamsoft.pydroid.ui.Injector
+import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
+import javax.inject.Inject
 
 class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
 
-  internal lateinit var component: MainFragmentUiComponent
-  internal lateinit var toolbarView: ToolbarView
+  @field:Inject internal lateinit var component: MainFragmentUiComponent
+  @field:Inject internal lateinit var toolbarView: ToolbarView
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -52,7 +54,8 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
 
     val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusMainFragmentComponent(layoutRoot)
+        .plusMainFragmentComponent()
+        .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
         .inject(this)
 
     component.bind(viewLifecycleOwner, savedInstanceState, this)
@@ -72,12 +75,12 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
     component.saveState(outState)
   }
 
-  override fun showUsageAccessRequestDialog() {
+  override fun onShowUsageAccessRequestDialog() {
     AccessibilityRequestDialog()
         .show(requireActivity(), "accessibility")
   }
 
-  override fun showInfoDialog() {
+  override fun onShowInfoDialog() {
     ServiceInfoDialog()
         .show(requireActivity(), "service_info")
   }

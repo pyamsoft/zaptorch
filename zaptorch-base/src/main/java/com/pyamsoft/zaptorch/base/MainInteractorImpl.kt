@@ -15,7 +15,7 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.base
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.pyamsoft.pydroid.core.threads.Enforcer
@@ -23,8 +23,11 @@ import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class MainInteractorImpl internal constructor(
+@Singleton
+internal class MainInteractorImpl @Inject internal constructor(
   private val handleKeyPressKey: String,
   private val enforcer: Enforcer,
   private val preferences: UIPreferences

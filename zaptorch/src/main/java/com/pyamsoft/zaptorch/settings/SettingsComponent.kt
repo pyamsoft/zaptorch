@@ -17,8 +17,52 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
+import androidx.preference.PreferenceScreen
+import androidx.recyclerview.widget.RecyclerView
+import com.pyamsoft.pydroid.arch.UiEventHandler
+import com.pyamsoft.pydroid.ui.app.ToolbarActivity
+import com.pyamsoft.zaptorch.settings.SettingsComponent.SettingsModule
+import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent
+import dagger.Binds
+import dagger.BindsInstance
+import dagger.Module
+import dagger.Subcomponent
+
+@Subcomponent(modules = [SettingsModule::class])
 interface SettingsComponent {
 
   fun inject(fragment: TorchPreferenceFragment)
+
+  @Subcomponent.Factory
+  interface Factory {
+
+    @CheckResult
+    fun create(
+      @BindsInstance owner: LifecycleOwner,
+      @BindsInstance toolbarActivity: ToolbarActivity,
+      @BindsInstance listView: RecyclerView,
+      @BindsInstance preferenceScreen: PreferenceScreen
+    ): SettingsComponent
+
+  }
+
+  @Module
+  abstract class SettingsModule {
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindUiComponent(impl: SettingsUiComponentImpl): SettingsUiComponent
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindUiCallback(impl: SettingsHandler): SettingsView.Callback
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindUiHandler(impl: SettingsHandler): UiEventHandler<SettingsEvent, SettingsView.Callback>
+
+  }
 
 }

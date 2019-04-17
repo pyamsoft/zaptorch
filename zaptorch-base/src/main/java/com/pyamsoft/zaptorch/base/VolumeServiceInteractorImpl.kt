@@ -15,7 +15,7 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.base
 
 import android.app.IntentService
 import android.app.Notification
@@ -42,8 +42,11 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import timber.log.Timber
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class VolumeServiceInteractorImpl internal constructor(
+@Singleton
+internal class VolumeServiceInteractorImpl @Inject internal constructor(
   private val enforcer: Enforcer,
   private val context: Context,
   private val preferences: CameraPreferences,
@@ -168,21 +171,24 @@ internal class VolumeServiceInteractorImpl internal constructor(
   }
 
   override fun setupCamera() {
-    val camera: CameraCommon = MarshmallowCamera(context, this).apply {
-      setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
-        override fun onOpened() {
-          notificationManagerCompat.notify(NOTIFICATION_ID, notification)
-        }
+    val camera: CameraCommon = MarshmallowCamera(
+        context, this
+    )
+        .apply {
+          setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
+            override fun onOpened() {
+              notificationManagerCompat.notify(NOTIFICATION_ID, notification)
+            }
 
-        override fun onClosed() {
-          notificationManagerCompat.cancel(NOTIFICATION_ID)
-        }
+            override fun onClosed() {
+              notificationManagerCompat.cancel(NOTIFICATION_ID)
+            }
 
-        override fun onError(error: CameraError) {
-          cameraErrorBus.publish(error)
+            override fun onError(error: CameraError) {
+              cameraErrorBus.publish(error)
+            }
+          })
         }
-      })
-    }
 
     releaseCamera()
     cameraInterface = camera

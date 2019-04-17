@@ -17,29 +17,39 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.pydroid.arch.UiState
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.zaptorch.api.MainInteractor
+import com.pyamsoft.zaptorch.main.MainViewModel.MainState
+import com.pyamsoft.zaptorch.main.MainViewModel.MainState.Handle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-internal class MainBinder internal constructor(
+internal class MainViewModel @Inject internal constructor(
   private val interactor: MainInteractor
-) : UiBinder<MainBinder.Callback>() {
+) : UiViewModel<MainState>(
+    initialState = MainState(isHandling = null)
+) {
 
   override fun onBind() {
     interactor.onHandleKeyPressChanged()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.handleKeypressChanged(it) }
+        .subscribe { handleKeypressChanged(it) }
         .destroy()
+  }
+
+  private fun handleKeypressChanged(handle: Boolean) {
+    setUniqueState(Handle(handle), old = { it.isHandling }) { state, value ->
+      state.copy(isHandling = value)
+    }
   }
 
   override fun onUnbind() {
   }
 
-  interface Callback : UiBinder.Callback {
-
-    fun handleKeypressChanged(handle: Boolean)
+  data class MainState(val isHandling: Handle?) : UiState {
+    data class Handle(val isHandling: Boolean)
   }
-
 }

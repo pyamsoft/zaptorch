@@ -17,48 +17,39 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.UiBinder
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.service.ServiceStateBinder.Callback
+import com.pyamsoft.pydroid.arch.UiState
+import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.zaptorch.service.ServiceFinishViewModel.FinishState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-internal class ServiceStateBinder internal constructor(
-  private val interactor: VolumeServiceInteractor
-) : UiBinder<Callback>() {
+internal class ServiceFinishViewModel @Inject internal constructor(
+  private val bus: EventBus<ServiceFinishEvent>
+) : UiViewModel<FinishState>(
+    initialState = FinishState(isFinished = false)
+) {
 
   override fun onBind() {
-    interactor.observeServiceState()
+    bus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe {
-          if (it) {
-            callback.onServiceStarted()
-          } else {
-            callback.onServiceStopped()
-          }
-        }
+        .subscribe { handleServiceFinished() }
         .destroy()
+  }
+
+  private fun handleServiceFinished() {
+    setState { copy(isFinished = true) }
   }
 
   override fun onUnbind() {
   }
 
-  fun start() {
-    interactor.setServiceState(true)
+  fun finish() {
+    bus.publish(ServiceFinishEvent)
   }
 
-  fun stop() {
-    interactor.setServiceState(false)
-  }
-
-  interface Callback : UiBinder.Callback {
-
-    fun onServiceStarted()
-
-    fun onServiceStopped()
-
-  }
+  data class FinishState(val isFinished: Boolean) : UiState
 
 }
-

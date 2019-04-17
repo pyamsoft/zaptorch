@@ -21,12 +21,13 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
 
-  internal lateinit var presenter: ClearAllPresenter
+  @field:Inject internal lateinit var viewModel: ClearAllViewModel
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
@@ -35,7 +36,7 @@ class ConfirmationDialog : DialogFragment() {
     return AlertDialog.Builder(requireActivity())
         .setMessage("Really clear all application settings?")
         .setPositiveButton("Yes") { _, _ ->
-          presenter.clearAll()
+          viewModel.clearAll()
           dismiss()
         }
         .setNegativeButton("No") { _, _ -> dismiss() }

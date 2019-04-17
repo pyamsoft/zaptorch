@@ -15,26 +15,16 @@
  *
  */
 
-package com.pyamsoft.zaptorch
+package com.pyamsoft.zaptorch.service
 
-import android.annotation.SuppressLint
-import android.content.Context
-import androidx.annotation.CheckResult
+import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import javax.inject.Inject
 
-object Injector {
+internal class TorchToggle @Inject internal constructor(
+  private val interactor: VolumeServiceInteractor
+) {
 
-  const val name: String = "com.pyamsoft.zaptorch.INJECTOR"
-
-  @SuppressLint("WrongConstant")
-  @CheckResult
-  @JvmStatic
-  fun <T : Any> obtain(context: Context): T {
-    val service: Any? = context.getSystemService(name)
-    if (service == null) {
-      throw IllegalStateException("No service found for: $name")
-    } else {
-      @Suppress("UNCHECKED_CAST")
-      return service as T
-    }
+  fun toggle() {
+    interactor.toggleTorch()
   }
 }

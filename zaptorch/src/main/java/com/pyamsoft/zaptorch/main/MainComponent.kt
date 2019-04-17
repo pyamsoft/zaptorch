@@ -17,8 +17,67 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.view.ViewGroup
+import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.arch.UiEventHandler
+import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
+import com.pyamsoft.zaptorch.main.MainComponent.MainModule
+import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent
+import dagger.Binds
+import dagger.BindsInstance
+import dagger.Module
+import dagger.Provides
+import dagger.Subcomponent
+
+@Subcomponent(modules = [MainModule::class])
 interface MainComponent {
 
   fun inject(activity: MainActivity)
 
+  @Subcomponent.Factory
+  interface Factory {
+
+    @CheckResult
+    fun create(
+      @BindsInstance owner: LifecycleOwner,
+      @BindsInstance parent: ViewGroup,
+      @BindsInstance toolbarActivityProvider: ToolbarActivityProvider
+    ): MainComponent
+
+  }
+
+  @Module
+  abstract class MainModule {
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindUiComponent(impl: MainUiComponentImpl): MainUiComponent
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindToolbarComponent(impl: MainToolbarUiComponentImpl): MainToolbarUiComponent
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindCallback(impl: MainToolbarHandler): MainToolbarView.Callback
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindHandler(impl: MainToolbarHandler): UiEventHandler<ToolbarEvent, MainToolbarView.Callback>
+
+    @Module
+    companion object {
+
+      @Provides
+      @JvmStatic
+      @CheckResult
+      fun provideDropshadow(parent: ViewGroup): DropshadowView {
+        return DropshadowView(parent)
+      }
+    }
+  }
+
 }
+

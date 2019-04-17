@@ -26,13 +26,15 @@ import com.pyamsoft.pydroid.ui.arch.PrefUiView
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
 import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.settings.SettingsView.Callback
+import javax.inject.Inject
 
-internal class SettingsView internal constructor(
+internal class SettingsView @Inject internal constructor(
   private val owner: LifecycleOwner,
   private val recyclerView: RecyclerView,
   parent: PreferenceScreen,
-  callback: SettingsView.Callback
-) : PrefUiView<SettingsView.Callback>(parent, callback) {
+  callback: Callback
+) : PrefUiView<Callback>(parent, callback) {
 
   private val explain by lazyPref<Preference>(R.string.zaptorch_explain_key)
 

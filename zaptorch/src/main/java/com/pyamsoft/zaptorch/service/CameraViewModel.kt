@@ -17,17 +17,22 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.UiBinder
+import com.pyamsoft.pydroid.arch.UiState
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.service.CameraViewModel.ServiceState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-internal class ServiceBinder internal constructor(
+internal class CameraViewModel @Inject internal constructor(
   private val interactor: VolumeServiceInteractor
-) : UiBinder<ServiceBinder.Callback>() {
+) : UiViewModel<ServiceState>(
+    initialState = ServiceState(throwable = null)
+) {
 
   private var keyEventDisposable by singleDisposable()
 
@@ -37,8 +42,12 @@ internal class ServiceBinder internal constructor(
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { interactor.setupCamera() }
         .doAfterTerminate { interactor.releaseCamera() }
-        .subscribe { callback.handleCameraError(it) }
+        .subscribe { handleCameraError(it) }
         .destroy()
+  }
+
+  private fun handleCameraError(error: CameraError) {
+    setState { copy(throwable = error) }
   }
 
   override fun onUnbind() {
@@ -55,10 +64,6 @@ internal class ServiceBinder internal constructor(
         .subscribe()
   }
 
-  interface Callback : UiBinder.Callback {
-
-    fun handleCameraError(error: CameraError)
-
-  }
+  data class ServiceState(val throwable: CameraError?) : UiState
 
 }

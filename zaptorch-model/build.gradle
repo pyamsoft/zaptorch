@@ -63,8 +63,5 @@ kapt {
 }
 
 dependencies {
-  api "androidx.recyclerview:recyclerview:$recyclerView"
-  api "androidx.annotation:annotation:$annotation"
-  api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

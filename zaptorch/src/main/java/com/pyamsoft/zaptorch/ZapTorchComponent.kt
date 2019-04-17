@@ -17,18 +17,36 @@
 
 package com.pyamsoft.zaptorch
 
-import android.view.ViewGroup
+import android.app.IntentService
+import android.content.Context
 import androidx.annotation.CheckResult
-import androidx.lifecycle.LifecycleOwner
-import androidx.preference.PreferenceScreen
-import androidx.recyclerview.widget.RecyclerView
+import com.pyamsoft.pydroid.core.bus.EventBus
+import com.pyamsoft.pydroid.core.bus.RxBus
+import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.loader.ImageLoader
+import com.pyamsoft.pydroid.ui.theme.Theming
+import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
+import com.pyamsoft.zaptorch.base.BaseModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
+import com.pyamsoft.zaptorch.main.MainHandler.MainEvent
+import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent
+import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
+import com.pyamsoft.zaptorch.settings.ClearAllEvent
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
+import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent
+import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
+import dagger.BindsInstance
+import dagger.Component
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
+@Singleton
+@Component(modules = [ZaptorchModule::class, BaseModule::class])
 interface ZapTorchComponent {
 
   fun inject(dialog: ConfirmationDialog)
@@ -38,16 +56,84 @@ interface ZapTorchComponent {
   fun inject(service: VolumeMonitorService)
 
   @CheckResult
-  fun plusMainComponent(parent: ViewGroup): MainComponent
+  fun plusMainComponent(): MainComponent.Factory
 
   @CheckResult
-  fun plusMainFragmentComponent(parent: ViewGroup): MainFragmentComponent
+  fun plusMainFragmentComponent(): MainFragmentComponent.Factory
 
   @CheckResult
-  fun plusSettingsComponent(
-    owner: LifecycleOwner,
-    recyclerView: RecyclerView,
-    preferenceScreen: PreferenceScreen
-  ): SettingsComponent
+  fun plusSettingsComponent(): SettingsComponent.Factory
 
+  @Component.Factory
+  interface Factory {
+
+    @CheckResult
+    fun create(
+      @BindsInstance context: Context,
+      @BindsInstance theming: Theming,
+      @BindsInstance enforcer: Enforcer,
+      @BindsInstance imageLoader: ImageLoader,
+      @BindsInstance serviceClass: Class<out IntentService>,
+      @BindsInstance notificationColor: Int,
+      @BindsInstance handleKeyPressKey: String
+    ): ZapTorchComponent
+  }
+
+  @Module
+  abstract class ZaptorchModule {
+
+    @Module
+    companion object {
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideClearBus(): EventBus<ClearAllEvent> {
+        return RxBus.create()
+      }
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
+        return RxBus.create()
+      }
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideSettingsEventBus(): EventBus<SettingsEvent> {
+        return RxBus.create()
+      }
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideMainEventBus(): EventBus<MainEvent> {
+        return RxBus.create()
+      }
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideToolbarEventBus(): EventBus<ToolbarEvent> {
+        return RxBus.create()
+      }
+
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
+        return RxBus.create()
+      }
+
+    }
+  }
 }
+

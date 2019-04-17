@@ -25,11 +25,13 @@ import androidx.preference.PreferenceManager
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class ZapTorchPreferencesImpl(
+@Singleton
+internal class ZapTorchPreferencesImpl @Inject internal constructor(
   context: Context
-) : CameraPreferences,
-    ClearPreferences, UIPreferences {
+) : CameraPreferences, ClearPreferences, UIPreferences {
 
   private val doublePressDelayKey: String
   private val displayCameraErrorsKey: String

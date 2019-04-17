@@ -22,16 +22,18 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
+import com.pyamsoft.pydroid.arch.renderOnChange
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
 import com.pyamsoft.zaptorch.main.MainToolbarUiComponent.Callback
+import com.pyamsoft.zaptorch.main.MainToolbarViewModel.ToolbarState
+import javax.inject.Inject
 
-internal class MainToolbarUiComponentImpl internal constructor(
+internal class MainToolbarUiComponentImpl @Inject internal constructor(
   private val toolbar: MainToolbarView,
   private val dropshadow: DropshadowView,
-  private val presenter: MainToolbarBinder
-) : BaseUiComponent<MainToolbarUiComponent.Callback>(),
-    MainToolbarUiComponent,
-    MainToolbarBinder.Callback {
+  private val viewModel: MainToolbarViewModel
+) : BaseUiComponent<Callback>(),
+    MainToolbarUiComponent {
 
   override fun id(): Int {
     return toolbar.id()
@@ -45,12 +47,25 @@ internal class MainToolbarUiComponentImpl internal constructor(
     owner.doOnDestroy {
       toolbar.teardown()
       dropshadow.teardown()
-      presenter.unbind()
+      viewModel.unbind()
     }
 
     toolbar.inflate(savedInstanceState)
     dropshadow.inflate(savedInstanceState)
-    presenter.bind(this)
+    viewModel.bind { state, oldState ->
+      renderPrivacyPolicy(state, oldState)
+    }
+  }
+
+  private fun renderPrivacyPolicy(
+    state: ToolbarState,
+    oldState: ToolbarState?
+  ) {
+    state.renderOnChange(oldState, value = { it.isShowingPolicy }) { show ->
+      if (show) {
+        callback.onShowPrivacyPolicy()
+      }
+    }
   }
 
   override fun onSaveState(outState: Bundle) {
@@ -65,9 +80,5 @@ internal class MainToolbarUiComponentImpl internal constructor(
       set.connect(it.id(), ConstraintSet.END, toolbar.id(), ConstraintSet.END)
       set.constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
     }
-  }
-
-  override fun handleShowPrivacyPolicy() {
-    callback.onShowPrivacyPolicy()
   }
 }

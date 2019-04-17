@@ -23,9 +23,9 @@ internal interface MainFragmentUiComponent : UiComponent<MainFragmentUiComponent
 
   interface Callback {
 
-    fun showInfoDialog()
+    fun onShowInfoDialog()
 
-    fun showUsageAccessRequestDialog()
+    fun onShowUsageAccessRequestDialog()
 
   }
 }

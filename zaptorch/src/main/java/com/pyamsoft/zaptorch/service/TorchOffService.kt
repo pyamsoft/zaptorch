@@ -19,14 +19,15 @@ package com.pyamsoft.zaptorch.service
 
 import android.app.IntentService
 import android.content.Intent
-import com.pyamsoft.zaptorch.Injector
+import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
+import javax.inject.Inject
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  internal lateinit var torchBinder: TorchBinder
+  @field:Inject internal lateinit var torchToggle: TorchToggle
 
   override fun onCreate() {
     super.onCreate()
@@ -42,7 +43,7 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
   override fun onHandleIntent(intent: Intent?) {
     try {
-      torchBinder.toggle()
+      torchToggle.toggle()
     } catch (e: IllegalStateException) {
       Timber.e(e, "onError")
     }

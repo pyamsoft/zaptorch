@@ -24,26 +24,27 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.pyamsoft.pydroid.arch.layout
+import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
-import com.pyamsoft.pydroid.ui.theme.ThemeInjector
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
-import com.pyamsoft.zaptorch.Injector
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
 class MainActivity : RatingActivity(),
     MainUiComponent.Callback,
     MainToolbarUiComponent.Callback {
 
-  internal lateinit var toolbarComponent: MainToolbarUiComponent
-  internal lateinit var component: MainUiComponent
+  @field:Inject internal lateinit var toolbarComponent: MainToolbarUiComponent
+  @field:Inject internal lateinit var component: MainUiComponent
 
   private var handleKeyPress: Boolean = false
 
@@ -64,7 +65,7 @@ class MainActivity : RatingActivity(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    if (ThemeInjector.obtain(applicationContext).isDarkTheme()) {
+    if (Injector.obtain<Theming>(applicationContext).isDarkTheme()) {
       setTheme(R.style.Theme_ZapTorch_Dark)
     } else {
       setTheme(R.style.Theme_ZapTorch_Light)
@@ -74,7 +75,8 @@ class MainActivity : RatingActivity(),
 
     val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
     Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent(layoutRoot)
+        .plusMainComponent()
+        .create(this, layoutRoot, this)
         .inject(this)
 
     component.bind(layoutRoot, this, savedInstanceState, this)

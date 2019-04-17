@@ -21,21 +21,22 @@ import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
+import com.pyamsoft.pydroid.arch.renderOnChange
 import com.pyamsoft.pydroid.ui.arch.InvalidIdException
-import com.pyamsoft.zaptorch.service.ServiceFinishBinder
-import com.pyamsoft.zaptorch.settings.ClearAllPresenter.ClearState
+import com.pyamsoft.zaptorch.service.ServiceFinishViewModel
+import com.pyamsoft.zaptorch.settings.ClearAllViewModel.ClearState
 import com.pyamsoft.zaptorch.settings.SettingsUiComponent.Callback
+import com.pyamsoft.zaptorch.settings.SettingsViewModel.SettingsState
 import timber.log.Timber
+import javax.inject.Inject
 
-internal class SettingsUiComponentImpl internal constructor(
+internal class SettingsUiComponentImpl @Inject internal constructor(
   private val settingsView: SettingsView,
-  private val binder: SettingsBinder,
-  private val serviceFinishBinder: ServiceFinishBinder,
-  private val clearPresenter: ClearAllPresenter
-) : BaseUiComponent<SettingsUiComponent.Callback>(),
-    SettingsUiComponent,
-    SettingsBinder.Callback,
-    ClearAllPresenter.Callback {
+  private val viewModel: SettingsViewModel,
+  private val serviceFinishViewModel: ServiceFinishViewModel,
+  private val clearViewModel: ClearAllViewModel
+) : BaseUiComponent<Callback>(),
+    SettingsUiComponent {
 
   override fun id(): Int {
     throw InvalidIdException
@@ -48,38 +49,49 @@ internal class SettingsUiComponentImpl internal constructor(
   ) {
     owner.doOnDestroy {
       settingsView.teardown()
-      binder.unbind()
-      clearPresenter.unbind()
+      viewModel.unbind()
+      clearViewModel.unbind()
     }
 
     settingsView.inflate(savedInstanceState)
-    binder.bind(this)
-    clearPresenter.bind(this)
+    viewModel.bind { state, oldState ->
+      renderExplain(state, oldState)
+    }
+    clearViewModel.bind { state, oldState ->
+      renderClear(state, oldState)
+      renderError(state, oldState)
+    }
+  }
+
+  private fun renderExplain(
+    state: SettingsState,
+    oldState: SettingsState?
+  ) {
+    state.renderOnChange(oldState, value = { it.isExplaining }) { explain ->
+      if (explain) {
+        callback.showHowTo()
+      }
+    }
   }
 
   override fun onSaveState(outState: Bundle) {
     settingsView.saveState(outState)
   }
 
-  override fun onShowExplanation() {
-    callback.showHowTo()
-  }
-
-  override fun handleClearAll() {
-    try {
-      serviceFinishBinder.finish()
-    } catch (e: NullPointerException) {
-      Timber.e(e, "Expected exception when Service is NULL")
-    }
-
-    callback.onKillApplication()
-  }
-
-  override fun onRender(
+  private fun renderClear(
     state: ClearState,
     oldState: ClearState?
   ) {
-    renderError(state, oldState)
+    state.renderOnChange(oldState, value = { it.isClearing }) { clearing ->
+      if (clearing) {
+        try {
+          serviceFinishViewModel.finish()
+        } catch (e: NullPointerException) {
+          Timber.e(e, "Expected exception when Service is NULL")
+        }
+        callback.onKillApplication()
+      }
+    }
   }
 
   private fun renderError(

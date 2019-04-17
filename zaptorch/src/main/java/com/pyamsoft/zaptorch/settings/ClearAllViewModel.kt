@@ -17,32 +17,32 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.Presenter
+import com.pyamsoft.pydroid.arch.UiState
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.SettingsInteractor
-import com.pyamsoft.zaptorch.settings.ClearAllPresenter.ClearState
+import com.pyamsoft.zaptorch.settings.ClearAllViewModel.ClearState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import javax.inject.Inject
 
-class ClearAllPresenter internal constructor(
+class ClearAllViewModel @Inject internal constructor(
   private val interactor: SettingsInteractor,
   private val bus: EventBus<ClearAllEvent>
-) : Presenter<ClearState, ClearAllPresenter.Callback>() {
+) : UiViewModel<ClearState>(
+    initialState = ClearState(isClearing = false, throwable = null)
+) {
 
   private var clearDisposable by singleDisposable()
-
-  override fun initialState(): ClearState {
-    return ClearState(throwable = null)
-  }
 
   override fun onBind() {
     bus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { callback.handleClearAll() }
+        .subscribe { handleClearAll() }
         .destroy()
   }
 
@@ -55,23 +55,30 @@ class ClearAllPresenter internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({ bus.publish(ClearAllEvent) }, {
-          Timber.e(it, "Error clearing all")
+          Timber.e(it, "Error clearing all settings")
           handleClearAllError(it)
         })
   }
 
-  private fun handleClearAllError(throwable: Throwable) {
+  private fun handleClearAll() {
     setState {
-      copy(throwable = throwable)
+      copy(throwable = null).also {
+        setUniqueState(true, old = { it.isClearing }) { state, value ->
+          state.copy(isClearing = value)
+        }
+      }
     }
   }
 
-  data class ClearState(val throwable: Throwable?)
-
-  interface Callback : Presenter.Callback<ClearState> {
-
-    fun handleClearAll()
-
+  private fun handleClearAllError(throwable: Throwable) {
+    setState {
+      copy(isClearing = false, throwable = throwable)
+    }
   }
+
+  data class ClearState(
+    val isClearing: Boolean,
+    val throwable: Throwable?
+  ) : UiState
 }
 

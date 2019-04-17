@@ -22,16 +22,17 @@ import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
-import com.pyamsoft.pydroid.ui.navigation.FailedNavigationBinder
+import com.pyamsoft.pydroid.arch.renderOnChange
+import com.pyamsoft.pydroid.ui.navigation.NavigationViewModel
 import com.pyamsoft.zaptorch.main.MainUiComponent.Callback
+import com.pyamsoft.zaptorch.main.MainViewModel.MainState
+import javax.inject.Inject
 
-internal class MainUiComponentImpl internal constructor(
+internal class MainUiComponentImpl @Inject internal constructor(
   private val frameView: MainFrameView,
-  private val binder: MainBinder,
-  private val failedNavigation: FailedNavigationBinder
-) : BaseUiComponent<MainUiComponent.Callback>(),
-    MainUiComponent,
-    MainBinder.Callback {
+  private val viewModel: MainViewModel
+) : BaseUiComponent<Callback>(),
+    MainUiComponent {
 
   override fun id(): Int {
     return frameView.id()
@@ -44,11 +45,24 @@ internal class MainUiComponentImpl internal constructor(
   ) {
     owner.doOnDestroy {
       frameView.teardown()
-      binder.unbind()
+      viewModel.unbind()
     }
 
     frameView.inflate(savedInstanceState)
-    binder.bind(this)
+    viewModel.bind { state, oldState ->
+      renderKeypress(state, oldState)
+    }
+  }
+
+  private fun renderKeypress(
+    state: MainState,
+    oldState: MainState?
+  ) {
+    state.renderOnChange(oldState, value = { it.isHandling }) { handling ->
+      if (handling != null) {
+        callback.onHandleKeyPressChanged(handling.isHandling)
+      }
+    }
   }
 
   override fun onSaveState(outState: Bundle) {
@@ -56,11 +70,7 @@ internal class MainUiComponentImpl internal constructor(
   }
 
   override fun failedNavigation(error: ActivityNotFoundException) {
-    failedNavigation.failedNavigation(error)
-  }
-
-  override fun handleKeypressChanged(handle: Boolean) {
-    callback.onHandleKeyPressChanged(handle)
+    frameView.showError()
   }
 
 }
