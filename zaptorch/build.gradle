@@ -103,8 +103,5 @@ dependencies {
   kapt "com.google.dagger:dagger-compiler:$dagger"
 
   implementation project(":zaptorch-base")
-  implementation project(":zaptorch-main")
-  implementation project(":zaptorch-service")
-  implementation project(":zaptorch-settings")
 }
 

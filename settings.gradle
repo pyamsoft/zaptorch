@@ -15,5 +15,5 @@
  *
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-main', ':zaptorch-model', ':zaptorch-api',
-    ':zaptorch-settings', ':zaptorch-service'
+include ':zaptorch', ':zaptorch-base', ':zaptorch-api'
+
