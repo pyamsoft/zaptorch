@@ -23,7 +23,6 @@ import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent
 import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent.Explain
 import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent.ScrollEvent
 import com.pyamsoft.zaptorch.settings.SettingsView.Callback
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -44,7 +43,7 @@ internal class SettingsHandler @Inject internal constructor(
   override fun handle(delegate: Callback): Disposable {
     return listen()
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+        .observeOn(Schedulers.io())
         .subscribe {
           return@subscribe when (it) {
             is Explain -> delegate.onExplainClicked()

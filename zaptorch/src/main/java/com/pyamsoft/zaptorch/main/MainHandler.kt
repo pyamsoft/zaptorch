@@ -22,7 +22,6 @@ import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.main.MainActionView.Callback
 import com.pyamsoft.zaptorch.main.MainHandler.MainEvent
 import com.pyamsoft.zaptorch.main.MainHandler.MainEvent.ActionClicked
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -39,7 +38,7 @@ internal class MainHandler @Inject internal constructor(
   override fun handle(delegate: Callback): Disposable {
     return listen()
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+        .observeOn(Schedulers.io())
         .subscribe {
           return@subscribe when (it) {
             is ActionClicked -> delegate.onActionButtonClicked(it.running)

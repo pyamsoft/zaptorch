@@ -22,7 +22,6 @@ import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent
 import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent.ShowPolicy
 import com.pyamsoft.zaptorch.main.MainToolbarView.Callback
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -39,7 +38,7 @@ internal class MainToolbarHandler @Inject internal constructor(
   override fun handle(delegate: Callback): Disposable {
     return listen()
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+        .observeOn(Schedulers.io())
         .subscribe {
           return@subscribe when (it) {
             is ShowPolicy -> delegate.onPrivacyPolicyClicked()

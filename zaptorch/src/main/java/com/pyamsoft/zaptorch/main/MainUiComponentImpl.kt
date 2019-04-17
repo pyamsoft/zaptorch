@@ -23,7 +23,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.arch.renderOnChange
-import com.pyamsoft.pydroid.ui.navigation.NavigationViewModel
 import com.pyamsoft.zaptorch.main.MainUiComponent.Callback
 import com.pyamsoft.zaptorch.main.MainViewModel.MainState
 import javax.inject.Inject
