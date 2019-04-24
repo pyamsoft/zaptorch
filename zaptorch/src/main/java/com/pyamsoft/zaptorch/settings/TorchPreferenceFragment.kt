@@ -34,8 +34,8 @@ import javax.inject.Inject
 class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
     SettingsUiComponent.Callback {
 
-  @field:Inject internal lateinit var component: SettingsUiComponent
-  @field:Inject internal lateinit var toolbarView: ToolbarView
+  @JvmField @Inject internal var component: SettingsUiComponent? = null
+  @JvmField @Inject internal var toolbarView: ToolbarView? = null
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -50,19 +50,22 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
         .create(viewLifecycleOwner, requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
-    component.bind(viewLifecycleOwner, savedInstanceState, this)
-    toolbarView.inflate(savedInstanceState)
+    requireNotNull(component).bind(viewLifecycleOwner, savedInstanceState, this)
+    requireNotNull(toolbarView).inflate(savedInstanceState)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    toolbarView.saveState(outState)
-    component.saveState(outState)
+    toolbarView?.saveState(outState)
+    component?.saveState(outState)
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    toolbarView.teardown()
+    toolbarView?.teardown()
+
+    toolbarView = null
+    component = null
   }
 
   override fun onKillApplication() {

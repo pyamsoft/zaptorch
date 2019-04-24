@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
 
-  @field:Inject internal lateinit var viewModel: ClearAllViewModel
+  @JvmField @Inject internal var viewModel: ClearAllViewModel? = null
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
@@ -36,10 +36,15 @@ class ConfirmationDialog : DialogFragment() {
     return AlertDialog.Builder(requireActivity())
         .setMessage("Really clear all application settings?")
         .setPositiveButton("Yes") { _, _ ->
-          viewModel.clearAll()
+          requireNotNull(viewModel).clearAll()
           dismiss()
         }
         .setNegativeButton("No") { _, _ -> dismiss() }
         .create()
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    viewModel = null
   }
 }

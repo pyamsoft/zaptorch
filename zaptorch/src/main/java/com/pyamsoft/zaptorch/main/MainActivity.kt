@@ -43,8 +43,8 @@ class MainActivity : RatingActivity(),
     MainUiComponent.Callback,
     MainToolbarUiComponent.Callback {
 
-  @field:Inject internal lateinit var toolbarComponent: MainToolbarUiComponent
-  @field:Inject internal lateinit var component: MainUiComponent
+  @JvmField @Inject internal var toolbarComponent: MainToolbarUiComponent? = null
+  @JvmField @Inject internal var component: MainUiComponent? = null
 
   private var handleKeyPress: Boolean = false
 
@@ -57,7 +57,7 @@ class MainActivity : RatingActivity(),
   }
 
   override val fragmentContainerId: Int
-    get() = component.id()
+    get() = requireNotNull(component).id()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -79,6 +79,8 @@ class MainActivity : RatingActivity(),
         .create(this, layoutRoot, this)
         .inject(this)
 
+    val component = requireNotNull(component)
+    val toolbarComponent = requireNotNull(toolbarComponent)
     component.bind(layoutRoot, this, savedInstanceState, this)
     toolbarComponent.bind(layoutRoot, this, savedInstanceState, this)
 
@@ -106,8 +108,14 @@ class MainActivity : RatingActivity(),
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    toolbarComponent.saveState(outState)
-    component.saveState(outState)
+    toolbarComponent?.saveState(outState)
+    component?.saveState(outState)
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    toolbarComponent = null
+    component = null
   }
 
   override fun onHandleKeyPressChanged(handle: Boolean) {
@@ -120,7 +128,7 @@ class MainActivity : RatingActivity(),
     val error = hyperlink.navigate()
 
     if (error != null) {
-      component.failedNavigation(error)
+      requireNotNull(component).failedNavigation(error)
     }
   }
 

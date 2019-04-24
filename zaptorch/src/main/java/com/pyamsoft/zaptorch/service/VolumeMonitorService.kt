@@ -34,14 +34,14 @@ import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
-  @field:Inject internal lateinit var stateViewModel: ServiceStateViewModel
-  @field:Inject internal lateinit var finishViewModel: ServiceFinishViewModel
-  @field:Inject internal lateinit var cameraViewModel: CameraViewModel
+  @JvmField @Inject internal var stateViewModel: ServiceStateViewModel? = null
+  @JvmField @Inject internal var finishViewModel: ServiceFinishViewModel? = null
+  @JvmField @Inject internal var cameraViewModel: CameraViewModel? = null
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    cameraViewModel.handleKeyEvent(action, keyCode)
+    requireNotNull(cameraViewModel).handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -60,10 +60,10 @@ class VolumeMonitorService : AccessibilityService() {
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    cameraViewModel.bind { state, oldState ->
+    requireNotNull(cameraViewModel).bind { state, oldState ->
       renderError(state, oldState)
     }
-    finishViewModel.bind { state, oldState ->
+    requireNotNull(finishViewModel).bind { state, oldState ->
       renderFinish(state, oldState)
     }
   }
@@ -98,19 +98,22 @@ class VolumeMonitorService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    stateViewModel.start()
+    requireNotNull(stateViewModel).start()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    stateViewModel.stop()
+    requireNotNull(stateViewModel).stop()
     return super.onUnbind(intent)
   }
 
   override fun onDestroy() {
     super.onDestroy()
 
-    finishViewModel.unbind()
-    cameraViewModel.unbind()
+    finishViewModel?.unbind()
+    cameraViewModel?.unbind()
+
+    finishViewModel = null
+    cameraViewModel = null
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

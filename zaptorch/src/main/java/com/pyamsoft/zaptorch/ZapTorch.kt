@@ -28,8 +28,8 @@ import com.squareup.leakcanary.RefWatcher
 
 class ZapTorch : Application() {
 
-  private lateinit var component: ZapTorchComponent
-  private lateinit var refWatcher: RefWatcher
+  private var component: ZapTorchComponent? = null
+  private var refWatcher: RefWatcher? = null
 
   override fun onCreate() {
     super.onCreate()
@@ -71,7 +71,7 @@ class ZapTorch : Application() {
     }
 
     if (ZapTorchComponent::class.java.name == name) {
-      return component
+      return requireNotNull(component)
     }
 
     return super.getSystemService(name)
@@ -87,7 +87,7 @@ class ZapTorch : Application() {
     @CheckResult
     private fun getRefWatcherInternal(application: Application): RefWatcher {
       if (application is ZapTorch) {
-        return application.refWatcher
+        return requireNotNull(application.refWatcher)
       } else {
         throw IllegalStateException("Application is not ZapTorch")
       }

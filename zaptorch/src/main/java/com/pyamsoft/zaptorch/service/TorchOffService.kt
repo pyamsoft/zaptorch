@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  @field:Inject internal lateinit var torchToggle: TorchToggle
+  @JvmField @Inject internal var torchToggle: TorchToggle? = null
 
   override fun onCreate() {
     super.onCreate()
@@ -37,13 +37,16 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
   override fun onDestroy() {
     super.onDestroy()
+
+    torchToggle = null
+
     ZapTorch.getRefWatcher(this)
         .watch(this)
   }
 
   override fun onHandleIntent(intent: Intent?) {
     try {
-      torchToggle.toggle()
+      requireNotNull(torchToggle).toggle()
     } catch (e: IllegalStateException) {
       Timber.e(e, "onError")
     }

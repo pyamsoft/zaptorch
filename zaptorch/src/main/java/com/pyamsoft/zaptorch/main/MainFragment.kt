@@ -35,8 +35,8 @@ import javax.inject.Inject
 
 class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
 
-  @field:Inject internal lateinit var component: MainFragmentUiComponent
-  @field:Inject internal lateinit var toolbarView: ToolbarView
+  @JvmField @Inject internal var component: MainFragmentUiComponent? = null
+  @JvmField @Inject internal var toolbarView: ToolbarView? = null
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -58,21 +58,24 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
         .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
         .inject(this)
 
-    component.bind(viewLifecycleOwner, savedInstanceState, this)
-    toolbarView.inflate(savedInstanceState)
+    requireNotNull(component).bind(viewLifecycleOwner, savedInstanceState, this)
+    requireNotNull(toolbarView).inflate(savedInstanceState)
 
     displayPreferenceFragment()
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    toolbarView.teardown()
+    toolbarView?.teardown()
+
+    component = null
+    toolbarView = null
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    toolbarView.saveState(outState)
-    component.saveState(outState)
+    toolbarView?.saveState(outState)
+    component?.saveState(outState)
   }
 
   override fun onShowUsageAccessRequestDialog() {
@@ -89,7 +92,7 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .add(component.id(), SettingsFragment(), SettingsFragment.TAG)
+          .add(requireNotNull(component).id(), SettingsFragment(), SettingsFragment.TAG)
           .commit(viewLifecycleOwner)
     }
   }
