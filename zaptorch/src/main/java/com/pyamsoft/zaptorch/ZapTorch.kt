@@ -64,7 +64,7 @@ class ZapTorch : Application() {
     }
   }
 
-  override fun getSystemService(name: String): Any {
+  override fun getSystemService(name: String): Any? {
     val service = PYDroid.getSystemService(name)
     if (service != null) {
       return service
