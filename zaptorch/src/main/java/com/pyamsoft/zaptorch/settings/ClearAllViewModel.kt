@@ -43,7 +43,7 @@ class ClearAllViewModel @Inject internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { handleClearAll() }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   override fun onUnbind() {

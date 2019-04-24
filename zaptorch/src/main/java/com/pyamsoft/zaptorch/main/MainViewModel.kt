@@ -37,7 +37,7 @@ internal class MainViewModel @Inject internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { handleKeypressChanged(it) }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   private fun handleKeypressChanged(handle: Boolean) {

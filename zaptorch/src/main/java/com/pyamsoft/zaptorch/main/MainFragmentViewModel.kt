@@ -39,13 +39,13 @@ internal class MainFragmentViewModel @Inject internal constructor(
 
   override fun onBind() {
     handler.handle(this)
-        .destroy()
+        .disposeOnDestroy()
 
     bus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { handleSignificantScrollEvent(it.visible) }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   override fun onUnbind() {

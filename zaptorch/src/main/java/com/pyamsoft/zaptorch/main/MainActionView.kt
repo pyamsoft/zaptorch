@@ -35,7 +35,7 @@ internal class MainActionView @Inject internal constructor(
   callback: Callback
 ) : BaseUiView<Callback>(parent, callback) {
 
-  override val layoutRoot by lazyView<FloatingActionButton>(R.id.fab)
+  override val layoutRoot by boundView<FloatingActionButton>(R.id.fab)
 
   private var actionIconLoaded: Loaded? = null
 

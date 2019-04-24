@@ -43,7 +43,7 @@ internal class ServiceStateViewModel @Inject internal constructor(
             handleStop()
           }
         }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   private fun handleStart() {

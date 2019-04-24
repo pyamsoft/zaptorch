@@ -43,7 +43,7 @@ internal class CameraViewModel @Inject internal constructor(
         .doOnSubscribe { interactor.setupCamera() }
         .doAfterTerminate { interactor.releaseCamera() }
         .subscribe { handleCameraError(it) }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   private fun handleCameraError(error: CameraError) {

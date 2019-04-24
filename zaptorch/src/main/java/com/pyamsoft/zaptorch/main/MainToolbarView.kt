@@ -37,7 +37,7 @@ internal class MainToolbarView @Inject internal constructor(
   callback: Callback
 ) : BaseUiView<Callback>(parent, callback) {
 
-  override val layoutRoot by lazyView<Toolbar>(R.id.toolbar)
+  override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
 
   override val layout: Int = R.layout.toolbar
 

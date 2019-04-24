@@ -36,7 +36,7 @@ internal class ServiceFinishViewModel @Inject internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { handleServiceFinished() }
-        .destroy()
+        .disposeOnDestroy()
   }
 
   private fun handleServiceFinished() {
