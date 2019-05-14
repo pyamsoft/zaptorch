@@ -18,37 +18,47 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.pyamsoft.pydroid.arch.BaseUiView
+import com.pyamsoft.pydroid.arch.impl.BaseUiView
+import com.pyamsoft.pydroid.arch.impl.onChange
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.main.MainActionView.Callback
+import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import javax.inject.Inject
 
 internal class MainActionView @Inject internal constructor(
   private val imageLoader: ImageLoader,
-  parent: ViewGroup,
-  callback: Callback
-) : BaseUiView<Callback>(parent, callback) {
+  parent: ViewGroup
+) : BaseUiView<MainViewState, MainViewEvent>(parent) {
 
-  override val layoutRoot by boundView<FloatingActionButton>(R.id.fab)
+  override val layoutRoot by boundView<FrameLayout>(R.id.fab_container)
+  private val fab by boundView<FloatingActionButton>(R.id.fab)
 
   private var actionIconLoaded: Loaded? = null
 
   override val layout: Int = R.layout.floating_action_button
 
   override fun onTeardown() {
-    layoutRoot.setOnDebouncedClickListener(null)
+    fab.setOnDebouncedClickListener(null)
     actionIconLoaded?.dispose()
   }
 
-  fun setFabFromServiceState(running: Boolean) {
-    layoutRoot.setOnDebouncedClickListener {
-      callback.onActionButtonClicked(running)
+  override fun onRender(
+    state: MainViewState,
+    oldState: MainViewState?
+  ) {
+    state.onChange(oldState, field = { it.isVisible }) { toggleVisibility(it) }
+    state.onChange(oldState, field = { it.isServiceRunning }) { setFabState(it) }
+  }
+
+  private fun setFabState(running: Boolean) {
+    fab.setOnDebouncedClickListener {
+      publish(ActionClick(running))
     }
 
     val icon: Int
@@ -60,21 +70,15 @@ internal class MainActionView @Inject internal constructor(
 
     actionIconLoaded?.dispose()
     actionIconLoaded = imageLoader.load(icon)
-        .into(layoutRoot)
+        .into(fab)
   }
 
-  fun toggleVisibility(visible: Boolean) {
+  private fun toggleVisibility(visible: Boolean) {
     if (visible) {
-      layoutRoot.popShow()
+      fab.popShow()
     } else {
-      layoutRoot.popHide()
+      fab.popHide()
     }
-  }
-
-  interface Callback {
-
-    fun onActionButtonClicked(running: Boolean)
-
   }
 
 }

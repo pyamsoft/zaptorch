@@ -19,11 +19,12 @@ package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.pyamsoft.pydroid.arch.layout
+import com.pyamsoft.pydroid.arch.impl.createComponent
+import com.pyamsoft.pydroid.arch.impl.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
@@ -31,20 +32,24 @@ import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
+import com.pyamsoft.pydroid.ui.util.layout
+import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
 import com.pyamsoft.pydroid.util.hyperlink
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.PrivacyPolicy
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
-class MainActivity : RatingActivity(),
-    MainUiComponent.Callback,
-    MainToolbarUiComponent.Callback {
+class MainActivity : RatingActivity() {
 
-  @JvmField @Inject internal var toolbarComponent: MainToolbarUiComponent? = null
-  @JvmField @Inject internal var component: MainUiComponent? = null
+  @JvmField @Inject internal var toolbar: MainToolbarView? = null
+  @JvmField @Inject internal var mainView: MainFrameView? = null
+  @JvmField @Inject internal var dropshadowView: DropshadowView? = null
+  @JvmField @Inject internal var viewModel: MainToolbarViewModel? = null
 
   private var handleKeyPress: Boolean = false
 
@@ -52,12 +57,12 @@ class MainActivity : RatingActivity(),
 
   override val applicationIcon: Int = R.mipmap.ic_launcher
 
-  override val snackbarRoot: View by lazy(NONE) {
+  override val snackbarRoot: ViewGroup by lazy(NONE) {
     findViewById<CoordinatorLayout>(R.id.snackbar_root)
   }
 
   override val fragmentContainerId: Int
-    get() = requireNotNull(component).id()
+    get() = requireNotNull(mainView).id()
 
   override val changeLogLines: ChangeLogBuilder = buildChangeLog {
     change("New icon style")
@@ -79,14 +84,37 @@ class MainActivity : RatingActivity(),
         .create(this, layoutRoot, this)
         .inject(this)
 
-    val component = requireNotNull(component)
-    val toolbarComponent = requireNotNull(toolbarComponent)
-    component.bind(layoutRoot, this, savedInstanceState, this)
-    toolbarComponent.bind(layoutRoot, this, savedInstanceState, this)
+    val component = requireNotNull(mainView)
+    val toolbarComponent = requireNotNull(toolbar)
+    val dropshadow = requireNotNull(dropshadowView)
+
+    dropshadow.inflate(savedInstanceState)
+    this.doOnDestroy {
+      dropshadow.teardown()
+    }
+
+    createComponent(
+        savedInstanceState, this,
+        requireNotNull(viewModel),
+        component,
+        toolbarComponent
+    ) {
+      return@createComponent when (it) {
+        is PrivacyPolicy -> showPrivacyPolicy()
+        is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
+      }
+    }
 
     layoutRoot.layout {
       toolbarComponent.also {
         connect(it.id(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
+
+      dropshadow.also {
+        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
         connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
         connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
         constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
@@ -108,27 +136,30 @@ class MainActivity : RatingActivity(),
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
-    toolbarComponent?.saveState(outState)
-    component?.saveState(outState)
+    toolbar?.saveState(outState)
+    mainView?.saveState(outState)
+    dropshadowView?.saveState(outState)
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    toolbarComponent = null
-    component = null
+    viewModel = null
+    mainView = null
+    toolbar = null
+    dropshadowView = null
   }
 
-  override fun onHandleKeyPressChanged(handle: Boolean) {
+  private fun onHandleKeyPressChanged(handle: Boolean) {
     Timber.d("Handle keypress: $handle")
     handleKeyPress = handle
   }
 
-  override fun onShowPrivacyPolicy() {
+  private fun showPrivacyPolicy() {
     val hyperlink = PRIVACY_POLICY_URL.hyperlink(this)
     val error = hyperlink.navigate()
 
     if (error != null) {
-      requireNotNull(component).failedNavigation(error)
+      requireNotNull(viewModel).failedNavigation(error)
     }
   }
 

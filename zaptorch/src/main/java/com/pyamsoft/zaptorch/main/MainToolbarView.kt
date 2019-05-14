@@ -22,20 +22,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
-import com.pyamsoft.pydroid.arch.BaseUiView
+import androidx.lifecycle.LifecycleOwner
+import com.pyamsoft.pydroid.arch.impl.BaseUiView
+import com.pyamsoft.pydroid.arch.impl.onChange
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.theme.Theming
+import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.main.MainToolbarView.Callback
+import com.pyamsoft.zaptorch.main.ToolbarViewEvent.ViewPrivacyPolicy
 import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
   private val toolbarActivityProvider: ToolbarActivityProvider,
+  private val owner: LifecycleOwner,
   private val theming: Theming,
-  parent: ViewGroup,
-  callback: Callback
-) : BaseUiView<Callback>(parent, callback) {
+  parent: ViewGroup
+) : BaseUiView<ToolbarViewState, ToolbarViewEvent>(parent) {
 
   override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
 
@@ -65,23 +68,42 @@ internal class MainToolbarView @Inject internal constructor(
 
       setOnMenuItemClickListener { item ->
         if (item.itemId == R.id.menu_id_privacy_policy) {
-          callback.onPrivacyPolicyClicked()
+          publish(ViewPrivacyPolicy)
         }
         return@setOnMenuItemClickListener true
       }
     }
   }
 
+  override fun onRender(
+    state: ToolbarViewState,
+    oldState: ToolbarViewState?
+  ) {
+    state.onChange(oldState, field = { it.throwable }) { throwable ->
+      if (throwable == null) {
+        hideError()
+      } else {
+        showError()
+      }
+    }
+  }
+
+  private fun showError() {
+    Snackbreak.bindTo(owner)
+        .short(layoutRoot, "Unable to open browser for policy viewing")
+        .show()
+  }
+
+  private fun hideError() {
+    Snackbreak.bindTo(owner)
+        .dismiss()
+  }
+
   override fun onTeardown() {
     layoutRoot.setOnMenuItemClickListener(null)
     layoutRoot.menu.removeItem(R.id.menu_id_privacy_policy)
     toolbarActivityProvider.setToolbar(null)
-  }
-
-  interface Callback {
-
-    fun onPrivacyPolicyClicked()
-
+    hideError()
   }
 
 }

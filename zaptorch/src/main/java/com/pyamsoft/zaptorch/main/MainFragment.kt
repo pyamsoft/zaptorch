@@ -23,20 +23,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import com.pyamsoft.pydroid.arch.impl.createComponent
+import com.pyamsoft.pydroid.arch.impl.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
 
-class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
+class MainFragment : Fragment() {
 
-  @JvmField @Inject internal var component: MainFragmentUiComponent? = null
+  @JvmField @Inject internal var actionView: MainActionView? = null
   @JvmField @Inject internal var toolbarView: ToolbarView? = null
+  @JvmField @Inject internal var viewModel: MainViewModel? = null
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -58,32 +62,47 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
         .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
         .inject(this)
 
-    requireNotNull(component).bind(viewLifecycleOwner, savedInstanceState, this)
     requireNotNull(toolbarView).inflate(savedInstanceState)
+    viewLifecycleOwner.doOnDestroy { toolbarView?.teardown() }
+
+    createComponent(
+        savedInstanceState, viewLifecycleOwner,
+        requireNotNull(viewModel),
+        requireNotNull(actionView)
+    ) {
+      return@createComponent when (it) {
+        is ServiceAction -> {
+          if (it.isServiceRunning) {
+            showInfoDialog()
+          } else {
+            showUsageAccessRequestDialog()
+          }
+        }
+      }
+    }
 
     displayPreferenceFragment()
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    toolbarView?.teardown()
-
-    component = null
+    viewModel = null
+    actionView = null
     toolbarView = null
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     toolbarView?.saveState(outState)
-    component?.saveState(outState)
+    actionView?.saveState(outState)
   }
 
-  override fun onShowUsageAccessRequestDialog() {
+  private fun showUsageAccessRequestDialog() {
     AccessibilityRequestDialog()
         .show(requireActivity(), "accessibility")
   }
 
-  override fun onShowInfoDialog() {
+  private fun showInfoDialog() {
     ServiceInfoDialog()
         .show(requireActivity(), "service_info")
   }
@@ -92,7 +111,7 @@ class MainFragment : Fragment(), MainFragmentUiComponent.Callback {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
       fragmentManager.beginTransaction()
-          .add(requireNotNull(component).id(), SettingsFragment(), SettingsFragment.TAG)
+          .add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
           .commit(viewLifecycleOwner)
     }
   }

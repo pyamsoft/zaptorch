@@ -22,26 +22,27 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import com.pyamsoft.pydroid.arch.renderOnChange
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.CameraViewModel.ServiceState
-import com.pyamsoft.zaptorch.service.ServiceFinishViewModel.FinishState
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
+import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import timber.log.Timber
 import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
-  @JvmField @Inject internal var stateViewModel: ServiceStateViewModel? = null
-  @JvmField @Inject internal var finishViewModel: ServiceFinishViewModel? = null
-  @JvmField @Inject internal var cameraViewModel: CameraViewModel? = null
+  @JvmField @Inject internal var viewModel: ServiceViewModel? = null
+  private var disposable by singleDisposable()
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    requireNotNull(cameraViewModel).handleKeyEvent(action, keyCode)
+    viewModel?.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -60,60 +61,43 @@ class VolumeMonitorService : AccessibilityService() {
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    requireNotNull(cameraViewModel).bind { state, oldState ->
-      renderError(state, oldState)
-    }
-    requireNotNull(finishViewModel).bind { state, oldState ->
-      renderFinish(state, oldState)
-    }
-  }
-
-  private fun renderError(
-    state: ServiceState,
-    oldState: ServiceState?
-  ) {
-    state.renderOnChange(oldState, value = { it.throwable }) { throwable ->
-      if (throwable != null) {
-        applicationContext.also {
-          val intent = throwable.intent
-          intent.setClass(it, CameraErrorExplanation::class.java)
-          it.startActivity(intent)
-        }
+    disposable = requireNotNull(viewModel).render {
+      return@render when (it) {
+        is RenderError -> renderError(it.error)
+        is Finish -> finish()
       }
     }
   }
 
-  private fun renderFinish(
-    state: FinishState,
-    oldState: FinishState?
-  ) {
-    state.renderOnChange(oldState, value = { it.isFinished }) { finished ->
-      if (finished) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          disableSelf()
-        }
-      }
+  private fun renderError(cameraError: CameraError) {
+    applicationContext.also {
+      val intent = cameraError.intent
+      intent.setClass(it, CameraErrorExplanation::class.java)
+      it.startActivity(intent)
+    }
+  }
+
+  private fun finish() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      disableSelf()
     }
   }
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    requireNotNull(stateViewModel).start()
+    requireNotNull(viewModel).start()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    requireNotNull(stateViewModel).stop()
+    viewModel?.stop()
     return super.onUnbind(intent)
   }
 
   override fun onDestroy() {
     super.onDestroy()
 
-    finishViewModel?.unbind()
-    cameraViewModel?.unbind()
-
-    finishViewModel = null
-    cameraViewModel = null
+    disposable.tryDispose()
+    viewModel = null
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

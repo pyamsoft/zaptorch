@@ -15,15 +15,16 @@
  *
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.UiComponent
+import com.pyamsoft.pydroid.arch.UiControllerEvent
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 
-internal interface MainToolbarUiComponent : UiComponent<MainToolbarUiComponent.Callback> {
+sealed class ServiceControllerEvent : UiControllerEvent {
 
-  interface Callback {
+  data class RenderError(val error: CameraError) : ServiceControllerEvent()
 
-    fun onShowPrivacyPolicy()
+  object Finish : ServiceControllerEvent()
 
-  }
 }
+

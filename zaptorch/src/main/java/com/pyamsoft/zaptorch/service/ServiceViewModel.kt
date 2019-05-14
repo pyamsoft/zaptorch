@@ -17,41 +17,51 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.UiState
-import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
+import com.pyamsoft.pydroid.arch.impl.UnitViewEvent
+import com.pyamsoft.pydroid.arch.impl.UnitViewState
+import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.service.CameraViewModel.ServiceState
+import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
+import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-internal class CameraViewModel @Inject internal constructor(
+internal class ServiceViewModel @Inject internal constructor(
+  private val finishBus: EventBus<ServiceFinishEvent>,
   private val interactor: VolumeServiceInteractor
-) : UiViewModel<ServiceState>(
-    initialState = ServiceState(throwable = null)
+) : BaseUiViewModel<UnitViewState, UnitViewEvent, ServiceControllerEvent>(
+    initialState = UnitViewState
 ) {
 
   private var keyEventDisposable by singleDisposable()
+  private var cameraStateDisposable by singleDisposable()
+  private var finishDisposable by singleDisposable()
 
   override fun onBind() {
-    interactor.observeCameraState()
+    cameraStateDisposable = interactor.observeCameraState()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { interactor.setupCamera() }
         .doAfterTerminate { interactor.releaseCamera() }
-        .subscribe { handleCameraError(it) }
-        .disposeOnDestroy()
+        .subscribe { publish(RenderError(it)) }
+
+    finishDisposable = finishBus.listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { publish(Finish) }
   }
 
-  private fun handleCameraError(error: CameraError) {
-    setState { copy(throwable = error) }
+  override fun handleViewEvent(event: UnitViewEvent) {
   }
 
   override fun onUnbind() {
     keyEventDisposable.tryDispose()
+    cameraStateDisposable.tryDispose()
+    finishDisposable.tryDispose()
   }
 
   fun handleKeyEvent(
@@ -61,9 +71,16 @@ internal class CameraViewModel @Inject internal constructor(
     keyEventDisposable = interactor.handleKeyPress(action, keyCode)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .doAfterTerminate { keyEventDisposable.tryDispose() }
         .subscribe()
   }
 
-  data class ServiceState(val throwable: CameraError?) : UiState
+  fun start() {
+    interactor.setServiceState(true)
+  }
+
+  fun stop() {
+    interactor.setServiceState(false)
+  }
 
 }

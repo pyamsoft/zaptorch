@@ -17,39 +17,50 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.UiEventHandler
-import com.pyamsoft.pydroid.arch.UiState
-import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
 import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent
-import com.pyamsoft.zaptorch.settings.SettingsViewModel.SettingsState
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
+import com.pyamsoft.zaptorch.service.ServiceFinishEvent
+import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
+import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ShowExplanation
+import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 internal class SettingsViewModel @Inject internal constructor(
-  private val handler: UiEventHandler<SettingsEvent, SettingsView.Callback>,
-  private val bus: EventBus<SignificantScrollEvent>
-) : UiViewModel<SettingsState>(
-    initialState = SettingsState(isExplaining = false)
-), SettingsView.Callback {
+  private val scrollBus: EventBus<SignificantScrollEvent>,
+  private val serviceFinishBus: EventBus<ServiceFinishEvent>,
+  private val bus: EventBus<ClearAllEvent>
+) : BaseUiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
+    initialState = SettingsViewState(throwable = null)
+) {
+
+  private var clearDisposable by singleDisposable()
 
   override fun onBind() {
-    handler.handle(this)
-        .disposeOnDestroy()
+    super.onBind()
+    clearDisposable = bus.listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { killApplication() }
+  }
+
+  private fun killApplication() {
+    serviceFinishBus.publish(ServiceFinishEvent)
+    publish(ClearAll)
   }
 
   override fun onUnbind() {
+    clearDisposable.tryDispose()
   }
 
-  override fun onExplainClicked() {
-    setUniqueState(true, old = { it.isExplaining }) { state, value ->
-      state.copy(isExplaining = value)
+  override fun handleViewEvent(event: SettingsViewEvent) {
+    return when (event) {
+      is SignificantScroll -> scrollBus.publish(SignificantScrollEvent(event.visible))
+      is ShowExplanation -> publish(Explain)
     }
   }
-
-  override fun onSignificantScrollEvent(visible: Boolean) {
-    bus.publish(SignificantScrollEvent(visible))
-  }
-
-  data class SettingsState(val isExplaining: Boolean) : UiState
-
 }

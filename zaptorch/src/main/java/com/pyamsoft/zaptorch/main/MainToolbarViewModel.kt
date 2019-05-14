@@ -17,33 +17,50 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.UiEventHandler
-import com.pyamsoft.pydroid.arch.UiState
-import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent
-import com.pyamsoft.zaptorch.main.MainToolbarViewModel.ToolbarState
+import android.content.ActivityNotFoundException
+import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
+import com.pyamsoft.pydroid.core.singleDisposable
+import com.pyamsoft.pydroid.core.tryDispose
+import com.pyamsoft.zaptorch.api.MainInteractor
+import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.PrivacyPolicy
+import com.pyamsoft.zaptorch.main.ToolbarViewEvent.ViewPrivacyPolicy
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
-  private val handler: UiEventHandler<ToolbarEvent, MainToolbarView.Callback>
-) : UiViewModel<ToolbarState>(
-    initialState = ToolbarState(isShowingPolicy = false)
-), MainToolbarView.Callback {
+  private val interactor: MainInteractor
+) : BaseUiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
+    initialState = ToolbarViewState(throwable = null)
+) {
+
+  private var keypressDisposable by singleDisposable()
 
   override fun onBind() {
-    handler.handle(this)
-        .disposeOnDestroy()
+    keypressDisposable = interactor.onHandleKeyPressChanged()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { handleKeypressChanged(it) }
+
   }
 
   override fun onUnbind() {
+    keypressDisposable.tryDispose()
   }
 
-  override fun onPrivacyPolicyClicked() {
-    setUniqueState(true, old = { it.isShowingPolicy }) { state, value ->
-      state.copy(isShowingPolicy = value)
+  private fun handleKeypressChanged(handle: Boolean) {
+    publish(HandleKeypress(handle))
+  }
+
+  override fun handleViewEvent(event: ToolbarViewEvent) {
+    return when (event) {
+      is ViewPrivacyPolicy -> publish(PrivacyPolicy)
     }
   }
 
-  data class ToolbarState(val isShowingPolicy: Boolean) : UiState
+  fun failedNavigation(error: ActivityNotFoundException) {
+    setState { copy(throwable = error) }
+  }
 
 }

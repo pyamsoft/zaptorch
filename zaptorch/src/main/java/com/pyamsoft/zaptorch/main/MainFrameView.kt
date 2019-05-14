@@ -19,30 +19,23 @@ package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.arch.BaseUiView
-import com.pyamsoft.pydroid.ui.util.Snackbreak
+import com.pyamsoft.pydroid.arch.impl.BaseUiView
 import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
 
 internal class MainFrameView @Inject internal constructor(
-  private val owner: LifecycleOwner,
   parent: ViewGroup
-) : BaseUiView<Unit>(parent, Unit) {
+) : BaseUiView<ToolbarViewState, ToolbarViewEvent>(parent) {
 
   override val layoutRoot by boundView<FrameLayout>(R.id.layout_frame)
 
   override val layout: Int = R.layout.layout_frame
 
-  fun showError() {
-    Snackbreak.bindTo(owner)
-        .short(layoutRoot, "Unable to open browser for policy viewing")
-        .show()
+  override fun onRender(
+    state: ToolbarViewState,
+    oldState: ToolbarViewState?
+  ) {
   }
 
-  override fun onTeardown() {
-    Snackbreak.bindTo(owner)
-        .dismiss()
-  }
 }
 

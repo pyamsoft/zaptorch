@@ -17,15 +17,25 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.UiComponent
+import com.pyamsoft.pydroid.arch.UiControllerEvent
+import com.pyamsoft.pydroid.arch.UiViewEvent
+import com.pyamsoft.pydroid.arch.UiViewState
 
-internal interface SettingsUiComponent : UiComponent<SettingsUiComponent.Callback> {
+data class SettingsViewState(val throwable: Throwable?) : UiViewState
 
-  interface Callback {
+sealed class SettingsViewEvent : UiViewEvent {
 
-    fun onKillApplication()
+  object ShowExplanation : SettingsViewEvent()
 
-    fun showHowTo()
+  data class SignificantScroll(val visible: Boolean) : SettingsViewEvent()
 
-  }
 }
+
+sealed class SettingsControllerEvent : UiControllerEvent {
+
+  object Explain : SettingsControllerEvent()
+
+  object ClearAll : SettingsControllerEvent()
+
+}
+

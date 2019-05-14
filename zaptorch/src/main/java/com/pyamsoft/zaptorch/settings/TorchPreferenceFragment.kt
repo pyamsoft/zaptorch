@@ -21,20 +21,24 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import com.pyamsoft.pydroid.arch.impl.createComponent
+import com.pyamsoft.pydroid.arch.impl.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
+import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 import javax.inject.Inject
 
-class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
-    SettingsUiComponent.Callback {
+class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
-  @JvmField @Inject internal var component: SettingsUiComponent? = null
+  @JvmField @Inject internal var viewModel: SettingsViewModel? = null
+  @JvmField @Inject internal var settingsView: SettingsView? = null
   @JvmField @Inject internal var toolbarView: ToolbarView? = null
 
   override val preferenceXmlResId: Int = R.xml.preferences
@@ -50,25 +54,37 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
         .create(viewLifecycleOwner, requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
-    requireNotNull(component).bind(viewLifecycleOwner, savedInstanceState, this)
     requireNotNull(toolbarView).inflate(savedInstanceState)
+    viewLifecycleOwner.doOnDestroy {
+      toolbarView?.teardown()
+    }
+
+    createComponent(
+        savedInstanceState, viewLifecycleOwner,
+        requireNotNull(viewModel),
+        requireNotNull(settingsView)
+    ) {
+      return@createComponent when (it) {
+        is Explain -> showHowTo()
+        is ClearAll -> killApplication()
+      }
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     toolbarView?.saveState(outState)
-    component?.saveState(outState)
+    settingsView?.saveState(outState)
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
-    toolbarView?.teardown()
-
+    viewModel = null
+    settingsView = null
     toolbarView = null
-    component = null
   }
 
-  override fun onKillApplication() {
+  private fun killApplication() {
     requireContext().also {
       Timber.d("Clear application data")
       val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -76,7 +92,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment(),
     }
   }
 
-  override fun showHowTo() {
+  private fun showHowTo() {
     HowToDialog().show(requireActivity(), "howto")
   }
 

@@ -17,15 +17,22 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.UiComponent
+import com.pyamsoft.pydroid.arch.UiControllerEvent
+import com.pyamsoft.pydroid.arch.UiViewEvent
+import com.pyamsoft.pydroid.arch.UiViewState
 
-internal interface MainFragmentUiComponent : UiComponent<MainFragmentUiComponent.Callback> {
+data class ToolbarViewState(val throwable: Throwable?) : UiViewState
 
-  interface Callback {
+sealed class ToolbarViewEvent : UiViewEvent {
 
-    fun onShowInfoDialog()
+  object ViewPrivacyPolicy : ToolbarViewEvent()
 
-    fun onShowUsageAccessRequestDialog()
+}
 
-  }
+sealed class ToolbarControllerEvent : UiControllerEvent {
+
+  data class HandleKeypress(val isHandling: Boolean) : ToolbarControllerEvent()
+
+  object PrivacyPolicy : ToolbarControllerEvent()
+
 }

@@ -29,15 +29,12 @@ import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
 import com.pyamsoft.zaptorch.base.BaseModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
-import com.pyamsoft.zaptorch.main.MainHandler.MainEvent
-import com.pyamsoft.zaptorch.main.MainToolbarHandler.ToolbarEvent
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.ClearAllEvent
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
-import com.pyamsoft.zaptorch.settings.SettingsHandler.SettingsEvent
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import dagger.BindsInstance
 import dagger.Component
@@ -98,30 +95,6 @@ interface ZapTorchComponent {
       @JvmStatic
       @CheckResult
       internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
-        return RxBus.create()
-      }
-
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideSettingsEventBus(): EventBus<SettingsEvent> {
-        return RxBus.create()
-      }
-
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideMainEventBus(): EventBus<MainEvent> {
-        return RxBus.create()
-      }
-
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideToolbarEventBus(): EventBus<ToolbarEvent> {
         return RxBus.create()
       }
 

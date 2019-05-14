@@ -20,16 +20,11 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
-import com.pyamsoft.pydroid.arch.UiEventHandler
 import com.pyamsoft.pydroid.ui.app.ToolbarActivity
-import com.pyamsoft.zaptorch.main.MainFragmentComponent.MainModule
-import com.pyamsoft.zaptorch.main.MainHandler.MainEvent
-import dagger.Binds
 import dagger.BindsInstance
-import dagger.Module
 import dagger.Subcomponent
 
-@Subcomponent(modules = [MainModule::class])
+@Subcomponent
 interface MainFragmentComponent {
 
   fun inject(fragment: MainFragment)
@@ -43,22 +38,6 @@ interface MainFragmentComponent {
       @BindsInstance toolbarActivity: ToolbarActivity,
       @BindsInstance parent: ViewGroup
     ): MainFragmentComponent
-  }
-
-  @Module
-  abstract class MainModule {
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindUiComponent(impl: MainFragmentUiComponentImpl): MainFragmentUiComponent
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindCallback(impl: MainHandler): MainActionView.Callback
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindHandler(impl: MainHandler): UiEventHandler<MainEvent, MainActionView.Callback>
   }
 }
 

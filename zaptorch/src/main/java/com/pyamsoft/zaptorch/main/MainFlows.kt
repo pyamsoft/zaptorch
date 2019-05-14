@@ -17,16 +17,23 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.content.ActivityNotFoundException
-import com.pyamsoft.pydroid.arch.UiComponent
+import com.pyamsoft.pydroid.arch.UiControllerEvent
+import com.pyamsoft.pydroid.arch.UiViewEvent
+import com.pyamsoft.pydroid.arch.UiViewState
 
-internal interface MainUiComponent : UiComponent<MainUiComponent.Callback> {
+data class MainViewState(
+  val isVisible: Boolean,
+  val isServiceRunning: Boolean
+) : UiViewState
 
-  fun failedNavigation(error: ActivityNotFoundException)
+sealed class MainViewEvent : UiViewEvent {
 
-  interface Callback {
+  data class ActionClick(val isServiceRunning: Boolean) : MainViewEvent()
 
-    fun onHandleKeyPressChanged(handle: Boolean)
+}
 
-  }
+sealed class MainControllerEvent : UiControllerEvent {
+
+  data class ServiceAction(val isServiceRunning: Boolean) : MainControllerEvent()
+
 }
