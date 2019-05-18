@@ -22,7 +22,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.preference.Preference
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
-import com.pyamsoft.pydroid.arch.impl.onChange
 import com.pyamsoft.pydroid.ui.arch.PrefUiView
 import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
@@ -61,7 +60,7 @@ internal class SettingsView @Inject internal constructor(
     state: SettingsViewState,
     oldState: SettingsViewState?
   ) {
-    state.onChange(oldState, field = { it.throwable }) { throwable ->
+    state.throwable.let { throwable ->
       if (throwable == null) {
         clearError()
       } else {

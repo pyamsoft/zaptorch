@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
@@ -34,14 +34,24 @@ internal class SettingsViewModel @Inject internal constructor(
   private val scrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>,
   private val bus: EventBus<ClearAllEvent>
-) : BaseUiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
+) : UiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
     initialState = SettingsViewState(throwable = null)
 ) {
 
   private var clearDisposable by singleDisposable()
 
-  override fun onBind() {
-    super.onBind()
+  override fun onCleared() {
+    clearDisposable.tryDispose()
+  }
+
+  override fun handleViewEvent(event: SettingsViewEvent) {
+    return when (event) {
+      is SignificantScroll -> scrollBus.publish(SignificantScrollEvent(event.visible))
+      is ShowExplanation -> publish(Explain)
+    }
+  }
+
+  fun beginWatchingForClear() {
     clearDisposable = bus.listen()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -51,16 +61,5 @@ internal class SettingsViewModel @Inject internal constructor(
   private fun killApplication() {
     serviceFinishBus.publish(ServiceFinishEvent)
     publish(ClearAll)
-  }
-
-  override fun onUnbind() {
-    clearDisposable.tryDispose()
-  }
-
-  override fun handleViewEvent(event: SettingsViewEvent) {
-    return when (event) {
-      is SignificantScroll -> scrollBus.publish(SignificantScrollEvent(event.visible))
-      is ShowExplanation -> publish(Explain)
-    }
   }
 }

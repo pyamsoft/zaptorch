@@ -23,8 +23,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.pyamsoft.pydroid.arch.impl.createComponent
-import com.pyamsoft.pydroid.arch.impl.doOnDestroy
+import com.pyamsoft.pydroid.arch.createComponent
+import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
@@ -104,6 +104,8 @@ class MainActivity : RatingActivity() {
         is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
       }
     }
+
+    requireNotNull(viewModel).watchKeypresses()
 
     layoutRoot.layout {
       toolbarComponent.also {

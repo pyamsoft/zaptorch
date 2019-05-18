@@ -38,13 +38,13 @@ buildscript {
     preference = "1.0.0"
     recyclerView = "1.0.0"
 
-    pydroid = "20.0.0"
+    pydroid = "20.1.0"
     leakCanary = "1.6.3"
     dagger = "2.22.1"
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.4.0'
+    classpath 'com.android.tools.build:gradle:3.4.1'
 
     // Dex count
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'

@@ -36,13 +36,13 @@ import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
-  @JvmField @Inject internal var viewModel: ServiceViewModel? = null
+  @JvmField @Inject internal var binder: ServiceBinder? = null
   private var disposable by singleDisposable()
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
     val keyCode = event.keyCode
-    viewModel?.handleKeyEvent(action, keyCode)
+    binder?.handleKeyEvent(action, keyCode)
 
     // Never consume events
     return false
@@ -61,8 +61,8 @@ class VolumeMonitorService : AccessibilityService() {
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .inject(this)
 
-    disposable = requireNotNull(viewModel).render {
-      return@render when (it) {
+    disposable = requireNotNull(binder).bind {
+      return@bind when (it) {
         is RenderError -> renderError(it.error)
         is Finish -> finish()
       }
@@ -85,11 +85,11 @@ class VolumeMonitorService : AccessibilityService() {
 
   override fun onServiceConnected() {
     super.onServiceConnected()
-    requireNotNull(viewModel).start()
+    requireNotNull(binder).start()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    viewModel?.stop()
+    binder?.stop()
     return super.onUnbind(intent)
   }
 
@@ -97,7 +97,7 @@ class VolumeMonitorService : AccessibilityService() {
     super.onDestroy()
 
     disposable.tryDispose()
-    viewModel = null
+    binder = null
 
     ZapTorch.getRefWatcher(this)
         .watch(this)

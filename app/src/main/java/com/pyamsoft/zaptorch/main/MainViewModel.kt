@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.core.bus.EventBus
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
@@ -32,17 +32,25 @@ import javax.inject.Inject
 internal class MainViewModel @Inject internal constructor(
   private val serviceInteractor: VolumeServiceInteractor,
   private val visibilityBus: EventBus<SignificantScrollEvent>
-) : BaseUiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
-    initialState = MainViewState(
-        isVisible = true,
-        isServiceRunning = false
-    )
+) : UiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
+    initialState = MainViewState(isVisible = true, isServiceRunning = false)
 ) {
 
   private var serviceDisposable by singleDisposable()
   private var visibilityDisposable by singleDisposable()
 
-  override fun onBind() {
+  override fun handleViewEvent(event: MainViewEvent) {
+    return when (event) {
+      is ActionClick -> publish(ServiceAction(event.isServiceRunning))
+    }
+  }
+
+  override fun onCleared() {
+    serviceDisposable.tryDispose()
+    visibilityDisposable.tryDispose()
+  }
+
+  fun watchServiceState() {
     serviceDisposable = serviceInteractor.observeServiceState()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -52,16 +60,6 @@ internal class MainViewModel @Inject internal constructor(
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { setState { copy(isVisible = it.visible) } }
-  }
-
-  override fun handleViewEvent(event: MainViewEvent) {
-    return when (event) {
-      is ActionClick -> publish(ServiceAction(event.isServiceRunning))
-    }
-  }
-
-  override fun onUnbind() {
-    serviceDisposable.tryDispose()
   }
 
 }

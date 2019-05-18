@@ -23,8 +23,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import com.pyamsoft.pydroid.arch.impl.createComponent
-import com.pyamsoft.pydroid.arch.impl.doOnDestroy
+import com.pyamsoft.pydroid.arch.createComponent
+import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.util.commit
@@ -81,6 +81,7 @@ class MainFragment : Fragment() {
       }
     }
 
+    requireNotNull(viewModel).watchServiceState()
     displayPreferenceFragment()
   }
 

@@ -15,5 +15,5 @@
  *
  */
 
-include ':zaptorch', ':zaptorch-base', ':zaptorch-api'
+include ':app', ':zaptorch-base', ':zaptorch-api'
 

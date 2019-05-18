@@ -35,7 +35,12 @@ class ConfirmationDialog : DialogFragment() {
         .inject(this)
 
     return AlertDialog.Builder(requireActivity())
-        .setMessage("Really clear all application settings?")
+        .setMessage(
+            """
+        |Really clear all application settings?
+        |You will have to manually restart the Accessibility Service component of ZapTorch
+        |""".trimMargin()
+        )
         .setPositiveButton("Yes") { _, _ ->
           requireNotNull(bus).publish(ClearAllEvent)
           dismiss()

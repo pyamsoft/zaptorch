@@ -18,7 +18,7 @@
 package com.pyamsoft.zaptorch.main
 
 import android.content.ActivityNotFoundException
-import com.pyamsoft.pydroid.arch.impl.BaseUiViewModel
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.core.singleDisposable
 import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.MainInteractor
@@ -31,13 +31,23 @@ import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
   private val interactor: MainInteractor
-) : BaseUiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
+) : UiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
     initialState = ToolbarViewState(throwable = null)
 ) {
 
   private var keypressDisposable by singleDisposable()
 
-  override fun onBind() {
+  override fun onCleared() {
+    keypressDisposable.tryDispose()
+  }
+
+  override fun handleViewEvent(event: ToolbarViewEvent) {
+    return when (event) {
+      is ViewPrivacyPolicy -> publish(PrivacyPolicy)
+    }
+  }
+
+  fun watchKeypresses() {
     keypressDisposable = interactor.onHandleKeyPressChanged()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -45,18 +55,8 @@ internal class MainToolbarViewModel @Inject internal constructor(
 
   }
 
-  override fun onUnbind() {
-    keypressDisposable.tryDispose()
-  }
-
   private fun handleKeypressChanged(handle: Boolean) {
     publish(HandleKeypress(handle))
-  }
-
-  override fun handleViewEvent(event: ToolbarViewEvent) {
-    return when (event) {
-      is ViewPrivacyPolicy -> publish(PrivacyPolicy)
-    }
   }
 
   fun failedNavigation(error: ActivityNotFoundException) {

@@ -21,8 +21,8 @@ import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import com.pyamsoft.pydroid.arch.impl.createComponent
-import com.pyamsoft.pydroid.arch.impl.doOnDestroy
+import com.pyamsoft.pydroid.arch.createComponent
+import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
@@ -69,6 +69,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
         is ClearAll -> killApplication()
       }
     }
+
+    requireNotNull(viewModel).beginWatchingForClear()
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

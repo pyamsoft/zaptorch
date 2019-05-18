@@ -20,8 +20,7 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.pyamsoft.pydroid.arch.impl.BaseUiView
-import com.pyamsoft.pydroid.arch.impl.onChange
+import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
 import com.pyamsoft.pydroid.ui.util.popHide
@@ -52,8 +51,8 @@ internal class MainActionView @Inject internal constructor(
     state: MainViewState,
     oldState: MainViewState?
   ) {
-    state.onChange(oldState, field = { it.isVisible }) { toggleVisibility(it) }
-    state.onChange(oldState, field = { it.isServiceRunning }) { setFabState(it) }
+    toggleVisibility(state.isVisible)
+    setFabState(state.isServiceRunning)
   }
 
   private fun setFabState(running: Boolean) {
