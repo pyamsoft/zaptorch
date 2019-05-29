@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.widget
 
 import android.os.Bundle
+import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.pydroid.arch.UiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
@@ -44,8 +45,7 @@ internal class ToolbarView @Inject internal constructor(
 
   override fun render(
     state: UnitViewState,
-    oldState: UnitViewState?
+    savedState: UiSavedState
   ) {
   }
-
 }

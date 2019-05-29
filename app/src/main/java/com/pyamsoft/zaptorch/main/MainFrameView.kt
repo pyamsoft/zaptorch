@@ -20,6 +20,7 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.pyamsoft.pydroid.arch.BaseUiView
+import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ internal class MainFrameView @Inject internal constructor(
 
   override fun onRender(
     state: ToolbarViewState,
-    oldState: ToolbarViewState?
+    savedState: UiSavedState
   ) {
   }
 

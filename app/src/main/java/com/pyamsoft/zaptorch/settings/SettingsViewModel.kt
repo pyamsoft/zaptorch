@@ -33,12 +33,19 @@ import javax.inject.Inject
 internal class SettingsViewModel @Inject internal constructor(
   private val scrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>,
-  private val bus: EventBus<ClearAllEvent>
+  bus: EventBus<ClearAllEvent>
 ) : UiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
     initialState = SettingsViewState(throwable = null)
 ) {
 
   private var clearDisposable by singleDisposable()
+
+  init {
+    clearDisposable = bus.listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { killApplication() }
+  }
 
   override fun onCleared() {
     clearDisposable.tryDispose()
@@ -49,13 +56,6 @@ internal class SettingsViewModel @Inject internal constructor(
       is SignificantScroll -> scrollBus.publish(SignificantScrollEvent(event.visible))
       is ShowExplanation -> publish(Explain)
     }
-  }
-
-  fun beginWatchingForClear() {
-    clearDisposable = bus.listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { killApplication() }
   }
 
   private fun killApplication() {

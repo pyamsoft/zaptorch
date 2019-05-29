@@ -30,12 +30,19 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
-  private val interactor: MainInteractor
+  interactor: MainInteractor
 ) : UiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
     initialState = ToolbarViewState(throwable = null)
 ) {
 
   private var keypressDisposable by singleDisposable()
+
+  init {
+    keypressDisposable = interactor.onHandleKeyPressChanged()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { handleKeypressChanged(it) }
+  }
 
   override fun onCleared() {
     keypressDisposable.tryDispose()
@@ -45,14 +52,6 @@ internal class MainToolbarViewModel @Inject internal constructor(
     return when (event) {
       is ViewPrivacyPolicy -> publish(PrivacyPolicy)
     }
-  }
-
-  fun watchKeypresses() {
-    keypressDisposable = interactor.onHandleKeyPressChanged()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { handleKeypressChanged(it) }
-
   }
 
   private fun handleKeypressChanged(handle: Boolean) {

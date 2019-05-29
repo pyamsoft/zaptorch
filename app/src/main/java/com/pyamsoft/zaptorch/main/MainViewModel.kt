@@ -30,14 +30,26 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 internal class MainViewModel @Inject internal constructor(
-  private val serviceInteractor: VolumeServiceInteractor,
-  private val visibilityBus: EventBus<SignificantScrollEvent>
+  serviceInteractor: VolumeServiceInteractor,
+  visibilityBus: EventBus<SignificantScrollEvent>
 ) : UiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
     initialState = MainViewState(isVisible = true, isServiceRunning = false)
 ) {
 
   private var serviceDisposable by singleDisposable()
   private var visibilityDisposable by singleDisposable()
+
+  init {
+    serviceDisposable = serviceInteractor.observeServiceState()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { setState { copy(isServiceRunning = it) } }
+
+    visibilityDisposable = visibilityBus.listen()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { setState { copy(isVisible = it.visible) } }
+  }
 
   override fun handleViewEvent(event: MainViewEvent) {
     return when (event) {
@@ -48,18 +60,6 @@ internal class MainViewModel @Inject internal constructor(
   override fun onCleared() {
     serviceDisposable.tryDispose()
     visibilityDisposable.tryDispose()
-  }
-
-  fun watchServiceState() {
-    serviceDisposable = serviceInteractor.observeServiceState()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { setState { copy(isServiceRunning = it) } }
-
-    visibilityDisposable = visibilityBus.listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { setState { copy(isVisible = it.visible) } }
   }
 
 }

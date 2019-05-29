@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pyamsoft.pydroid.arch.BaseUiView
+import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
 import com.pyamsoft.pydroid.ui.util.popHide
@@ -49,7 +50,7 @@ internal class MainActionView @Inject internal constructor(
 
   override fun onRender(
     state: MainViewState,
-    oldState: MainViewState?
+    savedState: UiSavedState
   ) {
     toggleVisibility(state.isVisible)
     setFabState(state.isServiceRunning)

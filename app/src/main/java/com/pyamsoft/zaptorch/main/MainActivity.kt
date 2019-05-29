@@ -23,6 +23,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
@@ -46,10 +48,11 @@ import kotlin.LazyThreadSafetyMode.NONE
 
 class MainActivity : RatingActivity() {
 
+  @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var toolbar: MainToolbarView? = null
   @JvmField @Inject internal var mainView: MainFrameView? = null
   @JvmField @Inject internal var dropshadowView: DropshadowView? = null
-  @JvmField @Inject internal var viewModel: MainToolbarViewModel? = null
+  private var viewModel: MainToolbarViewModel? = null
 
   private var handleKeyPress: Boolean = false
 
@@ -84,6 +87,11 @@ class MainActivity : RatingActivity() {
         .create(this, layoutRoot, this)
         .inject(this)
 
+    ViewModelProviders.of(this, factory)
+        .let { factory ->
+          viewModel = factory.get(MainToolbarViewModel::class.java)
+        }
+
     val component = requireNotNull(mainView)
     val toolbarComponent = requireNotNull(toolbar)
     val dropshadow = requireNotNull(dropshadowView)
@@ -104,8 +112,6 @@ class MainActivity : RatingActivity() {
         is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
       }
     }
-
-    requireNotNull(viewModel).watchKeypresses()
 
     layoutRoot.layout {
       toolbarComponent.also {
@@ -149,6 +155,7 @@ class MainActivity : RatingActivity() {
     mainView = null
     toolbar = null
     dropshadowView = null
+    factory = null
   }
 
   private fun onHandleKeyPressChanged(handle: Boolean) {
