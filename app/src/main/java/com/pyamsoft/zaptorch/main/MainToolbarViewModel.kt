@@ -44,7 +44,7 @@ internal class MainToolbarViewModel @Inject internal constructor(
         .subscribe { handleKeypressChanged(it) }
   }
 
-  override fun onCleared() {
+  override fun onTeardown() {
     keypressDisposable.tryDispose()
   }
 

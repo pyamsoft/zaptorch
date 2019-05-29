@@ -43,7 +43,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ZaptorchModule::class, BaseModule::class, ViewModelModule::class])
+@Component(modules = [ZaptorchModule::class, BaseModule::class])
 interface ZapTorchComponent {
 
   fun inject(dialog: ConfirmationDialog)

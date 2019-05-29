@@ -20,11 +20,19 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.ui.app.ToolbarActivity
+import com.pyamsoft.zaptorch.ViewModelKey
+import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
+import com.pyamsoft.zaptorch.main.MainFragmentComponent.ViewModelModule
+import dagger.Binds
 import dagger.BindsInstance
+import dagger.Module
 import dagger.Subcomponent
+import dagger.multibindings.IntoMap
 
-@Subcomponent
+@Subcomponent(modules = [ViewModelModule::class])
 interface MainFragmentComponent {
 
   fun inject(fragment: MainFragment)
@@ -38,6 +46,18 @@ interface MainFragmentComponent {
       @BindsInstance toolbarActivity: ToolbarActivity,
       @BindsInstance parent: ViewGroup
     ): MainFragmentComponent
+  }
+
+  @Module
+  abstract class ViewModelModule {
+
+    @Binds
+    internal abstract fun bindViewModelFactory(factory: ZapTorchViewModelFactory): ViewModelProvider.Factory
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    internal abstract fun mainViewModel(viewModel: MainViewModel): UiViewModel<*, *, *>
   }
 }
 

@@ -17,22 +17,13 @@
 
 package com.pyamsoft.zaptorch
 
-import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UiViewModelFactory
-import com.pyamsoft.zaptorch.main.MainToolbarViewModel
-import com.pyamsoft.zaptorch.main.MainViewModel
-import com.pyamsoft.zaptorch.settings.SettingsViewModel
-import dagger.Binds
 import dagger.MapKey
-import dagger.Module
-import dagger.multibindings.IntoMap
 import javax.inject.Inject
 import javax.inject.Provider
-import javax.inject.Singleton
 import kotlin.reflect.KClass
 
-@Singleton
 internal class ZapTorchViewModelFactory @Inject internal constructor(
   private val viewModels: MutableMap<Class<out UiViewModel<*, *, *>>, Provider<UiViewModel<*, *, *>>>
 ) : UiViewModelFactory() {
@@ -51,26 +42,5 @@ internal class ZapTorchViewModelFactory @Inject internal constructor(
 )
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey
-private annotation class ViewModelKey(val value: KClass<out UiViewModel<*, *, *>>)
+internal annotation class ViewModelKey(val value: KClass<out UiViewModel<*, *, *>>)
 
-@Module
-abstract class ViewModelModule {
-
-  @Binds
-  internal abstract fun bindViewModelFactory(factory: ZapTorchViewModelFactory): ViewModelProvider.Factory
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(MainToolbarViewModel::class)
-  internal abstract fun toolbarViewModel(viewModel: MainToolbarViewModel): UiViewModel<*, *, *>
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(MainViewModel::class)
-  internal abstract fun mainViewModel(viewModel: MainViewModel): UiViewModel<*, *, *>
-
-  @Binds
-  @IntoMap
-  @ViewModelKey(SettingsViewModel::class)
-  internal abstract fun settingsViewModel(viewModel: SettingsViewModel): UiViewModel<*, *, *>
-}

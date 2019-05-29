@@ -47,7 +47,7 @@ internal class SettingsViewModel @Inject internal constructor(
         .subscribe { killApplication() }
   }
 
-  override fun onCleared() {
+  override fun onTeardown() {
     clearDisposable.tryDispose()
   }
 

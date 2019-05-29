@@ -57,7 +57,7 @@ internal class MainViewModel @Inject internal constructor(
     }
   }
 
-  override fun onCleared() {
+  override fun onTeardown() {
     serviceDisposable.tryDispose()
     visibilityDisposable.tryDispose()
   }

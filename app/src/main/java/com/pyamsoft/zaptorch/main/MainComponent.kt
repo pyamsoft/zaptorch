@@ -20,13 +20,19 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
+import com.pyamsoft.zaptorch.ViewModelKey
+import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
 import com.pyamsoft.zaptorch.main.MainComponent.MainModule
+import dagger.Binds
 import dagger.BindsInstance
 import dagger.Module
 import dagger.Provides
 import dagger.Subcomponent
+import dagger.multibindings.IntoMap
 
 @Subcomponent(modules = [MainModule::class])
 interface MainComponent {
@@ -47,6 +53,14 @@ interface MainComponent {
 
   @Module
   abstract class MainModule {
+
+    @Binds
+    internal abstract fun bindViewModelFactory(factory: ZapTorchViewModelFactory): ViewModelProvider.Factory
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainToolbarViewModel::class)
+    internal abstract fun toolbarViewModel(viewModel: MainToolbarViewModel): UiViewModel<*, *, *>
 
     @Module
     companion object {
