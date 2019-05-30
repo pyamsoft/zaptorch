@@ -91,7 +91,6 @@ internal class MainToolbarView @Inject internal constructor(
   private fun showError() {
     Snackbreak.bindTo(owner)
         .short(layoutRoot, "Unable to open browser for policy viewing")
-        .show()
   }
 
   private fun hideError() {

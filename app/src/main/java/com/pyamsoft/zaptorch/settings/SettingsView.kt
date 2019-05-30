@@ -80,7 +80,6 @@ internal class SettingsView @Inject internal constructor(
   private fun showError(message: String) {
     Snackbreak.bindTo(owner)
         .short(recyclerView, message)
-        .show()
   }
 
   private fun clearError() {

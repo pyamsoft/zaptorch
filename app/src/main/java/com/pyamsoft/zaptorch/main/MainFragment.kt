@@ -120,9 +120,9 @@ class MainFragment : Fragment() {
   private fun displayPreferenceFragment() {
     val fragmentManager = childFragmentManager
     if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
-      fragmentManager.beginTransaction()
-          .add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
-          .commit(viewLifecycleOwner)
+      fragmentManager.commit(viewLifecycleOwner) {
+        add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
+      }
     }
   }
 

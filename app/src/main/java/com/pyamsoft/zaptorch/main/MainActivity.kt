@@ -175,9 +175,9 @@ class MainActivity : RatingActivity() {
   private fun showMainFragment() {
     val fm = supportFragmentManager
     if (fm.findFragmentByTag(MainFragment.TAG) == null && !AboutFragment.isPresent(this)) {
-      fm.beginTransaction()
-          .add(fragmentContainerId, MainFragment(), MainFragment.TAG)
-          .commit(this)
+      fm.commit(this) {
+        add(fragmentContainerId, MainFragment(), MainFragment.TAG)
+      }
     }
   }
 
