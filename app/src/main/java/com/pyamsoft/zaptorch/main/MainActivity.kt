@@ -51,7 +51,6 @@ class MainActivity : RatingActivity() {
   @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var toolbar: MainToolbarView? = null
   @JvmField @Inject internal var mainView: MainFrameView? = null
-  @JvmField @Inject internal var dropshadowView: DropshadowView? = null
   private var viewModel: MainToolbarViewModel? = null
 
   private var handleKeyPress: Boolean = false
@@ -94,7 +93,7 @@ class MainActivity : RatingActivity() {
 
     val component = requireNotNull(mainView)
     val toolbarComponent = requireNotNull(toolbar)
-    val dropshadow = requireNotNull(dropshadowView)
+    val dropshadow = DropshadowView.create(layoutRoot)
 
     dropshadow.inflate(savedInstanceState)
     this.doOnDestroy {
@@ -146,7 +145,6 @@ class MainActivity : RatingActivity() {
     super.onSaveInstanceState(outState)
     toolbar?.saveState(outState)
     mainView?.saveState(outState)
-    dropshadowView?.saveState(outState)
   }
 
   override fun onDestroy() {
@@ -154,7 +152,6 @@ class MainActivity : RatingActivity() {
     viewModel = null
     mainView = null
     toolbar = null
-    dropshadowView = null
     factory = null
   }
 
