@@ -28,7 +28,7 @@
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
       android:roundIcon="@mipmap/ic_launcher"
-      android:theme="@style/Theme.ZapTorch.Dark"
+      android:theme="@style/Theme.ZapTorch"
       tools:ignore="GoogleAppIndexingWarning">
 
     <!-- Support super wide screen -->
@@ -39,7 +39,7 @@
     <activity
         android:name=".main.MainActivity"
         android:launchMode="singleTask"
-        android:theme="@style/Theme.ZapTorch.Dark.Splash"
+        android:theme="@style/Theme.ZapTorch.Splash"
         android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -53,6 +53,7 @@
         android:excludeFromRecents="true"
         android:exported="false"
         android:launchMode="singleInstance"
+        android:theme="@style/Theme.ZapTorch.Error"
         android:noHistory="true"
         android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
 

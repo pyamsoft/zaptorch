@@ -43,7 +43,6 @@ class ZapTorch : Application() {
       refWatcher = RefWatcher.DISABLED
     }
 
-    Theming.IS_DEFAULT_DARK_THEME = true
     PYDroid.init(
         this,
         getString(R.string.app_name),

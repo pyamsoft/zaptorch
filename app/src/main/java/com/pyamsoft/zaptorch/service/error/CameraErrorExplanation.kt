@@ -19,9 +19,7 @@ package com.pyamsoft.zaptorch.service.error
 
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.ActivityBase
-import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
@@ -33,11 +31,7 @@ class CameraErrorExplanation : ActivityBase() {
   override val fragmentContainerId: Int = 0
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    if (Injector.obtain<Theming>(applicationContext).isDarkTheme()) {
-      setTheme(R.style.Theme_ZapTorch_Dark)
-    } else {
-      setTheme(R.style.Theme_ZapTorch_Light)
-    }
+    setTheme(R.style.Theme_ZapTorch_Error)
     super.onCreate(savedInstanceState)
   }
 

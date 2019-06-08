@@ -31,7 +31,7 @@ buildscript {
   ext {
 
     minSdk = 23
-    maxSdk = 28
+    maxSdk = 29
 
     // AndroidX
     annotation = "1.0.2"
@@ -40,7 +40,7 @@ buildscript {
 
     pydroid = "20.2.0-SNAPSHOT"
     leakCanary = "1.6.3"
-    dagger = "2.22.1"
+    dagger = "2.23.1"
   }
 
   dependencies {

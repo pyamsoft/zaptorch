@@ -17,6 +17,7 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ import com.pyamsoft.zaptorch.main.ToolbarViewEvent.ViewPrivacyPolicy
 import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
+  private val activity: Activity,
   private val toolbarActivityProvider: ToolbarActivityProvider,
   private val owner: LifecycleOwner,
   private val theming: Theming,
@@ -53,7 +55,7 @@ internal class MainToolbarView @Inject internal constructor(
 
   private fun setupToolbar() {
     val theme: Int
-    if (theming.isDarkTheme()) {
+    if (theming.isDarkTheme(activity)) {
       theme = R.style.ThemeOverlay_AppCompat
     } else {
       theme = R.style.ThemeOverlay_AppCompat_Light

@@ -17,6 +17,7 @@
 
 package com.pyamsoft.zaptorch.main
 
+import android.app.Activity
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
@@ -42,6 +43,7 @@ interface MainComponent {
 
     @CheckResult
     fun create(
+      @BindsInstance activity: Activity,
       @BindsInstance owner: LifecycleOwner,
       @BindsInstance parent: ViewGroup,
       @BindsInstance toolbarActivityProvider: ToolbarActivityProvider

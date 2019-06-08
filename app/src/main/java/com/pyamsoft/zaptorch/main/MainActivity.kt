@@ -32,7 +32,6 @@ import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
-import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.layout
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
@@ -72,18 +71,14 @@ class MainActivity : RatingActivity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    if (Injector.obtain<Theming>(applicationContext).isDarkTheme()) {
-      setTheme(R.style.Theme_ZapTorch_Dark)
-    } else {
-      setTheme(R.style.Theme_ZapTorch_Light)
-    }
+    setTheme(R.style.Theme_ZapTorch)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.snackbar_screen)
 
     val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
     Injector.obtain<ZapTorchComponent>(applicationContext)
         .plusMainComponent()
-        .create(this, layoutRoot, this)
+        .create(this, this, layoutRoot, this)
         .inject(this)
 
     ViewModelProviders.of(this, factory)
