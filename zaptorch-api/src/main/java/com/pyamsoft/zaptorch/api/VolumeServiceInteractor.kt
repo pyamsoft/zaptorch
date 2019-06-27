@@ -17,33 +17,31 @@
 
 package com.pyamsoft.zaptorch.api
 
+import android.hardware.camera2.CameraAccessException
 import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
-import io.reactivex.Observable
-import io.reactivex.Single
 
 interface VolumeServiceInteractor {
 
-  @CheckResult
-  fun handleKeyPress(
+  suspend fun handleKeyPress(
     action: Int,
-    keyCode: Int
-  ): Single<Long>
-
-  @CheckResult
-  fun shouldShowErrorDialog(): Single<Boolean>
+    keyCode: Int,
+    onError: (error: CameraAccessException?) -> Unit
+  )
 
   fun setupCamera()
 
-  fun toggleTorch()
+  suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit)
 
   fun releaseCamera()
 
   @CheckResult
-  fun observeServiceState(): Observable<Boolean>
+  fun observeServiceState(): EventConsumer<Boolean>
 
   @CheckResult
-  fun observeCameraState(): Observable<CameraError>
+  fun observeCameraState(): EventConsumer<CameraError>
 
   fun setServiceState(changed: Boolean)
+
+  fun showError(error: CameraAccessException?)
 }

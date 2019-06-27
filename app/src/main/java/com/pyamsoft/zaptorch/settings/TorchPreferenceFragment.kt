@@ -24,7 +24,6 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.pyamsoft.pydroid.arch.createComponent
-import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
@@ -41,7 +40,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
   @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var settingsView: SettingsView? = null
-  @JvmField @Inject internal var toolbarView: ToolbarView? = null
+  @JvmField @Inject internal var toolbarView: ToolbarView<SettingsViewState, SettingsViewEvent>? =
+    null
   private var viewModel: SettingsViewModel? = null
 
   override val preferenceXmlResId: Int = R.xml.preferences
@@ -57,11 +57,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
         .create(viewLifecycleOwner, requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
-    requireNotNull(toolbarView).inflate(savedInstanceState)
-    viewLifecycleOwner.doOnDestroy {
-      toolbarView?.teardown()
-    }
-
     ViewModelProviders.of(this, factory)
         .let { factory ->
           viewModel = factory.get(SettingsViewModel::class.java)
@@ -70,7 +65,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     createComponent(
         savedInstanceState, viewLifecycleOwner,
         requireNotNull(viewModel),
-        requireNotNull(settingsView)
+        requireNotNull(settingsView),
+        requireNotNull(toolbarView)
     ) {
       return@createComponent when (it) {
         is Explain -> showHowTo()

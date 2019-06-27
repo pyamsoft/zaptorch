@@ -20,18 +20,16 @@ package com.pyamsoft.zaptorch
 import android.app.IntentService
 import android.content.Context
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.core.bus.RxBus
-import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
 import com.pyamsoft.zaptorch.base.BaseModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
+import com.pyamsoft.zaptorch.service.ServiceComponent
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
-import com.pyamsoft.zaptorch.service.TorchOffService
-import com.pyamsoft.zaptorch.service.VolumeMonitorService
 import com.pyamsoft.zaptorch.settings.ClearAllEvent
 import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
@@ -48,10 +46,6 @@ interface ZapTorchComponent {
 
   fun inject(dialog: ConfirmationDialog)
 
-  fun inject(service: TorchOffService)
-
-  fun inject(service: VolumeMonitorService)
-
   @CheckResult
   fun plusMainComponent(): MainComponent.Factory
 
@@ -60,6 +54,9 @@ interface ZapTorchComponent {
 
   @CheckResult
   fun plusSettingsComponent(): SettingsComponent.Factory
+
+  @CheckResult
+  fun plusServiceComponent(): ServiceComponent.Factory
 
   @Component.Factory
   interface Factory {
@@ -87,7 +84,7 @@ interface ZapTorchComponent {
       @JvmStatic
       @CheckResult
       internal fun provideClearBus(): EventBus<ClearAllEvent> {
-        return RxBus.create()
+        return EventBus.create()
       }
 
       @Provides
@@ -95,7 +92,7 @@ interface ZapTorchComponent {
       @JvmStatic
       @CheckResult
       internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
-        return RxBus.create()
+        return EventBus.create()
       }
 
       @Provides
@@ -103,7 +100,7 @@ interface ZapTorchComponent {
       @JvmStatic
       @CheckResult
       internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
-        return RxBus.create()
+        return EventBus.create()
       }
 
     }

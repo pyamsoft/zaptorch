@@ -26,7 +26,9 @@ interface CameraInterface {
 
   fun destroy()
 
-  fun toggleTorch()
+  suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit)
+
+  fun showError(exception: CameraAccessException?)
 
   interface OnStateChangedCallback {
 

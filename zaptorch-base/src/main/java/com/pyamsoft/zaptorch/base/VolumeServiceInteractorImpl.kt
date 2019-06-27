@@ -24,6 +24,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.hardware.camera2.CameraAccessException
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.view.KeyEvent
@@ -32,16 +33,21 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.pyamsoft.pydroid.core.bus.RxBus
-import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
+import com.pyamsoft.zaptorch.api.EventConsumer
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.Observable
-import io.reactivex.Single
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
-import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,22 +60,28 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
   @ColorRes notificationColor: Int
 ) : VolumeServiceInteractor {
 
+  private val mutex = Mutex()
+
   private val notificationManagerCompat = NotificationManagerCompat.from(context)
   private val notification: Notification
 
   private var pressed: Boolean = false
 
   private var cameraInterface: CameraInterface? = null
-  private val cameraErrorBus = RxBus.create<CameraError>()
+
+  @ExperimentalCoroutinesApi
+  private val cameraErrorBus = BroadcastChannel<CameraError>(1)
 
   private var running = false
-  private val runningStateBus = RxBus.create<Boolean>()
+
+  @ExperimentalCoroutinesApi
+  private val runningStateBus = BroadcastChannel<Boolean>(1)
 
   init {
     val intent = Intent(context, torchOffServiceClass)
 
     val notificationChannelId = "zaptorch_foreground"
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
       setupNotificationChannel(notificationChannelId)
     }
 
@@ -112,90 +124,103 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     notificationManager.createNotificationChannel(notificationChannel)
   }
 
+  @ExperimentalCoroutinesApi
   override fun setServiceState(changed: Boolean) {
     running = changed
-    runningStateBus.publish(changed)
-  }
-
-  override fun observeServiceState(): Observable<Boolean> {
-    return Observable.defer {
-      enforcer.assertNotOnMainThread()
-      return@defer runningStateBus.listen()
-          .startWith(running)
+    if (!runningStateBus.offer(changed)) {
+      Timber.w("Failed to offer service state change: $changed")
     }
   }
 
-  override fun observeCameraState(): Observable<CameraError> {
-    return Observable.defer {
-      enforcer.assertNotOnMainThread()
-      return@defer cameraErrorBus.listen()
+  @ExperimentalCoroutinesApi
+  override fun observeServiceState(): EventConsumer<Boolean> {
+    return object : EventConsumer<Boolean> {
+
+      override suspend fun onEvent(func: suspend (event: Boolean) -> Unit) {
+        func(running)
+        runningStateBus.openSubscription()
+            .consumeEach { func(it) }
+      }
+
     }
   }
 
-  override fun handleKeyPress(
+  @ExperimentalCoroutinesApi
+  override fun observeCameraState(): EventConsumer<CameraError> {
+    return object : EventConsumer<CameraError> {
+
+      override suspend fun onEvent(func: suspend (event: CameraError) -> Unit) {
+        cameraErrorBus.openSubscription()
+            .consumeEach { func(it) }
+      }
+
+    }
+  }
+
+  override suspend fun handleKeyPress(
     action: Int,
-    keyCode: Int
-  ): Single<Long> {
-    return Single.defer {
-      enforcer.assertNotOnMainThread()
-      var keyPressSingle: Single<Long> = Single.never<Long>()
-      if (action == KeyEvent.ACTION_UP) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-          var result: Single<Long>? = null
-          if (pressed) {
-            Timber.d("Key has been double pressed")
-            pressed = false
-            toggleTorch()
-          } else {
-            pressed = true
-            result = Single.timer(preferences.buttonDelayTime, MILLISECONDS)
-                .doOnSuccess {
-                  Timber.d("Set pressed back to false")
-                  pressed = false
-                }
-          }
+    keyCode: Int,
+    onError: (error: CameraAccessException?) -> Unit
+  ) = coroutineScope {
+    if (action != KeyEvent.ACTION_UP) {
+      return@coroutineScope
+    }
+    if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
+      return@coroutineScope
+    }
 
-          if (result != null) {
-            keyPressSingle = result
+    enforcer.assertNotOnMainThread()
+    if (pressed) {
+      mutex.withLock {
+        Timber.d("Key has been double pressed")
+        pressed = false
+        toggleTorch(onError)
+      }
+    } else {
+      mutex.withLock {
+        pressed = true
+      }
+
+      launch {
+        delay(preferences.buttonDelayTime)
+        mutex.withLock {
+          if (pressed) {
+            Timber.d("Set pressed back to false")
+            pressed = false
           }
         }
       }
-
-      return@defer keyPressSingle
     }
   }
 
-  override fun shouldShowErrorDialog(): Single<Boolean> = Single.fromCallable {
-    enforcer.assertNotOnMainThread()
-    return@fromCallable preferences.shouldShowErrorDialog()
-  }
-
+  @ExperimentalCoroutinesApi
   override fun setupCamera() {
-    val camera: CameraCommon = MarshmallowCamera(
-        context, this
-    )
-        .apply {
-          setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
-            override fun onOpened() {
-              notificationManagerCompat.notify(NOTIFICATION_ID, notification)
-            }
-
-            override fun onClosed() {
-              notificationManagerCompat.cancel(NOTIFICATION_ID)
-            }
-
-            override fun onError(error: CameraError) {
-              cameraErrorBus.publish(error)
-            }
-          })
+    val camera: CameraCommon = MarshmallowCamera(context, enforcer, preferences).apply {
+      setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
+        override fun onOpened() {
+          notificationManagerCompat.notify(NOTIFICATION_ID, notification)
         }
+
+        override fun onClosed() {
+          notificationManagerCompat.cancel(NOTIFICATION_ID)
+        }
+
+        override fun onError(error: CameraError) {
+          if (!cameraErrorBus.offer(error)) {
+            Timber.w("Unable to offer camera error event: $error")
+          }
+        }
+      })
+    }
 
     releaseCamera()
     cameraInterface = camera
   }
 
-  override fun toggleTorch() {
-    cameraInterface?.toggleTorch()
+  override suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit) {
+    coroutineScope {
+      cameraInterface?.toggleTorch(onError)
+    }
   }
 
   override fun releaseCamera() {
@@ -204,6 +229,10 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
       it.setOnStateChangedCallback(null)
     }
     cameraInterface = null
+  }
+
+  override fun showError(error: CameraAccessException?) {
+    cameraInterface?.showError(error)
   }
 
   companion object {

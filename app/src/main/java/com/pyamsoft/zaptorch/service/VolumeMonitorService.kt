@@ -22,8 +22,6 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -37,7 +35,6 @@ import javax.inject.Inject
 class VolumeMonitorService : AccessibilityService() {
 
   @JvmField @Inject internal var binder: ServiceBinder? = null
-  private var disposable by singleDisposable()
 
   override fun onKeyEvent(event: KeyEvent): Boolean {
     val action = event.action
@@ -59,9 +56,11 @@ class VolumeMonitorService : AccessibilityService() {
   override fun onCreate() {
     super.onCreate()
     Injector.obtain<ZapTorchComponent>(applicationContext)
+        .plusServiceComponent()
+        .create()
         .inject(this)
 
-    disposable = requireNotNull(binder).bind {
+    requireNotNull(binder).bind {
       return@bind when (it) {
         is RenderError -> renderError(it.error)
         is Finish -> finish()
@@ -95,8 +94,7 @@ class VolumeMonitorService : AccessibilityService() {
 
   override fun onDestroy() {
     super.onDestroy()
-
-    disposable.tryDispose()
+    binder?.unbind()
     binder = null
 
     ZapTorch.getRefWatcher(this)

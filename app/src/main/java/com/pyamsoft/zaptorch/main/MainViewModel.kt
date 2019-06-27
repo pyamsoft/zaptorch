@@ -17,49 +17,39 @@
 
 package com.pyamsoft.zaptorch.main
 
+import androidx.lifecycle.viewModelScope
+import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class MainViewModel @Inject internal constructor(
-  serviceInteractor: VolumeServiceInteractor,
-  visibilityBus: EventBus<SignificantScrollEvent>
+  private val serviceInteractor: VolumeServiceInteractor,
+  private val visibilityBus: EventBus<SignificantScrollEvent>
 ) : UiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
     initialState = MainViewState(isVisible = true, isServiceRunning = false)
 ) {
 
-  private var serviceDisposable by singleDisposable()
-  private var visibilityDisposable by singleDisposable()
+  override fun onInit() {
+    viewModelScope.launch(context = Dispatchers.Default) {
+      serviceInteractor.observeServiceState()
+          .onEvent { setState { copy(isServiceRunning = it) } }
+    }
 
-  init {
-    serviceDisposable = serviceInteractor.observeServiceState()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { setState { copy(isServiceRunning = it) } }
-
-    visibilityDisposable = visibilityBus.listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { setState { copy(isVisible = it.visible) } }
+    viewModelScope.launch(context = Dispatchers.Default) {
+      visibilityBus.onEvent { setState { copy(isVisible = it.visible) } }
+    }
   }
 
   override fun handleViewEvent(event: MainViewEvent) {
     return when (event) {
       is ActionClick -> publish(ServiceAction(event.isServiceRunning))
     }
-  }
-
-  override fun onTeardown() {
-    serviceDisposable.tryDispose()
-    visibilityDisposable.tryDispose()
   }
 
 }

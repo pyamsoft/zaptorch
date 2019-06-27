@@ -15,20 +15,9 @@
  *
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.api
 
-import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.ClearPreferences
-import com.pyamsoft.zaptorch.api.SettingsInteractor
-import javax.inject.Inject
+interface EventConsumer<T : Any> {
 
-internal class SettingsInteractorImpl @Inject internal constructor(
-  private val enforcer: Enforcer,
-  private val clearPreferences: ClearPreferences
-) : SettingsInteractor {
-
-  override suspend fun clearAll() {
-    enforcer.assertNotOnMainThread()
-    clearPreferences.clearAll()
-  }
+  suspend fun onEvent(func: suspend (event: T) -> Unit)
 }

@@ -17,11 +17,7 @@
 
 package com.pyamsoft.zaptorch.api
 
-import androidx.annotation.CheckResult
-import io.reactivex.Single
-
 interface SettingsInteractor {
 
-  @CheckResult
-  fun clearAll(): Single<Unit>
+  suspend fun clearAll()
 }

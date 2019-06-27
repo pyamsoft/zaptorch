@@ -20,23 +20,23 @@ package com.pyamsoft.zaptorch.widget
 import android.os.Bundle
 import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.pydroid.arch.UiView
-import com.pyamsoft.pydroid.arch.UnitViewEvent
-import com.pyamsoft.pydroid.arch.UnitViewState
+import com.pyamsoft.pydroid.arch.UiViewEvent
+import com.pyamsoft.pydroid.arch.UiViewState
 import com.pyamsoft.pydroid.ui.app.ToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.InvalidIdException
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
 
-internal class ToolbarView @Inject internal constructor(
+internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal constructor(
   private val toolbarActivity: ToolbarActivity
-) : UiView<UnitViewState, UnitViewEvent>() {
+) : UiView<S, E>() {
 
   override fun id(): Int {
     throw InvalidIdException
   }
 
-  override fun inflate(savedInstanceState: Bundle?) {
+  override fun doInflate(savedInstanceState: Bundle?) {
     toolbarActivity.withToolbar { toolbar ->
       toolbar.setTitle(R.string.app_name)
       toolbar.setUpEnabled(false)
@@ -44,7 +44,7 @@ internal class ToolbarView @Inject internal constructor(
   }
 
   override fun render(
-    state: UnitViewState,
+    state: S,
     savedState: UiSavedState
   ) {
   }

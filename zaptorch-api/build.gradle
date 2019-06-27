@@ -64,9 +64,9 @@ kapt {
 
 dependencies {
   // PYDroid
+  api "com.pyamsoft.pydroid:arch:$pydroid"
   api "com.pyamsoft.pydroid:loader:$pydroid"
+
   api "androidx.recyclerview:recyclerview:$recyclerView"
-  api "androidx.annotation:annotation:$annotation"
-  api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 

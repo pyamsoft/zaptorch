@@ -15,20 +15,24 @@
  *
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.ClearPreferences
-import com.pyamsoft.zaptorch.api.SettingsInteractor
-import javax.inject.Inject
+import androidx.annotation.CheckResult
+import dagger.Subcomponent
 
-internal class SettingsInteractorImpl @Inject internal constructor(
-  private val enforcer: Enforcer,
-  private val clearPreferences: ClearPreferences
-) : SettingsInteractor {
+@Subcomponent
+interface ServiceComponent {
 
-  override suspend fun clearAll() {
-    enforcer.assertNotOnMainThread()
-    clearPreferences.clearAll()
+  fun inject(service: VolumeMonitorService)
+
+  fun inject(service: TorchOffService)
+
+  @Subcomponent.Factory
+  interface Factory {
+
+    @CheckResult
+    fun create(): ServiceComponent
+
   }
+
 }

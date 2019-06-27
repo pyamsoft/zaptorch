@@ -19,24 +19,21 @@ package com.pyamsoft.zaptorch.base
 
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
+import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.pyamsoft.zaptorch.api.CameraPreferences
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
-  private val interactor: VolumeServiceInteractor
+  protected val enforcer: Enforcer,
+  private val preferences: CameraPreferences
 ) : CameraInterface, OnStateChangedCallback {
 
   private val errorExplain = Intent()
   private var callback: OnStateChangedCallback? = null
-
-  private var errorDisposable by singleDisposable()
 
   init {
     errorExplain.apply {
@@ -79,16 +76,17 @@ internal abstract class CameraCommon protected constructor(
   }
 
   override fun destroy() {
-    errorDisposable.tryDispose()
     release()
   }
 
-  protected fun startErrorExplanationActivity(exception: CameraAccessException?) {
-    errorDisposable = interactor.shouldShowErrorDialog()
-        .filter { it }
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { notifyCallbackOnError(exception, errorExplain) }
+  @CheckResult
+  protected suspend fun shouldShowError(): Boolean {
+    enforcer.assertNotOnMainThread()
+    return preferences.shouldShowErrorDialog()
+  }
+
+  override fun showError(exception: CameraAccessException?) {
+    notifyCallbackOnError(exception, errorExplain)
   }
 
   protected abstract fun release()

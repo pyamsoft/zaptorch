@@ -18,11 +18,11 @@
 package com.pyamsoft.zaptorch.base
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.pyamsoft.pydroid.core.threads.Enforcer
+import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.core.Enforcer
+import com.pyamsoft.zaptorch.api.EventConsumer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,27 +33,25 @@ internal class MainInteractorImpl @Inject internal constructor(
   private val preferences: UIPreferences
 ) : MainInteractor {
 
-  override fun onHandleKeyPressChanged(): Observable<Boolean> {
-    return Observable.create {
-      val listener = OnSharedPreferenceChangeListener { _, key ->
-        if (key == handleKeyPressKey) {
-          emit(it)
-        }
-      }
+  override fun onHandleKeyPressChanged(): EventConsumer<Boolean> {
+    return object : EventConsumer<Boolean> {
 
-      enforcer.assertNotOnMainThread()
-      preferences.register(listener)
-      it.setCancellable {
+      private val bus = EventBus.create<Boolean>()
+
+      override suspend fun onEvent(func: suspend (event: Boolean) -> Unit) {
+        val listener = OnSharedPreferenceChangeListener { _, key ->
+          if (key == handleKeyPressKey) {
+            bus.publish(preferences.shouldHandleKeys())
+          }
+        }
+
+        enforcer.assertNotOnMainThread()
+        preferences.register(listener)
+        func(preferences.shouldHandleKeys())
+        bus.onEvent { func(it) }
         preferences.unregister(listener)
       }
 
-      emit(it)
-    }
-  }
-
-  private fun emit(emitter: ObservableEmitter<Boolean>) {
-    if (!emitter.isDisposed) {
-      emitter.onNext(preferences.shouldHandleKeys())
     }
   }
 

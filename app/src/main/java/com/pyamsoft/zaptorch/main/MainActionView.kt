@@ -29,6 +29,7 @@ import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class MainActionView @Inject internal constructor(

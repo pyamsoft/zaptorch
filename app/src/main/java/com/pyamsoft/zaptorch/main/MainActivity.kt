@@ -26,7 +26,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.pyamsoft.pydroid.arch.createComponent
-import com.pyamsoft.pydroid.arch.doOnDestroy
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
@@ -88,18 +87,14 @@ class MainActivity : RatingActivity() {
 
     val component = requireNotNull(mainView)
     val toolbarComponent = requireNotNull(toolbar)
-    val dropshadow = DropshadowView.create(layoutRoot)
-
-    dropshadow.inflate(savedInstanceState)
-    this.doOnDestroy {
-      dropshadow.teardown()
-    }
+    val dropshadow = DropshadowView.createTyped<ToolbarViewState, ToolbarViewEvent>(layoutRoot)
 
     createComponent(
         savedInstanceState, this,
         requireNotNull(viewModel),
         component,
-        toolbarComponent
+        toolbarComponent,
+        dropshadow
     ) {
       return@createComponent when (it) {
         is PrivacyPolicy -> showPrivacyPolicy()

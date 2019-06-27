@@ -18,10 +18,9 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
-import io.reactivex.Observable
 
 interface MainInteractor {
 
   @CheckResult
-  fun onHandleKeyPressChanged(): Observable<Boolean>
+  fun onHandleKeyPressChanged(): EventConsumer<Boolean>
 }

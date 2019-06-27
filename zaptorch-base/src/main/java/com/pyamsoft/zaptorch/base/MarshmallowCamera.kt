@@ -20,48 +20,77 @@ package com.pyamsoft.zaptorch.base
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
+import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.api.CameraPreferences
+import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 
 internal class MarshmallowCamera internal constructor(
   context: Context,
-  interactor: VolumeServiceInteractor
-) : com.pyamsoft.zaptorch.base.CameraCommon(interactor) {
+  enforcer: Enforcer,
+  preferences: CameraPreferences
+) : CameraCommon(enforcer, preferences) {
 
   private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
   private val torchCallback = TorchCallback(this)
 
   init {
-    Timber.d("INIT")
     setupCamera()
   }
 
-  override fun toggleTorch() {
-    val toggle = !torchCallback.isEnabled
-    Timber.d("Toggle torch: $toggle")
-    setTorch(toggle)
-  }
+  override suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit) {
+    coroutineScope {
+      enforcer.assertNotOnMainThread()
 
-  private fun setTorch(enable: Boolean) {
-    val cameraId = torchCallback.cameraId
-    if (cameraId != null) {
-      try {
-        Timber.d("Set torch: %s", enable)
-        cameraManager.setTorchMode(cameraId, enable)
-      } catch (e: CameraAccessException) {
-        Timber.e(e, "toggleTorch ERROR")
-        startErrorExplanationActivity(e)
-      }
-    } else {
-      Timber.e("Torch unavailable")
-      startErrorExplanationActivity(null)
+      val toggle = !torchCallback.isEnabled
+      Timber.d("Toggle torch: $toggle")
+      setTorch(toggle, onError)
     }
   }
 
+  private suspend inline fun setTorch(
+    enable: Boolean,
+    crossinline onError: (error: CameraAccessException?) -> Unit
+  ) {
+    coroutineScope {
+      enforcer.assertNotOnMainThread()
+
+      val error = setTorchState(enable)
+      if (error != null) {
+        if (shouldShowError()) {
+          onError(error.exception)
+        }
+      }
+    }
+  }
+
+  @CheckResult
+  private fun setTorchState(enabled: Boolean): TorchError? {
+    val cameraId = torchCallback.cameraId
+    if (cameraId != null) {
+      try {
+        Timber.d("Set torch: $enabled")
+        cameraManager.setTorchMode(cameraId, enabled)
+        return null
+      } catch (e: CameraAccessException) {
+        Timber.e(e, "Error during torchOff")
+        return TorchError(e)
+      }
+    } else {
+      Timber.e("Torch unavailable")
+      return TorchError(null)
+    }
+  }
+
+  private data class TorchError(val exception: CameraAccessException?)
+
   override fun release() {
     if (torchCallback.isEnabled) {
-      setTorch(false)
+      if (setTorchState(false) == null) {
+        Timber.d("Torch turned off")
+      }
     }
 
     Timber.d("Unregister torch callback")

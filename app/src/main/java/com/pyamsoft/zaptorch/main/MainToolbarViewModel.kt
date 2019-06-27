@@ -18,34 +18,27 @@
 package com.pyamsoft.zaptorch.main
 
 import android.content.ActivityNotFoundException
+import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.PrivacyPolicy
 import com.pyamsoft.zaptorch.main.ToolbarViewEvent.ViewPrivacyPolicy
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
-  interactor: MainInteractor
+  private val interactor: MainInteractor
 ) : UiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
     initialState = ToolbarViewState(throwable = null)
 ) {
 
-  private var keypressDisposable by singleDisposable()
-
-  init {
-    keypressDisposable = interactor.onHandleKeyPressChanged()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { handleKeypressChanged(it) }
-  }
-
-  override fun onTeardown() {
-    keypressDisposable.tryDispose()
+  override fun onInit() {
+    viewModelScope.launch(context = Dispatchers.Default) {
+      interactor.onHandleKeyPressChanged()
+          .onEvent { handleKeypressChanged(it) }
+    }
   }
 
   override fun handleViewEvent(event: ToolbarViewEvent) {

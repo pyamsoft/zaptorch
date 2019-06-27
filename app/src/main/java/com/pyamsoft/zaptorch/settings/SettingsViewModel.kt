@@ -17,38 +17,32 @@
 
 package com.pyamsoft.zaptorch.settings
 
+import androidx.lifecycle.viewModelScope
+import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.pydroid.core.bus.EventBus
-import com.pyamsoft.pydroid.core.singleDisposable
-import com.pyamsoft.pydroid.core.tryDispose
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ShowExplanation
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class SettingsViewModel @Inject internal constructor(
   private val scrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>,
-  bus: EventBus<ClearAllEvent>
+  private val bus: EventBus<ClearAllEvent>
 ) : UiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
     initialState = SettingsViewState(throwable = null)
 ) {
 
-  private var clearDisposable by singleDisposable()
-
-  init {
-    clearDisposable = bus.listen()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { killApplication() }
-  }
-
-  override fun onTeardown() {
-    clearDisposable.tryDispose()
+  override fun onInit() {
+    viewModelScope.launch(context = Dispatchers.Default) {
+      bus.onEvent {
+        launch(context = Dispatchers.Main) { killApplication() }
+      }
+    }
   }
 
   override fun handleViewEvent(event: SettingsViewEvent) {
