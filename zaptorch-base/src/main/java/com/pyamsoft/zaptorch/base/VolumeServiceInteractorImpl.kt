@@ -33,11 +33,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
-import com.pyamsoft.zaptorch.api.EventConsumer
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -136,10 +136,11 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
   override fun observeServiceState(): EventConsumer<Boolean> {
     return object : EventConsumer<Boolean> {
 
-      override suspend fun onEvent(func: suspend (event: Boolean) -> Unit) {
-        func(running)
+      override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
+        emitter(running)
+
         runningStateBus.openSubscription()
-            .consumeEach { func(it) }
+            .consumeEach { emitter(it) }
       }
 
     }
@@ -149,9 +150,9 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
   override fun observeCameraState(): EventConsumer<CameraError> {
     return object : EventConsumer<CameraError> {
 
-      override suspend fun onEvent(func: suspend (event: CameraError) -> Unit) {
+      override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
         cameraErrorBus.openSubscription()
-            .consumeEach { func(it) }
+            .consumeEach { emitter(it) }
       }
 
     }

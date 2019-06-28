@@ -18,9 +18,8 @@
 package com.pyamsoft.zaptorch.base
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.EventConsumer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
 import javax.inject.Inject
@@ -34,24 +33,21 @@ internal class MainInteractorImpl @Inject internal constructor(
 ) : MainInteractor {
 
   override fun onHandleKeyPressChanged(): EventConsumer<Boolean> {
-    return object : EventConsumer<Boolean> {
+    return EventConsumer.create { onCancel, startWith, emit ->
+      enforcer.assertNotOnMainThread()
 
-      private val bus = EventBus.create<Boolean>()
-
-      override suspend fun onEvent(func: suspend (event: Boolean) -> Unit) {
-        val listener = OnSharedPreferenceChangeListener { _, key ->
-          if (key == handleKeyPressKey) {
-            bus.publish(preferences.shouldHandleKeys())
-          }
+      val listener = OnSharedPreferenceChangeListener { _, key ->
+        if (key == handleKeyPressKey) {
+          emit(preferences.shouldHandleKeys())
         }
+      }
 
-        enforcer.assertNotOnMainThread()
-        preferences.register(listener)
-        func(preferences.shouldHandleKeys())
-        bus.onEvent { func(it) }
+      onCancel {
         preferences.unregister(listener)
       }
 
+      preferences.register(listener)
+      startWith { preferences.shouldHandleKeys() }
     }
   }
 

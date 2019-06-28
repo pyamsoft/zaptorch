@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.api
 
 import android.hardware.camera2.CameraAccessException
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 
 interface VolumeServiceInteractor {

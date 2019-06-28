@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.arch.EventConsumer
 
 interface MainInteractor {
 
