@@ -27,21 +27,20 @@ import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ShowExplanation
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class SettingsViewModel @Inject internal constructor(
   private val scrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>,
-  private val bus: EventBus<ClearAllEvent>
+  private val clearBus: EventBus<ClearAllEvent>
 ) : UiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
     initialState = SettingsViewState(throwable = null)
 ) {
 
   override fun onInit() {
     viewModelScope.launch(context = Dispatchers.Default) {
-      bus.onEvent {
-        launch(context = Dispatchers.Main) { killApplication() }
-      }
+      clearBus.onEvent { withContext(context = Dispatchers.Main) { killApplication() } }
     }
   }
 

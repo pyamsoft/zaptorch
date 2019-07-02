@@ -161,7 +161,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
   override suspend fun handleKeyPress(
     action: Int,
     keyCode: Int,
-    onError: (error: CameraAccessException?) -> Unit
+    onError: suspend (error: CameraAccessException?) -> Unit
   ) = coroutineScope {
     if (action != KeyEvent.ACTION_UP) {
       return@coroutineScope
@@ -218,7 +218,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     cameraInterface = camera
   }
 
-  override suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit) {
+  override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
     coroutineScope {
       cameraInterface?.toggleTorch(onError)
     }

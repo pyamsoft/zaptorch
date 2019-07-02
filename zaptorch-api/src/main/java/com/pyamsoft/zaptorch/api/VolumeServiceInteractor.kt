@@ -27,12 +27,12 @@ interface VolumeServiceInteractor {
   suspend fun handleKeyPress(
     action: Int,
     keyCode: Int,
-    onError: (error: CameraAccessException?) -> Unit
+    onError: suspend (error: CameraAccessException?) -> Unit
   )
 
   fun setupCamera()
 
-  suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit)
+  suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
 
   fun releaseCamera()
 

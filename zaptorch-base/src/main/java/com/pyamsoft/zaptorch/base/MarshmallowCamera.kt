@@ -40,7 +40,7 @@ internal class MarshmallowCamera internal constructor(
     setupCamera()
   }
 
-  override suspend fun toggleTorch(onError: (error: CameraAccessException?) -> Unit) {
+  override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
     coroutineScope {
       enforcer.assertNotOnMainThread()
 
@@ -52,7 +52,7 @@ internal class MarshmallowCamera internal constructor(
 
   private suspend inline fun setTorch(
     enable: Boolean,
-    crossinline onError: (error: CameraAccessException?) -> Unit
+    crossinline onError: suspend (error: CameraAccessException?) -> Unit
   ) {
     coroutineScope {
       enforcer.assertNotOnMainThread()

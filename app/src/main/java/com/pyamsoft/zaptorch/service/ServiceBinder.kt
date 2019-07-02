@@ -24,6 +24,7 @@ import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
@@ -44,16 +45,12 @@ internal class ServiceBinder @Inject internal constructor(
   private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
     launch(context = Dispatchers.Default) {
       interactor.observeCameraState()
-          .onEvent {
-            launch(context = Dispatchers.Main) { onEvent(RenderError(it)) }
-          }
+          .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
     }
 
   private inline fun CoroutineScope.listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
     launch(context = Dispatchers.Default) {
-      finishBus.onEvent {
-        launch(context = Dispatchers.Main) { onEvent(Finish) }
-      }
+      finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
     }
 
   fun handleKeyEvent(
@@ -68,9 +65,7 @@ internal class ServiceBinder @Inject internal constructor(
     keyCode: Int
   ) = launch(context = Dispatchers.Default) {
     interactor.handleKeyPress(action, keyCode) { error ->
-      launch(context = Dispatchers.Main) {
-        interactor.showError(error)
-      }
+      withContext(context = Dispatchers.Main) { interactor.showError(error) }
     }
   }
 
