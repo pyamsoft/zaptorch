@@ -24,10 +24,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
+import com.pyamsoft.pydroid.ui.arch.factory
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
@@ -49,7 +49,7 @@ class MainActivity : RatingActivity() {
   @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var toolbar: MainToolbarView? = null
   @JvmField @Inject internal var mainView: MainFrameView? = null
-  private var viewModel: MainToolbarViewModel? = null
+  private val viewModel by factory<MainToolbarViewModel> { factory }
 
   private var handleKeyPress: Boolean = false
 
@@ -80,18 +80,13 @@ class MainActivity : RatingActivity() {
         .create(this, this, layoutRoot, this)
         .inject(this)
 
-    ViewModelProviders.of(this, factory)
-        .let { factory ->
-          viewModel = factory.get(MainToolbarViewModel::class.java)
-        }
-
     val component = requireNotNull(mainView)
     val toolbarComponent = requireNotNull(toolbar)
     val dropshadow = DropshadowView.createTyped<ToolbarViewState, ToolbarViewEvent>(layoutRoot)
 
     createComponent(
         savedInstanceState, this,
-        requireNotNull(viewModel),
+        viewModel,
         component,
         toolbarComponent,
         dropshadow
@@ -139,7 +134,6 @@ class MainActivity : RatingActivity() {
 
   override fun onDestroy() {
     super.onDestroy()
-    viewModel = null
     mainView = null
     toolbar = null
     factory = null
@@ -155,7 +149,7 @@ class MainActivity : RatingActivity() {
     val error = hyperlink.navigate()
 
     if (error != null) {
-      requireNotNull(viewModel).failedNavigation(error)
+      viewModel.failedNavigation(error)
     }
   }
 
