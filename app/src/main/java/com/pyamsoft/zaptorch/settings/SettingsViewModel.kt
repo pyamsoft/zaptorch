@@ -20,6 +20,7 @@ package com.pyamsoft.zaptorch.settings
 import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
@@ -34,8 +35,8 @@ internal class SettingsViewModel @Inject internal constructor(
   private val scrollBus: EventBus<SignificantScrollEvent>,
   private val serviceFinishBus: EventBus<ServiceFinishEvent>,
   private val clearBus: EventBus<ClearAllEvent>
-) : UiViewModel<SettingsViewState, SettingsViewEvent, SettingsControllerEvent>(
-    initialState = SettingsViewState(throwable = null)
+) : UiViewModel<UnitViewState, SettingsViewEvent, SettingsControllerEvent>(
+    initialState = UnitViewState
 ) {
 
   override fun onInit() {

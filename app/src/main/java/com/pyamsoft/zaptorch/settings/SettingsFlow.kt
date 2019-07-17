@@ -19,15 +19,12 @@ package com.pyamsoft.zaptorch.settings
 
 import com.pyamsoft.pydroid.arch.UiControllerEvent
 import com.pyamsoft.pydroid.arch.UiViewEvent
-import com.pyamsoft.pydroid.arch.UiViewState
-
-data class SettingsViewState(val throwable: Throwable?) : UiViewState
 
 sealed class SettingsViewEvent : UiViewEvent {
 
   object ShowExplanation : SettingsViewEvent()
 
-  data class SignificantScroll(val visible: Boolean) : SettingsViewEvent()
+  data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
 
 }
 
@@ -36,6 +33,9 @@ sealed class SettingsControllerEvent : UiControllerEvent {
   object Explain : SettingsControllerEvent()
 
   object ClearAll : SettingsControllerEvent()
+
+  data class NavigationError internal constructor(val throwable: Throwable) :
+      SettingsControllerEvent()
 
 }
 

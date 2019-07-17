@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
@@ -32,6 +33,7 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
+import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.NavigationError
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,8 +42,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
   @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var settingsView: SettingsView? = null
-  @JvmField @Inject internal var toolbarView: ToolbarView<SettingsViewState, SettingsViewEvent>? =
-    null
+  @JvmField @Inject internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
   private var viewModel: SettingsViewModel? = null
 
   override val preferenceXmlResId: Int = R.xml.preferences
@@ -71,6 +72,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
       return@createComponent when (it) {
         is Explain -> showHowTo()
         is ClearAll -> killApplication()
+        is NavigationError -> requireNotNull(settingsView).showError(it.throwable)
       }
     }
   }

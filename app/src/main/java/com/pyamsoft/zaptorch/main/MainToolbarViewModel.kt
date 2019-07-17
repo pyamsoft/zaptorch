@@ -20,8 +20,10 @@ package com.pyamsoft.zaptorch.main
 import android.content.ActivityNotFoundException
 import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.NavigationError
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.PrivacyPolicy
 import com.pyamsoft.zaptorch.main.ToolbarViewEvent.ViewPrivacyPolicy
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +32,8 @@ import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
   private val interactor: MainInteractor
-) : UiViewModel<ToolbarViewState, ToolbarViewEvent, ToolbarControllerEvent>(
-    initialState = ToolbarViewState(throwable = null)
+) : UiViewModel<UnitViewState, ToolbarViewEvent, ToolbarControllerEvent>(
+    initialState = UnitViewState
 ) {
 
   override fun onInit() {
@@ -52,7 +54,7 @@ internal class MainToolbarViewModel @Inject internal constructor(
   }
 
   fun failedNavigation(error: ActivityNotFoundException) {
-    setState { copy(throwable = error) }
+    publish(NavigationError(error))
   }
 
 }
