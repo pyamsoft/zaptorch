@@ -24,7 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
-import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
@@ -40,7 +39,6 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
-import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.NavigationError
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.PrivacyPolicy
 import timber.log.Timber
 import javax.inject.Inject
@@ -84,7 +82,7 @@ class MainActivity : RatingActivity() {
 
     val component = requireNotNull(mainView)
     val toolbarComponent = requireNotNull(toolbar)
-    val dropshadow = DropshadowView.createTyped<UnitViewState, ToolbarViewEvent>(layoutRoot)
+    val dropshadow = DropshadowView.createTyped<ToolbarViewState, ToolbarViewEvent>(layoutRoot)
 
     createComponent(
         savedInstanceState, this,
@@ -96,7 +94,6 @@ class MainActivity : RatingActivity() {
       return@createComponent when (it) {
         is PrivacyPolicy -> showPrivacyPolicy()
         is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
-        is NavigationError -> toolbarComponent.showError()
       }
     }
 
@@ -153,6 +150,8 @@ class MainActivity : RatingActivity() {
 
     if (error != null) {
       viewModel.failedNavigation(error)
+    } else {
+      viewModel.failedSuccess()
     }
   }
 

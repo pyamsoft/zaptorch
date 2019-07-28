@@ -33,7 +33,6 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
-import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.NavigationError
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 import javax.inject.Inject
@@ -55,7 +54,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
     Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
         .plusSettingsComponent()
-        .create(viewLifecycleOwner, requireToolbarActivity(), listView, preferenceScreen)
+        .create(requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
     ViewModelProviders.of(this, factory)
@@ -72,7 +71,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
       return@createComponent when (it) {
         is Explain -> showHowTo()
         is ClearAll -> killApplication()
-        is NavigationError -> requireNotNull(settingsView).showError(it.throwable)
       }
     }
   }

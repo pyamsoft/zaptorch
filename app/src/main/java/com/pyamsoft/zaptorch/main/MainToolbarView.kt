@@ -26,7 +26,6 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UiSavedState
-import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.Snackbreak
@@ -41,7 +40,7 @@ internal class MainToolbarView @Inject internal constructor(
   private val owner: LifecycleOwner,
   private val theming: Theming,
   parent: ViewGroup
-) : BaseUiView<UnitViewState, ToolbarViewEvent>(parent) {
+) : BaseUiView<ToolbarViewState, ToolbarViewEvent>(parent) {
 
   override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
 
@@ -79,19 +78,28 @@ internal class MainToolbarView @Inject internal constructor(
   }
 
   override fun onRender(
-    state: UnitViewState,
+    state: ToolbarViewState,
     savedState: UiSavedState
   ) {
+    state.throwable.let { throwable ->
+      if (throwable == null) {
+        hideError()
+      } else {
+        showError(throwable)
+      }
+    }
   }
 
-  fun showError() {
-    Snackbreak.bindTo(owner)
-        .short(layoutRoot, "Unable to open browser for policy viewing")
+  private fun showError(throwable: Throwable) {
+    Snackbreak.bindTo(owner) {
+      make(layoutRoot, throwable.message ?: "Unable to open browser for policy viewing")
+    }
   }
 
   private fun hideError() {
-    Snackbreak.bindTo(owner)
-        .dismiss()
+    Snackbreak.bindTo(owner) {
+      dismiss()
+    }
   }
 
   override fun onTeardown() {

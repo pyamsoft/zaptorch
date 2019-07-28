@@ -21,20 +21,19 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UiSavedState
-import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
 
 internal class MainFrameView @Inject internal constructor(
   parent: ViewGroup
-) : BaseUiView<UnitViewState, ToolbarViewEvent>(parent) {
+) : BaseUiView<ToolbarViewState, ToolbarViewEvent>(parent) {
 
   override val layoutRoot by boundView<FrameLayout>(R.id.layout_frame)
 
   override val layout: Int = R.layout.layout_frame
 
   override fun onRender(
-    state: UnitViewState,
+    state: ToolbarViewState,
     savedState: UiSavedState
   ) {
   }

@@ -34,8 +34,5 @@ sealed class SettingsControllerEvent : UiControllerEvent {
 
   object ClearAll : SettingsControllerEvent()
 
-  data class NavigationError internal constructor(val throwable: Throwable) :
-      SettingsControllerEvent()
-
 }
 

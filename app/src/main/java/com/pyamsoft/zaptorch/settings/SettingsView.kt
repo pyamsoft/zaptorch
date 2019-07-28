@@ -18,14 +18,12 @@
 package com.pyamsoft.zaptorch.settings
 
 import android.os.Bundle
-import androidx.lifecycle.LifecycleOwner
 import androidx.preference.Preference
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
 import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.ui.arch.PrefUiView
-import com.pyamsoft.pydroid.ui.util.Snackbreak
 import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ShowExplanation
@@ -33,7 +31,6 @@ import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import javax.inject.Inject
 
 internal class SettingsView @Inject internal constructor(
-  private val owner: LifecycleOwner,
   private val recyclerView: RecyclerView,
   parent: PreferenceScreen
 ) : PrefUiView<UnitViewState, SettingsViewEvent>(parent) {
@@ -69,17 +66,6 @@ internal class SettingsView @Inject internal constructor(
 
     scrollListener?.also { recyclerView.removeOnScrollListener(it) }
     scrollListener = null
-    clearError()
-  }
-
-  fun showError(throwable: Throwable) {
-    Snackbreak.bindTo(owner)
-        .short(recyclerView, throwable.message ?: "An unexpected error occurred.")
-  }
-
-  private fun clearError() {
-    Snackbreak.bindTo(owner)
-        .dismiss()
   }
 }
 

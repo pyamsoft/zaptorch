@@ -43,7 +43,6 @@ interface SettingsComponent {
 
     @CheckResult
     fun create(
-      @BindsInstance owner: LifecycleOwner,
       @BindsInstance toolbarActivity: ToolbarActivity,
       @BindsInstance listView: RecyclerView,
       @BindsInstance preferenceScreen: PreferenceScreen
