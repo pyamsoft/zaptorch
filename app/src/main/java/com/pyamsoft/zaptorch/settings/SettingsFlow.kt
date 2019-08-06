@@ -22,15 +22,11 @@ import com.pyamsoft.pydroid.arch.UiViewEvent
 
 sealed class SettingsViewEvent : UiViewEvent {
 
-  object ShowExplanation : SettingsViewEvent()
-
   data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
 
 }
 
 sealed class SettingsControllerEvent : UiControllerEvent {
-
-  object Explain : SettingsControllerEvent()
 
   object ClearAll : SettingsControllerEvent()
 

@@ -98,13 +98,11 @@ class MainFragment : Fragment() {
   }
 
   private fun showUsageAccessRequestDialog() {
-    AccessibilityRequestDialog()
-        .show(requireActivity(), "accessibility")
+    AccessibilityRequestDialog().show(requireActivity(), "accessibility")
   }
 
   private fun showInfoDialog() {
-    ServiceInfoDialog()
-        .show(requireActivity(), "service_info")
+    HowToDialog().show(requireActivity(), "how_to")
   }
 
   private fun displayPreferenceFragment() {

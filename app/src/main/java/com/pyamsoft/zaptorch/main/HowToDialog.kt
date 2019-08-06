@@ -22,12 +22,13 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
-class ServiceInfoDialog : DialogFragment() {
+class HowToDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     return AlertDialog.Builder(requireActivity())
-        .setMessage("ZapTorch service is On")
-        .setPositiveButton("Okay") { _, _ -> dismiss() }
+        .setMessage("Just double press the volume down key to turn the flashlight on and off")
+        .setTitle("How to Use")
+        .setNeutralButton("Got It") { _, _ -> dismiss() }
         .create()
   }
 }

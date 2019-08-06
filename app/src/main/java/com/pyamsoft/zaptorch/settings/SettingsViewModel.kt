@@ -23,8 +23,6 @@ import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
-import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
-import com.pyamsoft.zaptorch.settings.SettingsViewEvent.ShowExplanation
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,7 +46,6 @@ internal class SettingsViewModel @Inject internal constructor(
   override fun handleViewEvent(event: SettingsViewEvent) {
     return when (event) {
       is SignificantScroll -> scrollBus.publish(SignificantScrollEvent(event.visible))
-      is ShowExplanation -> publish(Explain)
     }
   }
 

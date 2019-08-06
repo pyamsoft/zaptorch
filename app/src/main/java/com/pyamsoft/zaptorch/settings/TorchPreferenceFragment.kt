@@ -22,17 +22,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
+import com.pyamsoft.pydroid.ui.arch.factory
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
-import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.Explain
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,7 +41,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
   @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
   @JvmField @Inject internal var settingsView: SettingsView? = null
   @JvmField @Inject internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
-  private var viewModel: SettingsViewModel? = null
+  private val viewModel by factory<SettingsViewModel> { factory }
 
   override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -57,19 +56,13 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
         .create(requireToolbarActivity(), listView, preferenceScreen)
         .inject(this)
 
-    ViewModelProviders.of(this, factory)
-        .let { factory ->
-          viewModel = factory.get(SettingsViewModel::class.java)
-        }
-
     createComponent(
         savedInstanceState, viewLifecycleOwner,
-        requireNotNull(viewModel),
+        viewModel,
         requireNotNull(settingsView),
         requireNotNull(toolbarView)
     ) {
       return@createComponent when (it) {
-        is Explain -> showHowTo()
         is ClearAll -> killApplication()
       }
     }
@@ -83,7 +76,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
   override fun onDestroyView() {
     super.onDestroyView()
-    viewModel = null
     settingsView = null
     toolbarView = null
     factory = null
@@ -95,10 +87,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
       val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
       activityManager.clearApplicationUserData()
     }
-  }
-
-  private fun showHowTo() {
-    HowToDialog().show(requireActivity(), "howto")
   }
 
   override fun onClearAllClicked() {

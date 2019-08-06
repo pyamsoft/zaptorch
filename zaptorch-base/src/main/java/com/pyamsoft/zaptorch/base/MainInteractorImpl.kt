@@ -22,6 +22,9 @@ import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,18 +39,22 @@ internal class MainInteractorImpl @Inject internal constructor(
     return EventConsumer.create { onCancel, startWith, emit ->
       enforcer.assertNotOnMainThread()
 
-      val listener = OnSharedPreferenceChangeListener { _, key ->
-        if (key == handleKeyPressKey) {
-          emit(preferences.shouldHandleKeys())
+      coroutineScope {
+        val listener = OnSharedPreferenceChangeListener { _, key ->
+          if (key == handleKeyPressKey) {
+            launch(context = Dispatchers.Default) {
+              emit(preferences.shouldHandleKeys())
+            }
+          }
         }
-      }
 
-      onCancel {
-        preferences.unregister(listener)
-      }
+        onCancel {
+          preferences.unregister(listener)
+        }
 
-      preferences.register(listener)
-      startWith { preferences.shouldHandleKeys() }
+        preferences.register(listener)
+        startWith { preferences.shouldHandleKeys() }
+      }
     }
   }
 

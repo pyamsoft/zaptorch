@@ -21,12 +21,6 @@
 
   <PreferenceCategory android:title="Service Settings">
 
-    <com.pyamsoft.pydroid.ui.preference.PreferenceCompat
-        app:iconCompat="@drawable/ic_help_24dp"
-        android:key="@string/zaptorch_explain_key"
-        android:summary="@string/zaptorch_explain_summary"
-        android:title="@string/zaptorch_explain_title"/>
-
     <com.pyamsoft.pydroid.ui.preference.ListPreferenceCompat
         android:defaultValue="@string/double_press_delay_default"
         android:dialogTitle="@string/double_press_delay_title"
