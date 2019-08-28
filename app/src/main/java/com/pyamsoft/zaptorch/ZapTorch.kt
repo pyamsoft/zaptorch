@@ -46,6 +46,7 @@ class ZapTorch : Application() {
     PYDroid.init(
         this,
         getString(R.string.app_name),
+        "https://github.com/pyamsoft/zaptorch",
         "https://github.com/pyamsoft/zaptorch/issues",
         BuildConfig.VERSION_CODE,
         BuildConfig.DEBUG
