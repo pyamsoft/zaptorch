@@ -18,23 +18,9 @@
 package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.UiControllerEvent
-import com.pyamsoft.pydroid.arch.UiViewEvent
-import com.pyamsoft.pydroid.arch.UiViewState
-
-data class ToolbarViewState internal constructor(
-  val throwable: Throwable?
-) : UiViewState
-
-sealed class ToolbarViewEvent : UiViewEvent {
-
-  object ViewPrivacyPolicy : ToolbarViewEvent()
-
-}
 
 sealed class ToolbarControllerEvent : UiControllerEvent {
 
   data class HandleKeypress internal constructor(val isHandling: Boolean) : ToolbarControllerEvent()
-
-  object PrivacyPolicy : ToolbarControllerEvent()
 
 }

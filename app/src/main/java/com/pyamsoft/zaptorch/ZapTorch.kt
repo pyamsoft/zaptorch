@@ -21,7 +21,6 @@ import android.app.Application
 import android.app.Service
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.ui.PYDroid
-import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.service.TorchOffService
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -48,6 +47,8 @@ class ZapTorch : Application() {
         getString(R.string.app_name),
         "https://github.com/pyamsoft/zaptorch",
         "https://github.com/pyamsoft/zaptorch/issues",
+        PRIVACY_POLICY_URL,
+        TERMS_CONDITIONS_URL,
         BuildConfig.VERSION_CODE,
         BuildConfig.DEBUG
     ) { provider ->
@@ -78,6 +79,10 @@ class ZapTorch : Application() {
   }
 
   companion object {
+
+    const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
+    const val TERMS_CONDITIONS_URL =
+      "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
 
     @JvmStatic
     @CheckResult
