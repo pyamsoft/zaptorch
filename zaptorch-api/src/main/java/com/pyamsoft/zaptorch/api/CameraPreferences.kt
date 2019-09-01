@@ -21,9 +21,9 @@ import androidx.annotation.CheckResult
 
 interface CameraPreferences {
 
-  @CheckResult
-  fun shouldShowErrorDialog(): Boolean
+    @CheckResult
+    fun shouldShowErrorDialog(): Boolean
 
-  @get:CheckResult
-  val buttonDelayTime: Long
+    @get:CheckResult
+    val buttonDelayTime: Long
 }

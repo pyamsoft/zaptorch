@@ -24,20 +24,20 @@ import androidx.fragment.app.DialogFragment
 
 class CameraErrorDialog : DialogFragment() {
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(requireActivity())
-        .setMessage(
-            """ZapTorch was unable to access your devices Camera.
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireActivity())
+            .setMessage(
+                """ZapTorch was unable to access your devices Camera.
               |Please make sure that your device has a Camera with Flash functionality.
               |Please make sure no other application is using the Camera and try again.
             """.trimMargin()
-        )
-        .setPositiveButton("Okay") { _, _ -> dismiss() }
-        .create()
-  }
+            )
+            .setPositiveButton("Okay") { _, _ -> dismiss() }
+            .create()
+    }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    activity?.finish()
-  }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.finish()
+    }
 }

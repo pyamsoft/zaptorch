@@ -30,27 +30,27 @@ import dagger.Module
 @Module
 abstract class BaseModule {
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindServiceInteractor(impl: VolumeServiceInteractorImpl): VolumeServiceInteractor
+    @Binds
+    @CheckResult
+    internal abstract fun bindServiceInteractor(impl: VolumeServiceInteractorImpl): VolumeServiceInteractor
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindSettingsInteractor(impl: SettingsInteractorImpl): SettingsInteractor
+    @Binds
+    @CheckResult
+    internal abstract fun bindSettingsInteractor(impl: SettingsInteractorImpl): SettingsInteractor
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindMainInteractor(impl: MainInteractorImpl): MainInteractor
+    @Binds
+    @CheckResult
+    internal abstract fun bindMainInteractor(impl: MainInteractorImpl): MainInteractor
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindUiPreferences(impl: ZapTorchPreferencesImpl): UIPreferences
+    @Binds
+    @CheckResult
+    internal abstract fun bindUiPreferences(impl: ZapTorchPreferencesImpl): UIPreferences
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): CameraPreferences
+    @Binds
+    @CheckResult
+    internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): CameraPreferences
 
-  @Binds
-  @CheckResult
-  internal abstract fun bindClearPreferences(impl: ZapTorchPreferencesImpl): ClearPreferences
+    @Binds
+    @CheckResult
+    internal abstract fun bindClearPreferences(impl: ZapTorchPreferencesImpl): ClearPreferences
 }

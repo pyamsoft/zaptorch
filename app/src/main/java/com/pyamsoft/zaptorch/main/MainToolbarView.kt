@@ -37,52 +37,51 @@ import com.pyamsoft.zaptorch.ZapTorch
 import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
-  activity: Activity,
-  private val toolbarActivityProvider: ToolbarActivityProvider,
-  private val theming: Theming,
-  parent: ViewGroup
+    activity: Activity,
+    private val toolbarActivityProvider: ToolbarActivityProvider,
+    private val theming: Theming,
+    parent: ViewGroup
 ) : BaseUiView<UnitViewState, UnitViewEvent>(parent) {
 
-  private var activity: Activity? = activity
+    private var activity: Activity? = activity
 
-  override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
+    override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
 
-  override val layout: Int = R.layout.toolbar
+    override val layout: Int = R.layout.toolbar
 
-  override fun onInflated(
-    view: View,
-    savedInstanceState: Bundle?
-  ) {
-    setupToolbar()
-  }
-
-  private fun setupToolbar() {
-    val theme: Int
-    if (theming.isDarkTheme(requireNotNull(activity))) {
-      theme = R.style.ThemeOverlay_MaterialComponents
-    } else {
-      theme = R.style.ThemeOverlay_MaterialComponents_Light
+    override fun onInflated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
+        setupToolbar()
     }
 
-    layoutRoot.apply {
-      popupTheme = theme
-      toolbarActivityProvider.setToolbar(this)
-      setTitle(R.string.app_name)
-      ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
-      addPrivacy(ZapTorch.PRIVACY_POLICY_URL, ZapTorch.TERMS_CONDITIONS_URL)
+    private fun setupToolbar() {
+        val theme: Int
+        if (theming.isDarkTheme(requireNotNull(activity))) {
+            theme = R.style.ThemeOverlay_MaterialComponents
+        } else {
+            theme = R.style.ThemeOverlay_MaterialComponents_Light
+        }
+
+        layoutRoot.apply {
+            popupTheme = theme
+            toolbarActivityProvider.setToolbar(this)
+            setTitle(R.string.app_name)
+            ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
+            addPrivacy(ZapTorch.PRIVACY_POLICY_URL, ZapTorch.TERMS_CONDITIONS_URL)
+        }
     }
-  }
 
-  override fun onRender(
-    state: UnitViewState,
-    savedState: UiSavedState
-  ) {
-  }
+    override fun onRender(
+        state: UnitViewState,
+        savedState: UiSavedState
+    ) {
+    }
 
-  override fun onTeardown() {
-    layoutRoot.removePrivacy()
-    toolbarActivityProvider.setToolbar(null)
-    activity = null
-  }
-
+    override fun onTeardown() {
+        layoutRoot.removePrivacy()
+        toolbarActivityProvider.setToolbar(null)
+        activity = null
+    }
 }

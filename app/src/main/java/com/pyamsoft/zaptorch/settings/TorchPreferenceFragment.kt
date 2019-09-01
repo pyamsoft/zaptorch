@@ -38,65 +38,71 @@ import javax.inject.Inject
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
-  @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
-  @JvmField @Inject internal var settingsView: SettingsView? = null
-  @JvmField @Inject internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
-  private val viewModel by factory<SettingsViewModel> { factory }
+    @JvmField
+    @Inject
+    internal var factory: ViewModelProvider.Factory? = null
+    @JvmField
+    @Inject
+    internal var settingsView: SettingsView? = null
+    @JvmField
+    @Inject
+    internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
+    private val viewModel by factory<SettingsViewModel> { factory }
 
-  override val preferenceXmlResId: Int = R.xml.preferences
+    override val preferenceXmlResId: Int = R.xml.preferences
 
-  override fun onViewCreated(
-    view: View,
-    savedInstanceState: Bundle?
-  ) {
-    super.onViewCreated(view, savedInstanceState)
-
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusSettingsComponent()
-        .create(requireToolbarActivity(), listView, preferenceScreen)
-        .inject(this)
-
-    createComponent(
-        savedInstanceState, viewLifecycleOwner,
-        viewModel,
-        requireNotNull(settingsView),
-        requireNotNull(toolbarView)
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
     ) {
-      return@createComponent when (it) {
-        is ClearAll -> killApplication()
-      }
+        super.onViewCreated(view, savedInstanceState)
+
+        Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+            .plusSettingsComponent()
+            .create(requireToolbarActivity(), listView, preferenceScreen)
+            .inject(this)
+
+        createComponent(
+            savedInstanceState, viewLifecycleOwner,
+            viewModel,
+            requireNotNull(settingsView),
+            requireNotNull(toolbarView)
+        ) {
+            return@createComponent when (it) {
+                is ClearAll -> killApplication()
+            }
+        }
     }
-  }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    toolbarView?.saveState(outState)
-    settingsView?.saveState(outState)
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    settingsView = null
-    toolbarView = null
-    factory = null
-  }
-
-  private fun killApplication() {
-    requireContext().also {
-      Timber.d("Clear application data")
-      val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-      activityManager.clearApplicationUserData()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        toolbarView?.saveState(outState)
+        settingsView?.saveState(outState)
     }
-  }
 
-  override fun onClearAllClicked() {
-    super.onClearAllClicked()
-    ConfirmationDialog()
-        .show(requireActivity(), "confirm")
-  }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        settingsView = null
+        toolbarView = null
+        factory = null
+    }
 
-  companion object {
+    private fun killApplication() {
+        requireContext().also {
+            Timber.d("Clear application data")
+            val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            activityManager.clearApplicationUserData()
+        }
+    }
 
-    const val TAG = "TorchPreferenceFragment"
-  }
+    override fun onClearAllClicked() {
+        super.onClearAllClicked()
+        ConfirmationDialog()
+            .show(requireActivity(), "confirm")
+    }
+
+    companion object {
+
+        const val TAG = "TorchPreferenceFragment"
+    }
 }

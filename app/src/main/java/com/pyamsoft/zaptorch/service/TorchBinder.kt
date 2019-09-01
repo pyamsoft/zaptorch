@@ -25,18 +25,18 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class TorchBinder @Inject internal constructor(
-  private val interactor: VolumeServiceInteractor
+    private val interactor: VolumeServiceInteractor
 ) : Binder<UnitControllerEvent>() {
 
-  fun toggle() {
-    binderScope.launch(context = Dispatchers.Default) {
-      interactor.toggleTorch { error ->
-        if (error == null) {
-          Timber.e("Torch unavailable, cannot toggle")
-        } else {
-          Timber.e(error, "Error when toggling torch")
+    fun toggle() {
+        binderScope.launch(context = Dispatchers.Default) {
+            interactor.toggleTorch { error ->
+                if (error == null) {
+                    Timber.e("Torch unavailable, cannot toggle")
+                } else {
+                    Timber.e(error, "Error when toggling torch")
+                }
+            }
         }
-      }
     }
-  }
 }

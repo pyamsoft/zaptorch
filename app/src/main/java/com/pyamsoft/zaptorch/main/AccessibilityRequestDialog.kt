@@ -27,17 +27,17 @@ import com.pyamsoft.zaptorch.R
 
 class AccessibilityRequestDialog : DialogFragment() {
 
-  private val accessibilityServiceIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+    private val accessibilityServiceIntent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(requireActivity())
-        .setTitle("Enable ZapTorch AccessibilityService")
-        .setMessage(R.string.explain_accessibility_service)
-        .setPositiveButton("Let's Go") { _, _ ->
-          requireActivity().startActivity(accessibilityServiceIntent)
-          dismiss()
-        }
-        .setNegativeButton("No Thanks") { _, _ -> dismiss() }
-        .create()
-  }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireActivity())
+            .setTitle("Enable ZapTorch AccessibilityService")
+            .setMessage(R.string.explain_accessibility_service)
+            .setPositiveButton("Let's Go") { _, _ ->
+                requireActivity().startActivity(accessibilityServiceIntent)
+                dismiss()
+            }
+            .setNegativeButton("No Thanks") { _, _ -> dismiss() }
+            .create()
+    }
 }

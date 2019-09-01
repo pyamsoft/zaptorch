@@ -22,18 +22,16 @@ import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
 
 data class MainViewState(
-  val isVisible: Boolean,
-  val isServiceRunning: Boolean
+    val isVisible: Boolean,
+    val isServiceRunning: Boolean
 ) : UiViewState
 
 sealed class MainViewEvent : UiViewEvent {
 
-  data class ActionClick(val isServiceRunning: Boolean) : MainViewEvent()
-
+    data class ActionClick(val isServiceRunning: Boolean) : MainViewEvent()
 }
 
 sealed class MainControllerEvent : UiControllerEvent {
 
-  data class ServiceAction(val isServiceRunning: Boolean) : MainControllerEvent()
-
+    data class ServiceAction(val isServiceRunning: Boolean) : MainControllerEvent()
 }

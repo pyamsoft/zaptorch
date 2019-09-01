@@ -16,13 +16,13 @@
   -->
 
 <resources>
-  <string name="double_press_delay_key">double_press_delay</string>
-  <string name="double_press_delay_default">500</string>
+    <string name="double_press_delay_key">double_press_delay</string>
+    <string name="double_press_delay_default">500</string>
 
-  <bool name="display_camera_errors_default">true</bool>
-  <string name="display_camera_errors_key">display_camera_errors</string>
+    <bool name="display_camera_errors_default">true</bool>
+    <string name="display_camera_errors_key">display_camera_errors</string>
 
-  <bool name="handle_volume_keys_default">true</bool>
-  <string name="handle_volume_keys_key">handle_volume_keys</string>
+    <bool name="handle_volume_keys_default">true</bool>
+    <string name="handle_volume_keys_key">handle_volume_keys</string>
 
 </resources>

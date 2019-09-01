@@ -28,23 +28,22 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
-  private val interactor: MainInteractor
+    private val interactor: MainInteractor
 ) : UiViewModel<UnitViewState, UnitViewEvent, ToolbarControllerEvent>(
     initialState = UnitViewState
 ) {
 
-  override fun onInit() {
-    viewModelScope.launch(context = Dispatchers.Default) {
-      interactor.onHandleKeyPressChanged()
-          .onEvent { handleKeypressChanged(it) }
+    override fun onInit() {
+        viewModelScope.launch(context = Dispatchers.Default) {
+            interactor.onHandleKeyPressChanged()
+                .onEvent { handleKeypressChanged(it) }
+        }
     }
-  }
 
-  override fun handleViewEvent(event: UnitViewEvent) {
-  }
+    override fun handleViewEvent(event: UnitViewEvent) {
+    }
 
-  private fun handleKeypressChanged(handle: Boolean) {
-    publish(HandleKeypress(handle))
-  }
-
+    private fun handleKeypressChanged(handle: Boolean) {
+        publish(HandleKeypress(handle))
+    }
 }

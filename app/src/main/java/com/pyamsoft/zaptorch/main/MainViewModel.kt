@@ -29,27 +29,26 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class MainViewModel @Inject internal constructor(
-  private val serviceInteractor: VolumeServiceInteractor,
-  private val visibilityBus: EventBus<SignificantScrollEvent>
+    private val serviceInteractor: VolumeServiceInteractor,
+    private val visibilityBus: EventBus<SignificantScrollEvent>
 ) : UiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
     initialState = MainViewState(isVisible = true, isServiceRunning = false)
 ) {
 
-  override fun onInit() {
-    viewModelScope.launch(context = Dispatchers.Default) {
-      serviceInteractor.observeServiceState()
-          .onEvent { setState { copy(isServiceRunning = it) } }
+    override fun onInit() {
+        viewModelScope.launch(context = Dispatchers.Default) {
+            serviceInteractor.observeServiceState()
+                .onEvent { setState { copy(isServiceRunning = it) } }
+        }
+
+        viewModelScope.launch(context = Dispatchers.Default) {
+            visibilityBus.onEvent { setState { copy(isVisible = it.visible) } }
+        }
     }
 
-    viewModelScope.launch(context = Dispatchers.Default) {
-      visibilityBus.onEvent { setState { copy(isVisible = it.visible) } }
+    override fun handleViewEvent(event: MainViewEvent) {
+        return when (event) {
+            is ActionClick -> publish(ServiceAction(event.isServiceRunning))
+        }
     }
-  }
-
-  override fun handleViewEvent(event: MainViewEvent) {
-    return when (event) {
-      is ActionClick -> publish(ServiceAction(event.isServiceRunning))
-    }
-  }
-
 }

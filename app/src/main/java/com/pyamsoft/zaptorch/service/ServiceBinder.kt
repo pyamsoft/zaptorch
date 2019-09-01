@@ -28,53 +28,52 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
-  private val finishBus: EventBus<ServiceFinishEvent>,
-  private val interactor: VolumeServiceInteractor
+    private val finishBus: EventBus<ServiceFinishEvent>,
+    private val interactor: VolumeServiceInteractor
 ) : Binder<ServiceControllerEvent>() {
 
-  override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
-    interactor.setupCamera()
-    binderScope.setupCamera(onEvent)
-    binderScope.listenFinish(onEvent)
-  }
-
-  override fun onUnbind() {
-    interactor.releaseCamera()
-  }
-
-  private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-    launch(context = Dispatchers.Default) {
-      interactor.observeCameraState()
-          .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
+    override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
+        interactor.setupCamera()
+        binderScope.setupCamera(onEvent)
+        binderScope.listenFinish(onEvent)
     }
 
-  private inline fun CoroutineScope.listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-    launch(context = Dispatchers.Default) {
-      finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
+    override fun onUnbind() {
+        interactor.releaseCamera()
     }
 
-  fun handleKeyEvent(
-    action: Int,
-    keyCode: Int
-  ) {
-    binderScope.handleKeyEvent(action, keyCode)
-  }
+    private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
+        launch(context = Dispatchers.Default) {
+            interactor.observeCameraState()
+                .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
+        }
 
-  private fun CoroutineScope.handleKeyEvent(
-    action: Int,
-    keyCode: Int
-  ) = launch(context = Dispatchers.Default) {
-    interactor.handleKeyPress(action, keyCode) { error ->
-      withContext(context = Dispatchers.Main) { interactor.showError(error) }
+    private inline fun CoroutineScope.listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
+        launch(context = Dispatchers.Default) {
+            finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
+        }
+
+    fun handleKeyEvent(
+        action: Int,
+        keyCode: Int
+    ) {
+        binderScope.handleKeyEvent(action, keyCode)
     }
-  }
 
-  fun start() {
-    interactor.setServiceState(true)
-  }
+    private fun CoroutineScope.handleKeyEvent(
+        action: Int,
+        keyCode: Int
+    ) = launch(context = Dispatchers.Default) {
+        interactor.handleKeyPress(action, keyCode) { error ->
+            withContext(context = Dispatchers.Main) { interactor.showError(error) }
+        }
+    }
 
-  fun stop() {
-    interactor.setServiceState(false)
-  }
+    fun start() {
+        interactor.setServiceState(true)
+    }
 
+    fun stop() {
+        interactor.setServiceState(false)
+    }
 }

@@ -17,26 +17,26 @@
 
 <resources>
 
-  <string-array name="double_press_delay">
-    <item name="time_short">300 Milliseconds</item>
-    <item name="time_medium">500 Milliseconds</item>
-    <item name="time_long">1000 Milliseconds</item>
-  </string-array>
+    <string-array name="double_press_delay">
+        <item name="time_short">300 Milliseconds</item>
+        <item name="time_medium">500 Milliseconds</item>
+        <item name="time_long">1000 Milliseconds</item>
+    </string-array>
 
-  <string-array name="double_press_delay_entries">
-    <item name="time_short">300</item>
-    <item name="time_medium">500</item>
-    <item name="time_long">1000</item>
-  </string-array>
+    <string-array name="double_press_delay_entries">
+        <item name="time_short">300</item>
+        <item name="time_medium">500</item>
+        <item name="time_long">1000</item>
+    </string-array>
 
-  <string name="double_press_delay_title">Double Press Duration</string>
-  <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
+    <string name="double_press_delay_title">Double Press Duration</string>
+    <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
 
-  <string name="display_camera_errors_title">Display Camera Errors</string>
-  <string name="display_camera_errors_summary">Show a dialog when Camera errors occur</string>
+    <string name="display_camera_errors_title">Display Camera Errors</string>
+    <string name="display_camera_errors_summary">Show a dialog when Camera errors occur</string>
 
-  <string name="handle_volume_keys_title">Handle Volume KeyPress</string>
-  <string name="handle_volume_keys_summary_checked">Pressing volume keys while ZapTorch is open will not change the volume</string>
-  <string name="handle_volume_keys_summary_unchecked">Pressing volume keys while ZapTorch is open will perform as normal</string>
+    <string name="handle_volume_keys_title">Handle Volume KeyPress</string>
+    <string name="handle_volume_keys_summary_checked">Pressing volume keys while ZapTorch is open will not change the volume</string>
+    <string name="handle_volume_keys_summary_unchecked">Pressing volume keys while ZapTorch is open will perform as normal</string>
 
 </resources>

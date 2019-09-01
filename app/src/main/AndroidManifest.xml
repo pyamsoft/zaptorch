@@ -19,59 +19,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pyamsoft.zaptorch">
 
-  <uses-permission
-      android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
-      tools:ignore="ProtectedPermissions"/>
+    <uses-permission
+        android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
+        tools:ignore="ProtectedPermissions" />
 
-  <application
-      android:name=".ZapTorch"
-      android:icon="@mipmap/ic_launcher"
-      android:label="@string/app_name"
-      android:roundIcon="@mipmap/ic_launcher"
-      android:theme="@style/Theme.ZapTorch"
-      tools:ignore="GoogleAppIndexingWarning">
+    <application
+        android:name=".ZapTorch"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.ZapTorch"
+        tools:ignore="GoogleAppIndexingWarning">
 
-    <!-- Support super wide screen -->
-    <meta-data
-        android:name="android.max_aspect"
-        android:value="2.1"/>
+        <!-- Support super wide screen -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
 
-    <activity
-        android:name=".main.MainActivity"
-        android:launchMode="singleTask"
-        android:theme="@style/Theme.ZapTorch.Splash"
-        android:windowSoftInputMode="adjustResize">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
+        <activity
+            android:name=".main.MainActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.ZapTorch.Splash"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <activity
-        android:name=".service.error.CameraErrorExplanation"
-        android:excludeFromRecents="true"
-        android:exported="false"
-        android:launchMode="singleInstance"
-        android:theme="@style/Theme.ZapTorch.Error"
-        android:noHistory="true"
-        android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+        <activity
+            android:name=".service.error.CameraErrorExplanation"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:theme="@style/Theme.ZapTorch.Error"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
-    <service
-        android:name=".service.VolumeMonitorService"
-        android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-      <intent-filter>
-        <action android:name="android.accessibilityservice.AccessibilityService"/>
-      </intent-filter>
-      <meta-data
-          android:name="android.accessibilityservice"
-          android:resource="@xml/zaptorch"/>
-    </service>
+        <service
+            android:name=".service.VolumeMonitorService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/zaptorch" />
+        </service>
 
-    <service
-        android:name=".service.TorchOffService"
-        android:exported="false"/>
+        <service
+            android:name=".service.TorchOffService"
+            android:exported="false" />
 
-  </application>
+    </application>
 
 </manifest>

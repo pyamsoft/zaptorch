@@ -22,86 +22,86 @@ apply plugin: "com.getkeepsafe.dexcount"
 
 //noinspection GroovyMissingReturnStatement
 android {
-  compileSdkVersion rootProject.ext.maxSdk
+    compileSdkVersion rootProject.ext.maxSdk
 
-  //noinspection GroovyMissingReturnStatement
-  defaultConfig {
-    applicationId "com.pyamsoft.zaptorch"
-    minSdkVersion rootProject.ext.minSdk
-    targetSdkVersion rootProject.ext.maxSdk
-    versionCode 95
-    versionName "1.8.9-SNAPSHOT"
+    //noinspection GroovyMissingReturnStatement
+    defaultConfig {
+        applicationId "com.pyamsoft.zaptorch"
+        minSdkVersion rootProject.ext.minSdk
+        targetSdkVersion rootProject.ext.maxSdk
+        versionCode 95
+        versionName "1.8.9-SNAPSHOT"
 
-    // For vector drawables
-    vectorDrawables.useSupportLibrary = true
+        // For vector drawables
+        vectorDrawables.useSupportLibrary = true
 
-    resConfigs "en"
-  }
-
-  signingConfigs {
-    release {
-      //noinspection GroovyAssignabilityCheck
-      storeFile new File(RELEASE_STORE_FILE)
-
-      //noinspection GroovyAssignabilityCheck
-      keyAlias RELEASE_KEY_ALIAS
-
-      //noinspection GroovyAssignabilityCheck
-      keyPassword RELEASE_KEY_PASSWD
-
-      //noinspection GroovyAssignabilityCheck
-      storePassword RELEASE_STORE_PASSWD
-    }
-  }
-
-  buildTypes {
-    release {
-      //noinspection GroovyAssignabilityCheck
-      signingConfig signingConfigs.release
-      minifyEnabled true
-      shrinkResources true
-      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
-          "proguard-rules.pro"
+        resConfigs "en"
     }
 
-    debug {
-      applicationIdSuffix ".dev"
-      versionNameSuffix "-dev"
-    }
-  }
+    signingConfigs {
+        release {
+            //noinspection GroovyAssignabilityCheck
+            storeFile new File(RELEASE_STORE_FILE)
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
+            //noinspection GroovyAssignabilityCheck
+            keyAlias RELEASE_KEY_ALIAS
+
+            //noinspection GroovyAssignabilityCheck
+            keyPassword RELEASE_KEY_PASSWD
+
+            //noinspection GroovyAssignabilityCheck
+            storePassword RELEASE_STORE_PASSWD
+        }
+    }
+
+    buildTypes {
+        release {
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+        }
+
+        debug {
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 // Kapt flags
 kapt {
-  correctErrorTypes = true
-  useBuildCache = true
-  mapDiagnosticLocations = true
+    correctErrorTypes = true
+    useBuildCache = true
+    mapDiagnosticLocations = true
 
-  javacOptions {
-    option("-Xlint:unchecked")
-    option("-Xlint:deprecation")
-    option("-Xmaxerrs", 10000)
-  }
+    javacOptions {
+        option("-Xlint:unchecked")
+        option("-Xlint:deprecation")
+        option("-Xmaxerrs", 10000)
+    }
 }
 
 dependencies {
-  // Leak Canary
-  debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:$leakCanary"
-  debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanary"
-  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
-  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
+    // Leak Canary
+    debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:$leakCanary"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanary"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanary"
 
-  // PYDroid
-  implementation "com.pyamsoft.pydroid:ui:$pydroid"
+    // PYDroid
+    implementation "com.pyamsoft.pydroid:ui:$pydroid"
 
-  implementation "com.google.dagger:dagger:$dagger"
-  kapt "com.google.dagger:dagger-compiler:$dagger"
+    implementation "com.google.dagger:dagger:$dagger"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
 
-  implementation project(':zaptorch-base')
+    implementation project(':zaptorch-base')
 }
 

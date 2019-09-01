@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <string name="app_name">ZapTorch (DEV)</string>
+    <string name="app_name">ZapTorch (DEV)</string>
 </resources>

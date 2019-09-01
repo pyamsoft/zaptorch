@@ -28,19 +28,19 @@ import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
 
 class CameraErrorExplanation : ActivityBase() {
 
-  override val fragmentContainerId: Int = 0
+    override val fragmentContainerId: Int = 0
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    setTheme(R.style.Theme_ZapTorch_Error)
-    super.onCreate(savedInstanceState)
-  }
-
-  override fun onPostResume() {
-    super.onPostResume()
-    val fragment: DialogFragment? = when (intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)) {
-      TYPE_ERROR -> CameraErrorDialog()
-      else -> null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_ZapTorch_Error)
+        super.onCreate(savedInstanceState)
     }
-    fragment?.show(this, "camera_error")
-  }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        val fragment: DialogFragment? = when (intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)) {
+            TYPE_ERROR -> CameraErrorDialog()
+            else -> null
+        }
+        fragment?.show(this, "camera_error")
+    }
 }

@@ -23,16 +23,14 @@ import dagger.Subcomponent
 @Subcomponent
 interface ServiceComponent {
 
-  fun inject(service: VolumeMonitorService)
+    fun inject(service: VolumeMonitorService)
 
-  fun inject(service: TorchOffService)
+    fun inject(service: TorchOffService)
 
-  @Subcomponent.Factory
-  interface Factory {
+    @Subcomponent.Factory
+    interface Factory {
 
-    @CheckResult
-    fun create(): ServiceComponent
-
-  }
-
+        @CheckResult
+        fun create(): ServiceComponent
+    }
 }

@@ -28,29 +28,31 @@ import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
 
-  @JvmField @Inject internal var bus: EventBus<ClearAllEvent>? = null
+    @JvmField
+    @Inject
+    internal var bus: EventBus<ClearAllEvent>? = null
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .inject(this)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+            .inject(this)
 
-    return AlertDialog.Builder(requireActivity())
-        .setMessage(
-            """
+        return AlertDialog.Builder(requireActivity())
+            .setMessage(
+                """
         |Really clear all application settings?
         |You will have to manually restart the Accessibility Service component of ZapTorch
         |""".trimMargin()
-        )
-        .setPositiveButton("Yes") { _, _ ->
-          requireNotNull(bus).publish(ClearAllEvent)
-          dismiss()
-        }
-        .setNegativeButton("No") { _, _ -> dismiss() }
-        .create()
-  }
+            )
+            .setPositiveButton("Yes") { _, _ ->
+                requireNotNull(bus).publish(ClearAllEvent)
+                dismiss()
+            }
+            .setNegativeButton("No") { _, _ -> dismiss() }
+            .create()
+    }
 
-  override fun onDestroyView() {
-    super.onDestroyView()
-    bus = null
-  }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bus = null
+    }
 }

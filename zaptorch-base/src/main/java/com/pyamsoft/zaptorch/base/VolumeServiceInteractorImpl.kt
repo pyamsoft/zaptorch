@@ -53,192 +53,190 @@ import javax.inject.Singleton
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
-  private val enforcer: Enforcer,
-  private val context: Context,
-  private val preferences: CameraPreferences,
-  torchOffServiceClass: Class<out IntentService>,
-  @ColorRes notificationColor: Int
+    private val enforcer: Enforcer,
+    private val context: Context,
+    private val preferences: CameraPreferences,
+    torchOffServiceClass: Class<out IntentService>,
+    @ColorRes notificationColor: Int
 ) : VolumeServiceInteractor {
 
-  private val mutex = Mutex()
+    private val mutex = Mutex()
 
-  private val notificationManagerCompat = NotificationManagerCompat.from(context)
-  private val notification: Notification
+    private val notificationManagerCompat = NotificationManagerCompat.from(context)
+    private val notification: Notification
 
-  private var pressed: Boolean = false
+    private var pressed: Boolean = false
 
-  private var cameraInterface: CameraInterface? = null
+    private var cameraInterface: CameraInterface? = null
 
-  @ExperimentalCoroutinesApi
-  private val cameraErrorBus = BroadcastChannel<CameraError>(1)
+    @ExperimentalCoroutinesApi
+    private val cameraErrorBus = BroadcastChannel<CameraError>(1)
 
-  private var running = false
+    private var running = false
 
-  @ExperimentalCoroutinesApi
-  private val runningStateBus = BroadcastChannel<Boolean>(1)
+    @ExperimentalCoroutinesApi
+    private val runningStateBus = BroadcastChannel<Boolean>(1)
 
-  init {
-    val intent = Intent(context, torchOffServiceClass)
+    init {
+        val intent = Intent(context, torchOffServiceClass)
 
-    val notificationChannelId = "zaptorch_foreground"
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
-      setupNotificationChannel(notificationChannelId)
-    }
-
-    val pendingIntent =
-      PendingIntent.getService(context, NOTIFICATION_RC, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    notification = NotificationCompat.Builder(context, notificationChannelId)
-        .apply {
-          setContentIntent(pendingIntent)
-          setContentTitle("Torch is On")
-          setContentText("Click to turn off")
-          setSmallIcon(R.drawable.ic_light_notification)
-          setAutoCancel(true)
-          setWhen(0)
-          setOngoing(false)
-          color = ContextCompat.getColor(context, notificationColor)
-          priority = NotificationCompat.PRIORITY_DEFAULT
+        val notificationChannelId = "zaptorch_foreground"
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
+            setupNotificationChannel(notificationChannelId)
         }
-        .build()
 
-    pressed = false
-  }
+        val pendingIntent =
+            PendingIntent.getService(context, NOTIFICATION_RC, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        notification = NotificationCompat.Builder(context, notificationChannelId)
+            .apply {
+                setContentIntent(pendingIntent)
+                setContentTitle("Torch is On")
+                setContentText("Click to turn off")
+                setSmallIcon(R.drawable.ic_light_notification)
+                setAutoCancel(true)
+                setWhen(0)
+                setOngoing(false)
+                color = ContextCompat.getColor(context, notificationColor)
+                priority = NotificationCompat.PRIORITY_DEFAULT
+            }
+            .build()
 
-  @RequiresApi(VERSION_CODES.O)
-  private fun setupNotificationChannel(
-    notificationChannelId: String
-  ) {
-    val name = "Torch Service"
-    val desc = "Notification related to the ZapTorch service"
-    val importance = NotificationManager.IMPORTANCE_DEFAULT
-    val notificationChannel = NotificationChannel(notificationChannelId, name, importance).apply {
-      lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-      description = desc
-      enableLights(false)
-      enableVibration(false)
-    }
-
-    Timber.d("Create notification channel with id: %s", notificationChannelId)
-    val notificationManager: NotificationManager =
-      context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    notificationManager.createNotificationChannel(notificationChannel)
-  }
-
-  @ExperimentalCoroutinesApi
-  override fun setServiceState(changed: Boolean) {
-    running = changed
-    if (!runningStateBus.offer(changed)) {
-      Timber.w("Failed to offer service state change: $changed")
-    }
-  }
-
-  @ExperimentalCoroutinesApi
-  override fun observeServiceState(): EventConsumer<Boolean> {
-    return object : EventConsumer<Boolean> {
-
-      override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
-        emitter(running)
-
-        runningStateBus.openSubscription()
-            .consumeEach { emitter(it) }
-      }
-
-    }
-  }
-
-  @ExperimentalCoroutinesApi
-  override fun observeCameraState(): EventConsumer<CameraError> {
-    return object : EventConsumer<CameraError> {
-
-      override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
-        cameraErrorBus.openSubscription()
-            .consumeEach { emitter(it) }
-      }
-
-    }
-  }
-
-  override suspend fun handleKeyPress(
-    action: Int,
-    keyCode: Int,
-    onError: suspend (error: CameraAccessException?) -> Unit
-  ) = coroutineScope {
-    if (action != KeyEvent.ACTION_UP) {
-      return@coroutineScope
-    }
-    if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
-      return@coroutineScope
-    }
-
-    enforcer.assertNotOnMainThread()
-    if (pressed) {
-      mutex.withLock {
-        Timber.d("Key has been double pressed")
         pressed = false
-        toggleTorch(onError)
-      }
-    } else {
-      mutex.withLock {
-        pressed = true
-      }
-
-      launch {
-        delay(preferences.buttonDelayTime)
-        mutex.withLock {
-          if (pressed) {
-            Timber.d("Set pressed back to false")
-            pressed = false
-          }
-        }
-      }
-    }
-  }
-
-  @ExperimentalCoroutinesApi
-  override fun setupCamera() {
-    val camera: CameraCommon = MarshmallowCamera(context, enforcer, preferences).apply {
-      setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
-        override fun onOpened() {
-          notificationManagerCompat.notify(NOTIFICATION_ID, notification)
-        }
-
-        override fun onClosed() {
-          notificationManagerCompat.cancel(NOTIFICATION_ID)
-        }
-
-        override fun onError(error: CameraError) {
-          if (!cameraErrorBus.offer(error)) {
-            Timber.w("Unable to offer camera error event: $error")
-          }
-        }
-      })
     }
 
-    releaseCamera()
-    cameraInterface = camera
-  }
+    @RequiresApi(VERSION_CODES.O)
+    private fun setupNotificationChannel(
+        notificationChannelId: String
+    ) {
+        val name = "Torch Service"
+        val desc = "Notification related to the ZapTorch service"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val notificationChannel = NotificationChannel(notificationChannelId, name, importance).apply {
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            description = desc
+            enableLights(false)
+            enableVibration(false)
+        }
 
-  override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
-    coroutineScope {
-      cameraInterface?.toggleTorch(onError)
+        Timber.d("Create notification channel with id: %s", notificationChannelId)
+        val notificationManager: NotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
     }
-  }
 
-  override fun releaseCamera() {
-    cameraInterface?.also {
-      it.destroy()
-      it.setOnStateChangedCallback(null)
+    @ExperimentalCoroutinesApi
+    override fun setServiceState(changed: Boolean) {
+        running = changed
+        if (!runningStateBus.offer(changed)) {
+            Timber.w("Failed to offer service state change: $changed")
+        }
     }
-    cameraInterface = null
-  }
 
-  override fun showError(error: CameraAccessException?) {
-    cameraInterface?.showError(error)
-  }
+    @ExperimentalCoroutinesApi
+    override fun observeServiceState(): EventConsumer<Boolean> {
+        return object : EventConsumer<Boolean> {
 
-  companion object {
+            override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
+                emitter(running)
 
-    private const val NOTIFICATION_ID = 1345
-    private const val NOTIFICATION_RC = 1009
-  }
+                runningStateBus.openSubscription()
+                    .consumeEach { emitter(it) }
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun observeCameraState(): EventConsumer<CameraError> {
+        return object : EventConsumer<CameraError> {
+
+            override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
+                cameraErrorBus.openSubscription()
+                    .consumeEach { emitter(it) }
+            }
+        }
+    }
+
+    override suspend fun handleKeyPress(
+        action: Int,
+        keyCode: Int,
+        onError: suspend (error: CameraAccessException?) -> Unit
+    ) = coroutineScope {
+        if (action != KeyEvent.ACTION_UP) {
+            return@coroutineScope
+        }
+        if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
+            return@coroutineScope
+        }
+
+        enforcer.assertNotOnMainThread()
+        if (pressed) {
+            mutex.withLock {
+                Timber.d("Key has been double pressed")
+                pressed = false
+                toggleTorch(onError)
+            }
+        } else {
+            mutex.withLock {
+                pressed = true
+            }
+
+            launch {
+                delay(preferences.buttonDelayTime)
+                mutex.withLock {
+                    if (pressed) {
+                        Timber.d("Set pressed back to false")
+                        pressed = false
+                    }
+                }
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun setupCamera() {
+        val camera: CameraCommon = MarshmallowCamera(context, enforcer, preferences).apply {
+            setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
+                override fun onOpened() {
+                    notificationManagerCompat.notify(NOTIFICATION_ID, notification)
+                }
+
+                override fun onClosed() {
+                    notificationManagerCompat.cancel(NOTIFICATION_ID)
+                }
+
+                override fun onError(error: CameraError) {
+                    if (!cameraErrorBus.offer(error)) {
+                        Timber.w("Unable to offer camera error event: $error")
+                    }
+                }
+            })
+        }
+
+        releaseCamera()
+        cameraInterface = camera
+    }
+
+    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
+        coroutineScope {
+            cameraInterface?.toggleTorch(onError)
+        }
+    }
+
+    override fun releaseCamera() {
+        cameraInterface?.also {
+            it.destroy()
+            it.setOnStateChangedCallback(null)
+        }
+        cameraInterface = null
+    }
+
+    override fun showError(error: CameraAccessException?) {
+        cameraInterface?.showError(error)
+    }
+
+    companion object {
+
+        private const val NOTIFICATION_ID = 1345
+        private const val NOTIFICATION_RC = 1009
+    }
 }

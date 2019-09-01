@@ -19,5 +19,5 @@ package com.pyamsoft.zaptorch.api
 
 interface SettingsInteractor {
 
-  suspend fun clearAll()
+    suspend fun clearAll()
 }

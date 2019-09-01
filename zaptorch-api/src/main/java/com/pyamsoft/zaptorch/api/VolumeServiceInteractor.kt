@@ -24,25 +24,25 @@ import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 
 interface VolumeServiceInteractor {
 
-  suspend fun handleKeyPress(
-    action: Int,
-    keyCode: Int,
-    onError: suspend (error: CameraAccessException?) -> Unit
-  )
+    suspend fun handleKeyPress(
+        action: Int,
+        keyCode: Int,
+        onError: suspend (error: CameraAccessException?) -> Unit
+    )
 
-  fun setupCamera()
+    fun setupCamera()
 
-  suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
+    suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
 
-  fun releaseCamera()
+    fun releaseCamera()
 
-  @CheckResult
-  fun observeServiceState(): EventConsumer<Boolean>
+    @CheckResult
+    fun observeServiceState(): EventConsumer<Boolean>
 
-  @CheckResult
-  fun observeCameraState(): EventConsumer<CameraError>
+    @CheckResult
+    fun observeCameraState(): EventConsumer<CameraError>
 
-  fun setServiceState(changed: Boolean)
+    fun setServiceState(changed: Boolean)
 
-  fun showError(error: CameraAccessException?)
+    fun showError(error: CameraAccessException?)
 }

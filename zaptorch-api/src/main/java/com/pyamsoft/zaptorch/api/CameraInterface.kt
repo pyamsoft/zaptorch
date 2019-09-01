@@ -22,32 +22,32 @@ import android.hardware.camera2.CameraAccessException
 
 interface CameraInterface {
 
-  fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
+    fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
 
-  fun destroy()
+    fun destroy()
 
-  suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
+    suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
 
-  fun showError(exception: CameraAccessException?)
+    fun showError(exception: CameraAccessException?)
 
-  interface OnStateChangedCallback {
+    interface OnStateChangedCallback {
 
-    fun onOpened()
+        fun onOpened()
 
-    fun onClosed()
+        fun onClosed()
 
-    fun onError(error: CameraError)
-  }
+        fun onError(error: CameraError)
+    }
 
-  data class CameraError(
-    val exception: CameraAccessException?,
-    val intent: Intent
-  )
+    data class CameraError(
+        val exception: CameraAccessException?,
+        val intent: Intent
+    )
 
-  companion object {
+    companion object {
 
-    const val TYPE_NONE = -1
-    const val TYPE_ERROR = 0
-    const val DIALOG_WHICH = "dialog"
-  }
+        const val TYPE_NONE = -1
+        const val TYPE_ERROR = 0
+        const val DIALOG_WHICH = "dialog"
+    }
 }

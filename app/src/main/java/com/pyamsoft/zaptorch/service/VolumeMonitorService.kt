@@ -34,70 +34,72 @@ import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
-  @JvmField @Inject internal var binder: ServiceBinder? = null
+    @JvmField
+    @Inject
+    internal var binder: ServiceBinder? = null
 
-  override fun onKeyEvent(event: KeyEvent): Boolean {
-    val action = event.action
-    val keyCode = event.keyCode
-    binder?.handleKeyEvent(action, keyCode)
+    override fun onKeyEvent(event: KeyEvent): Boolean {
+        val action = event.action
+        val keyCode = event.keyCode
+        binder?.handleKeyEvent(action, keyCode)
 
-    // Never consume events
-    return false
-  }
-
-  override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
-    Timber.d("onAccessibilityEvent")
-  }
-
-  override fun onInterrupt() {
-    Timber.e("onInterrupt")
-  }
-
-  override fun onCreate() {
-    super.onCreate()
-    Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusServiceComponent()
-        .create()
-        .inject(this)
-
-    requireNotNull(binder).bind {
-      return@bind when (it) {
-        is RenderError -> renderError(it.error)
-        is Finish -> finish()
-      }
+        // Never consume events
+        return false
     }
-  }
 
-  private fun renderError(cameraError: CameraError) {
-    applicationContext.also {
-      val intent = cameraError.intent
-      intent.setClass(it, CameraErrorExplanation::class.java)
-      it.startActivity(intent)
+    override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
+        Timber.d("onAccessibilityEvent")
     }
-  }
 
-  private fun finish() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      disableSelf()
+    override fun onInterrupt() {
+        Timber.e("onInterrupt")
     }
-  }
 
-  override fun onServiceConnected() {
-    super.onServiceConnected()
-    requireNotNull(binder).start()
-  }
+    override fun onCreate() {
+        super.onCreate()
+        Injector.obtain<ZapTorchComponent>(applicationContext)
+            .plusServiceComponent()
+            .create()
+            .inject(this)
 
-  override fun onUnbind(intent: Intent): Boolean {
-    binder?.stop()
-    return super.onUnbind(intent)
-  }
+        requireNotNull(binder).bind {
+            return@bind when (it) {
+                is RenderError -> renderError(it.error)
+                is Finish -> finish()
+            }
+        }
+    }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    binder?.unbind()
-    binder = null
+    private fun renderError(cameraError: CameraError) {
+        applicationContext.also {
+            val intent = cameraError.intent
+            intent.setClass(it, CameraErrorExplanation::class.java)
+            it.startActivity(intent)
+        }
+    }
 
-    ZapTorch.getRefWatcher(this)
-        .watch(this)
-  }
+    private fun finish() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            disableSelf()
+        }
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        requireNotNull(binder).start()
+    }
+
+    override fun onUnbind(intent: Intent): Boolean {
+        binder?.stop()
+        return super.onUnbind(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binder?.unbind()
+        binder = null
+
+        ZapTorch.getRefWatcher(this)
+            .watch(this)
+    }
 }

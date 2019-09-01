@@ -21,6 +21,5 @@ import com.pyamsoft.pydroid.arch.UiControllerEvent
 
 sealed class ToolbarControllerEvent : UiControllerEvent {
 
-  data class HandleKeypress internal constructor(val isHandling: Boolean) : ToolbarControllerEvent()
-
+    data class HandleKeypress internal constructor(val isHandling: Boolean) : ToolbarControllerEvent()
 }

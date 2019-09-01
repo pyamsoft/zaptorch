@@ -22,10 +22,10 @@ import androidx.annotation.CheckResult
 
 interface UIPreferences {
 
-  @CheckResult
-  fun shouldHandleKeys(): Boolean
+    @CheckResult
+    fun shouldHandleKeys(): Boolean
 
-  fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 
-  fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
 }

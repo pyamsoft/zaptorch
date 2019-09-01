@@ -30,32 +30,31 @@ import javax.inject.Singleton
 
 @Singleton
 internal class MainInteractorImpl @Inject internal constructor(
-  private val handleKeyPressKey: String,
-  private val enforcer: Enforcer,
-  private val preferences: UIPreferences
+    private val handleKeyPressKey: String,
+    private val enforcer: Enforcer,
+    private val preferences: UIPreferences
 ) : MainInteractor {
 
-  override fun onHandleKeyPressChanged(): EventConsumer<Boolean> {
-    return EventConsumer.create { onCancel, startWith, emit ->
-      enforcer.assertNotOnMainThread()
+    override fun onHandleKeyPressChanged(): EventConsumer<Boolean> {
+        return EventConsumer.create { onCancel, startWith, emit ->
+            enforcer.assertNotOnMainThread()
 
-      coroutineScope {
-        val listener = OnSharedPreferenceChangeListener { _, key ->
-          if (key == handleKeyPressKey) {
-            launch(context = Dispatchers.Default) {
-              emit(preferences.shouldHandleKeys())
+            coroutineScope {
+                val listener = OnSharedPreferenceChangeListener { _, key ->
+                    if (key == handleKeyPressKey) {
+                        launch(context = Dispatchers.Default) {
+                            emit(preferences.shouldHandleKeys())
+                        }
+                    }
+                }
+
+                onCancel {
+                    preferences.unregister(listener)
+                }
+
+                preferences.register(listener)
+                startWith { preferences.shouldHandleKeys() }
             }
-          }
         }
-
-        onCancel {
-          preferences.unregister(listener)
-        }
-
-        preferences.register(listener)
-        startWith { preferences.shouldHandleKeys() }
-      }
     }
-  }
-
 }

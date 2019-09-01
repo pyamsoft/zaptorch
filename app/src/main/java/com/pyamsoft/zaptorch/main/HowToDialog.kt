@@ -24,11 +24,11 @@ import androidx.fragment.app.DialogFragment
 
 class HowToDialog : DialogFragment() {
 
-  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    return AlertDialog.Builder(requireActivity())
-        .setMessage("Just double press the volume down key to turn the flashlight on and off")
-        .setTitle("How to Use")
-        .setNeutralButton("Got It") { _, _ -> dismiss() }
-        .create()
-  }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireActivity())
+            .setMessage("Just double press the volume down key to turn the flashlight on and off")
+            .setTitle("How to Use")
+            .setNeutralButton("Got It") { _, _ -> dismiss() }
+            .create()
+    }
 }

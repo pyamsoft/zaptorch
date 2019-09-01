@@ -44,131 +44,136 @@ import kotlin.LazyThreadSafetyMode.NONE
 
 class MainActivity : RatingActivity() {
 
-  @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
-  @JvmField @Inject internal var toolbar: MainToolbarView? = null
-  @JvmField @Inject internal var mainView: MainFrameView? = null
-  private val viewModel by factory<MainToolbarViewModel> { factory }
+    @JvmField
+    @Inject
+    internal var factory: ViewModelProvider.Factory? = null
+    @JvmField
+    @Inject
+    internal var toolbar: MainToolbarView? = null
+    @JvmField
+    @Inject
+    internal var mainView: MainFrameView? = null
+    private val viewModel by factory<MainToolbarViewModel> { factory }
 
-  private var handleKeyPress: Boolean = false
+    private var handleKeyPress: Boolean = false
 
-  override val versionName: String = BuildConfig.VERSION_NAME
+    override val versionName: String = BuildConfig.VERSION_NAME
 
-  override val applicationIcon: Int = R.mipmap.ic_launcher
+    override val applicationIcon: Int = R.mipmap.ic_launcher
 
-  override val snackbarRoot: ViewGroup by lazy(NONE) {
-    findViewById<CoordinatorLayout>(R.id.snackbar_root)
-  }
-
-  override val fragmentContainerId: Int
-    get() = requireNotNull(mainView).id()
-
-  override val changeLogLines: ChangeLogBuilder = buildChangeLog {
-    change("New icon style")
-    change("Better open source license viewing experience")
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    setTheme(R.style.Theme_ZapTorch)
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.snackbar_screen)
-
-    val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
-    Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusMainComponent()
-        .create(this, layoutRoot, this)
-        .inject(this)
-
-    val component = requireNotNull(mainView)
-    val toolbarComponent = requireNotNull(toolbar)
-    val dropshadow = DropshadowView.create(layoutRoot)
-
-    createComponent(
-        savedInstanceState, this,
-        viewModel,
-        component,
-        toolbarComponent,
-        dropshadow
-    ) {
-      return@createComponent when (it) {
-        is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
-      }
+    override val snackbarRoot: ViewGroup by lazy(NONE) {
+        findViewById<CoordinatorLayout>(R.id.snackbar_root)
     }
 
-    layoutRoot.layout {
-      toolbarComponent.also {
-        connect(it.id(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
+    override val fragmentContainerId: Int
+        get() = requireNotNull(mainView).id()
 
-      dropshadow.also {
-        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
-
-      component.also {
-        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-        constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-      }
-
+    override val changeLogLines: ChangeLogBuilder = buildChangeLog {
+        change("New icon style")
+        change("Better open source license viewing experience")
     }
 
-    showMainFragment()
-  }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_ZapTorch)
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.snackbar_screen)
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    toolbar?.saveState(outState)
-    mainView?.saveState(outState)
-  }
+        val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
+        Injector.obtain<ZapTorchComponent>(applicationContext)
+            .plusMainComponent()
+            .create(this, layoutRoot, this)
+            .inject(this)
 
-  override fun onDestroy() {
-    super.onDestroy()
-    mainView = null
-    toolbar = null
-    factory = null
-  }
+        val component = requireNotNull(mainView)
+        val toolbarComponent = requireNotNull(toolbar)
+        val dropshadow = DropshadowView.create(layoutRoot)
 
-  private fun onHandleKeyPressChanged(handle: Boolean) {
-    Timber.d("Handle keypress: $handle")
-    handleKeyPress = handle
-  }
+        createComponent(
+            savedInstanceState, this,
+            viewModel,
+            component,
+            toolbarComponent,
+            dropshadow
+        ) {
+            return@createComponent when (it) {
+                is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
+            }
+        }
 
-  private fun showMainFragment() {
-    val fm = supportFragmentManager
-    if (fm.findFragmentByTag(MainFragment.TAG) == null && !AboutFragment.isPresent(this)) {
-      fm.commit(this) {
-        add(fragmentContainerId, MainFragment(), MainFragment.TAG)
-      }
+        layoutRoot.layout {
+            toolbarComponent.also {
+                connect(it.id(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+            }
+
+            dropshadow.also {
+                connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+            }
+
+            component.also {
+                connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+                connect(it.id(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+            }
+        }
+
+        showMainFragment()
     }
-  }
 
-  override fun onKeyUp(
-    keyCode: Int,
-    event: KeyEvent
-  ): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      return handleKeyPress
-    } else {
-      return super.onKeyUp(keyCode, event)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        toolbar?.saveState(outState)
+        mainView?.saveState(outState)
     }
-  }
 
-  override fun onKeyDown(
-    keyCode: Int,
-    event: KeyEvent
-  ): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      return handleKeyPress
-    } else {
-      return super.onKeyDown(keyCode, event)
+    override fun onDestroy() {
+        super.onDestroy()
+        mainView = null
+        toolbar = null
+        factory = null
     }
-  }
+
+    private fun onHandleKeyPressChanged(handle: Boolean) {
+        Timber.d("Handle keypress: $handle")
+        handleKeyPress = handle
+    }
+
+    private fun showMainFragment() {
+        val fm = supportFragmentManager
+        if (fm.findFragmentByTag(MainFragment.TAG) == null && !AboutFragment.isPresent(this)) {
+            fm.commit(this) {
+                add(fragmentContainerId, MainFragment(), MainFragment.TAG)
+            }
+        }
+    }
+
+    override fun onKeyUp(
+        keyCode: Int,
+        event: KeyEvent
+    ): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            return handleKeyPress
+        } else {
+            return super.onKeyUp(keyCode, event)
+        }
+    }
+
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent
+    ): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            return handleKeyPress
+        } else {
+            return super.onKeyDown(keyCode, event)
+        }
+    }
 }

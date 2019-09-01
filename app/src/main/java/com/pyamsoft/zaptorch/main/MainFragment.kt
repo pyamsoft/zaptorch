@@ -39,83 +39,89 @@ import javax.inject.Inject
 
 class MainFragment : Fragment() {
 
-  @JvmField @Inject internal var factory: ViewModelProvider.Factory? = null
-  @JvmField @Inject internal var actionView: MainActionView? = null
-  @JvmField @Inject internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null
-  private val viewModel by factory<MainViewModel> { factory }
+    @JvmField
+    @Inject
+    internal var factory: ViewModelProvider.Factory? = null
+    @JvmField
+    @Inject
+    internal var actionView: MainActionView? = null
+    @JvmField
+    @Inject
+    internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null
+    private val viewModel by factory<MainViewModel> { factory }
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    return inflater.inflate(R.layout.layout_coordinator, container, false)
-  }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.layout_coordinator, container, false)
+    }
 
-  override fun onViewCreated(
-    view: View,
-    savedInstanceState: Bundle?
-  ) {
-    super.onViewCreated(view, savedInstanceState)
-
-    val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
-    Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
-        .plusMainFragmentComponent()
-        .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
-        .inject(this)
-
-    createComponent(
-        savedInstanceState, viewLifecycleOwner,
-        viewModel,
-        requireNotNull(actionView),
-        requireNotNull(toolbarView)
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
     ) {
-      return@createComponent when (it) {
-        is ServiceAction -> {
-          if (it.isServiceRunning) {
-            showInfoDialog()
-          } else {
-            showUsageAccessRequestDialog()
-          }
+        super.onViewCreated(view, savedInstanceState)
+
+        val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
+        Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+            .plusMainFragmentComponent()
+            .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
+            .inject(this)
+
+        createComponent(
+            savedInstanceState, viewLifecycleOwner,
+            viewModel,
+            requireNotNull(actionView),
+            requireNotNull(toolbarView)
+        ) {
+            return@createComponent when (it) {
+                is ServiceAction -> {
+                    if (it.isServiceRunning) {
+                        showInfoDialog()
+                    } else {
+                        showUsageAccessRequestDialog()
+                    }
+                }
+            }
         }
-      }
+
+        displayPreferenceFragment()
     }
 
-    displayPreferenceFragment()
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    actionView = null
-    toolbarView = null
-    factory = null
-  }
-
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
-    toolbarView?.saveState(outState)
-    actionView?.saveState(outState)
-  }
-
-  private fun showUsageAccessRequestDialog() {
-    AccessibilityRequestDialog().show(requireActivity(), "accessibility")
-  }
-
-  private fun showInfoDialog() {
-    HowToDialog().show(requireActivity(), "how_to")
-  }
-
-  private fun displayPreferenceFragment() {
-    val fragmentManager = childFragmentManager
-    if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
-      fragmentManager.commit(viewLifecycleOwner) {
-        add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
-      }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        actionView = null
+        toolbarView = null
+        factory = null
     }
-  }
 
-  companion object {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        toolbarView?.saveState(outState)
+        actionView?.saveState(outState)
+    }
 
-    const val TAG = "MainFragment"
-  }
+    private fun showUsageAccessRequestDialog() {
+        AccessibilityRequestDialog().show(requireActivity(), "accessibility")
+    }
+
+    private fun showInfoDialog() {
+        HowToDialog().show(requireActivity(), "how_to")
+    }
+
+    private fun displayPreferenceFragment() {
+        val fragmentManager = childFragmentManager
+        if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
+            fragmentManager.commit(viewLifecycleOwner) {
+                add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
+            }
+        }
+    }
+
+    companion object {
+
+        const val TAG = "MainFragment"
+    }
 }

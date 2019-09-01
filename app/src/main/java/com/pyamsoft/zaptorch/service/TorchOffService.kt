@@ -27,33 +27,35 @@ import javax.inject.Inject
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
-  @JvmField @Inject internal var binder: TorchBinder? = null
+    @JvmField
+    @Inject
+    internal var binder: TorchBinder? = null
 
-  override fun onCreate() {
-    super.onCreate()
-    Injector.obtain<ZapTorchComponent>(applicationContext)
-        .plusServiceComponent()
-        .create()
-        .inject(this)
+    override fun onCreate() {
+        super.onCreate()
+        Injector.obtain<ZapTorchComponent>(applicationContext)
+            .plusServiceComponent()
+            .create()
+            .inject(this)
 
-    requireNotNull(binder).bind { }
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-
-    binder?.unbind()
-    binder = null
-
-    ZapTorch.getRefWatcher(this)
-        .watch(this)
-  }
-
-  override fun onHandleIntent(intent: Intent?) {
-    try {
-      requireNotNull(binder).toggle()
-    } catch (e: IllegalStateException) {
-      Timber.e(e, "Error toggling torch")
+        requireNotNull(binder).bind { }
     }
-  }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        binder?.unbind()
+        binder = null
+
+        ZapTorch.getRefWatcher(this)
+            .watch(this)
+    }
+
+    override fun onHandleIntent(intent: Intent?) {
+        try {
+            requireNotNull(binder).toggle()
+        } catch (e: IllegalStateException) {
+            Timber.e(e, "Error toggling torch")
+        }
+    }
 }

@@ -22,6 +22,6 @@ import com.pyamsoft.pydroid.arch.EventConsumer
 
 interface MainInteractor {
 
-  @CheckResult
-  fun onHandleKeyPressChanged(): EventConsumer<Boolean>
+    @CheckResult
+    fun onHandleKeyPressChanged(): EventConsumer<Boolean>
 }

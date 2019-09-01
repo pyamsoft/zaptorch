@@ -27,75 +27,75 @@ import com.squareup.leakcanary.RefWatcher
 
 class ZapTorch : Application() {
 
-  private var component: ZapTorchComponent? = null
-  private var refWatcher: RefWatcher? = null
+    private var component: ZapTorchComponent? = null
+    private var refWatcher: RefWatcher? = null
 
-  override fun onCreate() {
-    super.onCreate()
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      return
+    override fun onCreate() {
+        super.onCreate()
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return
+        }
+
+        if (BuildConfig.DEBUG) {
+            refWatcher = LeakCanary.install(this)
+        } else {
+            refWatcher = RefWatcher.DISABLED
+        }
+
+        PYDroid.init(
+            this,
+            getString(R.string.app_name),
+            "https://github.com/pyamsoft/zaptorch",
+            "https://github.com/pyamsoft/zaptorch/issues",
+            PRIVACY_POLICY_URL,
+            TERMS_CONDITIONS_URL,
+            BuildConfig.VERSION_CODE,
+            BuildConfig.DEBUG
+        ) { provider ->
+            component = DaggerZapTorchComponent.factory()
+                .create(
+                    this,
+                    provider.theming(),
+                    provider.enforcer(),
+                    provider.imageLoader(),
+                    TorchOffService::class.java,
+                    R.color.primary,
+                    getString(R.string.handle_volume_keys_key)
+                )
+        }
     }
 
-    if (BuildConfig.DEBUG) {
-      refWatcher = LeakCanary.install(this)
-    } else {
-      refWatcher = RefWatcher.DISABLED
+    override fun getSystemService(name: String): Any? {
+        val service = PYDroid.getSystemService(name)
+        if (service != null) {
+            return service
+        }
+
+        if (ZapTorchComponent::class.java.name == name) {
+            return requireNotNull(component)
+        }
+
+        return super.getSystemService(name)
     }
 
-    PYDroid.init(
-        this,
-        getString(R.string.app_name),
-        "https://github.com/pyamsoft/zaptorch",
-        "https://github.com/pyamsoft/zaptorch/issues",
-        PRIVACY_POLICY_URL,
-        TERMS_CONDITIONS_URL,
-        BuildConfig.VERSION_CODE,
-        BuildConfig.DEBUG
-    ) { provider ->
-      component = DaggerZapTorchComponent.factory()
-          .create(
-              this,
-              provider.theming(),
-              provider.enforcer(),
-              provider.imageLoader(),
-              TorchOffService::class.java,
-              R.color.primary,
-              getString(R.string.handle_volume_keys_key)
-          )
+    companion object {
+
+        const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
+        const val TERMS_CONDITIONS_URL =
+            "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
+
+        @JvmStatic
+        @CheckResult
+        fun getRefWatcher(service: Service): RefWatcher = getRefWatcherInternal(service.application)
+
+        @JvmStatic
+        @CheckResult
+        private fun getRefWatcherInternal(application: Application): RefWatcher {
+            if (application is ZapTorch) {
+                return requireNotNull(application.refWatcher)
+            } else {
+                throw IllegalStateException("Application is not ZapTorch")
+            }
+        }
     }
-  }
-
-  override fun getSystemService(name: String): Any? {
-    val service = PYDroid.getSystemService(name)
-    if (service != null) {
-      return service
-    }
-
-    if (ZapTorchComponent::class.java.name == name) {
-      return requireNotNull(component)
-    }
-
-    return super.getSystemService(name)
-  }
-
-  companion object {
-
-    const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
-    const val TERMS_CONDITIONS_URL =
-      "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
-
-    @JvmStatic
-    @CheckResult
-    fun getRefWatcher(service: Service): RefWatcher = getRefWatcherInternal(service.application)
-
-    @JvmStatic
-    @CheckResult
-    private fun getRefWatcherInternal(application: Application): RefWatcher {
-      if (application is ZapTorch) {
-        return requireNotNull(application.refWatcher)
-      } else {
-        throw IllegalStateException("Application is not ZapTorch")
-      }
-    }
-  }
 }

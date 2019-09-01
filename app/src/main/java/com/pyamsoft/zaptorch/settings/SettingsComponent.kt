@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.annotation.CheckResult
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceScreen
 import androidx.recyclerview.widget.RecyclerView
@@ -36,30 +35,28 @@ import dagger.multibindings.IntoMap
 @Subcomponent(modules = [ViewModelModule::class])
 interface SettingsComponent {
 
-  fun inject(fragment: TorchPreferenceFragment)
+    fun inject(fragment: TorchPreferenceFragment)
 
-  @Subcomponent.Factory
-  interface Factory {
+    @Subcomponent.Factory
+    interface Factory {
 
-    @CheckResult
-    fun create(
-      @BindsInstance toolbarActivity: ToolbarActivity,
-      @BindsInstance listView: RecyclerView,
-      @BindsInstance preferenceScreen: PreferenceScreen
-    ): SettingsComponent
+        @CheckResult
+        fun create(
+            @BindsInstance toolbarActivity: ToolbarActivity,
+            @BindsInstance listView: RecyclerView,
+            @BindsInstance preferenceScreen: PreferenceScreen
+        ): SettingsComponent
+    }
 
-  }
+    @Module
+    abstract class ViewModelModule {
 
-  @Module
-  abstract class ViewModelModule {
+        @Binds
+        internal abstract fun bindViewModelFactory(factory: ZapTorchViewModelFactory): ViewModelProvider.Factory
 
-    @Binds
-    internal abstract fun bindViewModelFactory(factory: ZapTorchViewModelFactory): ViewModelProvider.Factory
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SettingsViewModel::class)
-    internal abstract fun settingsViewModel(viewModel: SettingsViewModel): UiViewModel<*, *, *>
-  }
-
+        @Binds
+        @IntoMap
+        @ViewModelKey(SettingsViewModel::class)
+        internal abstract fun settingsViewModel(viewModel: SettingsViewModel): UiViewModel<*, *, *>
+    }
 }

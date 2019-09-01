@@ -27,39 +27,37 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class Binder<T : Any> {
 
-  val binderScope: CoroutineScope
-    get() = CloseableCoroutineScope(SupervisorJob() + Dispatchers.Main)
+    val binderScope: CoroutineScope
+        get() = CloseableCoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-  fun bind(onEvent: (event: T) -> Unit) {
-    onBind(onEvent)
-  }
-
-  protected open fun onBind(onEvent: (event: T) -> Unit) {
-  }
-
-  fun unbind() {
-    onUnbind()
-
-    val scope = binderScope
-    if (scope is Closeable) {
-      try {
-        scope.close()
-      } catch (e: Throwable) {
-        Timber.e(e, "Failed to close binder scope")
-      }
+    fun bind(onEvent: (event: T) -> Unit) {
+        onBind(onEvent)
     }
-  }
 
-  protected open fun onUnbind() {
-  }
-
-  private class CloseableCoroutineScope(context: CoroutineContext) : Closeable, CoroutineScope {
-    override val coroutineContext: CoroutineContext = context
-
-    override fun close() {
-      coroutineContext.cancel()
+    protected open fun onBind(onEvent: (event: T) -> Unit) {
     }
-  }
+
+    fun unbind() {
+        onUnbind()
+
+        val scope = binderScope
+        if (scope is Closeable) {
+            try {
+                scope.close()
+            } catch (e: Throwable) {
+                Timber.e(e, "Failed to close binder scope")
+            }
+        }
+    }
+
+    protected open fun onUnbind() {
+    }
+
+    private class CloseableCoroutineScope(context: CoroutineContext) : Closeable, CoroutineScope {
+        override val coroutineContext: CoroutineContext = context
+
+        override fun close() {
+            coroutineContext.cancel()
+        }
+    }
 }
-
-

@@ -29,57 +29,55 @@ import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
-import timber.log.Timber
 import javax.inject.Inject
 
 internal class MainActionView @Inject internal constructor(
-  private val imageLoader: ImageLoader,
-  parent: ViewGroup
+    private val imageLoader: ImageLoader,
+    parent: ViewGroup
 ) : BaseUiView<MainViewState, MainViewEvent>(parent) {
 
-  override val layoutRoot by boundView<FrameLayout>(R.id.fab_container)
-  private val fab by boundView<FloatingActionButton>(R.id.fab)
+    override val layoutRoot by boundView<FrameLayout>(R.id.fab_container)
+    private val fab by boundView<FloatingActionButton>(R.id.fab)
 
-  private var actionIconLoaded: Loaded? = null
+    private var actionIconLoaded: Loaded? = null
 
-  override val layout: Int = R.layout.floating_action_button
+    override val layout: Int = R.layout.floating_action_button
 
-  override fun onTeardown() {
-    fab.setOnDebouncedClickListener(null)
-    actionIconLoaded?.dispose()
-  }
-
-  override fun onRender(
-    state: MainViewState,
-    savedState: UiSavedState
-  ) {
-    toggleVisibility(state.isVisible)
-    setFabState(state.isServiceRunning)
-  }
-
-  private fun setFabState(running: Boolean) {
-    fab.setOnDebouncedClickListener {
-      publish(ActionClick(running))
+    override fun onTeardown() {
+        fab.setOnDebouncedClickListener(null)
+        actionIconLoaded?.dispose()
     }
 
-    val icon: Int
-    if (running) {
-      icon = R.drawable.ic_help_24dp
-    } else {
-      icon = R.drawable.ic_service_start_24dp
+    override fun onRender(
+        state: MainViewState,
+        savedState: UiSavedState
+    ) {
+        toggleVisibility(state.isVisible)
+        setFabState(state.isServiceRunning)
     }
 
-    actionIconLoaded?.dispose()
-    actionIconLoaded = imageLoader.load(icon)
-        .into(fab)
-  }
+    private fun setFabState(running: Boolean) {
+        fab.setOnDebouncedClickListener {
+            publish(ActionClick(running))
+        }
 
-  private fun toggleVisibility(visible: Boolean) {
-    if (visible) {
-      fab.popShow()
-    } else {
-      fab.popHide()
+        val icon: Int
+        if (running) {
+            icon = R.drawable.ic_help_24dp
+        } else {
+            icon = R.drawable.ic_service_start_24dp
+        }
+
+        actionIconLoaded?.dispose()
+        actionIconLoaded = imageLoader.load(icon)
+            .into(fab)
     }
-  }
 
+    private fun toggleVisibility(visible: Boolean) {
+        if (visible) {
+            fab.popShow()
+        } else {
+            fab.popHide()
+        }
+    }
 }

@@ -23,12 +23,12 @@ import com.pyamsoft.zaptorch.api.SettingsInteractor
 import javax.inject.Inject
 
 internal class SettingsInteractorImpl @Inject internal constructor(
-  private val enforcer: Enforcer,
-  private val clearPreferences: ClearPreferences
+    private val enforcer: Enforcer,
+    private val clearPreferences: ClearPreferences
 ) : SettingsInteractor {
 
-  override suspend fun clearAll() {
-    enforcer.assertNotOnMainThread()
-    clearPreferences.clearAll()
-  }
+    override suspend fun clearAll() {
+        enforcer.assertNotOnMainThread()
+        clearPreferences.clearAll()
+    }
 }

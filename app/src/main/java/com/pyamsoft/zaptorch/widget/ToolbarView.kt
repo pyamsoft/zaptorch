@@ -29,23 +29,23 @@ import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
 
 internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal constructor(
-  private val toolbarActivity: ToolbarActivity
+    private val toolbarActivity: ToolbarActivity
 ) : UiView<S, E>() {
 
-  override fun id(): Int {
-    throw InvalidIdException
-  }
-
-  override fun doInflate(savedInstanceState: Bundle?) {
-    toolbarActivity.withToolbar { toolbar ->
-      toolbar.setTitle(R.string.app_name)
-      toolbar.setUpEnabled(false)
+    override fun id(): Int {
+        throw InvalidIdException
     }
-  }
 
-  override fun render(
-    state: S,
-    savedState: UiSavedState
-  ) {
-  }
+    override fun doInflate(savedInstanceState: Bundle?) {
+        toolbarActivity.withToolbar { toolbar ->
+            toolbar.setTitle(R.string.app_name)
+            toolbar.setUpEnabled(false)
+        }
+    }
+
+    override fun render(
+        state: S,
+        savedState: UiSavedState
+    ) {
+    }
 }

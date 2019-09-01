@@ -44,66 +44,64 @@ import javax.inject.Singleton
 @Component(modules = [ZaptorchModule::class, BaseModule::class])
 interface ZapTorchComponent {
 
-  fun inject(dialog: ConfirmationDialog)
-
-  @CheckResult
-  fun plusMainComponent(): MainComponent.Factory
-
-  @CheckResult
-  fun plusMainFragmentComponent(): MainFragmentComponent.Factory
-
-  @CheckResult
-  fun plusSettingsComponent(): SettingsComponent.Factory
-
-  @CheckResult
-  fun plusServiceComponent(): ServiceComponent.Factory
-
-  @Component.Factory
-  interface Factory {
+    fun inject(dialog: ConfirmationDialog)
 
     @CheckResult
-    fun create(
-      @BindsInstance context: Context,
-      @BindsInstance theming: Theming,
-      @BindsInstance enforcer: Enforcer,
-      @BindsInstance imageLoader: ImageLoader,
-      @BindsInstance serviceClass: Class<out IntentService>,
-      @BindsInstance notificationColor: Int,
-      @BindsInstance handleKeyPressKey: String
-    ): ZapTorchComponent
-  }
+    fun plusMainComponent(): MainComponent.Factory
 
-  @Module
-  abstract class ZaptorchModule {
+    @CheckResult
+    fun plusMainFragmentComponent(): MainFragmentComponent.Factory
+
+    @CheckResult
+    fun plusSettingsComponent(): SettingsComponent.Factory
+
+    @CheckResult
+    fun plusServiceComponent(): ServiceComponent.Factory
+
+    @Component.Factory
+    interface Factory {
+
+        @CheckResult
+        fun create(
+            @BindsInstance context: Context,
+            @BindsInstance theming: Theming,
+            @BindsInstance enforcer: Enforcer,
+            @BindsInstance imageLoader: ImageLoader,
+            @BindsInstance serviceClass: Class<out IntentService>,
+            @BindsInstance notificationColor: Int,
+            @BindsInstance handleKeyPressKey: String
+        ): ZapTorchComponent
+    }
 
     @Module
-    companion object {
+    abstract class ZaptorchModule {
 
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideClearBus(): EventBus<ClearAllEvent> {
-        return EventBus.create()
-      }
+        @Module
+        companion object {
 
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
-        return EventBus.create()
-      }
+            @Provides
+            @Singleton
+            @JvmStatic
+            @CheckResult
+            internal fun provideClearBus(): EventBus<ClearAllEvent> {
+                return EventBus.create()
+            }
 
-      @Provides
-      @Singleton
-      @JvmStatic
-      @CheckResult
-      internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
-        return EventBus.create()
-      }
+            @Provides
+            @Singleton
+            @JvmStatic
+            @CheckResult
+            internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
+                return EventBus.create()
+            }
 
+            @Provides
+            @Singleton
+            @JvmStatic
+            @CheckResult
+            internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
+                return EventBus.create()
+            }
+        }
     }
-  }
 }
-
