@@ -43,9 +43,11 @@ internal class MainActionView @Inject internal constructor(
 
     override val layout: Int = R.layout.floating_action_button
 
-    override fun onTeardown() {
-        fab.setOnDebouncedClickListener(null)
-        actionIconLoaded?.dispose()
+    init {
+        doOnTeardown {
+            fab.setOnDebouncedClickListener(null)
+            actionIconLoaded?.dispose()
+        }
     }
 
     override fun onRender(
@@ -61,11 +63,10 @@ internal class MainActionView @Inject internal constructor(
             publish(ActionClick(running))
         }
 
-        val icon: Int
-        if (running) {
-            icon = R.drawable.ic_help_24dp
+        val icon = if (running) {
+            R.drawable.ic_help_24dp
         } else {
-            icon = R.drawable.ic_service_start_24dp
+            R.drawable.ic_service_start_24dp
         }
 
         actionIconLoaded?.dispose()

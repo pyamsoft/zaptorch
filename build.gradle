@@ -38,16 +38,16 @@ buildscript {
         maxSdk = 29
 
         // AndroidX
-        preference = "1.0.0"
+        preference = "1.1.0"
         recyclerView = "1.0.0"
 
-        pydroid = "20.4.0-SNAPSHOT"
+        pydroid = "20.5.0-SNAPSHOT"
         leakCanary = "1.6.3"
         dagger = "2.24"
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:3.5.0'
 
         // Dex count
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'

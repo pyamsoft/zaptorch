@@ -32,14 +32,16 @@ import javax.inject.Inject
 internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
     private val serviceFinishBus: EventBus<ServiceFinishEvent>,
-    private val clearBus: EventBus<ClearAllEvent>
+    clearBus: EventBus<ClearAllEvent>
 ) : UiViewModel<UnitViewState, SettingsViewEvent, SettingsControllerEvent>(
     initialState = UnitViewState
 ) {
 
-    override fun onInit() {
-        viewModelScope.launch(context = Dispatchers.Default) {
-            clearBus.onEvent { withContext(context = Dispatchers.Main) { killApplication() } }
+    init {
+        doOnInit {
+            viewModelScope.launch(context = Dispatchers.Default) {
+                clearBus.onEvent { withContext(context = Dispatchers.Main) { killApplication() } }
+            }
         }
     }
 
