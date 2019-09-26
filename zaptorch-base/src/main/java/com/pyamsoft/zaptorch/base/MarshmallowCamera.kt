@@ -69,18 +69,18 @@ internal class MarshmallowCamera internal constructor(
     @CheckResult
     private fun setTorchState(enabled: Boolean): TorchError? {
         val cameraId = torchCallback.cameraId
-        if (cameraId != null) {
+        return if (cameraId != null) {
             try {
                 Timber.d("Set torch: $enabled")
                 cameraManager.setTorchMode(cameraId, enabled)
-                return null
+                null
             } catch (e: CameraAccessException) {
                 Timber.e(e, "Error during torchOff")
-                return TorchError(e)
+                TorchError(e)
             }
         } else {
             Timber.e("Torch unavailable")
-            return TorchError(null)
+            TorchError(null)
         }
     }
 

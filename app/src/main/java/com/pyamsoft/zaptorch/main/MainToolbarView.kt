@@ -17,7 +17,6 @@
 
 package com.pyamsoft.zaptorch.main
 
-import android.app.Activity
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
@@ -35,7 +34,6 @@ import com.pyamsoft.zaptorch.ZapTorch
 import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
-    activity: Activity,
     toolbarActivityProvider: ToolbarActivityProvider,
     theming: Theming,
     parent: ViewGroup
@@ -47,7 +45,7 @@ internal class MainToolbarView @Inject internal constructor(
 
     init {
         doOnInflate {
-            setupToolbar(toolbarActivityProvider, theming, activity)
+            setupToolbar(toolbarActivityProvider, theming)
         }
 
         doOnTeardown {
@@ -58,10 +56,9 @@ internal class MainToolbarView @Inject internal constructor(
 
     private fun setupToolbar(
         toolbarActivityProvider: ToolbarActivityProvider,
-        theming: Theming,
-        activity: Activity
+        theming: Theming
     ) {
-        val theme = if (theming.isDarkTheme(activity)) {
+        val theme = if (theming.isDarkTheme()) {
             R.style.ThemeOverlay_MaterialComponents
         } else {
             R.style.ThemeOverlay_MaterialComponents_Light

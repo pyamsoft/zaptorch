@@ -80,14 +80,18 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     init {
         val intent = Intent(context, torchOffServiceClass)
 
-        val notificationChannelId = "zaptorch_foreground"
         if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
-            setupNotificationChannel(notificationChannelId)
+            setupNotificationChannel()
         }
 
         val pendingIntent =
-            PendingIntent.getService(context, NOTIFICATION_RC, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        notification = NotificationCompat.Builder(context, notificationChannelId)
+            PendingIntent.getService(
+                context,
+                NOTIFICATION_RC,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .apply {
                 setContentIntent(pendingIntent)
                 setContentTitle("Torch is On")
@@ -105,20 +109,19 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     }
 
     @RequiresApi(VERSION_CODES.O)
-    private fun setupNotificationChannel(
-        notificationChannelId: String
-    ) {
+    private fun setupNotificationChannel() {
         val name = "Torch Service"
         val desc = "Notification related to the ZapTorch service"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val notificationChannel = NotificationChannel(notificationChannelId, name, importance).apply {
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-            description = desc
-            enableLights(false)
-            enableVibration(false)
-        }
+        val notificationChannel =
+            NotificationChannel(CHANNEL_ID, name, importance).apply {
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                description = desc
+                enableLights(false)
+                enableVibration(false)
+            }
 
-        Timber.d("Create notification channel with id: %s", notificationChannelId)
+        Timber.d("Create notification channel with id: %s", CHANNEL_ID)
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
@@ -236,6 +239,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
 
     companion object {
 
+        private const val CHANNEL_ID = "zaptorch_foreground"
         private const val NOTIFICATION_ID = 1345
         private const val NOTIFICATION_RC = 1009
     }
