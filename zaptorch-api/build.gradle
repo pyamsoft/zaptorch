@@ -67,6 +67,5 @@ dependencies {
     api "com.pyamsoft.pydroid:arch:$pydroid"
     api "com.pyamsoft.pydroid:loader:$pydroid"
 
-    api "androidx.recyclerview:recyclerview:$recyclerView"
 }
 

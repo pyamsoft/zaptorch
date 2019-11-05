@@ -39,21 +39,20 @@ buildscript {
 
         // AndroidX
         preference = "1.1.0"
-        recyclerView = "1.0.0"
 
-        pydroid = "20.5.0-SNAPSHOT"
+        pydroid = "20.6.4"
         leakCanary = "1.6.3"
-        dagger = "2.24"
+        dagger = "2.25.2"
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.2'
 
         // Dex count
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
 
         // Gradle version checker
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.22.0'
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
