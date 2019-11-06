@@ -69,8 +69,9 @@ class MainActivity : RatingActivity() {
         get() = requireNotNull(mainView).id()
 
     override val changeLogLines: ChangeLogBuilder = buildChangeLog {
-        change("New icon style")
-        change("Better open source license viewing experience")
+        change("Lower memory consumption and faster operation")
+        bugfix("Fixed a memory leak in the license viewing experience")
+        feature("Added links to Terms of Service and Privacy Policy")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
