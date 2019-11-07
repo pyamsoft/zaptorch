@@ -27,7 +27,7 @@ import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.privacy.addPrivacy
 import com.pyamsoft.pydroid.ui.privacy.removePrivacy
-import com.pyamsoft.pydroid.ui.theme.Theming
+import com.pyamsoft.pydroid.ui.theme.ThemeProvider
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
     toolbarActivityProvider: ToolbarActivityProvider,
-    theming: Theming,
+    theming: ThemeProvider,
     parent: ViewGroup
 ) : BaseUiView<UnitViewState, UnitViewEvent>(parent) {
 
@@ -56,7 +56,7 @@ internal class MainToolbarView @Inject internal constructor(
 
     private fun setupToolbar(
         toolbarActivityProvider: ToolbarActivityProvider,
-        theming: Theming
+        theming: ThemeProvider
     ) {
         val theme = if (theming.isDarkTheme()) {
             R.style.ThemeOverlay_MaterialComponents

@@ -31,6 +31,8 @@ import com.pyamsoft.pydroid.ui.arch.factory
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
 import com.pyamsoft.pydroid.ui.rating.buildChangeLog
+import com.pyamsoft.pydroid.ui.theme.ThemeProvider
+import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.layout
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
@@ -53,6 +55,10 @@ class MainActivity : RatingActivity() {
     @JvmField
     @Inject
     internal var mainView: MainFrameView? = null
+    @JvmField
+    @Inject
+    internal var theming: Theming? = null
+
     private val viewModel by factory<MainToolbarViewModel> { factory }
 
     private var handleKeyPress: Boolean = false
@@ -82,7 +88,11 @@ class MainActivity : RatingActivity() {
         val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
         Injector.obtain<ZapTorchComponent>(applicationContext)
             .plusMainComponent()
-            .create(layoutRoot, this)
+            .create(
+                layoutRoot,
+                this,
+                ThemeProvider { requireNotNull(theming).isDarkTheme(this) }
+            )
             .inject(this)
 
         val component = requireNotNull(mainView)

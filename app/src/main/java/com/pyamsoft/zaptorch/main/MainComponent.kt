@@ -22,6 +22,7 @@ import androidx.annotation.CheckResult
 import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
+import com.pyamsoft.pydroid.ui.theme.ThemeProvider
 import com.pyamsoft.zaptorch.ViewModelKey
 import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
 import com.pyamsoft.zaptorch.main.MainComponent.MainModule
@@ -42,7 +43,8 @@ interface MainComponent {
         @CheckResult
         fun create(
             @BindsInstance parent: ViewGroup,
-            @BindsInstance toolbarActivityProvider: ToolbarActivityProvider
+            @BindsInstance toolbarActivityProvider: ToolbarActivityProvider,
+            @BindsInstance themeProvider: ThemeProvider
         ): MainComponent
     }
 
