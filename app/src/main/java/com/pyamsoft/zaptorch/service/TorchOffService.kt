@@ -20,7 +20,6 @@ package com.pyamsoft.zaptorch.service
 import android.app.IntentService
 import android.content.Intent
 import com.pyamsoft.pydroid.ui.Injector
-import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
 import javax.inject.Inject
@@ -46,9 +45,6 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
 
         binder?.unbind()
         binder = null
-
-        ZapTorch.getRefWatcher(this)
-            .watch(this)
     }
 
     override fun onHandleIntent(intent: Intent?) {

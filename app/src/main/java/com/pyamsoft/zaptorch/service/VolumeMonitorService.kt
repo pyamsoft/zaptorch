@@ -23,7 +23,6 @@ import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.pydroid.ui.Injector
-import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
@@ -98,8 +97,5 @@ class VolumeMonitorService : AccessibilityService() {
         super.onDestroy()
         binder?.unbind()
         binder = null
-
-        ZapTorch.getRefWatcher(this)
-            .watch(this)
     }
 }

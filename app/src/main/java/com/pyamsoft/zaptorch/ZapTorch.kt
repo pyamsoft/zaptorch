@@ -18,29 +18,15 @@
 package com.pyamsoft.zaptorch
 
 import android.app.Application
-import android.app.Service
-import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.zaptorch.service.TorchOffService
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 
 class ZapTorch : Application() {
 
     private var component: ZapTorchComponent? = null
-    private var refWatcher: RefWatcher? = null
 
     override fun onCreate() {
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return
-        }
-
-        refWatcher = if (BuildConfig.DEBUG) {
-            LeakCanary.install(this)
-        } else {
-            RefWatcher.DISABLED
-        }
 
         PYDroid.init(
             this,
@@ -80,22 +66,9 @@ class ZapTorch : Application() {
 
     companion object {
 
-        const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
+        const val PRIVACY_POLICY_URL =
+            "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
         const val TERMS_CONDITIONS_URL =
             "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
-
-        @JvmStatic
-        @CheckResult
-        fun getRefWatcher(service: Service): RefWatcher = getRefWatcherInternal(service.application)
-
-        @JvmStatic
-        @CheckResult
-        private fun getRefWatcherInternal(application: Application): RefWatcher {
-            if (application is ZapTorch) {
-                return requireNotNull(application.refWatcher)
-            } else {
-                throw IllegalStateException("Application is not ZapTorch")
-            }
-        }
     }
 }
