@@ -82,6 +82,8 @@ class MainActivity : RatingActivity() {
 
     override val changeLogTheme: Int = 0
 
+    override val versionCheckTheme: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)
         super.onCreate(savedInstanceState)
