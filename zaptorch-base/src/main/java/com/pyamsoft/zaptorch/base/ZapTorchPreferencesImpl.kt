@@ -36,23 +36,30 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
 ) : CameraPreferences, ClearPreferences, UIPreferences {
 
     private val doublePressDelayKey: String
-    private val displayCameraErrorsKey: String
-    private val handleVolumeKeysKey: String
     private val doublePressDelayDefault: String
+
+    private val displayCameraErrorsKey: String
     private val displayCameraErrorsDefault: Boolean
+
+    private val handleVolumeKeysKey: String
     private val handleVolumeKeysDefault: Boolean
+
     private val preferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(context)
+        enforcer.assertNotOnMainThread()
+        PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
     }
 
     init {
-        val res = context.resources
-        doublePressDelayKey = res.getString(R.string.double_press_delay_key)
-        displayCameraErrorsKey = res.getString(R.string.display_camera_errors_key)
-        handleVolumeKeysKey = res.getString(R.string.handle_volume_keys_key)
-        doublePressDelayDefault = res.getString(R.string.double_press_delay_default)
-        displayCameraErrorsDefault = res.getBoolean(R.bool.display_camera_errors_default)
-        handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default)
+        context.applicationContext.resources.apply {
+            doublePressDelayKey = getString(R.string.double_press_delay_key)
+            doublePressDelayDefault = getString(R.string.double_press_delay_default)
+
+            displayCameraErrorsKey = getString(R.string.display_camera_errors_key)
+            displayCameraErrorsDefault = getBoolean(R.bool.display_camera_errors_default)
+
+            handleVolumeKeysKey = getString(R.string.handle_volume_keys_key)
+            handleVolumeKeysDefault = getBoolean(R.bool.handle_volume_keys_default)
+        }
     }
 
     override suspend fun getButtonDelayTime(): Long {
@@ -93,7 +100,9 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
     }
 
     @SuppressLint("ApplySharedPref")
-    override fun clearAll() {
+    override suspend fun clearAll() {
+        enforcer.assertNotOnMainThread()
+
         // Commit because we must be sure transaction takes place before we continue
         preferences.edit()
             .clear()
