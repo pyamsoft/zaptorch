@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
+import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.about.AboutFragment
@@ -48,19 +49,22 @@ class MainActivity : RatingActivity() {
 
     @JvmField
     @Inject
-    internal var factory: ViewModelProvider.Factory? = null
-    @JvmField
-    @Inject
     internal var toolbar: MainToolbarView? = null
+
     @JvmField
     @Inject
     internal var mainView: MainFrameView? = null
+
     @JvmField
     @Inject
     internal var theming: Theming? = null
 
+    @JvmField
+    @Inject
+    internal var factory: ViewModelProvider.Factory? = null
     private val viewModel by factory<MainToolbarViewModel> { factory }
 
+    private var stateSaver: StateSaver? = null
     private var handleKeyPress: Boolean = false
 
     override val versionName: String = BuildConfig.VERSION_NAME
@@ -103,7 +107,7 @@ class MainActivity : RatingActivity() {
         val toolbarComponent = requireNotNull(toolbar)
         val dropshadow = DropshadowView.create(layoutRoot)
 
-        createComponent(
+        stateSaver = createComponent(
             savedInstanceState, this,
             viewModel,
             component,
@@ -150,12 +154,12 @@ class MainActivity : RatingActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        toolbar?.saveState(outState)
-        mainView?.saveState(outState)
+        stateSaver?.saveState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        stateSaver = null
         mainView = null
         toolbar = null
         factory = null

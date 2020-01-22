@@ -22,6 +22,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
@@ -37,7 +38,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
-
     @JvmField
     @Inject
     internal var factory: ViewModelProvider.Factory? = null
@@ -48,6 +48,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     @Inject
     internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
     private val viewModel by factory<SettingsViewModel> { factory }
+
+    private var stateSaver: StateSaver? = null
 
     override val preferenceXmlResId: Int = R.xml.preferences
 
@@ -62,7 +64,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
             .create(requireToolbarActivity(), listView, preferenceScreen)
             .inject(this)
 
-        createComponent(
+        stateSaver = createComponent(
             savedInstanceState, viewLifecycleOwner,
             viewModel,
             requireNotNull(settingsView),
@@ -76,12 +78,12 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        toolbarView?.saveState(outState)
-        settingsView?.saveState(outState)
+        stateSaver?.saveState(outState)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stateSaver = null
         settingsView = null
         toolbarView = null
         factory = null

@@ -17,15 +17,11 @@
 
 package com.pyamsoft.zaptorch.api
 
-import android.content.SharedPreferences
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.arch.EventConsumer
 
 interface UIPreferences {
 
     @CheckResult
-    fun shouldHandleKeys(): Boolean
-
-    fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener)
-
-    fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener)
+    fun shouldHandleKeys(): EventConsumer<Boolean>
 }

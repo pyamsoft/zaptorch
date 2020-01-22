@@ -20,7 +20,6 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.pyamsoft.pydroid.arch.BaseUiView
-import com.pyamsoft.pydroid.arch.UiSavedState
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.R
@@ -34,9 +33,6 @@ internal class MainFrameView @Inject internal constructor(
 
     override val layout: Int = R.layout.layout_frame
 
-    override fun onRender(
-        state: UnitViewState,
-        savedState: UiSavedState
-    ) {
+    override fun onRender(state: UnitViewState) {
     }
 }

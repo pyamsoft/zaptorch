@@ -17,7 +17,7 @@
 
 package com.pyamsoft.zaptorch.widget
 
-import com.pyamsoft.pydroid.arch.UiSavedState
+import com.pyamsoft.pydroid.arch.UiBundleReader
 import com.pyamsoft.pydroid.arch.UiView
 import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
@@ -44,9 +44,9 @@ internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal co
         throw InvalidIdException
     }
 
-    override fun render(
-        state: S,
-        savedState: UiSavedState
-    ) {
+    override fun onInit(savedInstanceState: UiBundleReader) {
+    }
+
+    override fun render(state: S) {
     }
 }

@@ -20,8 +20,11 @@ package com.pyamsoft.zaptorch.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import androidx.annotation.CheckResult
 import androidx.preference.PreferenceManager
+import com.pyamsoft.pydroid.arch.EventConsumer
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
@@ -30,7 +33,8 @@ import javax.inject.Singleton
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
-    context: Context
+    context: Context,
+    private val enforcer: Enforcer
 ) : CameraPreferences, ClearPreferences, UIPreferences {
 
     private val doublePressDelayKey: String
@@ -57,13 +61,35 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
             doublePressDelayKey, doublePressDelayDefault
         ).orEmpty().toLong()
 
-    @CheckResult
-    override fun shouldShowErrorDialog(): Boolean =
-        preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
+    override fun shouldShowErrorDialog(): Boolean {
+        return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
+    }
 
-    @CheckResult
-    override fun shouldHandleKeys(): Boolean =
-        preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
+    override fun shouldHandleKeys(): EventConsumer<Boolean> {
+        return EventConsumer.fromCallback { onCancel, startWith, emit ->
+            enforcer.assertNotOnMainThread()
+
+            val compareKey = handleVolumeKeysKey
+            val defaultValue = handleVolumeKeysDefault
+
+            val listener = OnSharedPreferenceChangeListener { prefs, key ->
+                if (key == compareKey) {
+                    val value = prefs.getBoolean(key, defaultValue)
+                    emit(value)
+                }
+            }
+
+            onCancel {
+                preferences.unregisterOnSharedPreferenceChangeListener(listener)
+            }
+
+            startWith {
+                preferences.getBoolean(compareKey, defaultValue)
+            }
+
+            preferences.registerOnSharedPreferenceChangeListener(listener)
+        }
+    }
 
     @SuppressLint("ApplySharedPref")
     override fun clearAll() {
@@ -71,13 +97,5 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         preferences.edit()
             .clear()
             .commit()
-    }
-
-    override fun register(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-    }
-
-    override fun unregister(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
-        preferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 }

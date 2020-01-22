@@ -41,9 +41,9 @@ buildscript {
         // AndroidX
         preference = "1.1.0"
 
-        pydroid = "20.6.10-SNAPSHOT"
-        leakCanary = "2.0"
-        dagger = "2.25.2"
+        pydroid = "20.8.0-SNAPSHOT"
+        leakCanary = "2.1"
+        dagger = "2.25.4"
     }
 
     dependencies {
@@ -57,14 +57,13 @@ buildscript {
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-        // Ktlint
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:8.2.0"
+        // Spotless
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.27.0"
     }
 }
 
 subprojects {
     apply plugin: "com.github.ben-manes.versions"
-    apply plugin: "org.jlleitschuh.gradle.ktlint"
 
     dependencyUpdates.resolutionStrategy {
         componentSelection { rules ->
@@ -76,6 +75,18 @@ subprojects {
                     selection.reject('Release candidate')
                 }
             }
+        }
+    }
+
+    apply plugin: "com.diffplug.gradle.spotless"
+
+    spotless {
+        java {
+            target "**/*.java"
+        }
+        kotlin {
+            target "**/*.kt"
+            ktlint()
         }
     }
 }
@@ -103,10 +114,4 @@ allprojects {
             arg("dagger.gradle.incremental", "enabled")
         }
     }
-
-    apply plugin: "org.jlleitschuh.gradle.ktlint"
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
