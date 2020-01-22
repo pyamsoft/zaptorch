@@ -19,9 +19,7 @@ package com.pyamsoft.zaptorch.base
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import androidx.annotation.CheckResult
 import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
@@ -43,8 +41,9 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
     private val doublePressDelayDefault: String
     private val displayCameraErrorsDefault: Boolean
     private val handleVolumeKeysDefault: Boolean
-    private val preferences: SharedPreferences =
+    private val preferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     init {
         val res = context.resources
@@ -56,12 +55,14 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         handleVolumeKeysDefault = res.getBoolean(R.bool.handle_volume_keys_default)
     }
 
-    override val buttonDelayTime: Long
-        @CheckResult get() = preferences.getString(
-            doublePressDelayKey, doublePressDelayDefault
-        ).orEmpty().toLong()
+    override suspend fun getButtonDelayTime(): Long {
+        enforcer.assertNotOnMainThread()
+        return preferences.getString(doublePressDelayKey, doublePressDelayDefault).orEmpty()
+            .toLong()
+    }
 
-    override fun shouldShowErrorDialog(): Boolean {
+    override suspend fun shouldShowErrorDialog(): Boolean {
+        enforcer.assertNotOnMainThread()
         return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
     }
 

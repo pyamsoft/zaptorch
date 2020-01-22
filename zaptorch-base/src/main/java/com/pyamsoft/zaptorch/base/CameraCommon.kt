@@ -80,7 +80,7 @@ internal abstract class CameraCommon protected constructor(
     }
 
     @CheckResult
-    protected fun shouldShowError(): Boolean {
+    protected suspend fun shouldShowError(): Boolean {
         enforcer.assertNotOnMainThread()
         return preferences.shouldShowErrorDialog()
     }

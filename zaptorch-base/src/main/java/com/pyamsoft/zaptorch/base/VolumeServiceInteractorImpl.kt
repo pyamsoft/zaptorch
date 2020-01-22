@@ -184,7 +184,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             }
 
             launch {
-                delay(preferences.buttonDelayTime)
+                delay(preferences.getButtonDelayTime())
                 mutex.withLock {
                     if (pressed) {
                         Timber.d("Set pressed back to false")
