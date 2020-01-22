@@ -183,7 +183,7 @@ class MainActivity : RatingActivity() {
         keyCode: Int,
         event: KeyEvent
     ): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             handleKeyPress
         } else {
             super.onKeyUp(keyCode, event)
@@ -194,7 +194,7 @@ class MainActivity : RatingActivity() {
         keyCode: Int,
         event: KeyEvent
     ): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             handleKeyPress
         } else {
             super.onKeyDown(keyCode, event)
