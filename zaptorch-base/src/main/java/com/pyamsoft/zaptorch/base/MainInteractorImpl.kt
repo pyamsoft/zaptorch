@@ -32,4 +32,3 @@ internal class MainInteractorImpl @Inject internal constructor(
         return preferences.shouldHandleKeys()
     }
 }
-

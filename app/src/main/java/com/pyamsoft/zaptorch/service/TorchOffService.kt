@@ -21,8 +21,8 @@ import android.app.IntentService
 import android.content.Intent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class TorchOffService : IntentService(TorchOffService::class.java.name) {
 

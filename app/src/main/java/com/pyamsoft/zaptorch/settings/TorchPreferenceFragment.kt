@@ -34,8 +34,8 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.widget.ToolbarView
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     @JvmField

@@ -28,8 +28,8 @@ import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService() {
 
