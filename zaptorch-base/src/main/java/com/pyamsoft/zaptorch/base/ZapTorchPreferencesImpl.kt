@@ -20,14 +20,18 @@ package com.pyamsoft.zaptorch.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import androidx.annotation.CheckResult
 import androidx.preference.PreferenceManager
-import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
+import com.pyamsoft.zaptorch.api.UIPreferences.PreferenceUnregister
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
@@ -73,29 +77,28 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
     }
 
-    override fun shouldHandleKeys(): EventConsumer<Boolean> {
-        return EventConsumer.fromCallback { onCancel, startWith, emit ->
-            enforcer.assertNotOnMainThread()
-
-            val compareKey = handleVolumeKeysKey
-            val defaultValue = handleVolumeKeysDefault
-
-            val listener = OnSharedPreferenceChangeListener { prefs, key ->
-                if (key == compareKey) {
-                    val value = prefs.getBoolean(key, defaultValue)
-                    emit(value)
+    override suspend fun shouldHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceUnregister {
+        return withContext(context = Dispatchers.Default) {
+            registerPreferenceListener(OnSharedPreferenceChangeListener { _, key ->
+                if (key == handleVolumeKeysKey) {
+                    launch(context = Dispatchers.Default) {
+                        onChange(preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault))
+                    }
                 }
-            }
+            })
+        }
+    }
 
-            onCancel {
-                preferences.unregisterOnSharedPreferenceChangeListener(listener)
-            }
+    @CheckResult
+    private fun registerPreferenceListener(l: OnSharedPreferenceChangeListener): PreferenceUnregister {
+        enforcer.assertNotOnMainThread()
+        preferences.registerOnSharedPreferenceChangeListener(l)
 
-            startWith {
-                preferences.getBoolean(compareKey, defaultValue)
-            }
+        return object : PreferenceUnregister {
 
-            preferences.registerOnSharedPreferenceChangeListener(listener)
+            override fun unregister() {
+                preferences.unregisterOnSharedPreferenceChangeListener(l)
+            }
         }
     }
 

@@ -17,9 +17,9 @@
 
 package com.pyamsoft.zaptorch.base
 
-import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
+import com.pyamsoft.zaptorch.api.UIPreferences.PreferenceUnregister
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,7 +28,7 @@ internal class MainInteractorImpl @Inject internal constructor(
     private val preferences: UIPreferences
 ) : MainInteractor {
 
-    override fun onHandleKeyPressChanged(): EventConsumer<Boolean> {
-        return preferences.shouldHandleKeys()
+    override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceUnregister {
+        return preferences.shouldHandleKeys(onChange)
     }
 }

@@ -18,10 +18,14 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.arch.EventConsumer
 
 interface UIPreferences {
 
     @CheckResult
-    fun shouldHandleKeys(): EventConsumer<Boolean>
+    suspend fun shouldHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceUnregister
+
+    interface PreferenceUnregister {
+
+        fun unregister()
+    }
 }

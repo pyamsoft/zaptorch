@@ -17,6 +17,7 @@
 
 package com.pyamsoft.zaptorch.main
 
+import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
@@ -24,6 +25,7 @@ import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 internal class MainToolbarViewModel @Inject internal constructor(
     interactor: MainInteractor
@@ -33,10 +35,15 @@ internal class MainToolbarViewModel @Inject internal constructor(
 
     init {
         doOnInit {
-            interactor.onHandleKeyPressChanged()
-                .scopedEvent(context = Dispatchers.Default) {
+            viewModelScope.launch(context = Dispatchers.Default) {
+                val unregister = interactor.onHandleKeyPressChanged {
                     handleKeypressChanged(it)
                 }
+
+                doOnTeardown {
+                    unregister.unregister()
+                }
+            }
         }
     }
 
