@@ -53,19 +53,11 @@ internal class ServiceBinder @Inject internal constructor(
             finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
         }
 
-    fun handleKeyEvent(
-        action: Int,
-        keyCode: Int
-    ) {
-        binderScope.handleKeyEvent(action, keyCode)
-    }
-
-    private fun CoroutineScope.handleKeyEvent(
-        action: Int,
-        keyCode: Int
-    ) = launch {
-        interactor.handleKeyPress(action, keyCode) { error ->
-            withContext(context = Dispatchers.Main) { interactor.showError(error) }
+    fun handleKeyEvent(action: Int, keyCode: Int) {
+        binderScope.launch {
+            interactor.handleKeyPress(action, keyCode) { error ->
+                withContext(context = Dispatchers.Main) { interactor.showError(error) }
+            }
         }
     }
 
