@@ -33,9 +33,11 @@ internal class ServiceBinder @Inject internal constructor(
 ) : Binder<ServiceControllerEvent>() {
 
     override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
-        interactor.setupCamera()
-        binderScope.setupCamera(onEvent)
-        binderScope.listenFinish(onEvent)
+        binderScope.launch {
+            interactor.setupCamera()
+            setupCamera(onEvent)
+            listenFinish(onEvent)
+        }
     }
 
     override fun onUnbind() {
@@ -62,10 +64,14 @@ internal class ServiceBinder @Inject internal constructor(
     }
 
     fun start() {
-        interactor.setServiceState(true)
+        binderScope.launch {
+            interactor.setServiceState(true)
+        }
     }
 
     fun stop() {
-        interactor.setServiceState(false)
+        binderScope.launch {
+            interactor.setServiceState(false)
+        }
     }
 }

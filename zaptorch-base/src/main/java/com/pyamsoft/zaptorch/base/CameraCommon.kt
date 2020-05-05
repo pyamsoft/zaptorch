@@ -25,6 +25,8 @@ import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraInterface.OnStateChangedCallback
 import com.pyamsoft.zaptorch.api.CameraPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
@@ -32,62 +34,52 @@ internal abstract class CameraCommon protected constructor(
     private val preferences: CameraPreferences
 ) : CameraInterface, OnStateChangedCallback {
 
-    private val errorExplain = Intent()
-    private var callback: OnStateChangedCallback? = null
-
-    init {
-        errorExplain.apply {
-            putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
+    private var stateChangedCallback: OnStateChangedCallback? = null
+    private val errorExplain = Intent().apply {
+        putExtra(CameraInterface.DIALOG_WHICH, CameraInterface.TYPE_ERROR)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
-    override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
-        this.callback = callback
+    final override fun setOnStateChangedCallback(callback: OnStateChangedCallback?) {
+        stateChangedCallback = callback
     }
 
-    override fun onOpened() {
-        callback?.also {
+    final override fun onOpened() {
+        stateChangedCallback?.also {
             Timber.d("Notify callback: opened")
             it.onOpened()
         }
     }
 
-    override fun onClosed() {
-        callback?.also {
+    final override fun onClosed() {
+        stateChangedCallback?.also {
             Timber.d("Notify callback: closed")
             it.onClosed()
         }
     }
 
-    private fun notifyCallbackOnError(
-        exception: CameraAccessException?,
-        intent: Intent
-    ) {
-        val error = CameraError(exception, intent)
-        onError(error)
-    }
-
-    override fun onError(error: CameraError) {
-        callback?.also {
+    final override fun onError(error: CameraError) {
+        stateChangedCallback?.also {
             Timber.w("Notify callback: error")
             it.onError(error)
         }
     }
 
-    override fun destroy() {
+    final override fun destroy() {
         release()
     }
 
     @CheckResult
-    protected suspend fun shouldShowError(): Boolean {
+    protected suspend fun shouldShowError(): Boolean = withContext(context = Dispatchers.Default) {
         enforcer.assertNotOnMainThread()
-        return preferences.shouldShowErrorDialog()
+        return@withContext preferences.shouldShowErrorDialog()
     }
 
-    override fun showError(exception: CameraAccessException?) {
-        notifyCallbackOnError(exception, errorExplain)
-    }
+    override suspend fun showError(exception: CameraAccessException?) =
+        withContext(context = Dispatchers.Main) {
+            val error = CameraError(exception, errorExplain)
+            onError(error)
+        }
 
     protected abstract fun release()
 }

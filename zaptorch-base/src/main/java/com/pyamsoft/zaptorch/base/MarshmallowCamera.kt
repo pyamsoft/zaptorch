@@ -24,7 +24,8 @@ import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraPreferences
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal class MarshmallowCamera internal constructor(
@@ -40,28 +41,25 @@ internal class MarshmallowCamera internal constructor(
         setupCamera()
     }
 
-    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
-        coroutineScope {
+    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
+        withContext(context = Dispatchers.Default) {
             enforcer.assertNotOnMainThread()
 
             val toggle = !torchCallback.isEnabled
             Timber.d("Toggle torch: $toggle")
             setTorch(toggle, onError)
         }
-    }
 
     private suspend inline fun setTorch(
         enable: Boolean,
         crossinline onError: suspend (error: CameraAccessException?) -> Unit
-    ) {
-        coroutineScope {
-            enforcer.assertNotOnMainThread()
+    ) = withContext(context = Dispatchers.Default) {
+        enforcer.assertNotOnMainThread()
 
-            val error = setTorchState(enable)
-            if (error != null) {
-                if (shouldShowError()) {
-                    onError(error.exception)
-                }
+        val error = setTorchState(enable)
+        if (error != null) {
+            if (shouldShowError()) {
+                onError(error.exception)
             }
         }
     }
@@ -83,8 +81,6 @@ internal class MarshmallowCamera internal constructor(
             TorchError(null)
         }
     }
-
-    private data class TorchError(val exception: CameraAccessException?)
 
     override fun release() {
         if (torchCallback.isEnabled) {
@@ -133,4 +129,6 @@ internal class MarshmallowCamera internal constructor(
             callback.onClosed()
         }
     }
+
+    private data class TorchError(val exception: CameraAccessException?)
 }

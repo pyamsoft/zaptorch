@@ -36,9 +36,12 @@ import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -63,12 +66,10 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
 
     private var cameraInterface: CameraInterface? = null
 
-    @ExperimentalCoroutinesApi
     private val cameraErrorBus = EventBus.create<CameraError>()
 
     private var running = false
 
-    @ExperimentalCoroutinesApi
     private val runningStateBus = EventBus.create<Boolean>()
 
     init {
@@ -121,13 +122,11 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         notificationManager.createNotificationChannel(notificationChannel)
     }
 
-    @ExperimentalCoroutinesApi
-    override fun setServiceState(changed: Boolean) {
+    override suspend fun setServiceState(changed: Boolean) {
         running = changed
-        runningStateBus.publish(changed)
+        runningStateBus.send(changed)
     }
 
-    @ExperimentalCoroutinesApi
     override suspend fun observeServiceState(): EventConsumer<Boolean> =
         withContext(context = Dispatchers.Default) {
             enforcer.assertNotOnMainThread()
@@ -147,7 +146,6 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             }
         }
 
-    @ExperimentalCoroutinesApi
     override suspend fun observeCameraState(): EventConsumer<CameraError> =
         withContext(context = Dispatchers.Default) {
             enforcer.assertNotOnMainThread()
@@ -202,8 +200,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         }
     }
 
-    @ExperimentalCoroutinesApi
-    override fun setupCamera() {
+    override suspend fun setupCamera() {
         val camera: CameraCommon = MarshmallowCamera(context, enforcer, preferences).apply {
             setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
                 override fun onOpened() {
@@ -238,7 +235,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         cameraInterface = null
     }
 
-    override fun showError(error: CameraAccessException?) {
+    override suspend fun showError(error: CameraAccessException?) {
         cameraInterface?.showError(error)
     }
 
