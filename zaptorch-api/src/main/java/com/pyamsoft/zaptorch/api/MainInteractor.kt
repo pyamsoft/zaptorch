@@ -18,10 +18,12 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.api.UIPreferences.PreferenceUnregister
 
 interface MainInteractor {
 
     @CheckResult
-    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceUnregister
+    suspend fun isKeyPressHandled(): Boolean
+
+    @CheckResult
+    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit)
 }

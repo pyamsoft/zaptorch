@@ -24,28 +24,29 @@ import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
-import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Named
 
 internal class MainViewModel @Inject internal constructor(
+    @Named("debug") debug: Boolean,
     serviceInteractor: VolumeServiceInteractor,
     visibilityBus: EventBus<SignificantScrollEvent>
 ) : UiViewModel<MainViewState, MainViewEvent, MainControllerEvent>(
-    initialState = MainViewState(isVisible = true, isServiceRunning = false)
+    initialState = MainViewState(isVisible = true, isServiceRunning = false), debug = debug
 ) {
 
     init {
         doOnInit {
-            viewModelScope.launch(context = Dispatchers.Default) {
+            viewModelScope.launch {
                 serviceInteractor.observeServiceState()
                     .onEvent { setState { copy(isServiceRunning = it) } }
             }
         }
 
         doOnInit {
-            viewModelScope.launch(context = Dispatchers.Default) {
-                visibilityBus.onEvent { setState { copy(isVisible = it.visible) } }
+            visibilityBus.scopedEvent {
+                setState { copy(isVisible = it.visible) }
             }
         }
     }

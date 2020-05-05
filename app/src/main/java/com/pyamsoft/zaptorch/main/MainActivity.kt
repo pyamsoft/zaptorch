@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
-import com.pyamsoft.pydroid.ui.about.AboutFragment
 import com.pyamsoft.pydroid.ui.arch.factory
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
@@ -41,9 +40,9 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
-import timber.log.Timber
 
 class MainActivity : RatingActivity() {
 
@@ -172,7 +171,7 @@ class MainActivity : RatingActivity() {
 
     private fun showMainFragment() {
         val fm = supportFragmentManager
-        if (fm.findFragmentByTag(MainFragment.TAG) == null && !AboutFragment.isPresent(this)) {
+        if (fm.findFragmentByTag(MainFragment.TAG) == null) {
             fm.commit(this) {
                 add(fragmentContainerId, MainFragment(), MainFragment.TAG)
             }

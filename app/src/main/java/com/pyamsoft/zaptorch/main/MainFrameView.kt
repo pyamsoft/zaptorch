@@ -18,20 +18,19 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
-import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.databinding.MainContainerBinding
 import javax.inject.Inject
 
 internal class MainFrameView @Inject internal constructor(
     parent: ViewGroup
-) : BaseUiView<UnitViewState, UnitViewEvent>(parent) {
+) : BaseUiView<UnitViewState, UnitViewEvent, MainContainerBinding>(parent) {
 
-    override val layoutRoot by boundView<FrameLayout>(R.id.layout_frame)
+    override val viewBinding = MainContainerBinding::inflate
 
-    override val layout: Int = R.layout.layout_frame
+    override val layoutRoot by boundView { mainContainer }
 
     override fun onRender(state: UnitViewState) {
     }

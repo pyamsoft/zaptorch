@@ -19,7 +19,8 @@ package com.pyamsoft.zaptorch.base
 
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
-import com.pyamsoft.zaptorch.api.UIPreferences.PreferenceUnregister
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,7 +29,10 @@ internal class MainInteractorImpl @Inject internal constructor(
     private val preferences: UIPreferences
 ) : MainInteractor {
 
-    override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceUnregister {
-        return preferences.shouldHandleKeys(onChange)
+    override suspend fun isKeyPressHandled(): Boolean = withContext(context = Dispatchers.Default) {
+        return@withContext preferences.shouldHandleKeys()
     }
+
+    override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit) =
+        withContext(context = Dispatchers.Default) { preferences.watchHandleKeys(onChange) }
 }

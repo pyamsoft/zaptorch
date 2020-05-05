@@ -17,30 +17,30 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Named
 
 internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
     private val serviceFinishBus: EventBus<ServiceFinishEvent>,
+    @Named("debug") debug: Boolean,
     clearBus: EventBus<ClearAllEvent>
 ) : UiViewModel<UnitViewState, SettingsViewEvent, SettingsControllerEvent>(
-    initialState = UnitViewState
+    initialState = UnitViewState, debug = debug
 ) {
 
     init {
         doOnInit {
-            viewModelScope.launch(context = Dispatchers.Default) {
-                clearBus.onEvent { withContext(context = Dispatchers.Main) { killApplication() } }
+            clearBus.scopedEvent(context = Dispatchers.Default) {
+                withContext(context = Dispatchers.Main) { killApplication() }
             }
         }
     }

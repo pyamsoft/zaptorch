@@ -18,7 +18,6 @@
 package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
@@ -30,17 +29,18 @@ import com.pyamsoft.pydroid.ui.theme.ThemeProvider
 import com.pyamsoft.pydroid.util.toDp
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
+import com.pyamsoft.zaptorch.databinding.ToolbarBinding
 import javax.inject.Inject
 
 internal class MainToolbarView @Inject internal constructor(
     toolbarActivityProvider: ToolbarActivityProvider,
     theming: ThemeProvider,
     parent: ViewGroup
-) : BaseUiView<UnitViewState, UnitViewEvent>(parent) {
+) : BaseUiView<UnitViewState, UnitViewEvent, ToolbarBinding>(parent) {
 
-    override val layoutRoot by boundView<Toolbar>(R.id.toolbar)
+    override val viewBinding = ToolbarBinding::inflate
 
-    override val layout: Int = R.layout.toolbar
+    override val layoutRoot by boundView { toolbar }
 
     init {
         doOnInflate {

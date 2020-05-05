@@ -22,7 +22,6 @@ import com.pyamsoft.pydroid.arch.UiView
 import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
 import com.pyamsoft.pydroid.ui.app.ToolbarActivity
-import com.pyamsoft.pydroid.ui.arch.InvalidIdException
 import com.pyamsoft.pydroid.ui.util.setUpEnabled
 import com.pyamsoft.zaptorch.R
 import javax.inject.Inject
@@ -38,10 +37,6 @@ internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal co
                 toolbar.setUpEnabled(false)
             }
         }
-    }
-
-    override fun id(): Int {
-        throw InvalidIdException
     }
 
     override fun onInit(savedInstanceState: UiBundleReader) {

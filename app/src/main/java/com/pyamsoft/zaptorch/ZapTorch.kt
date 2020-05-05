@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch
 
 import android.app.Application
 import com.pyamsoft.pydroid.ui.PYDroid
+import com.pyamsoft.pydroid.util.isDebugMode
 import com.pyamsoft.zaptorch.service.TorchOffService
 
 class ZapTorch : Application() {
@@ -30,22 +31,23 @@ class ZapTorch : Application() {
 
         PYDroid.init(
             this,
-            getString(R.string.app_name),
-            "https://github.com/pyamsoft/zaptorch",
-            "https://github.com/pyamsoft/zaptorch/issues",
-            PRIVACY_POLICY_URL,
-            TERMS_CONDITIONS_URL,
-            BuildConfig.VERSION_CODE,
-            BuildConfig.DEBUG
+            PYDroid.Parameters(
+                viewSourceUrl = "https://github.com/pyamsoft/zaptorch",
+                bugReportUrl = "https://github.com/pyamsoft/zaptorch/issues",
+                privacyPolicyUrl = PRIVACY_POLICY_URL,
+                termsConditionsUrl = TERMS_CONDITIONS_URL,
+                version = BuildConfig.VERSION_CODE
+            )
         ) { provider ->
             component = DaggerZapTorchComponent.factory()
                 .create(
+                    isDebugMode(),
                     this,
                     provider.theming(),
                     provider.enforcer(),
                     provider.imageLoader(),
                     TorchOffService::class.java,
-                    R.color.primary,
+                    R.color.colorPrimary,
                     getString(R.string.handle_volume_keys_key)
                 )
         }

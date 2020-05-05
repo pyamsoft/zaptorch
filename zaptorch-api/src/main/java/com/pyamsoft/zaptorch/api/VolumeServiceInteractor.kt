@@ -37,10 +37,10 @@ interface VolumeServiceInteractor {
     fun releaseCamera()
 
     @CheckResult
-    fun observeServiceState(): EventConsumer<Boolean>
+    suspend fun observeServiceState(): EventConsumer<Boolean>
 
     @CheckResult
-    fun observeCameraState(): EventConsumer<CameraError>
+    suspend fun observeCameraState(): EventConsumer<CameraError>
 
     fun setServiceState(changed: Boolean)
 

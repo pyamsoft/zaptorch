@@ -21,11 +21,11 @@ import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
     private val finishBus: EventBus<ServiceFinishEvent>,
@@ -43,7 +43,7 @@ internal class ServiceBinder @Inject internal constructor(
     }
 
     private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-        launch(context = Dispatchers.Default) {
+        launch {
             interactor.observeCameraState()
                 .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
         }
@@ -63,7 +63,7 @@ internal class ServiceBinder @Inject internal constructor(
     private fun CoroutineScope.handleKeyEvent(
         action: Int,
         keyCode: Int
-    ) = launch(context = Dispatchers.Default) {
+    ) = launch {
         interactor.handleKeyPress(action, keyCode) { error ->
             withContext(context = Dispatchers.Main) { interactor.showError(error) }
         }

@@ -22,10 +22,8 @@ import androidx.annotation.CheckResult
 interface UIPreferences {
 
     @CheckResult
-    suspend fun shouldHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceUnregister
+    suspend fun shouldHandleKeys(): Boolean
 
-    interface PreferenceUnregister {
-
-        fun unregister()
-    }
+    @CheckResult
+    suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit)
 }

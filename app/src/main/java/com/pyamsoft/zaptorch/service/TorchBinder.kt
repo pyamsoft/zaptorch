@@ -29,7 +29,7 @@ internal class TorchBinder @Inject internal constructor(
 ) : Binder<UnitControllerEvent>() {
 
     fun toggle() {
-        binderScope.launch(context = Dispatchers.Default) {
+        binderScope.launch {
             interactor.toggleTorch { error ->
                 if (error == null) {
                     Timber.e("Torch unavailable, cannot toggle")

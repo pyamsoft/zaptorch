@@ -17,11 +17,7 @@
 
 package com.pyamsoft.zaptorch.base
 
-import android.app.IntentService
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
@@ -33,23 +29,21 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
@@ -70,12 +64,12 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     private var cameraInterface: CameraInterface? = null
 
     @ExperimentalCoroutinesApi
-    private val cameraErrorBus = BroadcastChannel<CameraError>(1)
+    private val cameraErrorBus = EventBus.create<CameraError>()
 
     private var running = false
 
     @ExperimentalCoroutinesApi
-    private val runningStateBus = BroadcastChannel<Boolean>(1)
+    private val runningStateBus = EventBus.create<Boolean>()
 
     init {
         val intent = Intent(context, torchOffServiceClass)
@@ -130,45 +124,58 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     @ExperimentalCoroutinesApi
     override fun setServiceState(changed: Boolean) {
         running = changed
-        if (!runningStateBus.offer(changed)) {
-            Timber.w("Failed to offer service state change: $changed")
-        }
+        runningStateBus.publish(changed)
     }
 
     @ExperimentalCoroutinesApi
-    override fun observeServiceState(): EventConsumer<Boolean> {
-        return object : EventConsumer<Boolean> {
+    override suspend fun observeServiceState(): EventConsumer<Boolean> =
+        withContext(context = Dispatchers.Default) {
+            enforcer.assertNotOnMainThread()
+            return@withContext object : EventConsumer<Boolean> {
 
-            override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
-                emitter(running)
+                override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
+                    onEvent(EmptyCoroutineContext, emitter)
+                }
 
-                runningStateBus.openSubscription()
-                    .consumeEach { emitter(it) }
+                override suspend fun onEvent(
+                    context: CoroutineContext,
+                    emitter: suspend (event: Boolean) -> Unit
+                ) {
+                    emitter(running)
+                    runningStateBus.onEvent(context = context) { emitter(it) }
+                }
             }
         }
-    }
 
     @ExperimentalCoroutinesApi
-    override fun observeCameraState(): EventConsumer<CameraError> {
-        return object : EventConsumer<CameraError> {
+    override suspend fun observeCameraState(): EventConsumer<CameraError> =
+        withContext(context = Dispatchers.Default) {
+            enforcer.assertNotOnMainThread()
+            return@withContext object : EventConsumer<CameraError> {
 
-            override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
-                cameraErrorBus.openSubscription()
-                    .consumeEach { emitter(it) }
+                override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
+                    onEvent(EmptyCoroutineContext, emitter)
+                }
+
+                override suspend fun onEvent(
+                    context: CoroutineContext,
+                    emitter: suspend (event: CameraError) -> Unit
+                ) {
+                    cameraErrorBus.onEvent(context = context) { emitter(it) }
+                }
             }
         }
-    }
 
     override suspend fun handleKeyPress(
         action: Int,
         keyCode: Int,
         onError: suspend (error: CameraAccessException?) -> Unit
-    ) = coroutineScope {
+    ) = withContext(context = Dispatchers.Default) {
         if (action != KeyEvent.ACTION_UP) {
-            return@coroutineScope
+            return@withContext
         }
         if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
-            return@coroutineScope
+            return@withContext
         }
 
         enforcer.assertNotOnMainThread()
@@ -208,9 +215,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
                 }
 
                 override fun onError(error: CameraError) {
-                    if (!cameraErrorBus.offer(error)) {
-                        Timber.w("Unable to offer camera error event: $error")
-                    }
+                    cameraErrorBus.publish(error)
                 }
             })
         }
@@ -219,11 +224,11 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         cameraInterface = camera
     }
 
-    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) {
-        coroutineScope {
+    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
+        withContext(context = Dispatchers.Default) {
             cameraInterface?.toggleTorch(onError)
+            return@withContext
         }
-    }
 
     override fun releaseCamera() {
         cameraInterface?.also {

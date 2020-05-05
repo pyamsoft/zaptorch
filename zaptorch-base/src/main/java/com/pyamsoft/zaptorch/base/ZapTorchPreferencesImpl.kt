@@ -20,18 +20,17 @@ package com.pyamsoft.zaptorch.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import androidx.annotation.CheckResult
 import androidx.preference.PreferenceManager
+import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
-import com.pyamsoft.zaptorch.api.UIPreferences.PreferenceUnregister
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
@@ -66,49 +65,58 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun getButtonDelayTime(): Long {
+    override suspend fun getButtonDelayTime(): Long = withContext(context = Dispatchers.Default) {
         enforcer.assertNotOnMainThread()
-        return preferences.getString(doublePressDelayKey, doublePressDelayDefault).orEmpty()
+        return@withContext preferences.getString(doublePressDelayKey, doublePressDelayDefault)
+            .orEmpty()
             .toLong()
     }
 
-    override suspend fun shouldShowErrorDialog(): Boolean {
-        enforcer.assertNotOnMainThread()
-        return preferences.getBoolean(displayCameraErrorsKey, displayCameraErrorsDefault)
-    }
-
-    override suspend fun shouldHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceUnregister {
-        return withContext(context = Dispatchers.Default) {
-            registerPreferenceListener(OnSharedPreferenceChangeListener { _, key ->
-                if (key == handleVolumeKeysKey) {
-                    launch(context = Dispatchers.Default) {
-                        onChange(preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault))
-                    }
-                }
-            })
+    override suspend fun shouldShowErrorDialog(): Boolean =
+        withContext(context = Dispatchers.Default) {
+            enforcer.assertNotOnMainThread()
+            return@withContext preferences.getBoolean(
+                displayCameraErrorsKey,
+                displayCameraErrorsDefault
+            )
         }
+
+    override suspend fun shouldHandleKeys(): Boolean = withContext(context = Dispatchers.Default) {
+        enforcer.assertNotOnMainThread()
+        return@withContext preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
     }
 
-    @CheckResult
-    private fun registerPreferenceListener(l: OnSharedPreferenceChangeListener): PreferenceUnregister {
-        enforcer.assertNotOnMainThread()
-        preferences.registerOnSharedPreferenceChangeListener(l)
-
-        return object : PreferenceUnregister {
-
-            override fun unregister() {
-                preferences.unregisterOnSharedPreferenceChangeListener(l)
+    override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit) =
+        withContext(context = Dispatchers.IO) {
+            enforcer.assertNotOnMainThread()
+            return@withContext registerPreferenceListener { key ->
+                if (key == handleVolumeKeysKey) {
+                    onChange(shouldHandleKeys())
+                }
             }
+        }
+
+    private suspend fun registerPreferenceListener(onChange: suspend (key: String) -> Unit) {
+        enforcer.assertNotOnMainThread()
+        val bus = EventBus.create<String>()
+        val listener = OnSharedPreferenceChangeListener { _, key -> bus.publish(key) }
+
+        return coroutineScope {
+            preferences.registerOnSharedPreferenceChangeListener(listener)
+            bus.onEvent { onChange(it) }
+            preferences.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }
 
     @SuppressLint("ApplySharedPref")
-    override suspend fun clearAll() {
+    override suspend fun clearAll() = withContext(context = Dispatchers.Default) {
         enforcer.assertNotOnMainThread()
 
         // Commit because we must be sure transaction takes place before we continue
         preferences.edit()
             .clear()
             .commit()
+
+        return@withContext
     }
 }
