@@ -68,7 +68,7 @@ internal class MainToolbarView @Inject internal constructor(
             toolbarActivityProvider.setToolbar(this)
             setTitle(R.string.app_name)
             ViewCompat.setElevation(this, 4F.toDp(context).toFloat())
-            addPrivacy(ZapTorch.PRIVACY_POLICY_URL, ZapTorch.TERMS_CONDITIONS_URL)
+            viewScope.addPrivacy(this, ZapTorch.PRIVACY_POLICY_URL, ZapTorch.TERMS_CONDITIONS_URL)
         }
     }
 

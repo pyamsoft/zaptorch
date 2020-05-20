@@ -47,12 +47,12 @@ internal class ServiceBinder @Inject internal constructor(
     private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
         launch {
             interactor.observeCameraState()
-                .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
+                .subscribe { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
         }
 
     private inline fun CoroutineScope.listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
         launch(context = Dispatchers.Default) {
-            finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
+            finishBus.subscribe { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
         }
 
     fun handleKeyEvent(action: Int, keyCode: Int) {

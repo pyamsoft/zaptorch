@@ -17,7 +17,11 @@
 
 package com.pyamsoft.zaptorch.base
 
-import android.app.*
+import android.app.IntentService
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
@@ -36,7 +40,10 @@ import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -45,8 +52,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
@@ -71,6 +76,8 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     private var running = false
 
     private val runningStateBus = EventBus.create<Boolean>()
+
+    private var cameraScope: CoroutineScope? = null
 
     init {
         val intent = Intent(context, torchOffServiceClass)
@@ -124,7 +131,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
 
     override suspend fun setServiceState(changed: Boolean) {
         running = changed
-        runningStateBus.send(changed)
+        runningStateBus.publish(changed)
     }
 
     override suspend fun observeServiceState(): EventConsumer<Boolean> =
@@ -132,16 +139,9 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             enforcer.assertNotOnMainThread()
             return@withContext object : EventConsumer<Boolean> {
 
-                override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
-                    onEvent(EmptyCoroutineContext, emitter)
-                }
-
-                override suspend fun onEvent(
-                    context: CoroutineContext,
-                    emitter: suspend (event: Boolean) -> Unit
-                ) {
+                override suspend fun subscribe(emitter: suspend (event: Boolean) -> Unit) {
                     emitter(running)
-                    runningStateBus.onEvent(context = context) { emitter(it) }
+                    runningStateBus.subscribe(emitter)
                 }
             }
         }
@@ -151,15 +151,8 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             enforcer.assertNotOnMainThread()
             return@withContext object : EventConsumer<CameraError> {
 
-                override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
-                    onEvent(EmptyCoroutineContext, emitter)
-                }
-
-                override suspend fun onEvent(
-                    context: CoroutineContext,
-                    emitter: suspend (event: CameraError) -> Unit
-                ) {
-                    cameraErrorBus.onEvent(context = context) { emitter(it) }
+                override suspend fun subscribe(emitter: suspend (event: CameraError) -> Unit) {
+                    cameraErrorBus.subscribe(emitter)
                 }
             }
         }
@@ -212,13 +205,16 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
                 }
 
                 override fun onError(error: CameraError) {
-                    cameraErrorBus.publish(error)
+                    requireNotNull(cameraScope).launch {
+                        cameraErrorBus.publish(error)
+                    }
                 }
             })
         }
 
         releaseCamera()
         cameraInterface = camera
+        cameraScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     }
 
     override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
@@ -233,6 +229,9 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             it.setOnStateChangedCallback(null)
         }
         cameraInterface = null
+
+        cameraScope?.cancel()
+        cameraScope = null
     }
 
     override suspend fun showError(error: CameraAccessException?) {

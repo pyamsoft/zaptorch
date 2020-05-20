@@ -19,15 +19,14 @@ package com.pyamsoft.zaptorch.base
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import androidx.preference.PreferenceManager
-import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.core.Enforcer
+import com.pyamsoft.pydroid.util.PreferenceListener
+import com.pyamsoft.pydroid.util.listen
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -86,27 +85,15 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         return@withContext preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
     }
 
-    override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit) =
+    override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener =
         withContext(context = Dispatchers.IO) {
             enforcer.assertNotOnMainThread()
-            return@withContext registerPreferenceListener { key ->
+            return@withContext preferences.listen { key ->
                 if (key == handleVolumeKeysKey) {
                     onChange(shouldHandleKeys())
                 }
             }
         }
-
-    private suspend fun registerPreferenceListener(onChange: suspend (key: String) -> Unit) {
-        enforcer.assertNotOnMainThread()
-        val bus = EventBus.create<String>()
-        val listener = OnSharedPreferenceChangeListener { _, key -> bus.publish(key) }
-
-        return coroutineScope {
-            preferences.registerOnSharedPreferenceChangeListener(listener)
-            bus.onEvent { onChange(it) }
-            preferences.unregisterOnSharedPreferenceChangeListener(listener)
-        }
-    }
 
     @SuppressLint("ApplySharedPref")
     override suspend fun clearAll() = withContext(context = Dispatchers.Default) {

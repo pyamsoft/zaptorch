@@ -24,6 +24,11 @@ import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
@@ -32,9 +37,14 @@ class ConfirmationDialog : DialogFragment() {
     @Inject
     internal var bus: EventBus<ClearAllEvent>? = null
 
+    // TODO: Make this into a proper VM
+    private var scope: CoroutineScope? = null
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
             .inject(this)
+
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
         return AlertDialog.Builder(requireActivity())
             .setMessage(
@@ -44,7 +54,9 @@ class ConfirmationDialog : DialogFragment() {
         |""".trimMargin()
             )
             .setPositiveButton("Yes") { _, _ ->
-                requireNotNull(bus).publish(ClearAllEvent)
+                requireNotNull(scope).launch {
+                    requireNotNull(bus).publish(ClearAllEvent)
+                }
                 dismiss()
             }
             .setNegativeButton("No") { _, _ -> dismiss() }
@@ -54,5 +66,7 @@ class ConfirmationDialog : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         bus = null
+        scope?.cancel()
+        scope = null
     }
 }

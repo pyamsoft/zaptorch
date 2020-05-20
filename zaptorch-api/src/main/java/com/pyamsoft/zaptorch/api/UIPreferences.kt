@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.util.PreferenceListener
 
 interface UIPreferences {
 
@@ -25,5 +26,5 @@ interface UIPreferences {
     suspend fun shouldHandleKeys(): Boolean
 
     @CheckResult
-    suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit)
+    suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener
 }

@@ -38,7 +38,8 @@ internal class MainToolbarViewModel @Inject internal constructor(
         doOnInit {
             viewModelScope.launch {
                 publish(HandleKeypress(interactor.isKeyPressHandled()))
-                interactor.onHandleKeyPressChanged { publish(HandleKeypress(it)) }
+                val listener = interactor.onHandleKeyPressChanged { publish(HandleKeypress(it)) }
+                doOnTeardown { listener.cancel() }
             }
         }
     }

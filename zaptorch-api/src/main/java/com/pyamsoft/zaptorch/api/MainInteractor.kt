@@ -18,6 +18,7 @@
 package com.pyamsoft.zaptorch.api
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.pydroid.util.PreferenceListener
 
 interface MainInteractor {
 
@@ -25,5 +26,5 @@ interface MainInteractor {
     suspend fun isKeyPressHandled(): Boolean
 
     @CheckResult
-    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit)
+    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceListener
 }

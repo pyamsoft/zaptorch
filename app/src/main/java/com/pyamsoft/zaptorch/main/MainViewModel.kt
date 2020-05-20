@@ -40,7 +40,7 @@ internal class MainViewModel @Inject internal constructor(
         doOnInit {
             viewModelScope.launch {
                 serviceInteractor.observeServiceState()
-                    .onEvent { setState { copy(isServiceRunning = it) } }
+                    .subscribe { setState { copy(isServiceRunning = it) } }
             }
         }
 

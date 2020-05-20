@@ -17,6 +17,7 @@
 
 package com.pyamsoft.zaptorch.base
 
+import com.pyamsoft.pydroid.util.PreferenceListener
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,6 @@ internal class MainInteractorImpl @Inject internal constructor(
         return@withContext preferences.shouldHandleKeys()
     }
 
-    override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit) =
+    override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceListener =
         withContext(context = Dispatchers.Default) { preferences.watchHandleKeys(onChange) }
 }
