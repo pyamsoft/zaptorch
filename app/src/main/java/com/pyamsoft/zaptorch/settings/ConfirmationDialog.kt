@@ -25,9 +25,9 @@ import androidx.lifecycle.lifecycleScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
 
@@ -38,7 +38,6 @@ class ConfirmationDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
             .inject(this)
-
 
         return AlertDialog.Builder(requireActivity())
             .setMessage(

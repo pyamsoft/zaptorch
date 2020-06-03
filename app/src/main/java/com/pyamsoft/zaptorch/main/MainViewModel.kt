@@ -24,10 +24,10 @@ import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 internal class MainViewModel @Inject internal constructor(
     @Named("debug") debug: Boolean,
@@ -39,7 +39,7 @@ internal class MainViewModel @Inject internal constructor(
 
     init {
         doOnInit {
-            viewModelScope.launch {
+            viewModelScope.launch(context = Dispatchers.Default) {
                 serviceInteractor.observeServiceState()
                     .onEvent { setState { copy(isServiceRunning = it) } }
             }

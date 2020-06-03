@@ -21,7 +21,6 @@ import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,30 +32,31 @@ internal class ServiceBinder @Inject internal constructor(
 ) : Binder<ServiceControllerEvent>() {
 
     override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
-        binderScope.launch {
+        binderScope.launch(context = Dispatchers.Main) {
             interactor.setupCamera()
-            setupCamera(onEvent)
-            listenFinish(onEvent)
         }
+
+        setupCamera(onEvent)
+        listenFinish(onEvent)
     }
 
     override fun onUnbind() {
         interactor.releaseCamera()
     }
 
-    private inline fun CoroutineScope.setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-        launch {
+    private inline fun setupCamera(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
+        binderScope.launch(context = Dispatchers.Default) {
             interactor.observeCameraState()
                 .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
         }
 
-    private inline fun CoroutineScope.listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-        launch(context = Dispatchers.Default) {
+    private inline fun listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
+        binderScope.launch(context = Dispatchers.Default) {
             finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
         }
 
     fun handleKeyEvent(action: Int, keyCode: Int) {
-        binderScope.launch {
+        binderScope.launch(context = Dispatchers.Default) {
             interactor.handleKeyPress(action, keyCode) { error ->
                 withContext(context = Dispatchers.Main) { interactor.showError(error) }
             }

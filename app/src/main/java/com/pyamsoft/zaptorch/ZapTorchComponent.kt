@@ -21,7 +21,6 @@ import android.app.IntentService
 import android.content.Context
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.arch.EventBus
-import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
@@ -67,7 +66,6 @@ interface ZapTorchComponent {
             @Named("debug") @BindsInstance debug: Boolean,
             @BindsInstance context: Context,
             @BindsInstance theming: Theming,
-            @BindsInstance enforcer: Enforcer,
             @BindsInstance imageLoader: ImageLoader,
             @BindsInstance serviceClass: Class<out IntentService>,
             @BindsInstance notificationColor: Int,

@@ -30,7 +30,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal abstract class CameraCommon protected constructor(
-    protected val enforcer: Enforcer,
     private val preferences: CameraPreferences
 ) : CameraInterface, OnStateChangedCallback {
 
@@ -71,12 +70,13 @@ internal abstract class CameraCommon protected constructor(
 
     @CheckResult
     protected suspend fun shouldShowError(): Boolean = withContext(context = Dispatchers.Default) {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
         return@withContext preferences.shouldShowErrorDialog()
     }
 
     override suspend fun showError(exception: CameraAccessException?) =
         withContext(context = Dispatchers.Main) {
+            Enforcer.assertOnMainThread()
             val error = CameraError(exception, errorExplain)
             onError(error)
         }

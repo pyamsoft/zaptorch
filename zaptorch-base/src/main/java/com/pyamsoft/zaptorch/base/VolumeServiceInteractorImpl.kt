@@ -55,7 +55,6 @@ import timber.log.Timber
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
-    private val enforcer: Enforcer,
     private val context: Context,
     private val preferences: CameraPreferences,
     torchOffServiceClass: Class<out IntentService>,
@@ -130,13 +129,14 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     }
 
     override suspend fun setServiceState(changed: Boolean) {
+        Enforcer.assertOffMainThread()
         running = changed
         runningStateBus.send(changed)
     }
 
     override suspend fun observeServiceState(): EventConsumer<Boolean> =
         withContext(context = Dispatchers.Default) {
-            enforcer.assertNotOnMainThread()
+            Enforcer.assertOffMainThread()
             return@withContext object : EventConsumer<Boolean> {
                 override suspend fun onEvent(emitter: suspend (event: Boolean) -> Unit) {
                     emitter(running)
@@ -147,7 +147,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
 
     override suspend fun observeCameraState(): EventConsumer<CameraError> =
         withContext(context = Dispatchers.Default) {
-            enforcer.assertNotOnMainThread()
+            Enforcer.assertOffMainThread()
             return@withContext object : EventConsumer<CameraError> {
                 override suspend fun onEvent(emitter: suspend (event: CameraError) -> Unit) {
                     cameraErrorBus.onEvent(emitter)
@@ -167,7 +167,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             return@withContext
         }
 
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
         if (pressed) {
             mutex.withLock {
                 Timber.d("Key has been double pressed")
@@ -179,7 +179,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
                 pressed = true
             }
 
-            launch {
+            launch(context = Dispatchers.Default) {
                 delay(preferences.getButtonDelayTime())
                 mutex.withLock {
                     if (pressed) {
@@ -191,8 +191,9 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun setupCamera() {
-        val camera: CameraCommon = MarshmallowCamera(context, enforcer, preferences).apply {
+    override fun setupCamera() {
+        Enforcer.assertOnMainThread()
+        val camera: CameraCommon = MarshmallowCamera(context, preferences).apply {
             setOnStateChangedCallback(object : CameraInterface.OnStateChangedCallback {
                 override fun onOpened() {
                     notificationManagerCompat.notify(NOTIFICATION_ID, notification)

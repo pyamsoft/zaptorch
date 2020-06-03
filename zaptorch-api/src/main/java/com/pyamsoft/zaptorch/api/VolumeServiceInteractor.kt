@@ -30,7 +30,7 @@ interface VolumeServiceInteractor {
         onError: suspend (error: CameraAccessException?) -> Unit
     )
 
-    suspend fun setupCamera()
+    fun setupCamera()
 
     suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
 

@@ -20,6 +20,7 @@ package com.pyamsoft.zaptorch.service
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -28,7 +29,7 @@ internal class TorchBinder @Inject internal constructor(
 ) : Binder<UnitControllerEvent>() {
 
     fun toggle() {
-        binderScope.launch {
+        binderScope.launch(context = Dispatchers.Default) {
             interactor.toggleTorch { error ->
                 if (error == null) {
                     Timber.e("Torch unavailable, cannot toggle")

@@ -17,13 +17,15 @@
 
 package com.pyamsoft.zaptorch.base
 
+import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.util.PreferenceListener
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class MainInteractorImpl @Inject internal constructor(
@@ -31,9 +33,13 @@ internal class MainInteractorImpl @Inject internal constructor(
 ) : MainInteractor {
 
     override suspend fun isKeyPressHandled(): Boolean = withContext(context = Dispatchers.Default) {
+        Enforcer.assertOffMainThread()
         return@withContext preferences.shouldHandleKeys()
     }
 
     override suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceListener =
-        withContext(context = Dispatchers.Default) { preferences.watchHandleKeys(onChange) }
+        withContext(context = Dispatchers.Default) {
+            Enforcer.assertOffMainThread()
+            return@withContext preferences.watchHandleKeys(onChange)
+        }
 }

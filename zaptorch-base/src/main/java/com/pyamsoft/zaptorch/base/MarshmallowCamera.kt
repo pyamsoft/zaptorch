@@ -30,9 +30,8 @@ import timber.log.Timber
 
 internal class MarshmallowCamera internal constructor(
     context: Context,
-    enforcer: Enforcer,
     preferences: CameraPreferences
-) : CameraCommon(enforcer, preferences) {
+) : CameraCommon(preferences) {
 
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val torchCallback = TorchCallback(this)
@@ -43,7 +42,7 @@ internal class MarshmallowCamera internal constructor(
 
     override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
         withContext(context = Dispatchers.Default) {
-            enforcer.assertNotOnMainThread()
+            Enforcer.assertOffMainThread()
 
             val toggle = !torchCallback.isEnabled
             Timber.d("Toggle torch: $toggle")
@@ -54,7 +53,7 @@ internal class MarshmallowCamera internal constructor(
         enable: Boolean,
         crossinline onError: suspend (error: CameraAccessException?) -> Unit
     ) = withContext(context = Dispatchers.Default) {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
 
         val error = setTorchState(enable)
         if (error != null) {

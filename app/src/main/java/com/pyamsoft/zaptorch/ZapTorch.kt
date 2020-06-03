@@ -44,7 +44,6 @@ class ZapTorch : Application() {
                     isDebugMode(),
                     this,
                     provider.theming(),
-                    provider.enforcer(),
                     provider.imageLoader(),
                     TorchOffService::class.java,
                     R.color.colorPrimary,

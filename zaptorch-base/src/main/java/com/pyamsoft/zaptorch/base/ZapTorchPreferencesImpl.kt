@@ -26,15 +26,15 @@ import com.pyamsoft.pydroid.util.onChange
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
-    context: Context,
-    private val enforcer: Enforcer
+    context: Context
 ) : CameraPreferences, ClearPreferences, UIPreferences {
 
     private val doublePressDelayKey: String
@@ -47,7 +47,7 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
     private val handleVolumeKeysDefault: Boolean
 
     private val preferences by lazy {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
         PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
     }
 
@@ -65,7 +65,7 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
     }
 
     override suspend fun getButtonDelayTime(): Long = withContext(context = Dispatchers.Default) {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
         return@withContext preferences.getString(doublePressDelayKey, doublePressDelayDefault)
             .orEmpty()
             .toLong()
@@ -73,7 +73,7 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
 
     override suspend fun shouldShowErrorDialog(): Boolean =
         withContext(context = Dispatchers.Default) {
-            enforcer.assertNotOnMainThread()
+            Enforcer.assertOffMainThread()
             return@withContext preferences.getBoolean(
                 displayCameraErrorsKey,
                 displayCameraErrorsDefault
@@ -81,13 +81,13 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         }
 
     override suspend fun shouldHandleKeys(): Boolean = withContext(context = Dispatchers.Default) {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
         return@withContext preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
     }
 
     override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener =
         withContext(context = Dispatchers.IO) {
-            enforcer.assertNotOnMainThread()
+            Enforcer.assertOffMainThread()
             return@withContext preferences.onChange(handleVolumeKeysKey) {
                 onChange(shouldHandleKeys())
             }
@@ -95,7 +95,7 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
 
     @SuppressLint("ApplySharedPref")
     override suspend fun clearAll() = withContext(context = Dispatchers.Default) {
-        enforcer.assertNotOnMainThread()
+        Enforcer.assertOffMainThread()
 
         // Commit because we must be sure transaction takes place before we continue
         preferences.edit()
