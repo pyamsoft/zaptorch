@@ -20,9 +20,9 @@ package com.pyamsoft.zaptorch.base
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.SettingsInteractor
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class SettingsInteractorImpl @Inject internal constructor(
     private val enforcer: Enforcer,

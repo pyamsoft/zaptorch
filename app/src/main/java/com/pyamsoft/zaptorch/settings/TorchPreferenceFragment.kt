@@ -28,6 +28,7 @@ import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.factory
+import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
@@ -47,7 +48,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     @JvmField
     @Inject
     internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
-    private val viewModel by factory<SettingsViewModel> { factory }
+    private val viewModel by viewModelFactory<SettingsViewModel> { factory }
 
     private var stateSaver: StateSaver? = null
 

@@ -18,19 +18,19 @@
 <resources>
 
     <style name="Theme.ZapTorch" parent="@style/Base.Theme.ZapTorch.Normal">
-        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="Theme.ZapTorch.Dialog" parent="@style/Base.Theme.ZapTorch.Dialog">
-        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="Theme.ZapTorch.Dialog.Alert" parent="@style/Base.Theme.ZapTorch.Dialog.Alert">
-        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="Theme.ZapTorch.Splash" parent="@style/Base.Theme.ZapTorch.Splash">
-        <item name="android:windowLightNavigationBar">@bool/light_bars</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="Theme.ZapTorch.Error" parent="@style/Base.Theme.ZapTorch.Error">

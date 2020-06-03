@@ -41,13 +41,13 @@ buildscript {
         // AndroidX
         preference = "1.1.1"
 
-        pydroid = "21.0.1-SNAPSHOT"
-        leakCanary = "2.2"
-        dagger = "2.27"
+        pydroid = "21.0.3-SNAPSHOT"
+        leakCanary = "2.3"
+        dagger = "2.28"
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.0'
 
         // Gradle version checker
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.22.0'
@@ -85,6 +85,10 @@ subprojects {
             target "**/*.kt"
             ktlint()
         }
+        groovyGradle {
+            target "*.gradle", "**/*.gradle"
+            greclipse()
+        }
     }
 }
 
@@ -103,12 +107,5 @@ allprojects {
     tasks.withType(JavaCompile) {
         options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
         options.deprecation = true
-    }
-
-    afterEvaluate {
-        extensions.findByName('kapt')?.arguments {
-            arg("dagger.formatGeneratedSource", "disabled")
-            arg("dagger.gradle.incremental", "enabled")
-        }
     }
 }

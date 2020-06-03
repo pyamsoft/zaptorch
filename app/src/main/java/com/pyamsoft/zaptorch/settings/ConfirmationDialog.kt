@@ -24,12 +24,12 @@ import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class ConfirmationDialog : DialogFragment() {
 
@@ -55,7 +55,7 @@ class ConfirmationDialog : DialogFragment() {
             )
             .setPositiveButton("Yes") { _, _ ->
                 requireNotNull(scope).launch {
-                    requireNotNull(bus).publish(ClearAllEvent)
+                    requireNotNull(bus).send(ClearAllEvent)
                 }
                 dismiss()
             }

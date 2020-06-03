@@ -20,7 +20,6 @@ package com.pyamsoft.zaptorch.service
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

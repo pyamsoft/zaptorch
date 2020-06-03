@@ -22,14 +22,14 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.util.PreferenceListener
-import com.pyamsoft.pydroid.util.listen
+import com.pyamsoft.pydroid.util.onChange
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
@@ -88,10 +88,8 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
     override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener =
         withContext(context = Dispatchers.IO) {
             enforcer.assertNotOnMainThread()
-            return@withContext preferences.listen { key ->
-                if (key == handleVolumeKeysKey) {
-                    onChange(shouldHandleKeys())
-                }
+            return@withContext preferences.onChange(handleVolumeKeysKey) {
+                onChange(shouldHandleKeys())
             }
         }
 

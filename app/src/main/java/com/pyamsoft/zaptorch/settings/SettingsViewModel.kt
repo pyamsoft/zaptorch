@@ -24,11 +24,11 @@ import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.service.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
+import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Named
 
 internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
@@ -55,12 +55,12 @@ internal class SettingsViewModel @Inject internal constructor(
 
     private fun scroll(visible: Boolean) {
         viewModelScope.launch {
-            scrollBus.publish(SignificantScrollEvent(visible))
+            scrollBus.send(SignificantScrollEvent(visible))
         }
     }
 
     private suspend fun killApplication() {
-        serviceFinishBus.publish(ServiceFinishEvent)
+        serviceFinishBus.send(ServiceFinishEvent)
         publish(ClearAll)
     }
 }
