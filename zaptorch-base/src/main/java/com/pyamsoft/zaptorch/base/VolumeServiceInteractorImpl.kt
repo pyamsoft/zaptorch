@@ -203,7 +203,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
                 }
 
                 override fun onError(error: CameraError) {
-                    requireNotNull(cameraScope).launch {
+                    requireNotNull(cameraScope).launch(context = Dispatchers.Default) {
                         cameraErrorBus.send(error)
                     }
                 }

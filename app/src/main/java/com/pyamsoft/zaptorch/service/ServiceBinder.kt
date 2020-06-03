@@ -21,11 +21,11 @@ import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
 import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
     private val finishBus: EventBus<ServiceFinishEvent>,
@@ -64,13 +64,13 @@ internal class ServiceBinder @Inject internal constructor(
     }
 
     fun start() {
-        binderScope.launch {
+        binderScope.launch(context = Dispatchers.Default) {
             interactor.setServiceState(true)
         }
     }
 
     fun stop() {
-        binderScope.launch {
+        binderScope.launch(context = Dispatchers.Default) {
             interactor.setServiceState(false)
         }
     }
