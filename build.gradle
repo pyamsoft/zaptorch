@@ -41,7 +41,7 @@ buildscript {
         // AndroidX
         preference = "1.1.1"
 
-        pydroid = "21.0.3-SNAPSHOT"
+        pydroid = "21.0.3"
         leakCanary = "2.3"
         dagger = "2.28"
     }
