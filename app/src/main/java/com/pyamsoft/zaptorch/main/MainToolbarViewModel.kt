@@ -25,6 +25,7 @@ import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -45,7 +46,9 @@ internal class MainToolbarViewModel @Inject internal constructor(
                     publish(HandleKeypress(it))
                 }
 
-                doOnTeardown { listener.cancel() }
+                withContext(context = Dispatchers.Main) {
+                    doOnTeardown { listener.cancel() }
+                }
             }
         }
     }

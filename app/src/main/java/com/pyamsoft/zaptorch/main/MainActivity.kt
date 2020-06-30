@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
-import com.pyamsoft.pydroid.ui.arch.factory
 import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.rating.ChangeLogBuilder
 import com.pyamsoft.pydroid.ui.rating.RatingActivity
@@ -41,9 +40,9 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
-import timber.log.Timber
 
 class MainActivity : RatingActivity() {
 
@@ -83,10 +82,6 @@ class MainActivity : RatingActivity() {
         bugfix("Fixed a memory leak in the license viewing experience")
         feature("Added links to Terms of Service and Privacy Policy")
     }
-
-    override val changeLogTheme: Int = 0
-
-    override val versionCheckTheme: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch)

@@ -19,13 +19,12 @@ package com.pyamsoft.zaptorch
 
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UiViewModelFactory
-import dagger.MapKey
 import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
 internal class ZapTorchViewModelFactory @Inject internal constructor(
-    private val viewModels: MutableMap<Class<out UiViewModel<*, *, *>>, Provider<UiViewModel<*, *, *>>>
+    private val viewModels: MutableMap<Class<*>, Provider<UiViewModel<*, *, *>>>
 ) : UiViewModelFactory() {
 
     override fun <T : UiViewModel<*, *, *>> viewModel(modelClass: KClass<T>): UiViewModel<*, *, *> {
@@ -33,12 +32,3 @@ internal class ZapTorchViewModelFactory @Inject internal constructor(
         return viewModels[modelClass.java]?.get() as? T ?: fail()
     }
 }
-
-@Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
-)
-@Retention(AnnotationRetention.RUNTIME)
-@MapKey
-internal annotation class ViewModelKey(val value: KClass<out UiViewModel<*, *, *>>)

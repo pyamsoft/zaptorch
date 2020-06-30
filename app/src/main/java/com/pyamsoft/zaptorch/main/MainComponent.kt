@@ -23,13 +23,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.theme.ThemeProvider
-import com.pyamsoft.zaptorch.ViewModelKey
 import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
 import com.pyamsoft.zaptorch.main.MainComponent.MainModule
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Module
 import dagger.Subcomponent
+import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
 @Subcomponent(modules = [MainModule::class])
@@ -56,7 +56,7 @@ interface MainComponent {
 
         @Binds
         @IntoMap
-        @ViewModelKey(MainToolbarViewModel::class)
+        @ClassKey(MainToolbarViewModel::class)
         internal abstract fun toolbarViewModel(viewModel: MainToolbarViewModel): UiViewModel<*, *, *>
     }
 }
