@@ -26,11 +26,10 @@ import com.pyamsoft.pydroid.util.onChange
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.ClearPreferences
 import com.pyamsoft.zaptorch.api.UIPreferences
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(

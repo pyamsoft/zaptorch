@@ -40,9 +40,9 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
-import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
+import timber.log.Timber
 
 class MainActivity : RatingActivity() {
 

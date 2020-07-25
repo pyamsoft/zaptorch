@@ -21,11 +21,10 @@ import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.util.PreferenceListener
 import com.pyamsoft.zaptorch.api.MainInteractor
 import com.pyamsoft.zaptorch.api.UIPreferences
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Singleton
 internal class MainInteractorImpl @Inject internal constructor(
