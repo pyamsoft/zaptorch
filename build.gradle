@@ -36,12 +36,12 @@ buildscript {
 	ext {
 
 		minSdk = 23
-		maxSdk = 29
+		maxSdk = 30
 
 		// AndroidX
 		preference = "1.1.1"
 
-		pydroid = "22.0.1"
+		pydroid = "22.0.2"
 		leakCanary = "2.4"
 		dagger = "2.28.3"
 	}
