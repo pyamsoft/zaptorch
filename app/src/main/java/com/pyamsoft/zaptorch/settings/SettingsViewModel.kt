@@ -21,7 +21,7 @@ import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitViewState
-import com.pyamsoft.zaptorch.service.ServiceFinishEvent
+import com.pyamsoft.zaptorch.service.monitor.ServiceFinishEvent
 import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import javax.inject.Inject

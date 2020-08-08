@@ -20,15 +20,13 @@ package com.pyamsoft.zaptorch.api
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
 
-interface CameraInterface {
+interface CameraInterface : TorchToggle {
 
     fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
 
     fun destroy()
 
-    suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
-
-    suspend fun showError(exception: CameraAccessException?)
+    suspend fun showError(exception: CameraAccessException)
 
     interface OnStateChangedCallback {
 

@@ -74,7 +74,7 @@ internal abstract class CameraCommon protected constructor(
         return@withContext preferences.shouldShowErrorDialog()
     }
 
-    override suspend fun showError(exception: CameraAccessException?) =
+    override suspend fun showError(exception: CameraAccessException) =
         withContext(context = Dispatchers.Main) {
             Enforcer.assertOnMainThread()
             val error = CameraError(exception, errorExplain)

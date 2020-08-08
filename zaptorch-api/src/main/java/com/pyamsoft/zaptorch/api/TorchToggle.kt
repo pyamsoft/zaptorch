@@ -15,24 +15,11 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.api
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.service.monitor.VolumeMonitorService
-import com.pyamsoft.zaptorch.service.torchoff.TorchOffService
-import dagger.Subcomponent
+import android.hardware.camera2.CameraAccessException
 
-@Subcomponent
-interface ServiceComponent {
+interface TorchToggle {
 
-    fun inject(service: VolumeMonitorService)
-
-    fun inject(service: TorchOffService)
-
-    @Subcomponent.Factory
-    interface Factory {
-
-        @CheckResult
-        fun create(): ServiceComponent
-    }
+    suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit)
 }

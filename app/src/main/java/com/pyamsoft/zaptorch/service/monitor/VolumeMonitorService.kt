@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Peter Kenji Yamanaka
+ * Copyright 2020 Peter Kenji Yamanaka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.service.monitor
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
@@ -24,12 +24,11 @@ import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
-import com.pyamsoft.zaptorch.service.ServiceControllerEvent.Finish
-import com.pyamsoft.zaptorch.service.ServiceControllerEvent.RenderError
+import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.Finish
+import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
@@ -63,17 +62,9 @@ class VolumeMonitorService : AccessibilityService() {
 
         requireNotNull(binder).bind {
             return@bind when (it) {
-                is RenderError -> renderError(it.error)
+                is RenderError -> CameraErrorExplanation.renderError(this, it.error)
                 is Finish -> finish()
             }
-        }
-    }
-
-    private fun renderError(cameraError: CameraError) {
-        applicationContext.also {
-            val intent = cameraError.intent
-            intent.setClass(it, CameraErrorExplanation::class.java)
-            it.startActivity(intent)
         }
     }
 

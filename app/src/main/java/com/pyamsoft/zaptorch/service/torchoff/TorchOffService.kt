@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Peter Kenji Yamanaka
+ * Copyright 2020 Peter Kenji Yamanaka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.service.torchoff
 
-import android.app.IntentService
+import android.content.Context
 import android.content.Intent
+import androidx.core.app.JobIntentService
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
-class TorchOffService : IntentService(TorchOffService::class.java.name) {
+class TorchOffService : JobIntentService() {
 
     @JvmField
     @Inject
@@ -47,11 +48,23 @@ class TorchOffService : IntentService(TorchOffService::class.java.name) {
         binder = null
     }
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onHandleWork(intent: Intent) {
         try {
             requireNotNull(binder).toggle()
         } catch (e: IllegalStateException) {
             Timber.e(e, "Error toggling torch")
+        }
+    }
+
+    companion object {
+
+        private const val JOB_ID = 42069
+
+        @JvmStatic
+        fun enqueue(context: Context) {
+            val intent = Intent(context.applicationContext, TorchOffService::class.java)
+            enqueueWork(context, TorchOffService::class.java,
+                JOB_ID, intent)
         }
     }
 }

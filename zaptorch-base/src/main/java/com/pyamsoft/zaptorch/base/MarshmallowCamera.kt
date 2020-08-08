@@ -40,7 +40,7 @@ internal class MarshmallowCamera internal constructor(
         setupCamera()
     }
 
-    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
+    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit) =
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
 
@@ -51,7 +51,7 @@ internal class MarshmallowCamera internal constructor(
 
     private suspend inline fun setTorch(
         enable: Boolean,
-        crossinline onError: suspend (error: CameraAccessException?) -> Unit
+        crossinline onError: suspend (error: CameraAccessException) -> Unit
     ) = withContext(context = Dispatchers.Default) {
         Enforcer.assertOffMainThread()
 
@@ -77,7 +77,12 @@ internal class MarshmallowCamera internal constructor(
             }
         } else {
             Timber.e("Torch unavailable")
-            TorchError(null)
+            TorchError(
+                CameraAccessException(
+                    CameraAccessException.CAMERA_ERROR,
+                    "Torch unavailable"
+                )
+            )
         }
     }
 
@@ -129,5 +134,5 @@ internal class MarshmallowCamera internal constructor(
         }
     }
 
-    private data class TorchError(val exception: CameraAccessException?)
+    private data class TorchError(val exception: CameraAccessException)
 }

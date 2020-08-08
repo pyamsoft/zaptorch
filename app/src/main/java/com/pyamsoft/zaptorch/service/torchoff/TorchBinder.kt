@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Peter Kenji Yamanaka
+ * Copyright 2020 Peter Kenji Yamanaka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,15 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.service.torchoff
 
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import javax.inject.Inject
+import com.pyamsoft.zaptorch.service.Binder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 internal class TorchBinder @Inject internal constructor(
     private val interactor: VolumeServiceInteractor
@@ -30,13 +31,7 @@ internal class TorchBinder @Inject internal constructor(
 
     fun toggle() {
         binderScope.launch(context = Dispatchers.Default) {
-            interactor.toggleTorch { error ->
-                if (error == null) {
-                    Timber.e("Torch unavailable, cannot toggle")
-                } else {
-                    Timber.e(error, "Error when toggling torch")
-                }
-            }
+            interactor.toggleTorch { Timber.e(it, "Error when toggling torch") }
         }
     }
 }

@@ -17,11 +17,11 @@
 
 package com.pyamsoft.zaptorch.base
 
-import android.app.IntentService
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException
@@ -40,8 +40,6 @@ import com.pyamsoft.zaptorch.api.CameraInterface
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraPreferences
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -52,12 +50,14 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
     private val context: Context,
     private val preferences: CameraPreferences,
-    torchOffServiceClass: Class<out IntentService>,
+    receiverClass: Class<out BroadcastReceiver>,
     @ColorRes notificationColor: Int
 ) : VolumeServiceInteractor {
 
@@ -79,14 +79,14 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     private var cameraScope: CoroutineScope? = null
 
     init {
-        val intent = Intent(context, torchOffServiceClass)
+        val intent = Intent(context, receiverClass)
 
         if (Build.VERSION.SDK_INT >= VERSION_CODES.O) {
             setupNotificationChannel()
         }
 
         val pendingIntent =
-            PendingIntent.getService(
+            PendingIntent.getBroadcast(
                 context,
                 NOTIFICATION_RC,
                 intent,
@@ -158,7 +158,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     override suspend fun handleKeyPress(
         action: Int,
         keyCode: Int,
-        onError: suspend (error: CameraAccessException?) -> Unit
+        onError: suspend (error: CameraAccessException) -> Unit
     ) = withContext(context = Dispatchers.Default) {
         if (action != KeyEvent.ACTION_UP) {
             return@withContext
@@ -216,7 +216,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         cameraScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     }
 
-    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit) =
+    override suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit) =
         withContext(context = Dispatchers.Default) {
             cameraInterface?.toggleTorch(onError)
             return@withContext
@@ -233,7 +233,7 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         cameraScope = null
     }
 
-    override suspend fun showError(error: CameraAccessException?) {
+    override suspend fun showError(error: CameraAccessException) {
         cameraInterface?.showError(error)
     }
 

@@ -20,7 +20,7 @@ package com.pyamsoft.zaptorch
 import android.app.Application
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.util.isDebugMode
-import com.pyamsoft.zaptorch.service.TorchOffService
+import com.pyamsoft.zaptorch.service.torchoff.TorchOffReceiver
 
 class ZapTorch : Application() {
 
@@ -45,7 +45,7 @@ class ZapTorch : Application() {
                     this,
                     provider.theming(),
                     provider.imageLoader(),
-                    TorchOffService::class.java,
+                    TorchOffReceiver::class.java,
                     R.color.colorPrimary,
                     getString(R.string.handle_volume_keys_key)
                 )

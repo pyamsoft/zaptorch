@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Peter Kenji Yamanaka
+ * Copyright 2020 Peter Kenji Yamanaka
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,15 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.service.torchoff
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.service.monitor.VolumeMonitorService
-import com.pyamsoft.zaptorch.service.torchoff.TorchOffService
-import dagger.Subcomponent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 
-@Subcomponent
-interface ServiceComponent {
+class TorchOffReceiver : BroadcastReceiver() {
 
-    fun inject(service: VolumeMonitorService)
-
-    fun inject(service: TorchOffService)
-
-    @Subcomponent.Factory
-    interface Factory {
-
-        @CheckResult
-        fun create(): ServiceComponent
+    override fun onReceive(context: Context, intent: Intent) {
+        TorchOffService.enqueue(context)
     }
 }

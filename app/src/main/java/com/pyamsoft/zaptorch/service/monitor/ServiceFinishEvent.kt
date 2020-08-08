@@ -15,6 +15,6 @@
  *
  */
 
-package com.pyamsoft.zaptorch.service
+package com.pyamsoft.zaptorch.service.monitor
 
 internal object ServiceFinishEvent

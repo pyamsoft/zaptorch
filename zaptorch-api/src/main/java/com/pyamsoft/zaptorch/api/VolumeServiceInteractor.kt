@@ -22,17 +22,15 @@ import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 
-interface VolumeServiceInteractor {
+interface VolumeServiceInteractor : TorchToggle {
 
     suspend fun handleKeyPress(
         action: Int,
         keyCode: Int,
-        onError: suspend (error: CameraAccessException?) -> Unit
+        onError: suspend (error: CameraAccessException) -> Unit
     )
 
     fun setupCamera()
-
-    suspend fun toggleTorch(onError: suspend (error: CameraAccessException?) -> Unit)
 
     fun releaseCamera()
 
@@ -44,5 +42,5 @@ interface VolumeServiceInteractor {
 
     suspend fun setServiceState(changed: Boolean)
 
-    suspend fun showError(error: CameraAccessException?)
+    suspend fun showError(error: CameraAccessException)
 }

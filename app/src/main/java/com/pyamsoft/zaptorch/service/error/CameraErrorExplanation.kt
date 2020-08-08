@@ -17,14 +17,17 @@
 
 package com.pyamsoft.zaptorch.service.error
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.ActivityBase
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
+import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_ERROR
 import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
+import timber.log.Timber
 
 class CameraErrorExplanation : ActivityBase() {
 
@@ -42,5 +45,18 @@ class CameraErrorExplanation : ActivityBase() {
             else -> null
         }
         fragment?.show(this, "camera_error")
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun renderError(context: Context, cameraError: CameraError) {
+            cameraError.exception?.let { e -> Timber.e(e, "Received camera error") }
+            context.applicationContext.also { ctx ->
+                val intent = cameraError.intent
+                intent.setClass(ctx, CameraErrorExplanation::class.java)
+                ctx.startActivity(intent)
+            }
+        }
     }
 }
