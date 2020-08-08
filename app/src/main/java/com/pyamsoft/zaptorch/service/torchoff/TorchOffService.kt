@@ -63,8 +63,12 @@ class TorchOffService : JobIntentService() {
         @JvmStatic
         fun enqueue(context: Context) {
             val intent = Intent(context.applicationContext, TorchOffService::class.java)
-            enqueueWork(context, TorchOffService::class.java,
-                JOB_ID, intent)
+            enqueueWork(
+                context,
+                TorchOffService::class.java,
+                JOB_ID,
+                intent
+            )
         }
     }
 }
