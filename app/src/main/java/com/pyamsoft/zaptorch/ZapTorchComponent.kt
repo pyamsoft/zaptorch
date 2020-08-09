@@ -28,9 +28,6 @@ import com.pyamsoft.zaptorch.base.BaseModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.service.ServiceComponent
-import com.pyamsoft.zaptorch.service.monitor.ServiceFinishEvent
-import com.pyamsoft.zaptorch.settings.ClearAllEvent
-import com.pyamsoft.zaptorch.settings.ConfirmationDialog
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import dagger.BindsInstance
@@ -43,8 +40,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [ZaptorchModule::class, BaseModule::class])
 interface ZapTorchComponent {
-
-    fun inject(dialog: ConfirmationDialog)
 
     @CheckResult
     fun plusMainComponent(): MainComponent.Factory
@@ -78,22 +73,6 @@ interface ZapTorchComponent {
 
         @Module
         companion object {
-
-            @Provides
-            @Singleton
-            @JvmStatic
-            @CheckResult
-            internal fun provideClearBus(): EventBus<ClearAllEvent> {
-                return EventBus.create()
-            }
-
-            @Provides
-            @Singleton
-            @JvmStatic
-            @CheckResult
-            internal fun provideServiceBus(): EventBus<ServiceFinishEvent> {
-                return EventBus.create()
-            }
 
             @Provides
             @Singleton

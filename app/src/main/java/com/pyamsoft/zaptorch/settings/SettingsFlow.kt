@@ -25,7 +25,4 @@ sealed class SettingsViewEvent : UiViewEvent {
     data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
 }
 
-sealed class SettingsControllerEvent : UiControllerEvent {
-
-    object ClearAll : SettingsControllerEvent()
-}
+object SettingsControllerEvent : UiControllerEvent

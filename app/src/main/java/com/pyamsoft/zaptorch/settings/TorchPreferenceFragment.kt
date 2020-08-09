@@ -17,8 +17,6 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import android.app.ActivityManager
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -29,21 +27,20 @@ import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.settings.AppSettingsPreferenceFragment
-import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.settings.SettingsControllerEvent.ClearAll
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
-import timber.log.Timber
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     @JvmField
     @Inject
     internal var factory: ViewModelProvider.Factory? = null
+
     @JvmField
     @Inject
     internal var settingsView: SettingsView? = null
+
     @JvmField
     @Inject
     internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
@@ -70,9 +67,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
             requireNotNull(settingsView),
             requireNotNull(toolbarView)
         ) {
-            return@createComponent when (it) {
-                is ClearAll -> killApplication()
-            }
+            // TODO(Peter): Handle future controller events
         }
     }
 
@@ -87,20 +82,6 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
         settingsView = null
         toolbarView = null
         factory = null
-    }
-
-    private fun killApplication() {
-        requireContext().also {
-            Timber.d("Clear application data")
-            val activityManager = it.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            activityManager.clearApplicationUserData()
-        }
-    }
-
-    override fun onClearAllClicked() {
-        super.onClearAllClicked()
-        ConfirmationDialog()
-            .show(requireActivity(), "confirm")
     }
 
     companion object {

@@ -23,6 +23,4 @@ import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
 sealed class ServiceControllerEvent : UiControllerEvent {
 
     data class RenderError(val error: CameraError) : ServiceControllerEvent()
-
-    object Finish : ServiceControllerEvent()
 }

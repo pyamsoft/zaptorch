@@ -17,18 +17,15 @@
 
 package com.pyamsoft.zaptorch.service.monitor
 
-import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
-import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.Finish
 import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
-    private val finishBus: EventBus<ServiceFinishEvent>,
     private val interactor: VolumeServiceInteractor
 ) : Binder<ServiceControllerEvent>() {
 
@@ -38,7 +35,6 @@ internal class ServiceBinder @Inject internal constructor(
         }
 
         setupCamera(onEvent)
-        listenFinish(onEvent)
     }
 
     override fun onUnbind() {
@@ -49,11 +45,6 @@ internal class ServiceBinder @Inject internal constructor(
         binderScope.launch(context = Dispatchers.Default) {
             interactor.observeCameraState()
                 .onEvent { withContext(context = Dispatchers.Main) { onEvent(RenderError(it)) } }
-        }
-
-    private inline fun listenFinish(crossinline onEvent: (event: ServiceControllerEvent) -> Unit) =
-        binderScope.launch(context = Dispatchers.Default) {
-            finishBus.onEvent { withContext(context = Dispatchers.Main) { onEvent(Finish) } }
         }
 
     fun handleKeyEvent(action: Int, keyCode: Int) {

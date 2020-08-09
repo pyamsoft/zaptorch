@@ -19,14 +19,12 @@ package com.pyamsoft.zaptorch.service.monitor
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.os.Build
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.Finish
-import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
+import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -63,14 +61,7 @@ class VolumeMonitorService : AccessibilityService() {
         requireNotNull(binder).bind {
             return@bind when (it) {
                 is RenderError -> CameraErrorExplanation.renderError(this, it.error)
-                is Finish -> finish()
             }
-        }
-    }
-
-    private fun finish() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            disableSelf()
         }
     }
 
