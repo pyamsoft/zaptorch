@@ -72,6 +72,6 @@ dependencies {
 	implementation "com.google.dagger:dagger:$dagger"
 	kapt "com.google.dagger:dagger-compiler:$dagger"
 
-	api project(':zaptorch-api')
+	api project(':core')
 }
 

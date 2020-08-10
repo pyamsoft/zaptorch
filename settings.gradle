@@ -15,5 +15,5 @@
  *
  */
 
-include ':app', ':zaptorch-base', ':zaptorch-api'
+include ':app', ':core', ':service'
 
