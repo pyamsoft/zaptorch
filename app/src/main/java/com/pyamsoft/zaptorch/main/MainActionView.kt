@@ -44,6 +44,12 @@ internal class MainActionView @Inject internal constructor(
     private var animator: ViewPropertyAnimatorCompat? = null
 
     init {
+        doOnInflate {
+            binding.fab.setOnDebouncedClickListener {
+                publish(ActionClick)
+            }
+        }
+
         doOnTeardown {
             binding.fab.setOnDebouncedClickListener(null)
             actionIconLoaded?.dispose()
@@ -65,10 +71,6 @@ internal class MainActionView @Inject internal constructor(
     }
 
     private fun setFabState(running: Boolean) {
-        binding.fab.setOnDebouncedClickListener {
-            publish(ActionClick(running))
-        }
-
         val icon = if (running) {
             R.drawable.ic_help_24dp
         } else {

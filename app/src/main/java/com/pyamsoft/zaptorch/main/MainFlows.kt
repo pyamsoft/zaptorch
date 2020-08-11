@@ -28,10 +28,12 @@ data class MainViewState(
 
 sealed class MainViewEvent : UiViewEvent {
 
-    data class ActionClick(val isServiceRunning: Boolean) : MainViewEvent()
+    object ActionClick : MainViewEvent()
 }
 
 sealed class MainControllerEvent : UiControllerEvent {
 
-    data class ServiceAction(val isServiceRunning: Boolean) : MainControllerEvent()
+    data class ServiceAction internal constructor(
+        val isServiceRunning: Boolean
+    ) : MainControllerEvent()
 }
