@@ -28,8 +28,8 @@ android {
 		applicationId "com.pyamsoft.zaptorch"
 		minSdkVersion rootProject.ext.minSdk
 		targetSdkVersion rootProject.ext.maxSdk
-		versionCode 97
-		versionName "1.9.1-SNAPSHOT"
+		versionCode 98
+		versionName "1.9.2"
 
 		// For vector drawables
 		vectorDrawables.useSupportLibrary = true
@@ -50,10 +50,10 @@ android {
 		}
 
 		release {
-			storeFile new File(RELEASE_STORE_FILE)
-			keyAlias RELEASE_KEY_ALIAS
-			keyPassword RELEASE_KEY_PASSWD
-			storePassword RELEASE_STORE_PASSWD
+			storeFile new File(BUNDLE_STORE_FILE)
+			keyAlias BUNDLE_KEY_ALIAS
+			keyPassword BUNDLE_KEY_PASSWD
+			storePassword BUNDLE_STORE_PASSWD
 		}
 	}
 
@@ -81,6 +81,13 @@ android {
 
 	buildFeatures {
 		viewBinding true
+	}
+
+	// Fixes this error message
+	// More than one file was found with OS independent path 'META-INF/core_release.kotlin_module'
+	packagingOptions {
+		pickFirst 'META-INF/core_release.kotlin_module'
+		pickFirst 'META-INF/ui_release.kotlin_module'
 	}
 }
 
