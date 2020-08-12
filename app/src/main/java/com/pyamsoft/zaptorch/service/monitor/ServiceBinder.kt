@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.pyamsoft.zaptorch.service.monitor
@@ -20,10 +19,10 @@ package com.pyamsoft.zaptorch.service.monitor
 import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
 import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 internal class ServiceBinder @Inject internal constructor(
     private val interactor: VolumeServiceInteractor

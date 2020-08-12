@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.pyamsoft.zaptorch.service.monitor
@@ -25,8 +24,8 @@ import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService() {
 
