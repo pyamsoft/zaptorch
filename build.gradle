@@ -40,7 +40,7 @@ buildscript {
 		// AndroidX
 		preference = "1.1.1"
 
-		pydroid = "22.0.3"
+		pydroid = "22.0.4"
 		leakCanary = "2.4"
 		dagger = "2.28.3"
 	}
@@ -54,7 +54,7 @@ buildscript {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
 		// Spotless
-		classpath "com.diffplug.spotless:spotless-plugin-gradle:5.1.1"
+		classpath "com.diffplug.spotless:spotless-plugin-gradle:5.1.2"
 	}
 }
 
