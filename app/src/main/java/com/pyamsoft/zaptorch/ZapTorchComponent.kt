@@ -23,7 +23,8 @@ import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
-import com.pyamsoft.zaptorch.base.BaseModule
+import com.pyamsoft.zaptorch.base.ServiceModule
+import com.pyamsoft.zaptorch.base.notification.NotificationModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.service.ServiceComponent
@@ -37,7 +38,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ZaptorchModule::class, BaseModule::class])
+@Component(modules = [ZaptorchModule::class, ServiceModule::class, NotificationModule::class])
 interface ZapTorchComponent {
 
     @CheckResult

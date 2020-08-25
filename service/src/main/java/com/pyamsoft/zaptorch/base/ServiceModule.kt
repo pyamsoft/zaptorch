@@ -27,7 +27,7 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class BaseModule {
+abstract class ServiceModule {
 
     @Binds
     @CheckResult

@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch
 
 import android.app.Application
+import com.pyamsoft.pydroid.bootstrap.libraries.OssLibraries
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.util.isDebugMode
 import com.pyamsoft.zaptorch.service.torchoff.TorchOffReceiver
@@ -38,6 +39,9 @@ class ZapTorch : Application() {
                 version = BuildConfig.VERSION_CODE
             )
         ) { provider ->
+            // Using pydroid-notify
+            OssLibraries.usingNotify = true
+
             component = DaggerZapTorchComponent.factory()
                 .create(
                     isDebugMode(),
