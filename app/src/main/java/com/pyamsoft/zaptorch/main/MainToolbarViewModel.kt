@@ -36,7 +36,7 @@ internal class MainToolbarViewModel @Inject internal constructor(
 ) {
 
     init {
-        doOnInit {
+        doOnBind {
             viewModelScope.launch(context = Dispatchers.Default) {
                 val handle = interactor.isKeyPressHandled()
                 publish(HandleKeypress(handle))

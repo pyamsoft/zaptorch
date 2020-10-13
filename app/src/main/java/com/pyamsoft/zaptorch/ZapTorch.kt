@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch
 
 import android.app.Application
+import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.bootstrap.libraries.OssLibraries
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.util.isDebugMode
@@ -24,48 +25,43 @@ import com.pyamsoft.zaptorch.service.torchoff.TorchOffReceiver
 
 class ZapTorch : Application() {
 
-    private var component: ZapTorchComponent? = null
-
-    override fun onCreate() {
-        super.onCreate()
-
-        PYDroid.init(
+    private val component by lazy {
+        val url = "https://github.com/pyamsoft/zaptorch"
+        val provider = PYDroid.init(
             this,
             PYDroid.Parameters(
-                viewSourceUrl = "https://github.com/pyamsoft/zaptorch",
-                bugReportUrl = "https://github.com/pyamsoft/zaptorch/issues",
+                viewSourceUrl = url,
+                bugReportUrl = "$url/issues",
                 privacyPolicyUrl = PRIVACY_POLICY_URL,
                 termsConditionsUrl = TERMS_CONDITIONS_URL,
                 version = BuildConfig.VERSION_CODE
             )
-        ) { provider ->
-            // Using pydroid-notify
-            OssLibraries.usingNotify = true
+        )
 
-            component = DaggerZapTorchComponent.factory()
-                .create(
-                    isDebugMode(),
-                    this,
-                    provider.theming(),
-                    provider.imageLoader(),
-                    TorchOffReceiver::class.java,
-                    R.color.colorPrimary,
-                    getString(R.string.handle_volume_keys_key)
-                )
-        }
+        // Using pydroid-notify
+        OssLibraries.usingNotify = true
+
+        return@lazy DaggerZapTorchComponent.factory()
+            .create(
+                isDebugMode(),
+                this,
+                provider.theming(),
+                provider.imageLoader(),
+                TorchOffReceiver::class.java,
+                R.color.colorPrimary,
+                getString(R.string.handle_volume_keys_key)
+            )
     }
 
     override fun getSystemService(name: String): Any? {
-        val service = PYDroid.getSystemService(name)
-        if (service != null) {
-            return service
-        }
+        return PYDroid.getSystemService(name) ?: fallbackGetSystemService(name)
+    }
 
-        if (ZapTorchComponent::class.java.name == name) {
-            return requireNotNull(component)
+    @CheckResult
+    private fun fallbackGetSystemService(name: String): Any? {
+        return if (ZapTorchComponent::class.java.name == name) component else {
+            super.getSystemService(name)
         }
-
-        return super.getSystemService(name)
     }
 
     companion object {
