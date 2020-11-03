@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.util.PreferenceListener
-import com.pyamsoft.zaptorch.api.MainInteractor
-import com.pyamsoft.zaptorch.api.UIPreferences
+import com.pyamsoft.zaptorch.core.MainInteractor
+import com.pyamsoft.zaptorch.core.UIPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers

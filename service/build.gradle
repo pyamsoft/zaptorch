@@ -66,8 +66,8 @@ kapt {
 
 dependencies {
 	// Android Support
-	implementation "androidx.core:core-ktx:$core"
-	implementation "androidx.preference:preference:$preference"
+	api "androidx.core:core-ktx:$core"
+	api "androidx.preference:preference:$preference"
 
 	// PYDroid notify
 	// API for Dagger

@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch.main
 import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent

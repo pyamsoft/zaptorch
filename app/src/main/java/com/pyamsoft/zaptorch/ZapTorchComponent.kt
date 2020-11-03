@@ -23,8 +23,8 @@ import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
-import com.pyamsoft.zaptorch.base.ServiceModule
-import com.pyamsoft.zaptorch.base.notification.NotificationModule
+import com.pyamsoft.zaptorch.service.ServiceModule
+import com.pyamsoft.zaptorch.service.notification.NotificationModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.service.ServiceComponent

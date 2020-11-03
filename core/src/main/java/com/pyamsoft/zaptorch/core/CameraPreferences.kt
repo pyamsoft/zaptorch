@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.core
 
 import androidx.annotation.CheckResult
 

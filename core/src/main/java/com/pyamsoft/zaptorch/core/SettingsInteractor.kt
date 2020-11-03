@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.core
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.util.PreferenceListener
+interface SettingsInteractor {
 
-interface UIPreferences {
-
-    @CheckResult
-    suspend fun shouldHandleKeys(): Boolean
-
-    @CheckResult
-    suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener
+    suspend fun clearAll()
 }

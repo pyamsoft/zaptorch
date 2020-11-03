@@ -16,7 +16,7 @@
 
 package com.pyamsoft.zaptorch.service.monitor
 
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
 import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
 import javax.inject.Inject

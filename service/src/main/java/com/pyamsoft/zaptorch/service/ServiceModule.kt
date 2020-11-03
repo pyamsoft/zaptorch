@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.api.CameraPreferences
-import com.pyamsoft.zaptorch.api.ClearPreferences
-import com.pyamsoft.zaptorch.api.MainInteractor
-import com.pyamsoft.zaptorch.api.SettingsInteractor
-import com.pyamsoft.zaptorch.api.UIPreferences
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.ClearPreferences
+import com.pyamsoft.zaptorch.core.MainInteractor
+import com.pyamsoft.zaptorch.core.SettingsInteractor
+import com.pyamsoft.zaptorch.core.UIPreferences
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import dagger.Binds
 import dagger.Module
 

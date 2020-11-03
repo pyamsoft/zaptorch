@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.CameraInterface
-import com.pyamsoft.zaptorch.api.CameraPreferences
+import com.pyamsoft.zaptorch.core.CameraInterface
+import com.pyamsoft.zaptorch.core.CameraPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber

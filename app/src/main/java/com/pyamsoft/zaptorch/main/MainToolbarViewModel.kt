@@ -20,7 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
-import com.pyamsoft.zaptorch.api.MainInteractor
+import com.pyamsoft.zaptorch.core.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
 import javax.inject.Inject
 import javax.inject.Named

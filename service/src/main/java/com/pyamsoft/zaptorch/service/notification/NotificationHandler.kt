@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.notification
+package com.pyamsoft.zaptorch.service.notification
 
 import com.pyamsoft.pydroid.notify.Notifier
 import com.pyamsoft.pydroid.notify.NotifyChannelInfo

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.notification
+package com.pyamsoft.zaptorch.service.notification
 
 import android.app.*
 import android.content.BroadcastReceiver
@@ -29,7 +29,7 @@ import com.pyamsoft.pydroid.notify.NotifyChannelInfo
 import com.pyamsoft.pydroid.notify.NotifyData
 import com.pyamsoft.pydroid.notify.NotifyDispatcher
 import com.pyamsoft.pydroid.notify.NotifyId
-import com.pyamsoft.zaptorch.base.R
+import com.pyamsoft.zaptorch.service.R
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton

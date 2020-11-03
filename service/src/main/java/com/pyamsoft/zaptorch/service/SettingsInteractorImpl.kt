@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.service
 
-import android.hardware.camera2.CameraAccessException
+import com.pyamsoft.pydroid.core.Enforcer
+import com.pyamsoft.zaptorch.core.ClearPreferences
+import com.pyamsoft.zaptorch.core.SettingsInteractor
+import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-interface TorchToggle {
+internal class SettingsInteractorImpl @Inject internal constructor(
+    private val clearPreferences: ClearPreferences
+) : SettingsInteractor {
 
-    suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit)
+    override suspend fun clearAll() = withContext(context = Dispatchers.Default) {
+        Enforcer.assertOffMainThread()
+        clearPreferences.clearAll()
+    }
 }

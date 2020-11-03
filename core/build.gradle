@@ -65,9 +65,15 @@ kapt {
 }
 
 dependencies {
+	// Timber logging
+	api "com.jakewharton.timber:timber:$timber"
+
 	// PYDroid
 	api "com.pyamsoft.pydroid:arch:$pydroid"
 	api "com.pyamsoft.pydroid:loader:$pydroid"
 	api "com.pyamsoft.pydroid:util:$pydroid"
+
+	api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
+
 

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.notification
+package com.pyamsoft.zaptorch.core
 
-import com.pyamsoft.pydroid.notify.NotifyData
+import android.hardware.camera2.CameraAccessException
 
-object TorchNotification : NotifyData
+interface TorchToggle {
+
+    suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit)
+}

@@ -109,6 +109,14 @@ dependencies {
 
 	// PYDroid
 	implementation "com.pyamsoft.pydroid:ui:$pydroid"
+	debugImplementation "com.pyamsoft.pydroid:autopsy:$pydroid"
+
+	// AndroidX
+	implementation "androidx.coordinatorlayout:coordinatorlayout:$coordinatorLayout"
+	implementation "androidx.constraintlayout:constraintlayout:$constraintLayout"
+
+	// Material Design
+	implementation "com.google.android.material:material:$materialDesign"
 
 	implementation "com.google.dagger:dagger:$dagger"
 	kapt "com.google.dagger:dagger-compiler:$dagger"

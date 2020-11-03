@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base.notification
+package com.pyamsoft.zaptorch.service.notification
 
 import android.content.Context
 import androidx.annotation.CheckResult

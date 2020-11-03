@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.core
 
 import android.content.Intent
 import android.hardware.camera2.CameraAccessException

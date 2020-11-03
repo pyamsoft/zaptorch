@@ -14,16 +14,32 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.api
+package com.pyamsoft.zaptorch.core
 
+import android.hardware.camera2.CameraAccessException
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.util.PreferenceListener
+import com.pyamsoft.pydroid.arch.EventConsumer
+import com.pyamsoft.zaptorch.core.CameraInterface.CameraError
 
-interface MainInteractor {
+interface VolumeServiceInteractor : TorchToggle {
+
+    suspend fun handleKeyPress(
+        action: Int,
+        keyCode: Int,
+        onError: suspend (error: CameraAccessException) -> Unit
+    )
+
+    fun setupCamera()
+
+    fun releaseCamera()
 
     @CheckResult
-    suspend fun isKeyPressHandled(): Boolean
+    suspend fun observeServiceState(): EventConsumer<Boolean>
 
     @CheckResult
-    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceListener
+    suspend fun observeCameraState(): EventConsumer<CameraError>
+
+    suspend fun setServiceState(changed: Boolean)
+
+    suspend fun showError(error: CameraAccessException)
 }

@@ -22,10 +22,10 @@ import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.ActivityBase
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
-import com.pyamsoft.zaptorch.api.CameraInterface.Companion.DIALOG_WHICH
-import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_ERROR
-import com.pyamsoft.zaptorch.api.CameraInterface.Companion.TYPE_NONE
+import com.pyamsoft.zaptorch.core.CameraInterface.CameraError
+import com.pyamsoft.zaptorch.core.CameraInterface.Companion.DIALOG_WHICH
+import com.pyamsoft.zaptorch.core.CameraInterface.Companion.TYPE_ERROR
+import com.pyamsoft.zaptorch.core.CameraInterface.Companion.TYPE_NONE
 import timber.log.Timber
 
 class CameraErrorExplanation : ActivityBase() {

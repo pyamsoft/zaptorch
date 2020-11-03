@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service.torchoff
 
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

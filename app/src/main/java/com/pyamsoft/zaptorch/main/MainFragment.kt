@@ -26,11 +26,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
+import com.pyamsoft.pydroid.ui.R
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.show
-import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.settings.SettingsFragment
@@ -42,9 +42,11 @@ class MainFragment : Fragment() {
     @JvmField
     @Inject
     internal var factory: ViewModelProvider.Factory? = null
+
     @JvmField
     @Inject
     internal var actionView: MainActionView? = null
+
     @JvmField
     @Inject
     internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null

@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service.monitor
 
 import com.pyamsoft.pydroid.arch.UiControllerEvent
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
+import com.pyamsoft.zaptorch.core.CameraInterface.CameraError
 
 sealed class ServiceControllerEvent : UiControllerEvent {
 

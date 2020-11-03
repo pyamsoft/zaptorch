@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,9 +22,9 @@ import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.pydroid.util.PreferenceListener
 import com.pyamsoft.pydroid.util.onChange
-import com.pyamsoft.zaptorch.api.CameraPreferences
-import com.pyamsoft.zaptorch.api.ClearPreferences
-import com.pyamsoft.zaptorch.api.UIPreferences
+import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.ClearPreferences
+import com.pyamsoft.zaptorch.core.UIPreferences
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers

@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service.notification
 
-import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.ClearPreferences
-import com.pyamsoft.zaptorch.api.SettingsInteractor
-import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.pyamsoft.pydroid.notify.NotifyData
 
-internal class SettingsInteractorImpl @Inject internal constructor(
-    private val clearPreferences: ClearPreferences
-) : SettingsInteractor {
-
-    override suspend fun clearAll() = withContext(context = Dispatchers.Default) {
-        Enforcer.assertOffMainThread()
-        clearPreferences.clearAll()
-    }
-}
+object TorchNotification : NotifyData

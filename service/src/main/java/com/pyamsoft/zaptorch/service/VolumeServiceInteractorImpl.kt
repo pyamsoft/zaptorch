@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.base
+package com.pyamsoft.zaptorch.service
 
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
@@ -22,11 +22,11 @@ import android.view.KeyEvent
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.api.CameraInterface
-import com.pyamsoft.zaptorch.api.CameraInterface.CameraError
-import com.pyamsoft.zaptorch.api.CameraPreferences
-import com.pyamsoft.zaptorch.api.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.base.notification.NotificationHandler
+import com.pyamsoft.zaptorch.core.CameraInterface
+import com.pyamsoft.zaptorch.core.CameraInterface.CameraError
+import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
+import com.pyamsoft.zaptorch.service.notification.NotificationHandler
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
