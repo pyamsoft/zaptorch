@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.widget
 
-import com.pyamsoft.pydroid.arch.UiBundleReader
 import com.pyamsoft.pydroid.arch.UiView
 import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
@@ -36,12 +35,6 @@ internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal co
                 toolbar.setUpEnabled(false)
             }
         }
-    }
-
-    override fun onInit(savedInstanceState: UiBundleReader) {
-    }
-
-    override fun onFinalTeardown() {
     }
 
     override fun render(state: S) {
