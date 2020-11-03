@@ -41,6 +41,9 @@ internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal co
     override fun onInit(savedInstanceState: UiBundleReader) {
     }
 
+    override fun onFinalTeardown() {
+    }
+
     override fun render(state: S) {
     }
 }

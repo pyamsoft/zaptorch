@@ -35,6 +35,7 @@ import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.layout
 import com.pyamsoft.pydroid.ui.widget.shadow.DropshadowView
+import com.pyamsoft.pydroid.util.stableLayoutHideNavigation
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
@@ -100,6 +101,8 @@ class MainActivity : RatingActivity() {
         val component = requireNotNull(mainView)
         val toolbarComponent = requireNotNull(toolbar)
         val dropshadow = DropshadowView.create(layoutRoot)
+
+        stableLayoutHideNavigation()
 
         stateSaver = createComponent(
             savedInstanceState, this,

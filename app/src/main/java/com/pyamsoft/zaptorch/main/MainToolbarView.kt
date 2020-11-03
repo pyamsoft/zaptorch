@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.core.view.updatePadding
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
@@ -25,6 +26,7 @@ import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
 import com.pyamsoft.pydroid.ui.privacy.addPrivacy
 import com.pyamsoft.pydroid.ui.privacy.removePrivacy
 import com.pyamsoft.pydroid.ui.theme.ThemeProvider
+import com.pyamsoft.pydroid.util.doOnApplyWindowInsets
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.databinding.ToolbarBinding
@@ -39,11 +41,15 @@ internal class MainToolbarView @Inject internal constructor(
 
     override val viewBinding = ToolbarBinding::inflate
 
-    override val layoutRoot by boundView { toolbar }
+    override val layoutRoot by boundView { appbar }
 
     init {
         doOnInflate {
             setupToolbar(toolbarActivityProvider, theming)
+
+            layoutRoot.doOnApplyWindowInsets { v, insets, padding ->
+                v.updatePadding(top = padding.top + insets.systemWindowInsetTop)
+            }
         }
 
         doOnTeardown {

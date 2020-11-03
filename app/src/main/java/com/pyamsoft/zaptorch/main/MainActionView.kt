@@ -18,12 +18,14 @@ package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
 import androidx.core.view.ViewPropertyAnimatorCompat
+import androidx.core.view.updateLayoutParams
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
 import com.pyamsoft.pydroid.ui.util.popHide
 import com.pyamsoft.pydroid.ui.util.popShow
 import com.pyamsoft.pydroid.ui.util.setOnDebouncedClickListener
+import com.pyamsoft.pydroid.util.doOnApplyWindowInsets
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.databinding.FloatingActionButtonBinding
 import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
@@ -46,6 +48,14 @@ internal class MainActionView @Inject internal constructor(
         doOnInflate {
             binding.fab.setOnDebouncedClickListener {
                 publish(ActionClick)
+            }
+        }
+
+        doOnInflate {
+            binding.fab.doOnApplyWindowInsets { v, insets, _ ->
+                v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    bottomMargin = insets.systemWindowInsetBottom
+                }
             }
         }
 

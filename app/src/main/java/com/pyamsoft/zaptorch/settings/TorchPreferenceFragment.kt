@@ -38,6 +38,10 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
 
     @JvmField
     @Inject
+    internal var spacer: SettingsSpacer? = null
+
+    @JvmField
+    @Inject
     internal var settingsView: SettingsView? = null
 
     @JvmField
@@ -64,7 +68,8 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
             savedInstanceState, viewLifecycleOwner,
             viewModel,
             requireNotNull(settingsView),
-            requireNotNull(toolbarView)
+            requireNotNull(toolbarView),
+            requireNotNull(spacer)
         ) {
             // TODO(Peter): Handle future controller events
         }
