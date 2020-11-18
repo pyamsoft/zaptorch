@@ -16,23 +16,15 @@
 
 <resources>
 
-    <style name="Theme.ZapTorch" parent="@style/Base.Theme.ZapTorch.Normal">
+    <style name="Theme.ZapTorch" parent="@style/Custom.Theme.ZapTorch">
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.ZapTorch.Dialog" parent="@style/Base.Theme.ZapTorch.Dialog">
+    <style name="Theme.ZapTorch.Splash" parent="@style/Custom.Theme.ZapTorch.Splash">
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.ZapTorch.Dialog.Alert" parent="@style/Base.Theme.ZapTorch.Dialog.Alert">
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-    <style name="Theme.ZapTorch.Splash" parent="@style/Base.Theme.ZapTorch.Splash">
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-    <style name="Theme.ZapTorch.Error" parent="@style/Base.Theme.ZapTorch.Error">
+    <style name="Theme.ZapTorch.Error" parent="@style/Custom.Theme.ZapTorch.Error">
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

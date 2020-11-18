@@ -18,6 +18,12 @@
 
 <resources>
 
-    <style name="Base.Theme.ZapTorch" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Custom.ThemeOverlay.ZapTorch.Dialog" parent="@style/Base.ThemeOverlay.ZapTorch.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
+
+    <style name="Custom.ThemeOverlay.ZapTorch.Dialog.Alert" parent="@style/Base.ThemeOverlay.ZapTorch.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_background</item>
+    </style>
 
 </resources>

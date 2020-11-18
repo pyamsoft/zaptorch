@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2020 Peter Kenji Yamanaka
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +16,12 @@
 
 <resources>
 
-    <style name="Base.Theme.ZapTorch" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="ThemeOverlay.ZapTorch.Dialog" parent="@style/Custom.ThemeOverlay.ZapTorch.Dialog">
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="ThemeOverlay.ZapTorch.Dialog.Alert" parent="@style/Custom.ThemeOverlay.ZapTorch.Dialog.Alert">
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 
 </resources>

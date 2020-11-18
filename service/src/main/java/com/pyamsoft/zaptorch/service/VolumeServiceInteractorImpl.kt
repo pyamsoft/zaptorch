@@ -47,11 +47,11 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
 
     private var cameraInterface: CameraInterface? = null
 
-    private val cameraErrorBus = EventBus.create<CameraError>()
+    private val cameraErrorBus = EventBus.create<CameraError>(emitOnlyWhenActive = true)
 
     private var running = false
 
-    private val runningStateBus = EventBus.create<Boolean>()
+    private val runningStateBus = EventBus.create<Boolean>(emitOnlyWhenActive = true)
 
     private var cameraScope: CoroutineScope? = null
 

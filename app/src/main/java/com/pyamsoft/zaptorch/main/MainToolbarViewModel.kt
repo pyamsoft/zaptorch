@@ -22,32 +22,26 @@ import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.core.MainInteractor
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
-import javax.inject.Inject
-import javax.inject.Named
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 internal class MainToolbarViewModel @Inject internal constructor(
-    @Named("debug") debug: Boolean,
     interactor: MainInteractor
-) : UiViewModel<UnitViewState, UnitViewEvent, ToolbarControllerEvent>(
-    initialState = UnitViewState, debug = debug
-) {
+) : UiViewModel<UnitViewState, UnitViewEvent, ToolbarControllerEvent>(UnitViewState) {
 
     init {
-        doOnBind {
-            viewModelScope.launch(context = Dispatchers.Default) {
-                val handle = interactor.isKeyPressHandled()
-                publish(HandleKeypress(handle))
+        viewModelScope.launch(context = Dispatchers.Default) {
+            val handle = interactor.isKeyPressHandled()
+            publish(HandleKeypress(handle))
 
-                val listener = interactor.onHandleKeyPressChanged {
-                    publish(HandleKeypress(it))
-                }
+            val listener = interactor.onHandleKeyPressChanged {
+                publish(HandleKeypress(it))
+            }
 
-                withContext(context = Dispatchers.Main) {
-                    doOnTeardown { listener.cancel() }
-                }
+            withContext(context = Dispatchers.Main) {
+                doOnCleared { listener.cancel() }
             }
         }
     }

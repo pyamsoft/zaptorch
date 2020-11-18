@@ -79,7 +79,7 @@ interface ZapTorchComponent {
             @JvmStatic
             @CheckResult
             internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
-                return EventBus.create()
+                return EventBus.create(emitOnlyWhenActive = true)
             }
         }
     }

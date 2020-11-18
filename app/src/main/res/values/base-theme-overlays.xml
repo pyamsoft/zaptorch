@@ -18,6 +18,8 @@
 
 <resources>
 
-    <style name="Base.Theme.ZapTorch" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Base.ThemeOverlay.ZapTorch.Dialog" parent="@style/ThemeOverlay.MaterialComponents.Dialog" />
+
+    <style name="Base.ThemeOverlay.ZapTorch.Dialog.Alert" parent="@style/ThemeOverlay.MaterialComponents.Dialog.Alert" />
 
 </resources>
