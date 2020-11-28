@@ -75,9 +75,8 @@ internal class MainToolbarView @Inject internal constructor(
             ViewCompat.setElevation(this, 0F)
         }
 
-        viewScope.addPrivacy(
-            binding.toolbar,
-            ZapTorch.PRIVACY_POLICY_URL,
+        binding.toolbar.addPrivacy(
+            viewScope, ZapTorch.PRIVACY_POLICY_URL,
             ZapTorch.TERMS_CONDITIONS_URL
         )
     }

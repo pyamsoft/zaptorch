@@ -55,7 +55,8 @@ class ZapTorch : Application() {
     }
 
     override fun getSystemService(name: String): Any? {
-        return PYDroid.getSystemService(name) ?: fallbackGetSystemService(name)
+        // This weird construct is to ensure that component is initialized
+        return component.run { PYDroid.getSystemService(name) } ?: fallbackGetSystemService(name)
     }
 
     @CheckResult
