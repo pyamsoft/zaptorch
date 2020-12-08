@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2020 Peter Kenji Yamanaka
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:drawable="@color/colorPrimary" />
-
+    <item android:drawable="@color/colorPrimary"/>
     <item android:gravity="center">
-
-        <bitmap
-            android:src="@drawable/splash_icon"
-            android:tileMode="disabled" />
-
+        <bitmap android:src="@drawable/splash_icon" android:tileMode="disabled"/>
     </item>
-
 </layer-list>
