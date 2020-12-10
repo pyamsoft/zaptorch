@@ -49,7 +49,7 @@ buildscript {
 		// Material Design
 		materialDesign = "1.2.1"
 
-		pydroid = "22.1.2"
+		pydroid = "22.1.6"
 		leakCanary = "2.5"
 		dagger = "2.30.1"
 	}
