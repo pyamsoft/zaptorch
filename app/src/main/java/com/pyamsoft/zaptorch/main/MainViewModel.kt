@@ -57,8 +57,6 @@ internal class MainViewModel @Inject internal constructor(
     }
 
     private fun handleServiceAction() {
-        withState {
-            publish(ServiceAction(isServiceRunning))
-        }
+        publish(ServiceAction(state.isServiceRunning))
     }
 }

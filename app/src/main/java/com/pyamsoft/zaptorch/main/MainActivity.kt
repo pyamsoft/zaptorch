@@ -29,7 +29,6 @@ import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.changelog.ChangeLogActivity
 import com.pyamsoft.pydroid.ui.changelog.buildChangeLog
-import com.pyamsoft.pydroid.ui.theme.ThemeProvider
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.layout
@@ -39,9 +38,9 @@ import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
-import timber.log.Timber
 
 class MainActivity : ChangeLogActivity() {
 
@@ -77,9 +76,7 @@ class MainActivity : ChangeLogActivity() {
         get() = requireNotNull(mainView).id()
 
     override val changelog = buildChangeLog {
-        change("Lower memory consumption and faster operation")
-        bugfix("Fixed a memory leak in the license viewing experience")
-        feature("Added links to Terms of Service and Privacy Policy")
+        feature("Support for full screen content and gesture navigation")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,13 +86,11 @@ class MainActivity : ChangeLogActivity() {
 
         val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
         Injector.obtain<ZapTorchComponent>(applicationContext)
-            .plusMainComponent()
-            .create(
-                layoutRoot,
-                this,
-                ThemeProvider { requireNotNull(theming).isDarkTheme(this) }
-            )
-            .inject(this)
+                .plusMainComponent()
+                .create(layoutRoot, this) {
+                    requireNotNull(theming).isDarkTheme(this)
+                }
+                .inject(this)
 
         val component = requireNotNull(mainView)
         val toolbarComponent = requireNotNull(toolbar)
@@ -104,11 +99,11 @@ class MainActivity : ChangeLogActivity() {
         stableLayoutHideNavigation()
 
         stateSaver = createComponent(
-            savedInstanceState, this,
-            viewModel,
-            component,
-            toolbarComponent,
-            dropshadow
+                savedInstanceState, this,
+                viewModel,
+                component,
+                toolbarComponent,
+                dropshadow
         ) {
             return@createComponent when (it) {
                 is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
@@ -133,10 +128,10 @@ class MainActivity : ChangeLogActivity() {
             component.also {
                 connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
                 connect(
-                    it.id(),
-                    ConstraintSet.BOTTOM,
-                    ConstraintSet.PARENT_ID,
-                    ConstraintSet.BOTTOM
+                        it.id(),
+                        ConstraintSet.BOTTOM,
+                        ConstraintSet.PARENT_ID,
+                        ConstraintSet.BOTTOM
                 )
                 connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
                 connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
@@ -176,8 +171,8 @@ class MainActivity : ChangeLogActivity() {
     }
 
     override fun onKeyUp(
-        keyCode: Int,
-        event: KeyEvent
+            keyCode: Int,
+            event: KeyEvent
     ): Boolean {
         return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             handleKeyPress
@@ -187,8 +182,8 @@ class MainActivity : ChangeLogActivity() {
     }
 
     override fun onKeyDown(
-        keyCode: Int,
-        event: KeyEvent
+            keyCode: Int,
+            event: KeyEvent
     ): Boolean {
         return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             handleKeyPress

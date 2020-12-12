@@ -34,9 +34,9 @@ import javax.inject.Inject
 import com.google.android.material.R as R2
 
 internal class MainToolbarView @Inject internal constructor(
-    toolbarActivityProvider: ToolbarActivityProvider,
-    theming: ThemeProvider,
-    parent: ViewGroup
+        toolbarActivityProvider: ToolbarActivityProvider,
+        theming: ThemeProvider,
+        parent: ViewGroup
 ) : BaseUiView<UnitViewState, UnitViewEvent, ToolbarBinding>(parent) {
 
     override val viewBinding = ToolbarBinding::inflate
@@ -59,8 +59,8 @@ internal class MainToolbarView @Inject internal constructor(
     }
 
     private fun setupToolbar(
-        toolbarActivityProvider: ToolbarActivityProvider,
-        theming: ThemeProvider
+            toolbarActivityProvider: ToolbarActivityProvider,
+            theming: ThemeProvider
     ) {
         val theme = if (theming.isDarkTheme()) {
             R2.style.ThemeOverlay_MaterialComponents
@@ -76,11 +76,9 @@ internal class MainToolbarView @Inject internal constructor(
         }
 
         binding.toolbar.addPrivacy(
-            viewScope, ZapTorch.PRIVACY_POLICY_URL,
-            ZapTorch.TERMS_CONDITIONS_URL
+                viewScope, ZapTorch.PRIVACY_POLICY_URL,
+                ZapTorch.TERMS_CONDITIONS_URL
         )
     }
 
-    override fun onRender(state: UnitViewState) {
-    }
 }

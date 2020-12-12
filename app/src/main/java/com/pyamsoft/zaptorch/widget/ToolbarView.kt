@@ -16,6 +16,7 @@
 
 package com.pyamsoft.zaptorch.widget
 
+import com.pyamsoft.pydroid.arch.UiRender
 import com.pyamsoft.pydroid.arch.UiView
 import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
@@ -37,6 +38,6 @@ internal class ToolbarView<S : UiViewState, E : UiViewEvent> @Inject internal co
         }
     }
 
-    override fun render(state: S) {
+    override fun render(state: UiRender<S>) {
     }
 }

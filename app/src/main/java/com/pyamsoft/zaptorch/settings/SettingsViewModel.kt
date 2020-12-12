@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.settings
 import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ import javax.inject.Inject
 
 internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
-) : UiViewModel<UnitViewState, SettingsViewEvent, SettingsControllerEvent>(UnitViewState) {
+) : UiViewModel<UnitViewState, SettingsViewEvent, UnitControllerEvent>(UnitViewState) {
 
     override fun handleViewEvent(event: SettingsViewEvent) {
         return when (event) {

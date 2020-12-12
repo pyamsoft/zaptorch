@@ -31,6 +31,4 @@ internal class MainFrameView @Inject internal constructor(
 
     override val layoutRoot by boundView { mainContainer }
 
-    override fun onRender(state: UnitViewState) {
-    }
 }

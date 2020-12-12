@@ -46,6 +46,4 @@ internal class SettingsView @Inject internal constructor(
         }
     }
 
-    override fun onRender(state: UnitViewState) {
-    }
 }

@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewPropertyAnimatorCompat
 import androidx.core.view.updateLayoutParams
 import com.pyamsoft.pydroid.arch.BaseUiView
+import com.pyamsoft.pydroid.arch.UiRender
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.loader.Loaded
 import com.pyamsoft.pydroid.ui.util.popHide
@@ -74,9 +75,9 @@ internal class MainActionView @Inject internal constructor(
         animator = null
     }
 
-    override fun onRender(state: MainViewState) {
-        toggleVisibility(state.isVisible)
-        setFabState(state.isServiceRunning)
+    override fun onRender(state: UiRender<MainViewState>) {
+        state.distinctBy { it.isVisible }.render(viewScope) { toggleVisibility(it) }
+        state.distinctBy { it.isServiceRunning }.render(viewScope) { setFabState(it) }
     }
 
     private fun setFabState(running: Boolean) {

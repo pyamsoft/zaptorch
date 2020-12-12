@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.settings
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
 import com.pyamsoft.pydroid.arch.UiViewEvent
 
 sealed class SettingsViewEvent : UiViewEvent {
@@ -24,4 +23,3 @@ sealed class SettingsViewEvent : UiViewEvent {
     data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
 }
 
-object SettingsControllerEvent : UiControllerEvent
