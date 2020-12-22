@@ -16,15 +16,14 @@
 
 package com.pyamsoft.zaptorch.core
 
-interface CameraInterface {
+interface CameraInterface : TorchToggle {
 
-    suspend fun toggleTorchState()
+    suspend fun forceTorchOff()
 
-    suspend fun setTorchState(enabled: Boolean)
+    fun setOnOpenedCallback(onOpened: (TorchState) -> Unit)
 
-    fun setOnOpenedCallback(onOpened: (String) -> Unit)
-
-    fun setOnClosedCallback(onClosed: (String) -> Unit)
+    fun setOnClosedCallback(onClosed: (TorchState) -> Unit)
 
     fun destroy()
+
 }

@@ -17,11 +17,7 @@
 package com.pyamsoft.zaptorch.core
 
 
-interface CameraInteractor : TorchToggle {
+interface TorchToggle {
 
-    fun setupCamera(onOpened: (TorchState) -> Unit, onClosed: (TorchState) -> Unit)
-
-    fun releaseCamera()
-
-    suspend fun handleKeyPress(action: Int, keyCode: Int)
+    suspend fun toggleTorch(state: TorchState)
 }

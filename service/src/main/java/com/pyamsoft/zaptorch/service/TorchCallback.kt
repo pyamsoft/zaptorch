@@ -21,7 +21,8 @@ import androidx.annotation.CheckResult
 import timber.log.Timber
 
 internal class TorchCallback internal constructor(
-    private val callback: OnCameraStateChangedCallback
+    private val onOpened: (String) -> Unit,
+    private val onClosed: (String) -> Unit,
 ) : CameraManager.TorchCallback() {
 
     private var cameraId: String? = null
@@ -47,9 +48,9 @@ internal class TorchCallback internal constructor(
         this.enabled = enabled
 
         if (enabled) {
-            callback.onOpened(cameraId)
+            onOpened(cameraId)
         } else {
-            callback.onClosed(cameraId)
+            onClosed(cameraId)
         }
     }
 
@@ -58,6 +59,6 @@ internal class TorchCallback internal constructor(
         Timber.e("Torch unavailable $cameraId")
         this.cameraId = null
         this.enabled = false
-        callback.onClosed(cameraId)
+        onClosed(cameraId)
     }
 }

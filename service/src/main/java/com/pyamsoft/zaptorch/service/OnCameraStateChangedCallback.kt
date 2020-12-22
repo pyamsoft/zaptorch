@@ -16,10 +16,12 @@
 
 package com.pyamsoft.zaptorch.service
 
+import com.pyamsoft.zaptorch.core.TorchState
+
 internal interface OnCameraStateChangedCallback {
 
-    fun onOpened(id: String)
+    fun onOpened(state: TorchState)
 
-    fun onClosed(id: String)
+    fun onClosed(state: TorchState)
 
 }

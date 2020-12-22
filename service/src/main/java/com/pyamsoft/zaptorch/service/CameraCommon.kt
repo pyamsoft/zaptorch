@@ -17,27 +17,28 @@
 package com.pyamsoft.zaptorch.service
 
 import com.pyamsoft.zaptorch.core.CameraInterface
+import com.pyamsoft.zaptorch.core.TorchState
 
 internal abstract class CameraCommon protected constructor(
 ) : CameraInterface, OnCameraStateChangedCallback {
 
-    private var openedCallback: ((String) -> Unit)? = null
-    private var closedCallback: ((String) -> Unit)? = null
+    private var openedCallback: ((TorchState) -> Unit)? = null
+    private var closedCallback: ((TorchState) -> Unit)? = null
 
-    final override fun setOnOpenedCallback(onOpened: (String) -> Unit) {
+    final override fun setOnOpenedCallback(onOpened: (TorchState) -> Unit) {
         this.openedCallback = onOpened
     }
 
-    final override fun setOnClosedCallback(onClosed: (String) -> Unit) {
+    final override fun setOnClosedCallback(onClosed: (TorchState) -> Unit) {
         this.closedCallback = onClosed
     }
 
-    final override fun onOpened(id: String) {
-        openedCallback?.invoke(id)
+    final override fun onOpened(state: TorchState) {
+        openedCallback?.invoke(state)
     }
 
-    final override fun onClosed(id: String) {
-        closedCallback?.invoke(id)
+    final override fun onClosed(state: TorchState) {
+        closedCallback?.invoke(state)
     }
 
     final override fun destroy() {

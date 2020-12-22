@@ -21,6 +21,7 @@ import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.CameraInteractor
 import com.pyamsoft.zaptorch.core.CameraInterface
 import com.pyamsoft.zaptorch.core.TorchOffInteractor
+import com.pyamsoft.zaptorch.core.TorchState
 import com.pyamsoft.zaptorch.service.command.ToggleTorchCommand
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -43,10 +44,10 @@ internal class CameraInteractorImpl @Inject internal constructor(
                 return@withContext
             }
 
-            toggleCommand.handleCommand(keyCode) { toggleTorch() }
+            toggleCommand.handleCommand(keyCode) { toggleTorch(it) }
         }
 
-    override fun setupCamera(onOpened: (String) -> Unit, onClosed: (String) -> Unit) {
+    override fun setupCamera(onOpened: (TorchState) -> Unit, onClosed: (TorchState) -> Unit) {
         Enforcer.assertOnMainThread()
 
         releaseCamera()
@@ -56,15 +57,15 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun toggleTorch() {
+    override suspend fun toggleTorch(state: TorchState) {
         withContext(context = Dispatchers.Default) {
-            cameraInterface?.toggleTorchState()
+            cameraInterface?.toggleTorch(state)
         }
     }
 
     override suspend fun torchOff() {
         withContext(context = Dispatchers.Default) {
-            cameraInterface?.setTorchState(false)
+            cameraInterface?.forceTorchOff()
         }
     }
 

@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.service.command
 
 import android.view.KeyEvent
 import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -37,14 +38,14 @@ internal class ToggleTorchCommand @Inject internal constructor(
     private var commandReady = false
 
     @PublishedApi
-    internal suspend inline fun handleTorchOnDoublePressed(onAction: () -> Unit) {
+    internal suspend inline fun handleTorchOnDoublePressed(onAction: (TorchState) -> Unit) {
         mutex.withLock {
             commandReady = false
         }
 
 
         Timber.d("Key has been double pressed, toggle torch")
-        onAction()
+        onAction(TorchState.TOGGLE)
     }
 
     @PublishedApi
@@ -68,7 +69,7 @@ internal class ToggleTorchCommand @Inject internal constructor(
     }
 
     @PublishedApi
-    internal suspend inline fun handleTorchOnCommand(keyCode: Int, onAction: () -> Unit) {
+    internal suspend inline fun handleTorchOnCommand(keyCode: Int, onAction: (TorchState) -> Unit) {
         if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
             return
         }
@@ -80,7 +81,7 @@ internal class ToggleTorchCommand @Inject internal constructor(
         }
     }
 
-    suspend inline fun handleCommand(keyCode: Int, onAction: () -> Unit) {
+    suspend inline fun handleCommand(keyCode: Int, onAction: (TorchState) -> Unit) {
         handleTorchOnCommand(keyCode, onAction)
     }
 }
