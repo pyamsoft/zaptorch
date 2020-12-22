@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.service
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
+import com.pyamsoft.zaptorch.core.NotificationHandler
 import com.pyamsoft.zaptorch.core.TorchError
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import kotlinx.coroutines.*
@@ -27,6 +28,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class VolumeServiceInteractorImpl @Inject internal constructor(
+    private val notificationHandler: NotificationHandler,
     private val errorBus: EventBus<TorchError>
 ) : VolumeServiceInteractor {
 
@@ -49,6 +51,14 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
     override suspend fun observeCameraState(): EventConsumer<TorchError> =
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            return@withContext errorBus
+            return@withContext object : EventConsumer<TorchError> {
+                override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
+                    errorBus.onEvent { event ->
+                        notificationHandler.stop()
+                        emitter(event)
+                    }
+                }
+
+            }
         }
 }

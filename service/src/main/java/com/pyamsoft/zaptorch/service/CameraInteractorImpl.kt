@@ -76,6 +76,7 @@ internal class CameraInteractorImpl @Inject internal constructor(
             setOnUnavailableCallback { state ->
                 Timber.w("Torch unavailable: $state")
                 clearCommands()
+                notificationHandler.stop()
             }
         }
     }
@@ -100,6 +101,8 @@ internal class CameraInteractorImpl @Inject internal constructor(
 
     override fun destroy() {
         clearCommands()
+        notificationHandler.stop()
+
         cameraInterface?.destroy()
         cameraInterface = null
     }
