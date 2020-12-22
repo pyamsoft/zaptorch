@@ -18,15 +18,33 @@
     <string name="app_name">ZapTorch</string>
     <string name="explain_accessibility_service">
     In order to run correctly, ZapTorch needs to enable a system Accessibility Service.
-    This service will monitor when you press the Volume Down key on your device.
-    It will not monitor any other keys nor will it collect any user information.
-
-    \n\nPlease Enable ZapTorch in the System Accesibility Settings.
+    \n\n
+    ZapTorch needs this to observe when you press the Volume keys to turn on the flash light.
+    \n\n
+    It watches the following commands:
+    \n\n
+    ↓ ↓ - Toggle flash light
+    \n
+    ↑ ↑ - Pulse slowly
+    \n
+    ↓ ↑ - Strobe effect quickly
+    \n\n
+    It does not collect any information. It does not monitor anything else at all.
+    \n\n
+    Please Enable ZapTorch in the System Accesibility Settings.
   </string>
     <string name="accessibility_service_description">
-    ZapTorch needs this to observe when you press the Volume Down key to turn on the flash light.
-
-    \n\nIt does not collect any information. It does not monitor anything else at all.
+    ZapTorch needs this to observe when you press the Volume keys to turn on the flash light.
+    \n\n
+    It watches the following commands:
+    \n\n
+    ↓ ↓ - Toggle flash light
+    \n
+    ↑ ↑ - Pulse slowly
+    \n
+    ↓ ↑ - Strobe effect quickly
+    \n\n
+    It does not collect any information. It does not monitor anything else at all.
   </string>
     <string name="pirvacy_policy">Privacy Policy</string>
 </resources>
