@@ -59,9 +59,9 @@ internal class PulseTorchCommand @Inject internal constructor(
                         handler.onCommandStart(TorchState.Pulse)
                         while (isActive) {
                             handler.forceTorchOn(TorchState.Pulse)
-                            delay(300)
+                            delay(PULSE_TIMEOUT)
                             handler.forceTorchOff()
-                            delay(300)
+                            delay(PULSE_TIMEOUT)
                         }
                     }
                 } else {
@@ -129,5 +129,9 @@ internal class PulseTorchCommand @Inject internal constructor(
 
     override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {
         return handleTorchOnCommand(keyCode, handler)
+    }
+
+    companion object {
+        private const val PULSE_TIMEOUT = 600L
     }
 }
