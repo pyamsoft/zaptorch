@@ -24,16 +24,10 @@ internal class TorchCallback internal constructor(
 ) : CameraManager.TorchCallback() {
 
     private var cameraId: String? = null
-    private var enabled = false
 
     @CheckResult
     fun id(): String? {
         return cameraId
-    }
-
-    @CheckResult
-    fun isEnabled(): Boolean {
-        return enabled
     }
 
     override fun onTorchModeChanged(
@@ -42,13 +36,11 @@ internal class TorchCallback internal constructor(
     ) {
         super.onTorchModeChanged(cameraId, enabled)
         this.cameraId = cameraId
-        this.enabled = enabled
     }
 
     override fun onTorchModeUnavailable(cameraId: String) {
         super.onTorchModeUnavailable(cameraId)
         this.cameraId = null
-        this.enabled = false
         onUnavailable(cameraId)
     }
 }

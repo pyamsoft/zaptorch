@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.core
 
 
-interface TorchToggle {
+interface TorchOn {
 
-    suspend fun toggleTorch(state: TorchState)
+    suspend fun forceTorchOn(state: TorchState)
 }

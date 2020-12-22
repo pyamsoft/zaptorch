@@ -40,32 +40,30 @@ internal class CameraInteractorImpl @Inject internal constructor(
         val self = this
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-
             if (action != KeyEvent.ACTION_UP) {
                 return@withContext
             }
 
             if (toggleCommand.handle(keyCode, self)) {
-                pulseCommand.reset()
+                pulseCommand.awaitReset()
                 Timber.d("Torch handled by ${TorchState.Toggle}")
             }
 
             if (pulseCommand.handle(keyCode, self)) {
-                toggleCommand.reset()
+                toggleCommand.awaitReset()
                 Timber.d("Torch handled by ${TorchState.Pulse}")
             }
         }
     }
 
-    override fun onCommandStart(state: TorchState) {
+    override suspend fun onCommandStart(state: TorchState) {
         Timber.d("Start command: $state")
         notificationHandler.start()
     }
 
-    override fun onCommandStop(state: TorchState) {
+    override suspend fun onCommandStop(state: TorchState) {
         Timber.d("Stop command: $state")
         notificationHandler.stop()
-        clearCommands()
     }
 
     override fun initialize() {
@@ -81,22 +79,21 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun toggleTorch(state: TorchState) {
+    override suspend fun forceTorchOn(state: TorchState) {
         withContext(context = Dispatchers.Default) {
-            cameraInterface?.toggleTorch(state)
+            cameraInterface?.forceTorchOn(state)
         }
     }
 
     override suspend fun forceTorchOff() {
         withContext(context = Dispatchers.Default) {
-            clearCommands()
             cameraInterface?.forceTorchOff()
         }
     }
 
     private fun clearCommands() {
-        toggleCommand.destroy()
-        pulseCommand.destroy()
+        toggleCommand.reset()
+        pulseCommand.reset()
     }
 
     override fun destroy() {

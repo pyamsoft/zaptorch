@@ -23,6 +23,7 @@ import com.pyamsoft.zaptorch.core.NotificationHandler
 import com.pyamsoft.zaptorch.core.TorchError
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import kotlinx.coroutines.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,7 +55,9 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
             return@withContext object : EventConsumer<TorchError> {
                 override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
                     errorBus.onEvent { event ->
+                        Timber.w("Stop notification on camera error")
                         notificationHandler.stop()
+
                         emitter(event)
                     }
                 }

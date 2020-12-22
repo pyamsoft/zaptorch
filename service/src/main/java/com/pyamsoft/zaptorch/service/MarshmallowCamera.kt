@@ -55,17 +55,17 @@ internal class MarshmallowCamera @Inject internal constructor(
         this.activeState = state
     }
 
-    override suspend fun toggleTorch(state: TorchState) {
+    override suspend fun forceTorchOn(state: TorchState) {
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            applyTorchState(state, !torchCallback.isEnabled())?.let { errorBus.send(it) }
+            applyTorchState(state, true)?.let { errorBus.send(it) }
         }
     }
 
     override suspend fun forceTorchOff() {
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            applyTorchState(TorchState.None, false)?.let { errorBus.send(it) }
+            applyTorchState(activeState, false)?.let { errorBus.send(it) }
         }
     }
 
@@ -90,10 +90,8 @@ internal class MarshmallowCamera @Inject internal constructor(
     }
 
     override fun release() {
-        if (torchCallback.isEnabled()) {
-            if (applyTorchState(TorchState.None, false) == null) {
-                Timber.d("Torch turned off")
-            }
+        if (applyTorchState(TorchState.None, false) == null) {
+            Timber.d("Torch turned off")
         }
 
         Timber.d("Unregister torch callback")

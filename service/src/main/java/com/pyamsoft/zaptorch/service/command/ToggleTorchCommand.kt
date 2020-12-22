@@ -31,6 +31,8 @@ internal class ToggleTorchCommand @Inject internal constructor(
     private val preferences: CameraPreferences
 ) : Command<TorchState.Toggle> {
 
+    private val commandScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     private val mutex = Mutex()
     private var commandReady = false
 
@@ -38,41 +40,43 @@ internal class ToggleTorchCommand @Inject internal constructor(
     private var job: Job? = null
 
     @PublishedApi
-    internal suspend inline fun handleTorchOnDoublePressed(handler: Command.Handler) =
-        coroutineScope {
-            mutex.withLock {
-                commandReady = false
+    internal suspend inline fun handleTorchOnDoublePressed(
+        scope: CoroutineScope,
+        handler: Command.Handler
+    ) {
+        mutex.withLock {
+            commandReady = false
 
-                timerJob?.cancelAndJoin()
-                timerJob = null
-            }
+            timerJob?.cancelAndJoin()
+            timerJob = null
+        }
 
-            mutex.withLock {
-                job = job.let { j ->
-                    if (j == null) {
-                        launch(context = Dispatchers.Default) {
-                            handler.onCommandStart(TorchState.Toggle)
-                            handler.toggleTorch(TorchState.Toggle)
-                        }
-                    } else {
-                        j.cancelAndJoin()
-                        handler.onCommandStop(TorchState.Toggle)
-                        handler.forceTorchOff()
-                        null
+        mutex.withLock {
+            job = job.let { j ->
+                handler.forceTorchOff()
+                if (j == null) {
+                    scope.launch {
+                        handler.onCommandStart(TorchState.Toggle)
+                        handler.forceTorchOn(TorchState.Toggle)
                     }
+                } else {
+                    j.cancelAndJoin()
+                    handler.onCommandStop(TorchState.Toggle)
+                    null
                 }
             }
         }
+    }
 
     @PublishedApi
-    internal suspend fun handleTorchOnFirstPress() = coroutineScope {
+    internal suspend fun handleTorchOnFirstPress(scope: CoroutineScope) {
         mutex.withLock {
             commandReady = true
         }
 
         // Launch a new coroutine here so that this happens in parallel with other operations
         timerJob?.cancelAndJoin()
-        timerJob = launch(context = Dispatchers.Default) {
+        timerJob = scope.launch {
             delay(preferences.getButtonDelayTime())
             if (commandReady) {
                 mutex.withLock {
@@ -92,16 +96,28 @@ internal class ToggleTorchCommand @Inject internal constructor(
     ): Boolean {
         return if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) false else {
             commandReady.also { ready ->
-                if (ready) {
-                    handleTorchOnDoublePressed(handler)
-                } else {
-                    handleTorchOnFirstPress()
+                commandScope.launch {
+                    if (ready) {
+                        handleTorchOnDoublePressed(this, handler)
+                    } else {
+                        handleTorchOnFirstPress(this)
+                    }
                 }
             }
         }
     }
 
-    override suspend fun reset() {
+    override fun reset() {
+        commandReady = false
+
+        timerJob?.cancel()
+        timerJob = null
+
+        job?.cancel()
+        job = null
+    }
+
+    override suspend fun awaitReset() {
         mutex.withLock {
             commandReady = false
 
@@ -114,13 +130,8 @@ internal class ToggleTorchCommand @Inject internal constructor(
     }
 
     override fun destroy() {
-        commandReady = false
-
-        timerJob?.cancel()
-        timerJob = null
-
-        job?.cancel()
-        job = null
+        reset()
+        commandScope.cancel()
     }
 
     override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {

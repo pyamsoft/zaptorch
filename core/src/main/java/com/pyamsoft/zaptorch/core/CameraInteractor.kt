@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.core
 
 
-interface CameraInteractor : TorchToggle {
+interface CameraInteractor : TorchOn {
 
     fun initialize()
 
