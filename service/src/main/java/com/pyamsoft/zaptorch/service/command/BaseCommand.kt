@@ -16,20 +16,16 @@
 
 package com.pyamsoft.zaptorch.service.command
 
-import android.view.KeyEvent
 import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.core.CameraPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class PulseTorchCommand @Inject internal constructor(
+internal abstract class BaseCommand<S : TorchState> protected constructor(
     private val preferences: CameraPreferences
-) : Command<TorchState.Pulse> {
+) : Command<S> {
 
     private val commandScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -54,23 +50,14 @@ internal class PulseTorchCommand @Inject internal constructor(
             job = job.let { j ->
                 handler.forceTorchOff()
                 if (j == null) {
-                    launch {
-                        handler.onCommandStart(TorchState.Pulse)
-                        while (isActive) {
-                            handler.forceTorchOn(TorchState.Pulse)
-                            delay(PULSE_TIMEOUT)
-                            handler.forceTorchOff()
-                            delay(PULSE_TIMEOUT)
-                        }
-                    }
+                    launch { onClaimTorch(handler) }
                 } else {
                     j.cancelAndJoin()
-                    handler.onCommandStop(TorchState.Pulse)
+                    handler.onCommandStop(TorchState.Toggle)
                     null
                 }
             }
         }
-
     }
 
     @PublishedApi
@@ -96,23 +83,21 @@ internal class PulseTorchCommand @Inject internal constructor(
     @CheckResult
     @PublishedApi
     internal suspend inline fun handleTorchOnCommand(
-        keyCode: Int,
+        isReady: Boolean,
         handler: Command.Handler
     ): Boolean {
-        return if (keyCode != KeyEvent.KEYCODE_VOLUME_UP) false else {
-            commandReady.also { ready ->
-                commandScope.launch {
-                    if (ready) {
-                        handleTorchOnDoublePressed(handler)
-                    } else {
-                        handleTorchOnFirstPress()
-                    }
+        return isReady.also { ready ->
+            commandScope.launch {
+                if (ready) {
+                    handleTorchOnDoublePressed(handler)
+                } else {
+                    handleTorchOnFirstPress()
                 }
             }
         }
     }
 
-    override fun reset() {
+    final override fun reset() {
         commandReady = false
 
         timerJob?.cancel()
@@ -122,16 +107,20 @@ internal class PulseTorchCommand @Inject internal constructor(
         job = null
     }
 
-    override fun destroy() {
+    final override fun destroy() {
         reset()
         commandScope.cancel()
     }
 
-    override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {
-        return handleTorchOnCommand(keyCode, handler)
+    final override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {
+        val isReady = mutex.withLock { commandReady }
+        return if (!isKeyCodeHandled(keyCode, isReady)) false else {
+            handleTorchOnCommand(isReady, handler)
+        }
     }
 
-    companion object {
-        private const val PULSE_TIMEOUT = 600L
-    }
+    protected abstract suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler)
+
+    @CheckResult
+    protected abstract fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean
 }

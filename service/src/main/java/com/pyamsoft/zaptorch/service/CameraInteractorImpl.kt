@@ -32,6 +32,7 @@ internal class CameraInteractorImpl @Inject internal constructor(
     private val notificationHandler: NotificationHandler,
     private val toggleCommand: Command<TorchState.Toggle>,
     private val pulseCommand: Command<TorchState.Pulse>,
+    private val flickerCommand: Command<TorchState.Flicker>,
 ) : CameraInteractor, TorchOffInteractor, Command.Handler {
 
     private var cameraInterface: CameraInterface? = null
@@ -46,12 +47,20 @@ internal class CameraInteractorImpl @Inject internal constructor(
 
             if (toggleCommand.handle(keyCode, self)) {
                 pulseCommand.reset()
+                flickerCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Toggle}")
             }
 
             if (pulseCommand.handle(keyCode, self)) {
                 toggleCommand.reset()
+                flickerCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Pulse}")
+            }
+
+            if (flickerCommand.handle(keyCode, self)) {
+                toggleCommand.reset()
+                pulseCommand.reset()
+                Timber.d("Torch handled by ${TorchState.Flicker}")
             }
         }
     }
@@ -69,7 +78,10 @@ internal class CameraInteractorImpl @Inject internal constructor(
     override fun initialize() {
         Enforcer.assertOnMainThread()
 
-        destroy()
+        // Reset
+        clearCommands()
+        teardown()
+
         cameraInterface = cameraProvider.get().apply {
             setOnUnavailableCallback { state ->
                 Timber.w("Torch unavailable: $state")
@@ -91,17 +103,36 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
+    override suspend fun killTorch() {
+        withContext(context = Dispatchers.Default) {
+            Timber.d("Kill torch")
+            clearCommands()
+            notificationHandler.stop()
+            cameraInterface?.forceTorchOff()
+        }
+    }
+
     private fun clearCommands() {
         toggleCommand.reset()
         pulseCommand.reset()
+        flickerCommand.reset()
+    }
+
+    private fun destroyCommands() {
+        toggleCommand.destroy()
+        pulseCommand.destroy()
+        flickerCommand.destroy()
+    }
+
+    private fun teardown() {
+        notificationHandler.stop()
+        cameraInterface?.destroy()
+        cameraInterface = null
     }
 
     override fun destroy() {
-        clearCommands()
-        notificationHandler.stop()
-
-        cameraInterface?.destroy()
-        cameraInterface = null
+        destroyCommands()
+        teardown()
     }
 
 }

@@ -29,7 +29,7 @@ internal class TorchBinder @Inject internal constructor(
 
     fun toggle() {
         binderScope.launch(context = Dispatchers.Default) {
-            interactor.forceTorchOff()
+            interactor.killTorch()
         }
     }
 }
