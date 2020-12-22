@@ -41,9 +41,8 @@ internal class PulseTorchCommand @Inject internal constructor(
 
     @PublishedApi
     internal suspend inline fun handleTorchOnDoublePressed(
-        scope: CoroutineScope,
         handler: Command.Handler
-    ) {
+    ) = coroutineScope {
         mutex.withLock {
             commandReady = false
 
@@ -55,7 +54,7 @@ internal class PulseTorchCommand @Inject internal constructor(
             job = job.let { j ->
                 handler.forceTorchOff()
                 if (j == null) {
-                    scope.launch {
+                    launch {
                         handler.onCommandStart(TorchState.Pulse)
                         while (isActive) {
                             handler.forceTorchOn(TorchState.Pulse)
@@ -71,17 +70,18 @@ internal class PulseTorchCommand @Inject internal constructor(
                 }
             }
         }
+
     }
 
     @PublishedApi
-    internal suspend fun handleTorchOnFirstPress(scope: CoroutineScope) {
+    internal suspend fun handleTorchOnFirstPress() = coroutineScope {
         mutex.withLock {
             commandReady = true
         }
 
         // Launch a new coroutine here so that this happens in parallel with other operations
         timerJob?.cancelAndJoin()
-        timerJob = scope.launch {
+        timerJob = launch {
             delay(preferences.getButtonDelayTime())
             if (commandReady) {
                 mutex.withLock {
@@ -103,9 +103,9 @@ internal class PulseTorchCommand @Inject internal constructor(
             commandReady.also { ready ->
                 commandScope.launch {
                     if (ready) {
-                        handleTorchOnDoublePressed(this, handler)
+                        handleTorchOnDoublePressed(handler)
                     } else {
-                        handleTorchOnFirstPress(this)
+                        handleTorchOnFirstPress()
                     }
                 }
             }
