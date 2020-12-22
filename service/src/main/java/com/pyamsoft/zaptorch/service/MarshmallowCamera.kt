@@ -41,20 +41,10 @@ internal class MarshmallowCamera @Inject internal constructor(
 
     private val handler = Handler(Looper.getMainLooper())
     private val cameraManager = requireNotNull(context.getSystemService<CameraManager>())
-    private val torchCallback = TorchCallback(
-        onOpened = { id ->
-            Timber.d("Opened camera $id")
-            onOpened(activeState)
-        },
-        onClosed = { id ->
-            Timber.d("Closed camera $id")
-            onClosed(activeState)
-        },
-        onUnavailable = { id ->
-            Timber.d("Camera unavailable $id")
-            onUnavailable(activeState)
-        }
-    )
+    private val torchCallback = TorchCallback { id ->
+        Timber.w("Camera unavailable $id")
+        onUnavailable(activeState)
+    }
 
     init {
         Timber.d("Register torch callback on main thread")
@@ -62,7 +52,6 @@ internal class MarshmallowCamera @Inject internal constructor(
     }
 
     private fun setTorchState(state: TorchState) {
-        Timber.d("Setting torch state tracker to $state")
         this.activeState = state
     }
 
@@ -90,9 +79,8 @@ internal class MarshmallowCamera @Inject internal constructor(
         }
 
         return try {
-            Timber.d("Set torch: $cameraId $enabled")
             cameraManager.setTorchMode(cameraId, enabled)
-            setTorchState(if (enabled) state else TorchState.None)
+            setTorchState(state)
             null
         } catch (e: CameraAccessException) {
             Timber.e(e, "Error during setTorchState $cameraId $enabled")

@@ -17,7 +17,9 @@
 package com.pyamsoft.zaptorch.service.command
 
 import androidx.annotation.CheckResult
+import com.pyamsoft.zaptorch.core.TorchOff
 import com.pyamsoft.zaptorch.core.TorchState
+import com.pyamsoft.zaptorch.core.TorchToggle
 
 internal interface Command<out S : TorchState> {
 
@@ -26,5 +28,12 @@ internal interface Command<out S : TorchState> {
     suspend fun reset()
 
     @CheckResult
-    suspend fun handle(keyCode: Int, onAction: suspend (S) -> Unit): Boolean
+    suspend fun handle(keyCode: Int, handler: Handler): Boolean
+
+    interface Handler : TorchOff, TorchToggle {
+
+        fun onCommandStart(state: TorchState)
+
+        fun onCommandStop(state: TorchState)
+    }
 }

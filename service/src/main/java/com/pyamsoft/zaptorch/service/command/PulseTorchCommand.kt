@@ -27,9 +27,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class ToggleTorchCommand @Inject internal constructor(
+internal class PulseTorchCommand @Inject internal constructor(
     private val preferences: CameraPreferences
-) : Command<TorchState.Toggle> {
+) : Command<TorchState.Pulse> {
 
     private val mutex = Mutex()
     private var commandReady = false
@@ -51,12 +51,15 @@ internal class ToggleTorchCommand @Inject internal constructor(
                 job = job.let { j ->
                     if (j == null) {
                         launch(context = Dispatchers.Default) {
-                            handler.onCommandStart(TorchState.Toggle)
-                            handler.toggleTorch(TorchState.Toggle)
+                            handler.onCommandStart(TorchState.Pulse)
+                            while (isActive) {
+                                handler.toggleTorch(TorchState.Pulse)
+                                delay(300)
+                            }
                         }
                     } else {
                         j.cancelAndJoin()
-                        handler.onCommandStop(TorchState.Toggle)
+                        handler.onCommandStop(TorchState.Pulse)
                         handler.forceTorchOff()
                         null
                     }
@@ -90,7 +93,7 @@ internal class ToggleTorchCommand @Inject internal constructor(
         keyCode: Int,
         handler: Command.Handler
     ): Boolean {
-        return if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) false else {
+        return if (keyCode != KeyEvent.KEYCODE_VOLUME_UP) false else {
             commandReady.also { ready ->
                 if (ready) {
                     handleTorchOnDoublePressed(handler)

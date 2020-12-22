@@ -18,11 +18,8 @@ package com.pyamsoft.zaptorch.service
 
 import android.hardware.camera2.CameraManager
 import androidx.annotation.CheckResult
-import timber.log.Timber
 
 internal class TorchCallback internal constructor(
-    private val onOpened: (String) -> Unit,
-    private val onClosed: (String) -> Unit,
     private val onUnavailable: (String) -> Unit,
 ) : CameraManager.TorchCallback() {
 
@@ -44,20 +41,12 @@ internal class TorchCallback internal constructor(
         enabled: Boolean
     ) {
         super.onTorchModeChanged(cameraId, enabled)
-        Timber.d("Torch changed $cameraId $enabled")
         this.cameraId = cameraId
         this.enabled = enabled
-
-        if (enabled) {
-            onOpened(cameraId)
-        } else {
-            onClosed(cameraId)
-        }
     }
 
     override fun onTorchModeUnavailable(cameraId: String) {
         super.onTorchModeUnavailable(cameraId)
-        Timber.e("Torch unavailable $cameraId")
         this.cameraId = null
         this.enabled = false
         onUnavailable(cameraId)

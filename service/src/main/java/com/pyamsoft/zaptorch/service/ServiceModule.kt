@@ -20,6 +20,7 @@ import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.core.*
 import com.pyamsoft.zaptorch.service.command.Command
+import com.pyamsoft.zaptorch.service.command.PulseTorchCommand
 import com.pyamsoft.zaptorch.service.command.ToggleTorchCommand
 import dagger.Binds
 import dagger.Module
@@ -32,6 +33,10 @@ abstract class ServiceModule {
     @Binds
     @CheckResult
     internal abstract fun bindToggleCommand(impl: ToggleTorchCommand): Command<TorchState.Toggle>
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindPulseCommand(impl: PulseTorchCommand): Command<TorchState.Pulse>
 
     @Binds
     @CheckResult

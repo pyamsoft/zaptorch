@@ -17,8 +17,6 @@
 package com.pyamsoft.zaptorch.service.monitor
 
 import com.pyamsoft.zaptorch.core.CameraInteractor
-import com.pyamsoft.zaptorch.core.NotificationHandler
-import com.pyamsoft.zaptorch.core.TorchState
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
 import kotlinx.coroutines.Dispatchers
@@ -30,18 +28,11 @@ import javax.inject.Inject
 internal class ServiceBinder @Inject internal constructor(
     private val cameraInteractor: CameraInteractor,
     private val serviceInteractor: VolumeServiceInteractor,
-    private val notificationHandler: NotificationHandler
 ) : Binder<ServiceControllerEvent>() {
-
-    private var isShowingNotification = false
 
     override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
         binderScope.launch(context = Dispatchers.Main) {
-            cameraInteractor.initialize(
-                onOpened = { handleCameraOpened(it) },
-                onClosed = { handleCameraClosed(it) },
-                onUnavailable = { stopNotification() }
-            )
+            cameraInteractor.initialize()
         }
 
         watchCameraErrors(onEvent)
@@ -49,72 +40,6 @@ internal class ServiceBinder @Inject internal constructor(
 
     override fun onUnbind() {
         cameraInteractor.destroy()
-        notificationHandler.stop()
-    }
-
-    private fun handleFlickerOpen() {
-        Timber.d("State ${TorchState.Flicker} torch on")
-        startNotification()
-    }
-
-    private fun handlePulseOpen() {
-        Timber.d("State ${TorchState.Pulse} torch on")
-        startNotification()
-    }
-
-    private fun handleToggleOpen() {
-        Timber.d("State ${TorchState.Toggle} torch on")
-        startNotification()
-    }
-
-    private fun handleFlickerClose() {
-        Timber.d("State ${TorchState.Flicker} torch off")
-        // Don't stop notification yet
-    }
-
-    private fun handlePulseClose() {
-        Timber.d("State ${TorchState.Pulse} torch off")
-        // Don't stop notification yet
-    }
-
-    private fun handleToggleClose() {
-        Timber.d("State ${TorchState.Toggle} torch off")
-        stopNotification()
-    }
-
-    private fun handleNoneState() {
-        Timber.d("State is ${TorchState.None} stop notification")
-        stopNotification()
-    }
-
-    private fun startNotification() {
-        notificationHandler.stop()
-        isShowingNotification = false
-    }
-
-    private fun stopNotification() {
-        if (isShowingNotification) {
-            isShowingNotification = true
-            notificationHandler.stop()
-        }
-    }
-
-    private fun handleCameraOpened(state: TorchState) {
-        return when (state) {
-            is TorchState.None -> handleNoneState()
-            is TorchState.Toggle -> handleToggleOpen()
-            is TorchState.Pulse -> handlePulseOpen()
-            is TorchState.Flicker -> handleFlickerOpen()
-        }
-    }
-
-    private fun handleCameraClosed(state: TorchState) {
-        return when (state) {
-            is TorchState.None -> handleNoneState()
-            is TorchState.Toggle -> handleToggleClose()
-            is TorchState.Pulse -> handlePulseClose()
-            is TorchState.Flicker -> handleFlickerClose()
-        }
     }
 
     private inline fun watchCameraErrors(crossinline onEvent: (ServiceControllerEvent) -> Unit) =

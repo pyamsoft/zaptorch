@@ -19,11 +19,7 @@ package com.pyamsoft.zaptorch.core
 
 interface CameraInteractor : TorchToggle {
 
-    fun initialize(
-        onOpened: (TorchState) -> Unit,
-        onClosed: (TorchState) -> Unit,
-        onUnavailable: (TorchState) -> Unit
-    )
+    fun initialize()
 
     fun destroy()
 

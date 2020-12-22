@@ -22,28 +22,10 @@ import com.pyamsoft.zaptorch.core.TorchState
 internal abstract class CameraCommon protected constructor(
 ) : CameraInterface, OnCameraStateChangedCallback {
 
-    private var openedCallback: ((TorchState) -> Unit)? = null
-    private var closedCallback: ((TorchState) -> Unit)? = null
     private var unavailableCallback: ((TorchState) -> Unit)? = null
-
-    final override fun setOnOpenedCallback(onOpened: (TorchState) -> Unit) {
-        this.openedCallback = onOpened
-    }
-
-    final override fun setOnClosedCallback(onClosed: (TorchState) -> Unit) {
-        this.closedCallback = onClosed
-    }
 
     final override fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit) {
         this.unavailableCallback = onUnavailable
-    }
-
-    final override fun onOpened(state: TorchState) {
-        openedCallback?.invoke(state)
-    }
-
-    final override fun onClosed(state: TorchState) {
-        closedCallback?.invoke(state)
     }
 
     override fun onUnavailable(state: TorchState) {
@@ -52,9 +34,6 @@ internal abstract class CameraCommon protected constructor(
 
     final override fun destroy() {
         release()
-
-        openedCallback = null
-        closedCallback = null
         unavailableCallback = null
     }
 

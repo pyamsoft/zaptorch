@@ -18,10 +18,7 @@ package com.pyamsoft.zaptorch.service
 
 import android.view.KeyEvent
 import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.zaptorch.core.CameraInteractor
-import com.pyamsoft.zaptorch.core.CameraInterface
-import com.pyamsoft.zaptorch.core.TorchOffInteractor
-import com.pyamsoft.zaptorch.core.TorchState
+import com.pyamsoft.zaptorch.core.*
 import com.pyamsoft.zaptorch.service.command.Command
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -32,12 +29,15 @@ import javax.inject.Singleton
 @Singleton
 internal class CameraInteractorImpl @Inject internal constructor(
     private val cameraProvider: Provider<CameraInterface>,
+    private val notificationHandler: NotificationHandler,
     private val toggleCommand: Command<TorchState.Toggle>,
-) : CameraInteractor, TorchOffInteractor {
+    private val pulseCommand: Command<TorchState.Pulse>,
+) : CameraInteractor, TorchOffInteractor, Command.Handler {
 
     private var cameraInterface: CameraInterface? = null
 
-    override suspend fun handleKeyPress(action: Int, keyCode: Int) =
+    override suspend fun handleKeyPress(action: Int, keyCode: Int) {
+        val self = this
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
 
@@ -45,25 +45,37 @@ internal class CameraInteractorImpl @Inject internal constructor(
                 return@withContext
             }
 
-            if (toggleCommand.handle(keyCode) { toggleTorch(it) }) {
+            if (toggleCommand.handle(keyCode, self)) {
+                pulseCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Toggle}")
             }
-        }
 
-    override fun initialize(
-        onOpened: (TorchState) -> Unit,
-        onClosed: (TorchState) -> Unit,
-        onUnavailable: (TorchState) -> Unit
-    ) {
+            if (pulseCommand.handle(keyCode, self)) {
+                toggleCommand.reset()
+                Timber.d("Torch handled by ${TorchState.Pulse}")
+            }
+        }
+    }
+
+    override fun onCommandStart(state: TorchState) {
+        Timber.d("Start command: $state")
+        notificationHandler.start()
+    }
+
+    override fun onCommandStop(state: TorchState) {
+        Timber.d("Stop command: $state")
+        notificationHandler.stop()
+        clearCommands()
+    }
+
+    override fun initialize() {
         Enforcer.assertOnMainThread()
 
         destroy()
         cameraInterface = cameraProvider.get().apply {
-            setOnOpenedCallback(onOpened)
-            setOnClosedCallback(onClosed)
             setOnUnavailableCallback { state ->
-                toggleCommand.destroy()
-                onUnavailable(state)
+                Timber.w("Torch unavailable: $state")
+                clearCommands()
             }
         }
     }
@@ -74,14 +86,20 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun torchOff() {
+    override suspend fun forceTorchOff() {
         withContext(context = Dispatchers.Default) {
+            clearCommands()
             cameraInterface?.forceTorchOff()
         }
     }
 
-    override fun destroy() {
+    private fun clearCommands() {
         toggleCommand.destroy()
+        pulseCommand.destroy()
+    }
+
+    override fun destroy() {
+        clearCommands()
         cameraInterface?.destroy()
         cameraInterface = null
     }
