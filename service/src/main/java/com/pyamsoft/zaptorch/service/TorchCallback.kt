@@ -23,6 +23,7 @@ import timber.log.Timber
 internal class TorchCallback internal constructor(
     private val onOpened: (String) -> Unit,
     private val onClosed: (String) -> Unit,
+    private val onUnavailable: (String) -> Unit,
 ) : CameraManager.TorchCallback() {
 
     private var cameraId: String? = null
@@ -59,6 +60,6 @@ internal class TorchCallback internal constructor(
         Timber.e("Torch unavailable $cameraId")
         this.cameraId = null
         this.enabled = false
-        onClosed(cameraId)
+        onUnavailable(cameraId)
     }
 }

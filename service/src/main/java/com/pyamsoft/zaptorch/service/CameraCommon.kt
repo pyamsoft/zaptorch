@@ -24,6 +24,7 @@ internal abstract class CameraCommon protected constructor(
 
     private var openedCallback: ((TorchState) -> Unit)? = null
     private var closedCallback: ((TorchState) -> Unit)? = null
+    private var unavailableCallback: ((TorchState) -> Unit)? = null
 
     final override fun setOnOpenedCallback(onOpened: (TorchState) -> Unit) {
         this.openedCallback = onOpened
@@ -31,6 +32,10 @@ internal abstract class CameraCommon protected constructor(
 
     final override fun setOnClosedCallback(onClosed: (TorchState) -> Unit) {
         this.closedCallback = onClosed
+    }
+
+    final override fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit) {
+        this.unavailableCallback = onUnavailable
     }
 
     final override fun onOpened(state: TorchState) {
@@ -41,11 +46,16 @@ internal abstract class CameraCommon protected constructor(
         closedCallback?.invoke(state)
     }
 
+    override fun onUnavailable(state: TorchState) {
+        unavailableCallback?.invoke(state)
+    }
+
     final override fun destroy() {
         release()
 
         openedCallback = null
         closedCallback = null
+        unavailableCallback = null
     }
 
     protected abstract fun release()

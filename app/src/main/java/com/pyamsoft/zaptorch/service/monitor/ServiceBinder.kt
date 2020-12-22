@@ -37,9 +37,10 @@ internal class ServiceBinder @Inject internal constructor(
 
     override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
         binderScope.launch(context = Dispatchers.Main) {
-            cameraInteractor.setupCamera(
+            cameraInteractor.initialize(
                 onOpened = { handleCameraOpened(it) },
-                onClosed = { handleCameraClosed(it) }
+                onClosed = { handleCameraClosed(it) },
+                onUnavailable = { stopNotification() }
             )
         }
 
@@ -47,35 +48,23 @@ internal class ServiceBinder @Inject internal constructor(
     }
 
     override fun onUnbind() {
-        cameraInteractor.releaseCamera()
+        cameraInteractor.destroy()
         notificationHandler.stop()
     }
 
     private fun handleFlickerOpen() {
         Timber.d("State ${TorchState.Flicker} torch on")
-        if (!isShowingNotification) {
-            Timber.d("Show ${TorchState.Flicker} notification")
-            isShowingNotification = true
-            notificationHandler.start()
-        }
+        startNotification()
     }
 
     private fun handlePulseOpen() {
         Timber.d("State ${TorchState.Pulse} torch on")
-        if (!isShowingNotification) {
-            Timber.d("Show ${TorchState.Pulse} notification")
-            isShowingNotification = true
-            notificationHandler.start()
-        }
+        startNotification()
     }
 
     private fun handleToggleOpen() {
         Timber.d("State ${TorchState.Toggle} torch on")
-        if (!isShowingNotification) {
-            Timber.d("Show ${TorchState.Toggle} notification")
-            isShowingNotification = true
-            notificationHandler.start()
-        }
+        startNotification()
     }
 
     private fun handleFlickerClose() {
@@ -90,14 +79,24 @@ internal class ServiceBinder @Inject internal constructor(
 
     private fun handleToggleClose() {
         Timber.d("State ${TorchState.Toggle} torch off")
-        notificationHandler.stop()
-        isShowingNotification = false
+        stopNotification()
     }
 
     private fun handleNoneState() {
         Timber.d("State is ${TorchState.None} stop notification")
+        stopNotification()
+    }
+
+    private fun startNotification() {
         notificationHandler.stop()
         isShowingNotification = false
+    }
+
+    private fun stopNotification() {
+        if (isShowingNotification) {
+            isShowingNotification = true
+            notificationHandler.stop()
+        }
     }
 
     private fun handleCameraOpened(state: TorchState) {

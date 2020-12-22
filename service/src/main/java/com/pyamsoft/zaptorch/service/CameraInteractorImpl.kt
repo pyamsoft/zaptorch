@@ -50,13 +50,21 @@ internal class CameraInteractorImpl @Inject internal constructor(
             }
         }
 
-    override fun setupCamera(onOpened: (TorchState) -> Unit, onClosed: (TorchState) -> Unit) {
+    override fun initialize(
+        onOpened: (TorchState) -> Unit,
+        onClosed: (TorchState) -> Unit,
+        onUnavailable: (TorchState) -> Unit
+    ) {
         Enforcer.assertOnMainThread()
 
-        releaseCamera()
+        destroy()
         cameraInterface = cameraProvider.get().apply {
             setOnOpenedCallback(onOpened)
             setOnClosedCallback(onClosed)
+            setOnUnavailableCallback { state ->
+                toggleCommand.destroy()
+                onUnavailable(state)
+            }
         }
     }
 
@@ -72,7 +80,8 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
-    override fun releaseCamera() {
+    override fun destroy() {
+        toggleCommand.destroy()
         cameraInterface?.destroy()
         cameraInterface = null
     }

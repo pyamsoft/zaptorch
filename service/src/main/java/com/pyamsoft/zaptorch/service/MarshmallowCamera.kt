@@ -42,13 +42,17 @@ internal class MarshmallowCamera @Inject internal constructor(
     private val handler = Handler(Looper.getMainLooper())
     private val cameraManager = requireNotNull(context.getSystemService<CameraManager>())
     private val torchCallback = TorchCallback(
-        onOpened = {
-            Timber.d("Opened camera $it")
+        onOpened = { id ->
+            Timber.d("Opened camera $id")
             onOpened(activeState)
         },
-        onClosed = {
-            Timber.d("Closed camera $it")
+        onClosed = { id ->
+            Timber.d("Closed camera $id")
             onClosed(activeState)
+        },
+        onUnavailable = { id ->
+            Timber.d("Camera unavailable $id")
+            onUnavailable(activeState)
         }
     )
 

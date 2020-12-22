@@ -24,4 +24,6 @@ internal interface OnCameraStateChangedCallback {
 
     fun onClosed(state: TorchState)
 
+    fun onUnavailable(state: TorchState)
+
 }

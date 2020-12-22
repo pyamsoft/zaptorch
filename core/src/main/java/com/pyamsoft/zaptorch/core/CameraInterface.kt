@@ -24,6 +24,8 @@ interface CameraInterface : TorchToggle {
 
     fun setOnClosedCallback(onClosed: (TorchState) -> Unit)
 
+    fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit)
+
     fun destroy()
 
 }

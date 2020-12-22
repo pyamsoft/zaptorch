@@ -20,10 +20,7 @@ import android.view.KeyEvent
 import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.core.CameraPreferences
 import com.pyamsoft.zaptorch.core.TorchState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
@@ -37,16 +34,21 @@ internal class ToggleTorchCommand @Inject internal constructor(
 
     private val mutex = Mutex()
     private var commandReady = false
+    private var job: Job? = null
 
     @PublishedApi
-    internal suspend inline fun handleTorchOnDoublePressed(onAction: () -> Unit) {
-        mutex.withLock {
-            commandReady = false
-        }
-
+    internal suspend inline fun handleTorchOnDoublePressed(
+        crossinline onAction: suspend () -> Unit
+    ) = coroutineScope {
+        reset()
 
         Timber.d("Key has been double pressed, toggle torch")
-        onAction()
+        mutex.withLock {
+            clearJob()
+            job = launch(context = Dispatchers.Default) {
+                onAction()
+            }
+        }
     }
 
     @PublishedApi
@@ -59,12 +61,7 @@ internal class ToggleTorchCommand @Inject internal constructor(
         launch(context = Dispatchers.Default) {
             delay(preferences.getButtonDelayTime())
             if (commandReady) {
-                mutex.withLock {
-                    if (commandReady) {
-                        Timber.d("Set pressed back to false")
-                        commandReady = false
-                    }
-                }
+                reset()
             }
         }
     }
@@ -73,7 +70,7 @@ internal class ToggleTorchCommand @Inject internal constructor(
     @PublishedApi
     internal suspend inline fun handleTorchOnCommand(
         keyCode: Int,
-        onAction: () -> Unit
+        crossinline onAction: suspend () -> Unit
     ): Boolean {
         return if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) false else {
             commandReady.also { ready ->
@@ -84,6 +81,30 @@ internal class ToggleTorchCommand @Inject internal constructor(
                 }
             }
         }
+    }
+
+    private suspend fun clearJob() {
+        job?.also { j ->
+            Timber.d("Cancelling ${TorchState.Toggle} job: $j")
+            j.cancelAndJoin()
+        }
+        job = null
+    }
+
+    override suspend fun reset() {
+        mutex.withLock {
+            commandReady = false
+            clearJob()
+        }
+    }
+
+    override fun destroy() {
+        commandReady = false
+        job?.also { j ->
+            Timber.d("Cancelling ${TorchState.Toggle} job: $j")
+            j.cancel()
+        }
+        job = null
     }
 
     override suspend fun handle(
