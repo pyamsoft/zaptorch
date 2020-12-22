@@ -45,12 +45,12 @@ internal class CameraInteractorImpl @Inject internal constructor(
             }
 
             if (toggleCommand.handle(keyCode, self)) {
-                pulseCommand.awaitReset()
+                pulseCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Toggle}")
             }
 
             if (pulseCommand.handle(keyCode, self)) {
-                toggleCommand.awaitReset()
+                toggleCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Pulse}")
             }
         }

@@ -27,8 +27,6 @@ internal interface Command<out S : TorchState> {
 
     fun destroy()
 
-    suspend fun awaitReset()
-
     @CheckResult
     suspend fun handle(keyCode: Int, handler: Handler): Boolean
 

@@ -122,18 +122,6 @@ internal class PulseTorchCommand @Inject internal constructor(
         job = null
     }
 
-    override suspend fun awaitReset() {
-        mutex.withLock {
-            commandReady = false
-
-            job?.cancelAndJoin()
-            job = null
-
-            timerJob?.cancelAndJoin()
-            timerJob = null
-        }
-    }
-
     override fun destroy() {
         reset()
         commandScope.cancel()
