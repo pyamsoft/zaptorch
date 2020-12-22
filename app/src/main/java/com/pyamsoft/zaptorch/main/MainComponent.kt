@@ -18,6 +18,7 @@ package com.pyamsoft.zaptorch.main
 
 import android.view.ViewGroup
 import androidx.annotation.CheckResult
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.ui.app.ToolbarActivityProvider
@@ -41,6 +42,7 @@ interface MainComponent {
 
         @CheckResult
         fun create(
+            @BindsInstance owner: LifecycleOwner,
             @BindsInstance parent: ViewGroup,
             @BindsInstance toolbarActivityProvider: ToolbarActivityProvider,
             @BindsInstance themeProvider: ThemeProvider
@@ -55,7 +57,7 @@ interface MainComponent {
 
         @Binds
         @IntoMap
-        @ClassKey(MainToolbarViewModel::class)
-        internal abstract fun toolbarViewModel(viewModel: MainToolbarViewModel): UiViewModel<*, *, *>
+        @ClassKey(ToolbarViewModel::class)
+        internal abstract fun toolbarViewModel(viewModel: ToolbarViewModel): UiViewModel<*, *, *>
     }
 }

@@ -17,17 +17,23 @@
 package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.core.CameraPreferences
-import com.pyamsoft.zaptorch.core.ClearPreferences
-import com.pyamsoft.zaptorch.core.MainInteractor
-import com.pyamsoft.zaptorch.core.SettingsInteractor
-import com.pyamsoft.zaptorch.core.UIPreferences
-import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
+import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.zaptorch.core.*
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 abstract class ServiceModule {
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindTorchOffInteractor(impl: CameraInteractorImpl): TorchOffInteractor
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindCameraInteractor(impl: CameraInteractorImpl): CameraInteractor
 
     @Binds
     @CheckResult
@@ -39,17 +45,26 @@ abstract class ServiceModule {
 
     @Binds
     @CheckResult
-    internal abstract fun bindMainInteractor(impl: MainInteractorImpl): MainInteractor
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindUiPreferences(impl: ZapTorchPreferencesImpl): UIPreferences
-
-    @Binds
-    @CheckResult
     internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): CameraPreferences
 
     @Binds
     @CheckResult
     internal abstract fun bindClearPreferences(impl: ZapTorchPreferencesImpl): ClearPreferences
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindCamera(impl: MarshmallowCamera): CameraInterface
+
+    @Module
+    companion object {
+
+        @JvmStatic
+        @Provides
+        @CheckResult
+        @Singleton
+        fun provideCameraErrorBus(): EventBus<TorchError> {
+            return EventBus.create(emitOnlyWhenActive = false)
+        }
+
+    }
 }

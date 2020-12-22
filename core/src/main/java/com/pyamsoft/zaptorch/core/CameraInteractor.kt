@@ -16,14 +16,14 @@
 
 package com.pyamsoft.zaptorch.core
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.util.PreferenceListener
 
-interface MainInteractor {
+interface CameraInteractor {
 
-    @CheckResult
-    suspend fun isKeyPressHandled(): Boolean
+    fun setupCamera(onOpened: (String) -> Unit, onClosed: (String) -> Unit)
 
-    @CheckResult
-    suspend fun onHandleKeyPressChanged(onChange: (handle: Boolean) -> Unit): PreferenceListener
+    fun releaseCamera()
+
+    suspend fun handleKeyPress(action: Int, keyCode: Int)
+
+    suspend fun toggleTorch()
 }

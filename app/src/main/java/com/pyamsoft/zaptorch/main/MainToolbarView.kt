@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
@@ -34,9 +35,10 @@ import javax.inject.Inject
 import com.google.android.material.R as R2
 
 internal class MainToolbarView @Inject internal constructor(
-        toolbarActivityProvider: ToolbarActivityProvider,
-        theming: ThemeProvider,
-        parent: ViewGroup
+    owner: LifecycleOwner,
+    toolbarActivityProvider: ToolbarActivityProvider,
+    theming: ThemeProvider,
+    parent: ViewGroup
 ) : BaseUiView<UnitViewState, UnitViewEvent, ToolbarBinding>(parent) {
 
     override val viewBinding = ToolbarBinding::inflate
@@ -47,7 +49,7 @@ internal class MainToolbarView @Inject internal constructor(
         doOnInflate {
             setupToolbar(toolbarActivityProvider, theming)
 
-            layoutRoot.doOnApplyWindowInsets { v, insets, padding ->
+            layoutRoot.doOnApplyWindowInsets(owner) { v, insets, padding ->
                 v.updatePadding(top = padding.top + insets.systemWindowInsetTop)
             }
         }
@@ -59,8 +61,8 @@ internal class MainToolbarView @Inject internal constructor(
     }
 
     private fun setupToolbar(
-            toolbarActivityProvider: ToolbarActivityProvider,
-            theming: ThemeProvider
+        toolbarActivityProvider: ToolbarActivityProvider,
+        theming: ThemeProvider
     ) {
         val theme = if (theming.isDarkTheme()) {
             R2.style.ThemeOverlay_MaterialComponents
@@ -76,8 +78,8 @@ internal class MainToolbarView @Inject internal constructor(
         }
 
         binding.toolbar.addPrivacy(
-                viewScope, ZapTorch.PRIVACY_POLICY_URL,
-                ZapTorch.TERMS_CONDITIONS_URL
+            viewScope, ZapTorch.PRIVACY_POLICY_URL,
+            ZapTorch.TERMS_CONDITIONS_URL
         )
     }
 

@@ -17,16 +17,11 @@
 package com.pyamsoft.zaptorch.service.error
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import com.pyamsoft.pydroid.ui.app.ActivityBase
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
-import com.pyamsoft.zaptorch.core.CameraInterface.CameraError
-import com.pyamsoft.zaptorch.core.CameraInterface.Companion.DIALOG_WHICH
-import com.pyamsoft.zaptorch.core.CameraInterface.Companion.TYPE_ERROR
-import com.pyamsoft.zaptorch.core.CameraInterface.Companion.TYPE_NONE
-import timber.log.Timber
 
 class CameraErrorExplanation : ActivityBase() {
 
@@ -39,23 +34,18 @@ class CameraErrorExplanation : ActivityBase() {
 
     override fun onPostResume() {
         super.onPostResume()
-        val fragment: DialogFragment? = when (intent.getIntExtra(DIALOG_WHICH, TYPE_NONE)) {
-            TYPE_ERROR -> CameraErrorDialog()
-            else -> null
-        }
-        fragment?.show(this, "camera_error")
+        CameraErrorDialog().show(this, "camera_error")
     }
 
     companion object {
 
         @JvmStatic
-        fun renderError(context: Context, cameraError: CameraError) {
-            cameraError.exception?.let { e -> Timber.e(e, "Received camera error") }
-            context.applicationContext.also { ctx ->
-                val intent = cameraError.intent
-                intent.setClass(ctx, CameraErrorExplanation::class.java)
-                ctx.startActivity(intent)
+        fun showError(context: Context) {
+            val appContext = context.applicationContext
+            val intent = Intent(appContext, CameraErrorExplanation::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
+            appContext.startActivity(intent)
         }
     }
 }

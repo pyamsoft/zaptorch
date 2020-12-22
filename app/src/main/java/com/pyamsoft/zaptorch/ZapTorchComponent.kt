@@ -64,7 +64,6 @@ interface ZapTorchComponent {
             @BindsInstance imageLoader: ImageLoader,
             @BindsInstance receiverClass: Class<out BroadcastReceiver>,
             @BindsInstance notificationColor: Int,
-            @BindsInstance handleKeyPressKey: String
         ): ZapTorchComponent
     }
 

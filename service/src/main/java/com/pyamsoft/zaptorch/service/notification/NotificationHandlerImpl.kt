@@ -19,16 +19,17 @@ package com.pyamsoft.zaptorch.service.notification
 import com.pyamsoft.pydroid.notify.Notifier
 import com.pyamsoft.pydroid.notify.NotifyChannelInfo
 import com.pyamsoft.pydroid.notify.toNotifyId
+import com.pyamsoft.zaptorch.core.NotificationHandler
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class NotificationHandler @Inject internal constructor(
+internal class NotificationHandlerImpl @Inject internal constructor(
     @InternalApi private val notifier: Notifier
-) {
+) : NotificationHandler {
 
-    fun start() {
+    override fun start() {
         stop()
         notifier.show(
             ID,
@@ -43,7 +44,7 @@ internal class NotificationHandler @Inject internal constructor(
         }
     }
 
-    fun stop() {
+    override fun stop() {
         notifier.cancel(ID)
     }
 

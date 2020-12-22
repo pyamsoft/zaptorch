@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service.monitor
+package com.pyamsoft.zaptorch.core
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
-import com.pyamsoft.zaptorch.core.TorchError
+interface NotificationHandler {
 
-sealed class ServiceControllerEvent : UiControllerEvent {
+    fun start()
 
-    data class RenderError(val error: TorchError) : ServiceControllerEvent()
+    fun stop()
 }

@@ -24,8 +24,8 @@ import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class VolumeMonitorService : AccessibilityService() {
 
@@ -59,7 +59,7 @@ class VolumeMonitorService : AccessibilityService() {
 
         requireNotNull(binder).bind {
             return@bind when (it) {
-                is RenderError -> CameraErrorExplanation.renderError(this, it.error)
+                is RenderError -> CameraErrorExplanation.showError(applicationContext)
             }
         }
     }

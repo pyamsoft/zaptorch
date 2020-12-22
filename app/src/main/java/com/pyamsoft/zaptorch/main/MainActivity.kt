@@ -17,7 +17,6 @@
 package com.pyamsoft.zaptorch.main
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -37,8 +36,6 @@ import com.pyamsoft.pydroid.util.stableLayoutHideNavigation
 import com.pyamsoft.zaptorch.BuildConfig
 import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.main.ToolbarControllerEvent.HandleKeypress
-import timber.log.Timber
 import javax.inject.Inject
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -59,10 +56,9 @@ class MainActivity : ChangeLogActivity() {
     @JvmField
     @Inject
     internal var factory: ViewModelProvider.Factory? = null
-    private val viewModel by viewModelFactory<MainToolbarViewModel> { factory }
+    private val viewModel by viewModelFactory<ToolbarViewModel> { factory }
 
     private var stateSaver: StateSaver? = null
-    private var handleKeyPress: Boolean = false
 
     override val versionName: String = BuildConfig.VERSION_NAME
 
@@ -76,7 +72,8 @@ class MainActivity : ChangeLogActivity() {
         get() = requireNotNull(mainView).id()
 
     override val changelog = buildChangeLog {
-        feature("Support for full screen content and gesture navigation")
+        change("Remove support for ignoring volume changes when the app is open. Very few people left the screen open when using the app, so this was rather useless.")
+        change("Always show camera errors when they occur. There is no reason to not inform a user when something goes wrong that can be easily fixed.")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,11 +83,11 @@ class MainActivity : ChangeLogActivity() {
 
         val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
         Injector.obtain<ZapTorchComponent>(applicationContext)
-                .plusMainComponent()
-                .create(layoutRoot, this) {
-                    requireNotNull(theming).isDarkTheme(this)
-                }
-                .inject(this)
+            .plusMainComponent()
+            .create(this, layoutRoot, this) {
+                requireNotNull(theming).isDarkTheme(this)
+            }
+            .inject(this)
 
         val component = requireNotNull(mainView)
         val toolbarComponent = requireNotNull(toolbar)
@@ -99,15 +96,14 @@ class MainActivity : ChangeLogActivity() {
         stableLayoutHideNavigation()
 
         stateSaver = createComponent(
-                savedInstanceState, this,
-                viewModel,
-                component,
-                toolbarComponent,
-                dropshadow
+            savedInstanceState,
+            this,
+            viewModel,
+            component,
+            toolbarComponent,
+            dropshadow
         ) {
-            return@createComponent when (it) {
-                is HandleKeypress -> onHandleKeyPressChanged(it.isHandling)
-            }
+            // TODO Handle any controller events
         }
 
         layoutRoot.layout {
@@ -128,10 +124,10 @@ class MainActivity : ChangeLogActivity() {
             component.also {
                 connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
                 connect(
-                        it.id(),
-                        ConstraintSet.BOTTOM,
-                        ConstraintSet.PARENT_ID,
-                        ConstraintSet.BOTTOM
+                    it.id(),
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM
                 )
                 connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
                 connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
@@ -156,39 +152,12 @@ class MainActivity : ChangeLogActivity() {
         factory = null
     }
 
-    private fun onHandleKeyPressChanged(handle: Boolean) {
-        Timber.d("Handle keypress: $handle")
-        handleKeyPress = handle
-    }
-
     private fun showMainFragment() {
         val fm = supportFragmentManager
         if (fm.findFragmentByTag(MainFragment.TAG) == null) {
             fm.commit(this) {
                 add(fragmentContainerId, MainFragment(), MainFragment.TAG)
             }
-        }
-    }
-
-    override fun onKeyUp(
-            keyCode: Int,
-            event: KeyEvent
-    ): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            handleKeyPress
-        } else {
-            super.onKeyUp(keyCode, event)
-        }
-    }
-
-    override fun onKeyDown(
-            keyCode: Int,
-            event: KeyEvent
-    ): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            handleKeyPress
-        } else {
-            super.onKeyDown(keyCode, event)
         }
     }
 }

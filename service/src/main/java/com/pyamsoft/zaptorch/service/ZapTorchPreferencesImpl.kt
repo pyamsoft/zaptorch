@@ -20,29 +20,20 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.pyamsoft.pydroid.core.Enforcer
-import com.pyamsoft.pydroid.util.PreferenceListener
-import com.pyamsoft.pydroid.util.onChange
 import com.pyamsoft.zaptorch.core.CameraPreferences
 import com.pyamsoft.zaptorch.core.ClearPreferences
-import com.pyamsoft.zaptorch.core.UIPreferences
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class ZapTorchPreferencesImpl @Inject internal constructor(
     context: Context
-) : CameraPreferences, ClearPreferences, UIPreferences {
+) : CameraPreferences, ClearPreferences {
 
     private val doublePressDelayKey: String
     private val doublePressDelayDefault: String
-
-    private val displayCameraErrorsKey: String
-    private val displayCameraErrorsDefault: Boolean
-
-    private val handleVolumeKeysKey: String
-    private val handleVolumeKeysDefault: Boolean
 
     private val preferences by lazy {
         Enforcer.assertOffMainThread()
@@ -53,12 +44,6 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
         context.applicationContext.resources.apply {
             doublePressDelayKey = getString(R.string.double_press_delay_key)
             doublePressDelayDefault = getString(R.string.double_press_delay_default)
-
-            displayCameraErrorsKey = getString(R.string.display_camera_errors_key)
-            displayCameraErrorsDefault = getBoolean(R.bool.display_camera_errors_default)
-
-            handleVolumeKeysKey = getString(R.string.handle_volume_keys_key)
-            handleVolumeKeysDefault = getBoolean(R.bool.handle_volume_keys_default)
         }
     }
 
@@ -68,28 +53,6 @@ internal class ZapTorchPreferencesImpl @Inject internal constructor(
             .orEmpty()
             .toLong()
     }
-
-    override suspend fun shouldShowErrorDialog(): Boolean =
-        withContext(context = Dispatchers.Default) {
-            Enforcer.assertOffMainThread()
-            return@withContext preferences.getBoolean(
-                displayCameraErrorsKey,
-                displayCameraErrorsDefault
-            )
-        }
-
-    override suspend fun shouldHandleKeys(): Boolean = withContext(context = Dispatchers.Default) {
-        Enforcer.assertOffMainThread()
-        return@withContext preferences.getBoolean(handleVolumeKeysKey, handleVolumeKeysDefault)
-    }
-
-    override suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener =
-        withContext(context = Dispatchers.IO) {
-            Enforcer.assertOffMainThread()
-            return@withContext preferences.onChange(handleVolumeKeysKey) {
-                onChange(shouldHandleKeys())
-            }
-        }
 
     @SuppressLint("ApplySharedPref")
     override suspend fun clearAll() = withContext(context = Dispatchers.Default) {

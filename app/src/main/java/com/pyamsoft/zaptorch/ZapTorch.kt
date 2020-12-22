@@ -22,7 +22,6 @@ import com.pyamsoft.pydroid.bootstrap.libraries.OssLibraries
 import com.pyamsoft.pydroid.ui.PYDroid
 import com.pyamsoft.pydroid.util.isDebugMode
 import com.pyamsoft.zaptorch.service.torchoff.TorchOffReceiver
-import com.pyamsoft.zaptorch.service.R as R2
 
 class ZapTorch : Application() {
 
@@ -50,7 +49,6 @@ class ZapTorch : Application() {
                 provider.imageLoader(),
                 TorchOffReceiver::class.java,
                 R.color.colorPrimary,
-                getString(R2.string.handle_volume_keys_key)
             )
     }
 

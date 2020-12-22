@@ -29,21 +29,6 @@
             android:title="@string/double_press_delay_title"
             app:iconCompat="@drawable/ic_timer_24dp" />
 
-        <com.pyamsoft.pydroid.ui.preference.CheckBoxPreferenceCompat
-            android:defaultValue="@bool/display_camera_errors_default"
-            android:key="@string/display_camera_errors_key"
-            android:summary="@string/display_camera_errors_summary"
-            android:title="@string/display_camera_errors_title"
-            app:iconCompat="@drawable/ic_camera_24dp" />
-
-        <com.pyamsoft.pydroid.ui.preference.CheckBoxPreferenceCompat
-            android:defaultValue="@bool/handle_volume_keys_default"
-            android:key="@string/handle_volume_keys_key"
-            android:summaryOff="@string/handle_volume_keys_summary_unchecked"
-            android:summaryOn="@string/handle_volume_keys_summary_checked"
-            android:title="@string/handle_volume_keys_title"
-            app:iconCompat="@drawable/ic_volume_24dp" />
-
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

@@ -21,8 +21,8 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class TorchOffService : JobIntentService() {
 
@@ -37,7 +37,9 @@ class TorchOffService : JobIntentService() {
             .create()
             .inject(this)
 
-        requireNotNull(binder).bind { }
+        requireNotNull(binder).bind {
+            // This should not handle any events
+        }
     }
 
     override fun onDestroy() {

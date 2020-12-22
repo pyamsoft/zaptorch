@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.notify.Notifier
 import com.pyamsoft.pydroid.notify.NotifyDispatcher
+import com.pyamsoft.zaptorch.core.NotificationHandler
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -32,6 +33,10 @@ internal annotation class InternalApi
 
 @Module
 abstract class NotificationModule {
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindNotification(impl: NotificationHandlerImpl): NotificationHandler
 
     @Binds
     @IntoSet

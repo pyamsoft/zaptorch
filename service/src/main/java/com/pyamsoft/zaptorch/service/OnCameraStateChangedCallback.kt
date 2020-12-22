@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.core
+package com.pyamsoft.zaptorch.service
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.util.PreferenceListener
+internal interface OnCameraStateChangedCallback {
 
-interface UIPreferences {
+    fun onOpened(id: String)
 
-    @CheckResult
-    suspend fun shouldHandleKeys(): Boolean
+    fun onClosed(id: String)
 
-    @CheckResult
-    suspend fun watchHandleKeys(onChange: (handle: Boolean) -> Unit): PreferenceListener
 }

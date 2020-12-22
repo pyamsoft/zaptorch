@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.main
 import android.view.ViewGroup
 import androidx.core.view.ViewPropertyAnimatorCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.LifecycleOwner
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UiRender
 import com.pyamsoft.pydroid.loader.ImageLoader
@@ -34,6 +35,7 @@ import javax.inject.Inject
 
 internal class MainActionView @Inject internal constructor(
     private val imageLoader: ImageLoader,
+    owner: LifecycleOwner,
     parent: ViewGroup
 ) : BaseUiView<MainViewState, MainViewEvent, FloatingActionButtonBinding>(parent) {
 
@@ -53,7 +55,7 @@ internal class MainActionView @Inject internal constructor(
         }
 
         doOnInflate {
-            binding.fab.doOnApplyWindowInsets { v, insets, _ ->
+            binding.fab.doOnApplyWindowInsets(owner) { v, insets, _ ->
                 v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     bottomMargin = insets.systemWindowInsetBottom
                 }

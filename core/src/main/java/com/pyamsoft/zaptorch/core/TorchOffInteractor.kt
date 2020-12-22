@@ -16,9 +16,9 @@
 
 package com.pyamsoft.zaptorch.core
 
-import android.hardware.camera2.CameraAccessException
 
-interface TorchToggle {
+interface TorchOffInteractor  {
 
-    suspend fun toggleTorch(onError: suspend (error: CameraAccessException) -> Unit)
+    suspend fun torchOff()
+
 }

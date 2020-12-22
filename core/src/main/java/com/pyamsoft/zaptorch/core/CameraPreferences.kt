@@ -21,8 +21,5 @@ import androidx.annotation.CheckResult
 interface CameraPreferences {
 
     @CheckResult
-    suspend fun shouldShowErrorDialog(): Boolean
-
-    @CheckResult
     suspend fun getButtonDelayTime(): Long
 }

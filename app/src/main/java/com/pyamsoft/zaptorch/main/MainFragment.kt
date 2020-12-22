@@ -32,7 +32,6 @@ import com.pyamsoft.pydroid.ui.arch.viewModelFactory
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
@@ -81,13 +80,7 @@ class MainFragment : Fragment() {
             requireNotNull(toolbarView)
         ) {
             return@createComponent when (it) {
-                is ServiceAction -> {
-                    if (it.isServiceRunning) {
-                        showInfoDialog()
-                    } else {
-                        showUsageAccessRequestDialog()
-                    }
-                }
+                is MainControllerEvent.ServiceAction -> handleServiceAction(it.isServiceRunning)
             }
         }
 
@@ -105,6 +98,14 @@ class MainFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         stateSaver?.saveState(outState)
+    }
+
+    private fun handleServiceAction(isServiceRunning: Boolean) {
+        if (isServiceRunning) {
+            showInfoDialog()
+        } else {
+            showUsageAccessRequestDialog()
+        }
     }
 
     private fun showUsageAccessRequestDialog() {

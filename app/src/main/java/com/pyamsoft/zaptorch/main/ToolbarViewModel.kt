@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.service.monitor
+package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
-import com.pyamsoft.zaptorch.core.TorchError
+import com.pyamsoft.pydroid.arch.UiViewModel
+import com.pyamsoft.pydroid.arch.UnitControllerEvent
+import com.pyamsoft.pydroid.arch.UnitViewEvent
+import com.pyamsoft.pydroid.arch.UnitViewState
+import javax.inject.Inject
 
-sealed class ServiceControllerEvent : UiControllerEvent {
+internal class ToolbarViewModel @Inject internal constructor(
+) : UiViewModel<UnitViewState, UnitViewEvent, UnitControllerEvent>(
+    initialState = UnitViewState
+) {
 
-    data class RenderError(val error: TorchError) : ServiceControllerEvent()
+    override fun handleViewEvent(event: UnitViewEvent) {
+    }
 }

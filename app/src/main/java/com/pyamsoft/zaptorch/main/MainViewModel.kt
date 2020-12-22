@@ -20,8 +20,6 @@ import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
-import com.pyamsoft.zaptorch.main.MainControllerEvent.ServiceAction
-import com.pyamsoft.zaptorch.main.MainViewEvent.ActionClick
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,11 +50,11 @@ internal class MainViewModel @Inject internal constructor(
 
     override fun handleViewEvent(event: MainViewEvent) {
         return when (event) {
-            is ActionClick -> handleServiceAction()
+            is MainViewEvent.ActionClick -> handleServiceAction()
         }
     }
 
     private fun handleServiceAction() {
-        publish(ServiceAction(state.isServiceRunning))
+        publish(MainControllerEvent.ServiceAction(state.isServiceRunning))
     }
 }

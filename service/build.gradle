@@ -20,6 +20,11 @@ apply plugin: 'kotlin-kapt'
 
 //noinspection GroovyMissingReturnStatement
 android {
+
+	kotlinOptions {
+		freeCompilerArgs += '-Xallow-result-return-type'
+	}
+
 	compileSdkVersion rootProject.ext.maxSdk
 
 	//noinspection GroovyMissingReturnStatement

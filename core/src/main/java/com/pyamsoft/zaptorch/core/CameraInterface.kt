@@ -16,35 +16,15 @@
 
 package com.pyamsoft.zaptorch.core
 
-import android.content.Intent
-import android.hardware.camera2.CameraAccessException
+interface CameraInterface {
 
-interface CameraInterface : TorchToggle {
+    suspend fun toggleTorchState()
 
-    fun setOnStateChangedCallback(callback: OnStateChangedCallback?)
+    suspend fun setTorchState(enabled: Boolean)
+
+    fun setOnOpenedCallback(onOpened: (String) -> Unit)
+
+    fun setOnClosedCallback(onClosed: (String) -> Unit)
 
     fun destroy()
-
-    suspend fun showError(exception: CameraAccessException)
-
-    interface OnStateChangedCallback {
-
-        fun onOpened()
-
-        fun onClosed()
-
-        fun onError(error: CameraError)
-    }
-
-    data class CameraError(
-        val exception: CameraAccessException?,
-        val intent: Intent
-    )
-
-    companion object {
-
-        const val TYPE_NONE = -1
-        const val TYPE_ERROR = 0
-        const val DIALOG_WHICH = "dialog"
-    }
 }

@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.main
+package com.pyamsoft.zaptorch.core
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
+import android.hardware.camera2.CameraAccessException
 
-sealed class ToolbarControllerEvent : UiControllerEvent {
-
-    data class HandleKeypress internal constructor(val isHandling: Boolean) : ToolbarControllerEvent()
-}
+data class TorchError(val exception: CameraAccessException)
