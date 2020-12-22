@@ -22,8 +22,9 @@ import com.pyamsoft.zaptorch.core.CameraInteractor
 import com.pyamsoft.zaptorch.core.CameraInterface
 import com.pyamsoft.zaptorch.core.TorchOffInteractor
 import com.pyamsoft.zaptorch.core.TorchState
-import com.pyamsoft.zaptorch.service.command.ToggleTorchCommand
+import com.pyamsoft.zaptorch.service.command.Command
 import kotlinx.coroutines.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -31,7 +32,7 @@ import javax.inject.Singleton
 @Singleton
 internal class CameraInteractorImpl @Inject internal constructor(
     private val cameraProvider: Provider<CameraInterface>,
-    private val toggleCommand: ToggleTorchCommand,
+    private val toggleCommand: Command<TorchState.Toggle>,
 ) : CameraInteractor, TorchOffInteractor {
 
     private var cameraInterface: CameraInterface? = null
@@ -44,7 +45,9 @@ internal class CameraInteractorImpl @Inject internal constructor(
                 return@withContext
             }
 
-            toggleCommand.handleCommand(keyCode) { toggleTorch(it) }
+            if (toggleCommand.handle(keyCode) { toggleTorch(it) }) {
+                Timber.d("Torch handled by ${TorchState.Toggle}")
+            }
         }
 
     override fun setupCamera(onOpened: (TorchState) -> Unit, onClosed: (TorchState) -> Unit) {

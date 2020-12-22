@@ -19,6 +19,8 @@ package com.pyamsoft.zaptorch.service
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.arch.EventBus
 import com.pyamsoft.zaptorch.core.*
+import com.pyamsoft.zaptorch.service.command.Command
+import com.pyamsoft.zaptorch.service.command.ToggleTorchCommand
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,6 +28,10 @@ import javax.inject.Singleton
 
 @Module
 abstract class ServiceModule {
+
+    @Binds
+    @CheckResult
+    internal abstract fun bindToggleCommand(impl: ToggleTorchCommand): Command<TorchState.Toggle>
 
     @Binds
     @CheckResult

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.pyamsoft.zaptorch.core
+package com.pyamsoft.zaptorch.service.command
 
-sealed class TorchState {
-    object None : TorchState()
-    object Toggle : TorchState()
-    object Pulse : TorchState()
-    object Flicker : TorchState()
+import androidx.annotation.CheckResult
+import com.pyamsoft.zaptorch.core.TorchState
+
+internal interface Command<out S : TorchState> {
+
+    @CheckResult
+    suspend fun handle(keyCode: Int, onAction: suspend (S) -> Unit): Boolean
 }

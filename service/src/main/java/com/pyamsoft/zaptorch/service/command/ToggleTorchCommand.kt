@@ -17,6 +17,7 @@
 package com.pyamsoft.zaptorch.service.command
 
 import android.view.KeyEvent
+import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.core.CameraPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.Dispatchers
@@ -32,20 +33,20 @@ import javax.inject.Singleton
 @Singleton
 internal class ToggleTorchCommand @Inject internal constructor(
     private val preferences: CameraPreferences
-) {
+) : Command<TorchState.Toggle> {
 
     private val mutex = Mutex()
     private var commandReady = false
 
     @PublishedApi
-    internal suspend inline fun handleTorchOnDoublePressed(onAction: (TorchState) -> Unit) {
+    internal suspend inline fun handleTorchOnDoublePressed(onAction: () -> Unit) {
         mutex.withLock {
             commandReady = false
         }
 
 
         Timber.d("Key has been double pressed, toggle torch")
-        onAction(TorchState.TOGGLE)
+        onAction()
     }
 
     @PublishedApi
@@ -68,20 +69,27 @@ internal class ToggleTorchCommand @Inject internal constructor(
         }
     }
 
+    @CheckResult
     @PublishedApi
-    internal suspend inline fun handleTorchOnCommand(keyCode: Int, onAction: (TorchState) -> Unit) {
-        if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
-            return
-        }
-
-        if (commandReady) {
-            handleTorchOnDoublePressed(onAction)
-        } else {
-            handleTorchOnFirstPress()
+    internal suspend inline fun handleTorchOnCommand(
+        keyCode: Int,
+        onAction: () -> Unit
+    ): Boolean {
+        return if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) false else {
+            commandReady.also { ready ->
+                if (ready) {
+                    handleTorchOnDoublePressed(onAction)
+                } else {
+                    handleTorchOnFirstPress()
+                }
+            }
         }
     }
 
-    suspend inline fun handleCommand(keyCode: Int, onAction: (TorchState) -> Unit) {
-        handleTorchOnCommand(keyCode, onAction)
+    override suspend fun handle(
+        keyCode: Int,
+        onAction: suspend (TorchState.Toggle) -> Unit
+    ): Boolean {
+        return handleTorchOnCommand(keyCode) { onAction(TorchState.Toggle) }
     }
 }
