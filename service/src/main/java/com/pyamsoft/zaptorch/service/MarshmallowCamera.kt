@@ -23,7 +23,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.CheckResult
 import androidx.core.content.getSystemService
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.TorchError
 import com.pyamsoft.zaptorch.core.TorchState

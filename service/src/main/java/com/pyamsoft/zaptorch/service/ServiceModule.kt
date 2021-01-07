@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.zaptorch.core.*
 import com.pyamsoft.zaptorch.service.command.Command
 import com.pyamsoft.zaptorch.service.command.FlickerCommand

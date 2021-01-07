@@ -16,8 +16,8 @@
 
 package com.pyamsoft.zaptorch.service
 
-import com.pyamsoft.pydroid.arch.EventBus
-import com.pyamsoft.pydroid.arch.EventConsumer
+import com.pyamsoft.pydroid.bus.EventBus
+import com.pyamsoft.pydroid.bus.EventConsumer
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.NotificationHandler
 import com.pyamsoft.zaptorch.core.TorchError

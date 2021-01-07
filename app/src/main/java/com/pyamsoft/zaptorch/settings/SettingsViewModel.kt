@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.settings
 
 import androidx.lifecycle.viewModelScope
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.arch.UnitViewState

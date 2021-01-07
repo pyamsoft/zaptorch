@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.core
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.arch.EventConsumer
+import com.pyamsoft.pydroid.bus.EventConsumer
 
 
 interface VolumeServiceInteractor {

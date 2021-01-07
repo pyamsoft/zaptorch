@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.main
 
 import androidx.lifecycle.viewModelScope
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent

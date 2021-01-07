@@ -27,6 +27,8 @@ class CameraErrorExplanation : ActivityBase() {
 
     override val fragmentContainerId: Int = 0
 
+    override val applicationIcon: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch_Error)
         super.onCreate(savedInstanceState)

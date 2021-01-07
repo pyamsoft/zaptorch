@@ -74,6 +74,9 @@ class MainActivity : ChangeLogActivity() {
     override val changelog = buildChangeLog {
         change("Remove support for ignoring volume changes when the app is open. Very few people left the screen open when using the app, so this was rather useless.")
         change("Always show camera errors when they occur. There is no reason to not inform a user when something goes wrong that can be easily fixed.")
+        feature("Turn flashlight on all the time with a double press on Volume Down")
+        feature("Pulse flashlight on and off slowly with a double press on Volume Up")
+        feature("Flashlight strobe effect quickly with a Volume Down press followed by a Volume Up")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

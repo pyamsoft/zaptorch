@@ -19,7 +19,7 @@ package com.pyamsoft.zaptorch
 import android.content.BroadcastReceiver
 import android.content.Context
 import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.arch.EventBus
+import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
