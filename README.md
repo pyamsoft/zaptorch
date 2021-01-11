@@ -1,7 +1,7 @@
 # zaptorch
 ZapTorch pyamsoft Android application
 
-[![Get it on Google Play](https://raw.githubusercontent.com/pyamsoft/zaptorch/master/art/google-play-badge.png)][1]
+[![Get it on Google Play](https://raw.githubusercontent.com/pyamsoft/zaptorch/main/art/google-play-badge.png)][1]
 
 ## What is ZapTorch
 
