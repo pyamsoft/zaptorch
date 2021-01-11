@@ -19,7 +19,15 @@ package com.pyamsoft.zaptorch.service.command
 import androidx.annotation.CheckResult
 import com.pyamsoft.zaptorch.core.CameraPreferences
 import com.pyamsoft.zaptorch.core.TorchState
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -27,13 +35,23 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
     private val preferences: CameraPreferences
 ) : Command<S> {
 
-    private val commandScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var commandScope: CoroutineScope? = null
 
     private val mutex = Mutex()
     private var commandReady = false
 
     private var timerJob: Job? = null
     private var job: Job? = null
+
+    @CheckResult
+    private suspend fun ensureScope(): CoroutineScope = mutex.withLock {
+        commandScope ?: newScope().also { commandScope = it }
+    }
+
+    @CheckResult
+    private fun newScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    }
 
     @PublishedApi
     internal suspend inline fun handleTorchOnDoublePressed(
@@ -42,8 +60,7 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
         mutex.withLock {
             commandReady = false
 
-            timerJob?.cancelAndJoin()
-            timerJob = null
+            cancelTimer()
         }
 
         mutex.withLock {
@@ -67,7 +84,7 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
         }
 
         // Launch a new coroutine here so that this happens in parallel with other operations
-        timerJob?.cancelAndJoin()
+        cancelTimer()
         timerJob = launch {
             delay(preferences.getButtonDelayTime())
             if (commandReady) {
@@ -87,7 +104,7 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
         handler: Command.Handler
     ): Boolean {
         return isReady.also { ready ->
-            commandScope.launch {
+            ensureScope().launch {
                 if (ready) {
                     handleTorchOnDoublePressed(handler)
                 } else {
@@ -97,11 +114,15 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
         }
     }
 
+    private fun cancelTimer() {
+        timerJob?.cancel()
+        timerJob = null
+    }
+
     final override fun reset() {
         commandReady = false
 
-        timerJob?.cancel()
-        timerJob = null
+        cancelTimer()
 
         job?.cancel()
         job = null
@@ -109,7 +130,9 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
 
     final override fun destroy() {
         reset()
-        commandScope.cancel()
+
+        commandScope?.cancel()
+        commandScope = null
     }
 
     final override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {
