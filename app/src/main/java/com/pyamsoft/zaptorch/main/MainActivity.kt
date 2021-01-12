@@ -81,7 +81,7 @@ class MainActivity : ChangeLogActivity() {
         setContentView(R.layout.snackbar_screen)
 
         val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
-        Injector.obtain<ZapTorchComponent>(applicationContext)
+        Injector.obtainFromApplication<ZapTorchComponent>(this)
             .plusMainComponent()
             .create(this, layoutRoot, this) {
                 requireNotNull(theming).isDarkTheme(this)

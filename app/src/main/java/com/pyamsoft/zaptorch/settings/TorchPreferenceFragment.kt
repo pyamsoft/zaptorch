@@ -59,7 +59,7 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        Injector.obtainFromApplication<ZapTorchComponent>(view.context)
             .plusSettingsComponent()
             .create(requireToolbarActivity(), listView, preferenceScreen)
             .inject(this)

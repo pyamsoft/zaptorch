@@ -68,7 +68,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
-        Injector.obtain<ZapTorchComponent>(requireContext().applicationContext)
+        Injector.obtainFromApplication<ZapTorchComponent>(view.context)
             .plusMainFragmentComponent()
             .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
             .inject(this)
