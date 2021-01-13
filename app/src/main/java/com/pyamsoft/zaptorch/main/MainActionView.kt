@@ -78,8 +78,8 @@ internal class MainActionView @Inject internal constructor(
     }
 
     override fun onRender(state: UiRender<MainViewState>) {
-        state.distinctBy { it.isVisible }.render(viewScope) { toggleVisibility(it) }
-        state.distinctBy { it.isServiceRunning }.render(viewScope) { setFabState(it) }
+        state.mapChanged { it.isVisible }.render(viewScope) { toggleVisibility(it) }
+        state.mapChanged { it.isServiceRunning }.render(viewScope) { setFabState(it) }
     }
 
     private fun setFabState(running: Boolean) {
