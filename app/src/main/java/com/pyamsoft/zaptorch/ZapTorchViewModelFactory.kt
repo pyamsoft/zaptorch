@@ -16,19 +16,36 @@
 
 package com.pyamsoft.zaptorch
 
-import com.pyamsoft.pydroid.arch.UiStateViewModel
-import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.pydroid.arch.UiViewModelFactory
+import androidx.annotation.CheckResult
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.savedstate.SavedStateRegistryOwner
+import com.pyamsoft.pydroid.arch.SavedStateViewModelFactory
+import com.pyamsoft.pydroid.arch.UiSavedState
+import dagger.Reusable
 import javax.inject.Inject
 import javax.inject.Provider
-import kotlin.reflect.KClass
 
-internal class ZapTorchViewModelFactory @Inject internal constructor(
-    private val viewModels: MutableMap<Class<*>, Provider<UiViewModel<*, *, *>>>
-) : UiViewModelFactory() {
+interface ZapTorchViewModelFactory {
 
-    override fun <T : UiStateViewModel<*>> viewModel(modelClass: KClass<T>): UiStateViewModel<*> {
-        @Suppress("UNCHECKED_CAST")
-        return viewModels[modelClass.java]?.get() as? T ?: fail()
+    @CheckResult
+    fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory
+
+}
+
+@Reusable
+internal class ZapTorchViewModelFactoryImpl @Inject internal constructor(
+    private val viewModels: Map<Class<*>, @JvmSuppressWildcards Provider<ViewModel>>
+) : ZapTorchViewModelFactory {
+
+    override fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
+        return object : SavedStateViewModelFactory(owner, null) {
+            override fun <T : ViewModel> createViewModel(
+                modelClass: Class<T>,
+                savedState: UiSavedState
+            ): ViewModel {
+                return viewModels[modelClass]?.get() ?: fail(modelClass)
+            }
+        }
     }
 }

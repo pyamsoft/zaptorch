@@ -22,16 +22,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.pyamsoft.pydroid.arch.StateSaver
 import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.R
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
-import com.pyamsoft.pydroid.ui.arch.viewModelFactory
+import com.pyamsoft.pydroid.ui.arch.fromViewModelFactory
 import com.pyamsoft.pydroid.ui.util.commit
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.ZapTorchComponent
+import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
 import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
@@ -40,16 +40,16 @@ class MainFragment : Fragment() {
 
     @JvmField
     @Inject
-    internal var factory: ViewModelProvider.Factory? = null
-
-    @JvmField
-    @Inject
     internal var actionView: MainActionView? = null
 
     @JvmField
     @Inject
     internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null
-    private val viewModel by viewModelFactory<MainViewModel> { factory }
+
+    @JvmField
+    @Inject
+    internal var factory: ZapTorchViewModelFactory? = null
+    private val viewModel by fromViewModelFactory<MainViewModel> { factory?.create(this) }
 
     private var stateSaver: StateSaver? = null
 
