@@ -16,17 +16,12 @@
 
 package com.pyamsoft.zaptorch.core
 
-import androidx.annotation.CheckResult
-import com.pyamsoft.pydroid.bus.EventConsumer
-
 
 interface VolumeServiceInteractor {
 
     suspend fun setServiceState(changed: Boolean)
 
-    @CheckResult
-    suspend fun observeServiceState(): EventConsumer<Boolean>
+    suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit)
 
-    @CheckResult
-    suspend fun observeCameraState(): EventConsumer<TorchError>
+    suspend fun observeCameraState(onError: suspend (TorchError) -> Unit)
 }

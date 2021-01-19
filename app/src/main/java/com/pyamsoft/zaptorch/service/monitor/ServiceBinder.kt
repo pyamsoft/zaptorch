@@ -44,7 +44,7 @@ internal class ServiceBinder @Inject internal constructor(
 
     private inline fun watchCameraErrors(crossinline onEvent: (ServiceControllerEvent) -> Unit) =
         binderScope.launch(context = Dispatchers.Default) {
-            serviceInteractor.observeCameraState().onEvent { error ->
+            serviceInteractor.observeCameraState { error ->
                 withContext(context = Dispatchers.Main) {
                     Timber.e(error.exception, "Camera error received")
                     onEvent(ServiceControllerEvent.RenderError(error))

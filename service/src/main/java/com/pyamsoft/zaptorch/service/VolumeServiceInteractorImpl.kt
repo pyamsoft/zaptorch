@@ -23,7 +23,6 @@ import com.pyamsoft.zaptorch.core.NotificationHandler
 import com.pyamsoft.zaptorch.core.TorchError
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import kotlinx.coroutines.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,30 +37,32 @@ internal class VolumeServiceInteractorImpl @Inject internal constructor(
         replayCount = 1
     )
 
+    private val cameraErrorStream by lazy {
+        object : EventConsumer<TorchError> {
+            override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
+                errorBus.onEvent { event ->
+                    notificationHandler.stop()
+                    emitter(event)
+                }
+            }
+        }
+    }
+
     override suspend fun setServiceState(changed: Boolean) {
         Enforcer.assertOffMainThread()
         runningStateBus.send(changed)
     }
 
-    override suspend fun observeServiceState(): EventConsumer<Boolean> =
+    override suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit) {
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            return@withContext runningStateBus
+            return@withContext runningStateBus.onEvent(onEvent)
         }
+    }
 
-    override suspend fun observeCameraState(): EventConsumer<TorchError> =
+    override suspend fun observeCameraState(onError: suspend (TorchError) -> Unit) =
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            return@withContext object : EventConsumer<TorchError> {
-                override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
-                    errorBus.onEvent { event ->
-                        Timber.w("Stop notification on camera error")
-                        notificationHandler.stop()
-
-                        emitter(event)
-                    }
-                }
-
-            }
+            cameraErrorStream.onEvent(onError)
         }
 }
