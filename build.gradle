@@ -51,7 +51,7 @@ buildscript {
 
 		pydroid = "22.6.0"
 		leakCanary = "2.6"
-		dagger = "2.31"
+		dagger = "2.31.1"
 	}
 
 	dependencies {
