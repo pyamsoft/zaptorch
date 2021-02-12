@@ -31,11 +31,16 @@
     <string name="double_press_delay_title">Double Press Duration</string>
     <string name="double_press_delay_summary">Duration to register button presses as a double press</string>
 
-    <string name="display_camera_errors_title">Display Camera Errors</string>
-    <string name="display_camera_errors_summary">Show a dialog when Camera errors occur</string>
+    <string name="torch_enabled_title">Toggle Flash Light</string>
+    <string name="torch_enabled_summary_on">Pressing ↓ ↓ quickly will toggle the flash light on or off.</string>
+    <string name="torch_enabled_summary_off">Pressing ↓ ↓ quickly will not change the flash light.</string>
 
-    <string name="handle_volume_keys_title">Handle Volume KeyPress</string>
-    <string name="handle_volume_keys_summary_checked">Pressing volume keys while ZapTorch is open will not change the volume</string>
-    <string name="handle_volume_keys_summary_unchecked">Pressing volume keys while ZapTorch is open will perform as normal</string>
+    <string name="pulse_enabled_title">Toggle Pulse</string>
+    <string name="pulse_enabled_summary_on">Pressing ↑ ↑ quickly will make the flash light pulse on and off slowly.</string>
+    <string name="pulse_enabled_summary_off">Pressing ↑ ↑ quickly will not change the flash light</string>
+
+    <string name="strobe_enabled_title">Toggle Flash Light</string>
+    <string name="strobe_enabled_summary_on">Pressing ↓ ↑ quickly will make the flash light flicker quickly like a strobe effect.</string>
+    <string name="strobe_enabled_summary_off">Pressing ↓ ↑ quickly will not change the flash light.</string>
 
 </resources>

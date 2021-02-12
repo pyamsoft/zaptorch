@@ -17,7 +17,8 @@
 package com.pyamsoft.zaptorch.service.command
 
 import androidx.annotation.CheckResult
-import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.pydroid.core.Enforcer
+import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 internal abstract class BaseCommand<S : TorchState> protected constructor(
-    private val preferences: CameraPreferences
+    private val preferences: TorchPreferences
 ) : Command<S> {
 
     private var commandScope: CoroutineScope? = null
@@ -136,6 +137,12 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
     }
 
     final override suspend fun handle(keyCode: Int, handler: Command.Handler): Boolean {
+        Enforcer.assertOffMainThread()
+
+        if (!isCommandEnabled(preferences)) {
+            return false
+        }
+
         val isReady = mutex.withLock { commandReady }
         return if (!isKeyCodeHandled(keyCode, isReady)) false else {
             handleTorchOnCommand(isReady, handler)
@@ -145,5 +152,11 @@ internal abstract class BaseCommand<S : TorchState> protected constructor(
     protected abstract suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler)
 
     @CheckResult
-    protected abstract fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean
+    protected abstract suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean
+
+    @CheckResult
+    protected abstract suspend fun isKeyCodeHandled(
+        keyCode: Int,
+        isFirstPressComplete: Boolean
+    ): Boolean
 }

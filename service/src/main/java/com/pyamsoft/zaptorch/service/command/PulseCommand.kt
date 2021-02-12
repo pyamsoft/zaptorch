@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service.command
 
 import android.view.KeyEvent
-import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -28,7 +28,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class PulseCommand @Inject internal constructor(
-    preferences: CameraPreferences
+    preferences: TorchPreferences
 ) : BaseCommand<TorchState.Pulse>(preferences) {
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
@@ -44,8 +44,12 @@ internal class PulseCommand @Inject internal constructor(
         }
     }
 
-    override fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
         return keyCode == KeyEvent.KEYCODE_VOLUME_UP
+    }
+
+    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+        return preferences.isPulseEnabled()
     }
 
     companion object {

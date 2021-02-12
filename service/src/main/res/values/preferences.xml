@@ -16,5 +16,15 @@
 
 <resources>
     <string name="double_press_delay_key">double_press_delay</string>
+    <!-- As a string since the ListPreference deals in strings -->
     <string name="double_press_delay_default">500</string>
+
+    <string name="torch_enabled_key">torch_enabled</string>
+    <bool name="torch_enabled_default">true</bool>
+
+    <string name="pulse_enabled_key">pulse_enabled</string>
+    <bool name="pulse_enabled_default">true</bool>
+
+    <string name="strobe_enabled_key">strobe_enabled</string>
+    <bool name="strobe_enabled_default">true</bool>
 </resources>

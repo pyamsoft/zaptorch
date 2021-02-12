@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service.command
 
 import android.view.KeyEvent
-import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -27,8 +27,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class FlickerCommand @Inject internal constructor(
-    preferences: CameraPreferences
+internal class StrobeCommand @Inject internal constructor(
+    preferences: TorchPreferences
 ) : BaseCommand<TorchState.Flicker>(preferences) {
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
@@ -44,12 +44,16 @@ internal class FlickerCommand @Inject internal constructor(
         }
     }
 
-    override fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
         return if (isFirstPressComplete) {
             keyCode == KeyEvent.KEYCODE_VOLUME_UP
         } else {
             keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
         }
+    }
+
+    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+        return preferences.isStrobeEnabled()
     }
 
     companion object {

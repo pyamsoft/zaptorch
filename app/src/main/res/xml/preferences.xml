@@ -29,6 +29,30 @@
             android:title="@string/double_press_delay_title"
             app:iconCompat="@drawable/ic_timer_24dp" />
 
+        <com.pyamsoft.pydroid.ui.preference.SwitchPreferenceCompat
+            android:defaultValue="@bool/torch_enabled_default"
+            android:key="@string/torch_enabled_key"
+            android:summaryOff="@string/torch_enabled_summary_off"
+            android:summaryOn="@string/torch_enabled_summary_on"
+            android:title="@string/torch_enabled_title"
+            app:iconCompat="@drawable/ic_flashlight_24dp" />
+
+        <com.pyamsoft.pydroid.ui.preference.SwitchPreferenceCompat
+            android:defaultValue="@bool/pulse_enabled_default"
+            android:key="@string/pulse_enabled_key"
+            android:summaryOff="@string/pulse_enabled_summary_off"
+            android:summaryOn="@string/pulse_enabled_summary_on"
+            android:title="@string/pulse_enabled_title"
+            app:iconCompat="@drawable/ic_flashlight_24dp" />
+
+        <com.pyamsoft.pydroid.ui.preference.SwitchPreferenceCompat
+            android:defaultValue="@bool/strobe_enabled_default"
+            android:key="@string/strobe_enabled_key"
+            android:summaryOff="@string/strobe_enabled_summary_off"
+            android:summaryOn="@string/strobe_enabled_summary_on"
+            android:title="@string/strobe_enabled_title"
+            app:iconCompat="@drawable/ic_flashlight_24dp" />
+
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

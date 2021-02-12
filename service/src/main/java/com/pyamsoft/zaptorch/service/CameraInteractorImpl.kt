@@ -32,7 +32,7 @@ internal class CameraInteractorImpl @Inject internal constructor(
     private val notificationHandler: NotificationHandler,
     private val toggleCommand: Command<TorchState.Toggle>,
     private val pulseCommand: Command<TorchState.Pulse>,
-    private val flickerCommand: Command<TorchState.Flicker>,
+    private val strobeCommand: Command<TorchState.Flicker>,
 ) : CameraInteractor, TorchOffInteractor, Command.Handler {
 
     private var cameraInterface: CameraInterface? = null
@@ -47,17 +47,17 @@ internal class CameraInteractorImpl @Inject internal constructor(
 
             if (toggleCommand.handle(keyCode, self)) {
                 pulseCommand.reset()
-                flickerCommand.reset()
+                strobeCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Toggle}")
             }
 
             if (pulseCommand.handle(keyCode, self)) {
                 toggleCommand.reset()
-                flickerCommand.reset()
+                strobeCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Pulse}")
             }
 
-            if (flickerCommand.handle(keyCode, self)) {
+            if (strobeCommand.handle(keyCode, self)) {
                 toggleCommand.reset()
                 pulseCommand.reset()
                 Timber.d("Torch handled by ${TorchState.Flicker}")
@@ -115,13 +115,13 @@ internal class CameraInteractorImpl @Inject internal constructor(
     private fun clearCommands() {
         toggleCommand.reset()
         pulseCommand.reset()
-        flickerCommand.reset()
+        strobeCommand.reset()
     }
 
     private fun destroyCommands() {
         toggleCommand.destroy()
         pulseCommand.destroy()
-        flickerCommand.destroy()
+        strobeCommand.destroy()
     }
 
     private fun teardown() {

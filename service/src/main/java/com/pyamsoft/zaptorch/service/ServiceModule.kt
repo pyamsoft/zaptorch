@@ -20,7 +20,7 @@ import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.zaptorch.core.*
 import com.pyamsoft.zaptorch.service.command.Command
-import com.pyamsoft.zaptorch.service.command.FlickerCommand
+import com.pyamsoft.zaptorch.service.command.StrobeCommand
 import com.pyamsoft.zaptorch.service.command.PulseCommand
 import com.pyamsoft.zaptorch.service.command.ToggleCommand
 import dagger.Binds
@@ -41,7 +41,7 @@ abstract class ServiceModule {
 
     @Binds
     @CheckResult
-    internal abstract fun bindFlickerCommand(impl: FlickerCommand): Command<TorchState.Flicker>
+    internal abstract fun bindFlickerCommand(impl: StrobeCommand): Command<TorchState.Flicker>
 
     @Binds
     @CheckResult
@@ -61,7 +61,7 @@ abstract class ServiceModule {
 
     @Binds
     @CheckResult
-    internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): CameraPreferences
+    internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): TorchPreferences
 
     @Binds
     @CheckResult

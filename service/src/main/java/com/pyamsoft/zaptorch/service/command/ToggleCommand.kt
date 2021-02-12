@@ -17,7 +17,7 @@
 package com.pyamsoft.zaptorch.service.command
 
 import android.view.KeyEvent
-import com.pyamsoft.zaptorch.core.CameraPreferences
+import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.yield
@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class ToggleCommand @Inject internal constructor(
-    preferences: CameraPreferences
+    preferences: TorchPreferences
 ) : BaseCommand<TorchState.Toggle>(preferences) {
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
@@ -38,7 +38,11 @@ internal class ToggleCommand @Inject internal constructor(
         handler.forceTorchOn(TorchState.Toggle)
     }
 
-    override fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
         return keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+    }
+
+    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+        return preferences.isTorchEnabled()
     }
 }
