@@ -30,9 +30,8 @@ import javax.inject.Singleton
 internal class CameraInteractorImpl @Inject internal constructor(
     private val cameraProvider: Provider<CameraInterface>,
     private val notificationHandler: NotificationHandler,
-    private val toggleCommand: Command<TorchState.Toggle>,
-    private val pulseCommand: Command<TorchState.Pulse>,
-    private val strobeCommand: Command<TorchState.Flicker>,
+    // Need JvmSuppressWildcards for Dagger
+    private val commands: Set<@JvmSuppressWildcards Command>,
 ) : CameraInteractor, TorchOffInteractor, Command.Handler {
 
     private var cameraInterface: CameraInterface? = null
@@ -45,22 +44,13 @@ internal class CameraInteractorImpl @Inject internal constructor(
                 return@withContext
             }
 
-            if (toggleCommand.handle(keyCode, self)) {
-                pulseCommand.reset()
-                strobeCommand.reset()
-                Timber.d("Torch handled by ${TorchState.Toggle}")
-            }
-
-            if (pulseCommand.handle(keyCode, self)) {
-                toggleCommand.reset()
-                strobeCommand.reset()
-                Timber.d("Torch handled by ${TorchState.Pulse}")
-            }
-
-            if (strobeCommand.handle(keyCode, self)) {
-                toggleCommand.reset()
-                pulseCommand.reset()
-                Timber.d("Torch handled by ${TorchState.Flicker}")
+            for (command in commands) {
+                val name = command.name()
+                val otherCommands = commands.filter { it.name() !== name }
+                if (command.handle(keyCode, self)) {
+                    otherCommands.forEach { it.reset() }
+                    Timber.d("Torch handled by $name")
+                }
             }
         }
     }
@@ -113,15 +103,11 @@ internal class CameraInteractorImpl @Inject internal constructor(
     }
 
     private fun clearCommands() {
-        toggleCommand.reset()
-        pulseCommand.reset()
-        strobeCommand.reset()
+        commands.forEach { it.reset() }
     }
 
     private fun destroyCommands() {
-        toggleCommand.destroy()
-        pulseCommand.destroy()
-        strobeCommand.destroy()
+        commands.forEach { it.destroy() }
     }
 
     private fun teardown() {

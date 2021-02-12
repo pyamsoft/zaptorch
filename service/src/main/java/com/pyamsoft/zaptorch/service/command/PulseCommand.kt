@@ -29,7 +29,11 @@ import javax.inject.Singleton
 @Singleton
 internal class PulseCommand @Inject internal constructor(
     preferences: TorchPreferences
-) : BaseCommand<TorchState.Pulse>(preferences) {
+) : BaseCommand(preferences) {
+
+    override fun name(): String {
+        return "PulseCommand"
+    }
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
         handler.onCommandStart(TorchState.Pulse)

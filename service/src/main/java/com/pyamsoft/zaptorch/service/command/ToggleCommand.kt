@@ -27,7 +27,11 @@ import javax.inject.Singleton
 @Singleton
 internal class ToggleCommand @Inject internal constructor(
     preferences: TorchPreferences
-) : BaseCommand<TorchState.Toggle>(preferences) {
+) : BaseCommand(preferences) {
+
+    override fun name(): String {
+        return "ToggleCommand"
+    }
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
         handler.onCommandStart(TorchState.Toggle)

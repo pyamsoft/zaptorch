@@ -18,14 +18,22 @@ package com.pyamsoft.zaptorch.service
 
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.zaptorch.core.*
+import com.pyamsoft.zaptorch.core.CameraInteractor
+import com.pyamsoft.zaptorch.core.CameraInterface
+import com.pyamsoft.zaptorch.core.ClearPreferences
+import com.pyamsoft.zaptorch.core.SettingsInteractor
+import com.pyamsoft.zaptorch.core.TorchError
+import com.pyamsoft.zaptorch.core.TorchOffInteractor
+import com.pyamsoft.zaptorch.core.TorchPreferences
+import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.command.Command
-import com.pyamsoft.zaptorch.service.command.StrobeCommand
 import com.pyamsoft.zaptorch.service.command.PulseCommand
+import com.pyamsoft.zaptorch.service.command.StrobeCommand
 import com.pyamsoft.zaptorch.service.command.ToggleCommand
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
 @Module
@@ -33,15 +41,18 @@ abstract class ServiceModule {
 
     @Binds
     @CheckResult
-    internal abstract fun bindToggleCommand(impl: ToggleCommand): Command<TorchState.Toggle>
+    @IntoSet
+    internal abstract fun bindToggleCommand(impl: ToggleCommand): Command
 
     @Binds
     @CheckResult
-    internal abstract fun bindPulseCommand(impl: PulseCommand): Command<TorchState.Pulse>
+    @IntoSet
+    internal abstract fun bindPulseCommand(impl: PulseCommand): Command
 
     @Binds
     @CheckResult
-    internal abstract fun bindFlickerCommand(impl: StrobeCommand): Command<TorchState.Flicker>
+    @IntoSet
+    internal abstract fun bindFlickerCommand(impl: StrobeCommand): Command
 
     @Binds
     @CheckResult

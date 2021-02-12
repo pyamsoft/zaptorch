@@ -29,7 +29,11 @@ import javax.inject.Singleton
 @Singleton
 internal class StrobeCommand @Inject internal constructor(
     preferences: TorchPreferences
-) : BaseCommand<TorchState.Flicker>(preferences) {
+) : BaseCommand(preferences) {
+
+    override fun name(): String {
+        return "StrobeCommand"
+    }
 
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
         handler.onCommandStart(TorchState.Pulse)

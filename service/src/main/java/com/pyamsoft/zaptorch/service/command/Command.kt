@@ -21,11 +21,14 @@ import com.pyamsoft.zaptorch.core.TorchOff
 import com.pyamsoft.zaptorch.core.TorchOn
 import com.pyamsoft.zaptorch.core.TorchState
 
-internal interface Command<out S : TorchState> {
+internal interface Command {
 
     fun reset()
 
     fun destroy()
+
+    @CheckResult
+    fun name(): String
 
     @CheckResult
     suspend fun handle(keyCode: Int, handler: Handler): Boolean

@@ -35,6 +35,7 @@ interface ZapTorchViewModelFactory {
 
 @Reusable
 internal class ZapTorchViewModelFactoryImpl @Inject internal constructor(
+    // Need JvmSuppressWildcards for Dagger
     private val viewModels: Map<Class<*>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ZapTorchViewModelFactory {
 

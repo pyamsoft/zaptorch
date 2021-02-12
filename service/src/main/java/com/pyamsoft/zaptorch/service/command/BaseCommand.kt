@@ -32,9 +32,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-internal abstract class BaseCommand<S : TorchState> protected constructor(
+internal abstract class BaseCommand protected constructor(
     private val preferences: TorchPreferences
-) : Command<S> {
+) : Command {
 
     private var commandScope: CoroutineScope? = null
 
