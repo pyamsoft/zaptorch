@@ -19,15 +19,11 @@ package com.pyamsoft.zaptorch.service.error
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.pyamsoft.pydroid.ui.app.ActivityBase
+import androidx.appcompat.app.AppCompatActivity
 import com.pyamsoft.pydroid.ui.util.show
 import com.pyamsoft.zaptorch.R
 
-class CameraErrorExplanation : ActivityBase() {
-
-    override val fragmentContainerId: Int = 0
-
-    override val applicationIcon: Int = 0
+class CameraErrorExplanation : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_ZapTorch_Error)
