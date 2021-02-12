@@ -37,7 +37,7 @@ internal interface Command {
 
         suspend fun onCommandStart(state: TorchState)
 
-        suspend fun onCommandStop(state: TorchState)
+        suspend fun onCommandStop()
     }
 }
 

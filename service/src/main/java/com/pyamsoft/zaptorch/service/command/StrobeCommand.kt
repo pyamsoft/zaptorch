@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +32,7 @@ internal class StrobeCommand @Inject internal constructor(
     preferences: TorchPreferences
 ) : BaseCommand(preferences) {
 
-    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
+    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
         handler.onCommandStart(TorchState.Pulse)
         while (isActive) {
             // In case something is planning on killing the torch
@@ -41,11 +42,21 @@ internal class StrobeCommand @Inject internal constructor(
             // If this fails, it continues to loop and try instead of throwing an error and stopping
             // What can we do about this?
 
-            handler.forceTorchOn(TorchState.Strobe)
+            handler.forceTorchOn(TorchState.Strobe)?.also { error ->
+                Timber.e(error, "Force torch ON failed. Stop strobe")
+                return error
+            }
             delay(STROBE_TIMEOUT)
-            handler.forceTorchOff()
+
+            handler.forceTorchOff()?.also { error ->
+                Timber.e(error, "Force torch ON failed. Stop strobe")
+                return error
+            }
+
             delay(STROBE_TIMEOUT)
         }
+
+        return null
     }
 
     override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {

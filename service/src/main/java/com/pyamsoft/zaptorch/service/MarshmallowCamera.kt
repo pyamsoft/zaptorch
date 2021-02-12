@@ -55,27 +55,24 @@ internal class MarshmallowCamera @Inject internal constructor(
         this.activeState = state
     }
 
-    override suspend fun forceTorchOn(state: TorchState) {
+    override suspend fun forceTorchOn(state: TorchState): Throwable? =
         withContext(context = Dispatchers.Default) {
             Enforcer.assertOffMainThread()
-            applyTorchState(state, true)?.let { errorBus.send(it) }
+            applyTorchState(state, true)?.also { errorBus.send(TorchError(it)) }
         }
-    }
 
-    override suspend fun forceTorchOff() {
-        withContext(context = Dispatchers.Default) {
-            Enforcer.assertOffMainThread()
-            applyTorchState(activeState, false)?.let { errorBus.send(it) }
-        }
+    override suspend fun forceTorchOff(): Throwable? = withContext(context = Dispatchers.Default) {
+        Enforcer.assertOffMainThread()
+        applyTorchState(activeState, false)?.also { errorBus.send(TorchError(it)) }
     }
 
     @CheckResult
-    private fun applyTorchState(state: TorchState, enabled: Boolean): TorchError? {
+    private fun applyTorchState(state: TorchState, enabled: Boolean): CameraAccessException? {
         val cameraId = torchCallback.id()
         if (cameraId == null) {
             Timber.e("Torch unavailable $cameraId")
             setTorchState(TorchState.None)
-            return TorchError(CAMERA_UNAVAILABLE)
+            return CAMERA_UNAVAILABLE
         }
 
         return try {
@@ -85,7 +82,7 @@ internal class MarshmallowCamera @Inject internal constructor(
         } catch (e: CameraAccessException) {
             Timber.e(e, "Error during setTorchState $cameraId $enabled")
             setTorchState(TorchState.None)
-            TorchError(e)
+            e
         }
     }
 

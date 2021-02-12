@@ -21,6 +21,7 @@ import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.yield
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,13 +30,15 @@ internal class ToggleCommand @Inject internal constructor(
     preferences: TorchPreferences
 ) : BaseCommand(preferences) {
 
-    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
+    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
         handler.onCommandStart(TorchState.Toggle)
 
         // In case something is planning on killing the torch
         yield()
 
-        handler.forceTorchOn(TorchState.Toggle)
+        return handler.forceTorchOn(TorchState.Toggle)?.also { error ->
+            Timber.e(error, "Force torch ON failed. Stop Toggle")
+        }
     }
 
     override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {

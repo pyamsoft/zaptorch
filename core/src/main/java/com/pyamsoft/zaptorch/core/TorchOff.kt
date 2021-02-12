@@ -16,8 +16,11 @@
 
 package com.pyamsoft.zaptorch.core
 
+import androidx.annotation.CheckResult
+
 interface TorchOff {
 
-    suspend fun forceTorchOff()
+    @CheckResult
+    suspend fun forceTorchOff(): Throwable?
 
 }

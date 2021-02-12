@@ -60,8 +60,8 @@ internal class CameraInteractorImpl @Inject internal constructor(
         notificationHandler.start()
     }
 
-    override suspend fun onCommandStop(state: TorchState) {
-        Timber.d("Stop command: $state")
+    override suspend fun onCommandStop() {
+        Timber.d("Stop command")
         notificationHandler.stop()
     }
 
@@ -81,17 +81,15 @@ internal class CameraInteractorImpl @Inject internal constructor(
         }
     }
 
-    override suspend fun forceTorchOn(state: TorchState) {
-        withContext(context = Dispatchers.Default) {
+    override suspend fun forceTorchOn(state: TorchState): Throwable? =
+        withContext(context = Dispatchers.IO) {
             cameraInterface?.forceTorchOn(state)
         }
-    }
 
-    override suspend fun forceTorchOff() {
-        withContext(context = Dispatchers.Default) {
+    override suspend fun forceTorchOff(): Throwable? =
+        withContext(context = Dispatchers.IO) {
             cameraInterface?.forceTorchOff()
         }
-    }
 
     override suspend fun killTorch() {
         withContext(context = Dispatchers.Default) {

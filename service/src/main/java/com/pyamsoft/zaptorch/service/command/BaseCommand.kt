@@ -19,7 +19,6 @@ package com.pyamsoft.zaptorch.service.command
 import androidx.annotation.CheckResult
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.TorchPreferences
-import com.pyamsoft.zaptorch.core.TorchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import timber.log.Timber
 
 internal abstract class BaseCommand protected constructor(
     private val preferences: TorchPreferences
@@ -66,12 +66,20 @@ internal abstract class BaseCommand protected constructor(
 
         mutex.withLock {
             job = job.let { j ->
-                handler.forceTorchOff()
-                if (j == null) {
-                    launch { onClaimTorch(handler) }
+                val prepError = handler.forceTorchOff()
+                if (j == null && prepError == null) {
+                    launch {
+                        val torchError = onClaimTorch(handler)
+                        if (torchError != null) {
+                            Timber.e(torchError, "Error running torch command")
+                            cancel()
+                            handler.onCommandStop()
+                        }
+                    }
                 } else {
-                    j.cancelAndJoin()
-                    handler.onCommandStop(TorchState.Toggle)
+                    prepError?.also { Timber.e(it, "Error preparing torch for command") }
+                    j?.cancelAndJoin()
+                    handler.onCommandStop()
                     null
                 }
             }
@@ -154,7 +162,8 @@ internal abstract class BaseCommand protected constructor(
         }
     }
 
-    protected abstract suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler)
+    @CheckResult
+    protected abstract suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable?
 
     @CheckResult
     protected abstract suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean
