@@ -31,10 +31,6 @@ internal class StrobeCommand @Inject internal constructor(
     preferences: TorchPreferences
 ) : BaseCommand(preferences) {
 
-    override fun id(): String {
-        return "StrobeCommand"
-    }
-
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
         handler.onCommandStart(TorchState.Pulse)
         while (isActive) {

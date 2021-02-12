@@ -29,10 +29,6 @@ internal class ToggleCommand @Inject internal constructor(
     preferences: TorchPreferences
 ) : BaseCommand(preferences) {
 
-    override fun id(): String {
-        return "ToggleCommand"
-    }
-
     override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler) {
         handler.onCommandStart(TorchState.Toggle)
 

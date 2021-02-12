@@ -120,6 +120,10 @@ internal abstract class BaseCommand protected constructor(
         timerJob = null
     }
 
+    final override fun id(): String {
+        return this::class.java.name
+    }
+
     final override fun reset() {
         commandReady = false
 
@@ -140,6 +144,7 @@ internal abstract class BaseCommand protected constructor(
         Enforcer.assertOffMainThread()
 
         if (!isCommandEnabled(preferences)) {
+            reset()
             return false
         }
 
