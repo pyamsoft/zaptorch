@@ -52,7 +52,7 @@ abstract class ServiceModule {
     @Binds
     @CheckResult
     @IntoSet
-    internal abstract fun bindFlickerCommand(impl: StrobeCommand): Command
+    internal abstract fun bindStrobeCommand(impl: StrobeCommand): Command
 
     @Binds
     @CheckResult

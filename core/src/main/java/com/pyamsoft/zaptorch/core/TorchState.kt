@@ -20,5 +20,5 @@ sealed class TorchState {
     object None : TorchState()
     object Toggle : TorchState()
     object Pulse : TorchState()
-    object Flicker : TorchState()
+    object Strobe : TorchState()
 }

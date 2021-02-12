@@ -37,10 +37,14 @@ internal class StrobeCommand @Inject internal constructor(
             // In case something is planning on killing the torch
             yield()
 
-            handler.forceTorchOn(TorchState.Pulse)
-            delay(FLICKER_TIMEOUT)
+            // FIXME(Peter)
+            // If this fails, it continues to loop and try instead of throwing an error and stopping
+            // What can we do about this?
+
+            handler.forceTorchOn(TorchState.Strobe)
+            delay(STROBE_TIMEOUT)
             handler.forceTorchOff()
-            delay(FLICKER_TIMEOUT)
+            delay(STROBE_TIMEOUT)
         }
     }
 
@@ -57,6 +61,6 @@ internal class StrobeCommand @Inject internal constructor(
     }
 
     companion object {
-        private const val FLICKER_TIMEOUT = 60L
+        private const val STROBE_TIMEOUT = 60L
     }
 }
