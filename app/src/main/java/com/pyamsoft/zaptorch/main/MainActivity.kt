@@ -72,7 +72,10 @@ class MainActivity : ChangeLogActivity() {
         get() = requireNotNull(mainView).id()
 
     override val changelog = buildChangeLog {
-        bugfix("Flash light service properly responds when the service is toggled on and off")
+        bugfix("When the flashlight is unavailable, the service will not attempt to keep connecting.")
+        feature("Enable and Disable the Torch command on ↓ ↓↑")
+        feature("Enable and Disable the Torch command on ↑ ↑")
+        feature("Enable and Disable the Torch command on ↓ ↑")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
