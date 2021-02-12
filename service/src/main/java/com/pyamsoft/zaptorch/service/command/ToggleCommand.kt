@@ -29,7 +29,7 @@ internal class ToggleCommand @Inject internal constructor(
     preferences: TorchPreferences
 ) : BaseCommand(preferences) {
 
-    override fun name(): String {
+    override fun id(): String {
         return "ToggleCommand"
     }
 

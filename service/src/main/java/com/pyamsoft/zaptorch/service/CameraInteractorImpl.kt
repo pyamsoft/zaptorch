@@ -45,8 +45,8 @@ internal class CameraInteractorImpl @Inject internal constructor(
             }
 
             for (command in commands) {
-                val name = command.name()
-                val otherCommands = commands.filter { it.name() !== name }
+                val name = command.id()
+                val otherCommands = commands.filter { it.id() !== name }
                 if (command.handle(keyCode, self)) {
                     otherCommands.forEach { it.reset() }
                     Timber.d("Torch handled by $name")

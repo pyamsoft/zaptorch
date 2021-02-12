@@ -28,7 +28,7 @@ internal interface Command {
     fun destroy()
 
     @CheckResult
-    fun name(): String
+    fun id(): String
 
     @CheckResult
     suspend fun handle(keyCode: Int, handler: Handler): Boolean
