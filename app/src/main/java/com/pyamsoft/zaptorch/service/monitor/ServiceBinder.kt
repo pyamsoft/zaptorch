@@ -19,6 +19,7 @@ package com.pyamsoft.zaptorch.service.monitor
 import com.pyamsoft.zaptorch.core.CameraInteractor
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.service.Binder
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,10 +29,10 @@ import javax.inject.Inject
 internal class ServiceBinder @Inject internal constructor(
     private val cameraInteractor: CameraInteractor,
     private val serviceInteractor: VolumeServiceInteractor,
-) : Binder<ServiceControllerEvent>() {
+) : Binder<ServiceEvent>() {
 
-    override fun onBind(onEvent: (event: ServiceControllerEvent) -> Unit) {
-        binderScope.launch(context = Dispatchers.Main) {
+    override fun CoroutineScope.onBind(onEvent: (event: ServiceEvent) -> Unit) {
+        launch(context = Dispatchers.Main) {
             cameraInteractor.initialize()
         }
 
@@ -42,30 +43,30 @@ internal class ServiceBinder @Inject internal constructor(
         cameraInteractor.destroy()
     }
 
-    private inline fun watchCameraErrors(crossinline onEvent: (ServiceControllerEvent) -> Unit) =
-        binderScope.launch(context = Dispatchers.Default) {
+    private inline fun CoroutineScope.watchCameraErrors(crossinline onEvent: (ServiceEvent) -> Unit) =
+        launch(context = Dispatchers.Default) {
             serviceInteractor.observeCameraState { error ->
                 withContext(context = Dispatchers.Main) {
                     Timber.e(error.exception, "Camera error received")
-                    onEvent(ServiceControllerEvent.RenderError(error))
+                    onEvent(ServiceEvent.RenderError(error))
                 }
             }
         }
 
-    fun handleKeyEvent(action: Int, keyCode: Int) {
-        binderScope.launch(context = Dispatchers.Default) {
+    internal fun handleKeyEvent(scope: CoroutineScope, action: Int, keyCode: Int) {
+        scope.launch(context = Dispatchers.Default) {
             cameraInteractor.handleKeyPress(action, keyCode)
         }
     }
 
-    fun start() {
-        binderScope.launch(context = Dispatchers.Default) {
+    internal fun start(scope: CoroutineScope) {
+        scope.launch(context = Dispatchers.Default) {
             serviceInteractor.setServiceState(true)
         }
     }
 
-    fun stop() {
-        binderScope.launch(context = Dispatchers.Default) {
+    internal fun handleStop(scope: CoroutineScope) {
+        scope.launch(context = Dispatchers.Default) {
             serviceInteractor.setServiceState(false)
         }
     }

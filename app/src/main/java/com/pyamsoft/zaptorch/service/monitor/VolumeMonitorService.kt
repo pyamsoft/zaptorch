@@ -20,23 +20,33 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.lifecycleScope
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
-import com.pyamsoft.zaptorch.service.monitor.ServiceControllerEvent.RenderError
+import com.pyamsoft.zaptorch.service.monitor.ServiceEvent.RenderError
 import timber.log.Timber
 import javax.inject.Inject
 
-class VolumeMonitorService : AccessibilityService() {
+class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
 
     @JvmField
     @Inject
     internal var binder: ServiceBinder? = null
 
+    private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
+
+    override fun getLifecycle(): Lifecycle {
+        return registry
+    }
+
     override fun onKeyEvent(event: KeyEvent): Boolean {
         val action = event.action
         val keyCode = event.keyCode
-        binder?.handleKeyEvent(action, keyCode)
+        binder?.handleKeyEvent(lifecycleScope, action, keyCode)
 
         // Never consume events
         return false
@@ -57,20 +67,22 @@ class VolumeMonitorService : AccessibilityService() {
             .create()
             .inject(this)
 
-        requireNotNull(binder).bind {
+        requireNotNull(binder).bind(lifecycleScope) {
             return@bind when (it) {
                 is RenderError -> CameraErrorExplanation.showError(applicationContext)
             }
         }
+
+        registry.currentState = Lifecycle.State.RESUMED
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        requireNotNull(binder).start()
+        requireNotNull(binder).start(lifecycleScope)
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        binder?.stop()
+        binder?.handleStop(lifecycleScope)
         return super.onUnbind(intent)
     }
 
@@ -78,5 +90,7 @@ class VolumeMonitorService : AccessibilityService() {
         super.onDestroy()
         binder?.unbind()
         binder = null
+
+        registry.currentState = Lifecycle.State.DESTROYED
     }
 }

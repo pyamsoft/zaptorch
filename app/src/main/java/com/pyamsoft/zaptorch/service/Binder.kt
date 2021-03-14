@@ -17,24 +17,18 @@
 package com.pyamsoft.zaptorch.service
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 
 abstract class Binder<T : Any> {
 
-    val binderScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
-    fun bind(onEvent: (event: T) -> Unit) {
-        onBind(onEvent)
+    fun bind(scope: CoroutineScope, onEvent: (event: T) -> Unit) {
+        scope.onBind(onEvent)
     }
 
-    protected open fun onBind(onEvent: (event: T) -> Unit) {
+    protected open fun CoroutineScope.onBind(onEvent: (event: T) -> Unit) {
     }
 
     fun unbind() {
         onUnbind()
-        binderScope.cancel()
     }
 
     protected open fun onUnbind() {

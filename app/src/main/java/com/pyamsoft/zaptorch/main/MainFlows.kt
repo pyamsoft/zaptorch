@@ -16,7 +16,6 @@
 
 package com.pyamsoft.zaptorch.main
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
 import com.pyamsoft.pydroid.arch.UiViewEvent
 import com.pyamsoft.pydroid.arch.UiViewState
 
@@ -28,11 +27,4 @@ data class MainViewState(
 sealed class MainViewEvent : UiViewEvent {
 
     object ActionClick : MainViewEvent()
-}
-
-sealed class MainControllerEvent : UiControllerEvent {
-
-    data class ServiceAction internal constructor(
-        val isServiceRunning: Boolean
-    ) : MainControllerEvent()
 }

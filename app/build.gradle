@@ -108,8 +108,8 @@ dependencies {
 	debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanary"
 
 	// PYDroid
-	implementation "com.pyamsoft.pydroid:ui:$pydroid"
-	debugImplementation "com.pyamsoft.pydroid:autopsy:$pydroid"
+	implementation "com.github.pyamsoft.pydroid:ui:$pydroid"
+	debugImplementation "com.github.pyamsoft.pydroid:autopsy:$pydroid"
 
 	// AndroidX
 	implementation "androidx.coordinatorlayout:coordinatorlayout:$coordinatorLayout"

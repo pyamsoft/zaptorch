@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.pyamsoft.pydroid.arch.StateSaver
-import com.pyamsoft.pydroid.arch.createComponent
+import com.pyamsoft.pydroid.arch.bindController
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.R
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
@@ -73,14 +73,16 @@ class MainFragment : Fragment() {
             .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
             .inject(this)
 
-        stateSaver = createComponent(
-            savedInstanceState, viewLifecycleOwner,
-            viewModel,
+        stateSaver = viewModel.bindController(
+            savedInstanceState,
+            viewLifecycleOwner,
             requireNotNull(actionView),
             requireNotNull(toolbarView)
         ) {
-            return@createComponent when (it) {
-                is MainControllerEvent.ServiceAction -> handleServiceAction(it.isServiceRunning)
+            return@bindController when (it) {
+                is MainViewEvent.ActionClick -> viewModel.handleServiceAction { running ->
+                    handleServiceAction(running)
+                }
             }
         }
 

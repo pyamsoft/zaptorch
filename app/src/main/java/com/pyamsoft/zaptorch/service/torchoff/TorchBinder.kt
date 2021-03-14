@@ -16,19 +16,19 @@
 
 package com.pyamsoft.zaptorch.service.torchoff
 
-import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.zaptorch.core.TorchOffInteractor
 import com.pyamsoft.zaptorch.service.Binder
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 internal class TorchBinder @Inject internal constructor(
     private val interactor: TorchOffInteractor
-) : Binder<UnitControllerEvent>() {
+) : Binder<Unit>() {
 
-    fun toggle() {
-        binderScope.launch(context = Dispatchers.Default) {
+    internal fun handleToggle(scope: CoroutineScope) {
+        scope.launch(context = Dispatchers.Default) {
             interactor.killTorch()
         }
     }

@@ -19,16 +19,26 @@ package com.pyamsoft.zaptorch.service.torchoff
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.lifecycleScope
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import timber.log.Timber
 import javax.inject.Inject
 
-class TorchOffService : JobIntentService() {
+class TorchOffService : JobIntentService(), LifecycleOwner {
 
     @JvmField
     @Inject
     internal var binder: TorchBinder? = null
+
+    private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
+
+    override fun getLifecycle(): Lifecycle {
+        return registry
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -37,9 +47,11 @@ class TorchOffService : JobIntentService() {
             .create()
             .inject(this)
 
-        requireNotNull(binder).bind {
+        requireNotNull(binder).bind(lifecycleScope) {
             // This should not handle any events
         }
+
+        registry.currentState = Lifecycle.State.RESUMED
     }
 
     override fun onDestroy() {
@@ -47,11 +59,13 @@ class TorchOffService : JobIntentService() {
 
         binder?.unbind()
         binder = null
+
+        registry.currentState = Lifecycle.State.DESTROYED
     }
 
     override fun onHandleWork(intent: Intent) {
         try {
-            requireNotNull(binder).toggle()
+            requireNotNull(binder).handleToggle(lifecycleScope)
         } catch (e: IllegalStateException) {
             Timber.e(e, "Error toggling torch")
         }

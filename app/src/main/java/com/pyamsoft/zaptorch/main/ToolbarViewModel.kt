@@ -25,8 +25,4 @@ import javax.inject.Inject
 internal class ToolbarViewModel @Inject internal constructor(
 ) : UiViewModel<UnitViewState, UnitViewEvent, UnitControllerEvent>(
     initialState = UnitViewState
-) {
-
-    override fun handleViewEvent(event: UnitViewEvent) {
-    }
-}
+)

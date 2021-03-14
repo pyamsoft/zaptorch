@@ -16,10 +16,9 @@
 
 package com.pyamsoft.zaptorch.service.monitor
 
-import com.pyamsoft.pydroid.arch.UiControllerEvent
 import com.pyamsoft.zaptorch.core.TorchError
 
-sealed class ServiceControllerEvent : UiControllerEvent {
+sealed class ServiceEvent {
 
-    data class RenderError(val error: TorchError) : ServiceControllerEvent()
+    data class RenderError(val error: TorchError) : ServiceEvent()
 }

@@ -21,7 +21,6 @@ import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.bus.EventBus
-import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,11 +29,7 @@ internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
 ) : UiViewModel<UnitViewState, SettingsViewEvent, UnitControllerEvent>(UnitViewState) {
 
-    override fun handleViewEvent(event: SettingsViewEvent) = when (event) {
-        is SignificantScroll -> scroll(event.visible)
-    }
-
-    private fun scroll(visible: Boolean) {
+    internal fun handleScroll(visible: Boolean) {
         viewModelScope.launch(context = Dispatchers.Default) {
             scrollBus.send(SignificantScrollEvent(visible))
         }
