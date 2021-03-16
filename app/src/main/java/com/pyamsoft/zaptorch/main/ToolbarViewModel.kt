@@ -18,11 +18,8 @@ package com.pyamsoft.zaptorch.main
 
 import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
-import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import javax.inject.Inject
 
 internal class ToolbarViewModel @Inject internal constructor(
-) : UiViewModel<UnitViewState, UnitViewEvent, UnitControllerEvent>(
-    initialState = UnitViewState
-)
+) : UiViewModel<UnitViewState, UnitControllerEvent>(initialState = UnitViewState)

@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 internal class SettingsViewModel @Inject internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
-) : UiViewModel<UnitViewState, SettingsViewEvent, UnitControllerEvent>(UnitViewState) {
+) : UiViewModel<UnitViewState, UnitControllerEvent>(UnitViewState) {
 
     internal fun handleScroll(visible: Boolean) {
         viewModelScope.launch(context = Dispatchers.Default) {

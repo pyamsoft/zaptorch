@@ -23,7 +23,8 @@ import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.pyamsoft.pydroid.arch.StateSaver
-import com.pyamsoft.pydroid.arch.bindController
+import com.pyamsoft.pydroid.arch.UiController
+import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.R
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
@@ -36,7 +37,7 @@ import com.pyamsoft.zaptorch.settings.SettingsFragment
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), UiController<MainControllerEvent> {
 
     @JvmField
     @Inject
@@ -73,20 +74,26 @@ class MainFragment : Fragment() {
             .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
             .inject(this)
 
-        stateSaver = viewModel.bindController(
+        stateSaver = createComponent(
             savedInstanceState,
             viewLifecycleOwner,
+            viewModel,
+            this,
             requireNotNull(actionView),
             requireNotNull(toolbarView)
         ) {
-            return@bindController when (it) {
-                is MainViewEvent.ActionClick -> viewModel.handleServiceAction { running ->
-                    handleServiceAction(running)
-                }
+            return@createComponent when (it) {
+                is MainViewEvent.ActionClick -> viewModel.handleServiceAction()
             }
         }
 
         displayPreferenceFragment()
+    }
+
+    override fun onControllerEvent(event: MainControllerEvent) {
+        return when (event) {
+            is MainControllerEvent.OnServiceStateChanged -> handleServiceAction(event.isRunning)
+        }
     }
 
     override fun onDestroyView() {

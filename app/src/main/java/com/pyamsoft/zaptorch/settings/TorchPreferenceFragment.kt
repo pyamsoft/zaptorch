@@ -19,8 +19,10 @@ package com.pyamsoft.zaptorch.settings
 import android.os.Bundle
 import android.view.View
 import com.pyamsoft.pydroid.arch.StateSaver
+import com.pyamsoft.pydroid.arch.UiController
+import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
-import com.pyamsoft.pydroid.arch.bindController
+import com.pyamsoft.pydroid.arch.createComponent
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.pydroid.ui.app.requireToolbarActivity
 import com.pyamsoft.pydroid.ui.arch.fromViewModelFactory
@@ -31,7 +33,7 @@ import com.pyamsoft.zaptorch.ZapTorchViewModelFactory
 import com.pyamsoft.zaptorch.widget.ToolbarView
 import javax.inject.Inject
 
-class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
+class TorchPreferenceFragment : AppSettingsPreferenceFragment(), UiController<UnitControllerEvent> {
 
     @JvmField
     @Inject
@@ -65,17 +67,22 @@ class TorchPreferenceFragment : AppSettingsPreferenceFragment() {
             .create(requireToolbarActivity(), listView, preferenceScreen)
             .inject(this)
 
-        stateSaver = viewModel.bindController(
+        stateSaver = createComponent(
             savedInstanceState,
             viewLifecycleOwner,
+            viewModel,
+            this,
             requireNotNull(settingsView),
             requireNotNull(toolbarView),
             requireNotNull(spacer)
         ) {
-            return@bindController when (it) {
+            return@createComponent when (it) {
                 is SettingsViewEvent.SignificantScroll -> viewModel.handleScroll(it.visible)
             }
         }
+    }
+
+    override fun onControllerEvent(event: UnitControllerEvent) {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

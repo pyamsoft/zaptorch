@@ -18,7 +18,6 @@ package com.pyamsoft.zaptorch.main
 
 import androidx.lifecycle.viewModelScope
 import com.pyamsoft.pydroid.arch.UiViewModel
-import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
@@ -29,7 +28,7 @@ import javax.inject.Inject
 internal class MainViewModel @Inject internal constructor(
     serviceInteractor: VolumeServiceInteractor,
     visibilityBus: EventBus<SignificantScrollEvent>
-) : UiViewModel<MainViewState, MainViewEvent, UnitControllerEvent>(
+) : UiViewModel<MainViewState, MainControllerEvent>(
     MainViewState(
         isVisible = true,
         isServiceRunning = false
@@ -48,7 +47,7 @@ internal class MainViewModel @Inject internal constructor(
         }
     }
 
-    internal inline fun handleServiceAction(onServiceState: (running: Boolean) -> Unit) {
-        onServiceState(state.isServiceRunning)
+    internal fun handleServiceAction() {
+        publish(MainControllerEvent.OnServiceStateChanged(state.isServiceRunning))
     }
 }
