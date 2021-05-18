@@ -20,17 +20,15 @@ import kotlinx.coroutines.CoroutineScope
 
 abstract class Binder<T : Any> {
 
-    fun bind(scope: CoroutineScope, onEvent: (event: T) -> Unit) {
-        scope.onBind(onEvent)
-    }
+  fun bind(scope: CoroutineScope, onEvent: (event: T) -> Unit) {
+    scope.onBind(onEvent)
+  }
 
-    protected open fun CoroutineScope.onBind(onEvent: (event: T) -> Unit) {
-    }
+  protected open fun CoroutineScope.onBind(onEvent: (event: T) -> Unit) {}
 
-    fun unbind() {
-        onUnbind()
-    }
+  fun unbind() {
+    onUnbind()
+  }
 
-    protected open fun onUnbind() {
-    }
+  protected open fun onUnbind() {}
 }

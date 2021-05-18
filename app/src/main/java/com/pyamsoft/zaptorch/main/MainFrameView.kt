@@ -23,12 +23,10 @@ import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.zaptorch.databinding.MainContainerBinding
 import javax.inject.Inject
 
-internal class MainFrameView @Inject internal constructor(
-    parent: ViewGroup
-) : BaseUiView<UnitViewState, UnitViewEvent, MainContainerBinding>(parent) {
+internal class MainFrameView @Inject internal constructor(parent: ViewGroup) :
+    BaseUiView<UnitViewState, UnitViewEvent, MainContainerBinding>(parent) {
 
-    override val viewBinding = MainContainerBinding::inflate
+  override val viewBinding = MainContainerBinding::inflate
 
-    override val layoutRoot by boundView { mainContainer }
-
+  override val layoutRoot by boundView { mainContainer }
 }

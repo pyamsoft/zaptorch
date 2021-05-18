@@ -23,21 +23,18 @@ import com.pyamsoft.zaptorch.core.TorchState
 
 internal interface Command {
 
-    fun reset()
+  fun reset()
 
-    fun destroy()
+  fun destroy()
 
-    @CheckResult
-    fun id(): String
+  @CheckResult fun id(): String
 
-    @CheckResult
-    suspend fun handle(keyCode: Int, handler: Handler): Boolean
+  @CheckResult suspend fun handle(keyCode: Int, handler: Handler): Boolean
 
-    interface Handler : TorchOff, TorchOn {
+  interface Handler : TorchOff, TorchOn {
 
-        suspend fun onCommandStart(state: TorchState)
+    suspend fun onCommandStart(state: TorchState)
 
-        suspend fun onCommandStop()
-    }
+    suspend fun onCommandStop()
+  }
 }
-

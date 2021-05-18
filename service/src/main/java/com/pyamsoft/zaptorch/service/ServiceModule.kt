@@ -39,59 +39,49 @@ import javax.inject.Singleton
 @Module
 abstract class ServiceModule {
 
-    @Binds
+  @Binds @CheckResult @IntoSet internal abstract fun bindToggleCommand(impl: ToggleCommand): Command
+
+  @Binds @CheckResult @IntoSet internal abstract fun bindPulseCommand(impl: PulseCommand): Command
+
+  @Binds @CheckResult @IntoSet internal abstract fun bindStrobeCommand(impl: StrobeCommand): Command
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindTorchOffInteractor(impl: CameraInteractorImpl): TorchOffInteractor
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindCameraInteractor(impl: CameraInteractorImpl): CameraInteractor
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindServiceInteractor(
+      impl: VolumeServiceInteractorImpl
+  ): VolumeServiceInteractor
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindSettingsInteractor(impl: SettingsInteractorImpl): SettingsInteractor
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): TorchPreferences
+
+  @Binds
+  @CheckResult
+  internal abstract fun bindClearPreferences(impl: ZapTorchPreferencesImpl): ClearPreferences
+
+  @Binds @CheckResult internal abstract fun bindCamera(impl: MarshmallowCamera): CameraInterface
+
+  @Module
+  companion object {
+
+    @JvmStatic
+    @Provides
     @CheckResult
-    @IntoSet
-    internal abstract fun bindToggleCommand(impl: ToggleCommand): Command
-
-    @Binds
-    @CheckResult
-    @IntoSet
-    internal abstract fun bindPulseCommand(impl: PulseCommand): Command
-
-    @Binds
-    @CheckResult
-    @IntoSet
-    internal abstract fun bindStrobeCommand(impl: StrobeCommand): Command
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindTorchOffInteractor(impl: CameraInteractorImpl): TorchOffInteractor
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindCameraInteractor(impl: CameraInteractorImpl): CameraInteractor
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindServiceInteractor(impl: VolumeServiceInteractorImpl): VolumeServiceInteractor
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindSettingsInteractor(impl: SettingsInteractorImpl): SettingsInteractor
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindCameraPreferences(impl: ZapTorchPreferencesImpl): TorchPreferences
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindClearPreferences(impl: ZapTorchPreferencesImpl): ClearPreferences
-
-    @Binds
-    @CheckResult
-    internal abstract fun bindCamera(impl: MarshmallowCamera): CameraInterface
-
-    @Module
-    companion object {
-
-        @JvmStatic
-        @Provides
-        @CheckResult
-        @Singleton
-        fun provideCameraErrorBus(): EventBus<TorchError> {
-            return EventBus.create(emitOnlyWhenActive = false)
-        }
-
+    @Singleton
+    fun provideCameraErrorBus(): EventBus<TorchError> {
+      return EventBus.create(emitOnlyWhenActive = false)
     }
+  }
 }

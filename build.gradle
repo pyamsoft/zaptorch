@@ -18,127 +18,118 @@
 
 
 buildscript {
-	ext {
-		kotlin_version = '1.5.0'
-	}
-	repositories {
-		mavenLocal()
-		google()
-		mavenCentral()
-		jcenter()
+  ext {
+    kotlin_version = '1.5.0'
+  }
+  repositories {
+    mavenLocal()
+    google()
+    mavenCentral()
 
-		maven {
-			url "https://jitpack.io"
-		}
+    maven {
+      url "https://jitpack.io"
+    }
 
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
 
-	ext {
+  ext {
 
-		minSdk = 23
-		maxSdk = 30
+    minSdk = 23
+    maxSdk = 30
 
-		// Logging
-		timber = "4.7.1"
+    // Logging
+    timber = "4.7.1"
 
-		// AndroidX
-		core = "1.3.2"
-		preference = "1.1.1"
-		coordinatorLayout = "1.1.0"
-		constraintLayout = "2.0.4"
+    // AndroidX
+    core = "1.3.2"
+    preference = "1.1.1"
+    coordinatorLayout = "1.1.0"
+    constraintLayout = "2.0.4"
 
-		// Material Design
-		materialDesign = "1.3.0"
+    // Material Design
+    materialDesign = "1.3.0"
 
-		pydroid = "23.0.2"
-		leakCanary = "2.7"
-		dagger = "2.35.1"
-	}
+    pydroid = "23.0.5"
+    leakCanary = "2.7"
+    dagger = "2.35.1"
+  }
 
-	dependencies {
-		classpath 'com.android.tools.build:gradle:4.2.1'
+  dependencies {
+    classpath 'com.android.tools.build:gradle:4.2.1'
 
-		// Gradle version checker
-		classpath 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
+    // Gradle version checker
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
 
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
-		// Spotless
-		classpath "com.diffplug.spotless:spotless-plugin-gradle:5.12.5"
-	}
+    // Spotless
+    classpath "com.diffplug.spotless:spotless-plugin-gradle:5.12.5"
+  }
 }
 
 allprojects {
-	apply plugin: "com.github.ben-manes.versions"
-	apply plugin: "com.diffplug.spotless"
+  apply plugin: "com.github.ben-manes.versions"
+  apply plugin: "com.diffplug.spotless"
 
-	dependencyUpdates.resolutionStrategy {
-		componentSelection { rules ->
-			rules.all { ComponentSelection selection ->
-				boolean rejected = [
-					'alpha',
-					'beta',
-					'rc',
-					'cr',
-					'm',
-					'preview'
-				].any { qualifier ->
-					selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-				}
-				if (rejected) {
-					selection.reject('Release candidate')
-				}
-			}
-		}
-	}
+  // Ignore non-release libraries
+  def isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
+    return !stableKeyword && !(version ==~ regex)
+  }
 
-	spotless {
-		java {
-			target "src/**/*.java"
+  tasks.named("dependencyUpdates").configure {
+    rejectVersionIf {
+      isNonStable(it.candidate.version)
+    }
+  }
 
-			removeUnusedImports()
-			trimTrailingWhitespace()
-			endWithNewline()
-			indentWithSpaces(2)
-		}
-		kotlin {
-			target "src/**/*.kt"
-			ktlint()
+  spotless {
+    java {
+      target "src/**/*.java"
 
-			trimTrailingWhitespace()
-			endWithNewline()
-			indentWithSpaces(2)
-		}
-		groovyGradle {
-			target "*.gradle"
-			greclipse()
+      removeUnusedImports()
+      trimTrailingWhitespace()
+      endWithNewline()
+      indentWithSpaces(2)
+    }
+    kotlin {
+      target "src/**/*.kt"
+      ktfmt()
 
-			trimTrailingWhitespace()
-			endWithNewline()
-			indentWithSpaces(2)
-		}
-	}
+      trimTrailingWhitespace()
+      endWithNewline()
+      indentWithSpaces(2)
+    }
+    groovyGradle {
+      target "*.gradle"
+      greclipse()
 
-	repositories {
-		mavenLocal()
-		google()
-		mavenCentral()
-		jcenter()
+      trimTrailingWhitespace()
+      endWithNewline()
+      indentWithSpaces(2)
+    }
+  }
 
-		maven {
-			url "https://jitpack.io"
-		}
+  repositories {
+    mavenLocal()
+    google()
+    mavenCentral()
 
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
-	}
+    maven {
+      url "https://jitpack.io"
+    }
 
-	tasks.withType(JavaCompile) {
-		options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
-		options.deprecation = true
-	}
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+
+  tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+    options.deprecation = true
+  }
 }

@@ -22,7 +22,7 @@ import android.content.Intent
 
 class TorchOffReceiver : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
-        TorchOffService.enqueue(context)
-    }
+  override fun onReceive(context: Context, intent: Intent) {
+    TorchOffService.enqueue(context)
+  }
 }

@@ -39,103 +39,94 @@ import javax.inject.Inject
 
 class MainFragment : Fragment(), UiController<MainControllerEvent> {
 
-    @JvmField
-    @Inject
-    internal var actionView: MainActionView? = null
+  @JvmField @Inject internal var actionView: MainActionView? = null
 
-    @JvmField
-    @Inject
-    internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null
+  @JvmField @Inject internal var toolbarView: ToolbarView<MainViewState, MainViewEvent>? = null
 
-    @JvmField
-    @Inject
-    internal var factory: ZapTorchViewModelFactory? = null
-    private val viewModel by fromViewModelFactory<MainViewModel> { factory?.create(this) }
+  @JvmField @Inject internal var factory: ZapTorchViewModelFactory? = null
+  private val viewModel by fromViewModelFactory<MainViewModel> { factory?.create(this) }
 
-    private var stateSaver: StateSaver? = null
+  private var stateSaver: StateSaver? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.layout_coordinator, container, false)
-    }
+  override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
+  ): View? {
+    return inflater.inflate(R.layout.layout_coordinator, container, false)
+  }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-        val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
-        Injector.obtainFromApplication<ZapTorchComponent>(view.context)
-            .plusMainFragmentComponent()
-            .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
-            .inject(this)
+    val layoutRoot = view.findViewById<CoordinatorLayout>(R.id.layout_coordinator)
+    Injector.obtainFromApplication<ZapTorchComponent>(view.context)
+        .plusMainFragmentComponent()
+        .create(viewLifecycleOwner, requireToolbarActivity(), layoutRoot)
+        .inject(this)
 
-        stateSaver = createComponent(
+    stateSaver =
+        createComponent(
             savedInstanceState,
             viewLifecycleOwner,
             viewModel,
             this,
             requireNotNull(actionView),
-            requireNotNull(toolbarView)
-        ) {
-            return@createComponent when (it) {
-                is MainViewEvent.ActionClick -> viewModel.handleServiceAction()
-            }
+            requireNotNull(toolbarView)) {
+          return@createComponent when (it) {
+            is MainViewEvent.ActionClick -> viewModel.handleServiceAction()
+          }
         }
 
-        displayPreferenceFragment()
-    }
+    displayPreferenceFragment()
+  }
 
-    override fun onControllerEvent(event: MainControllerEvent) {
-        return when (event) {
-            is MainControllerEvent.OnServiceStateChanged -> handleServiceAction(event.isRunning)
-        }
+  override fun onControllerEvent(event: MainControllerEvent) {
+    return when (event) {
+      is MainControllerEvent.OnServiceStateChanged -> handleServiceAction(event.isRunning)
     }
+  }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        actionView = null
-        toolbarView = null
-        factory = null
-        stateSaver = null
+  override fun onDestroyView() {
+    super.onDestroyView()
+    actionView = null
+    toolbarView = null
+    factory = null
+    stateSaver = null
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    stateSaver?.saveState(outState)
+  }
+
+  private fun handleServiceAction(isServiceRunning: Boolean) {
+    if (isServiceRunning) {
+      showInfoDialog()
+    } else {
+      showUsageAccessRequestDialog()
     }
+  }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        stateSaver?.saveState(outState)
+  private fun showUsageAccessRequestDialog() {
+    AccessibilityRequestDialog().show(requireActivity(), "accessibility")
+  }
+
+  private fun showInfoDialog() {
+    HowToDialog().show(requireActivity(), "how_to")
+  }
+
+  private fun displayPreferenceFragment() {
+    val fragmentManager = childFragmentManager
+    if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
+      fragmentManager.commit(viewLifecycleOwner) {
+        add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
+      }
     }
+  }
 
-    private fun handleServiceAction(isServiceRunning: Boolean) {
-        if (isServiceRunning) {
-            showInfoDialog()
-        } else {
-            showUsageAccessRequestDialog()
-        }
-    }
+  companion object {
 
-    private fun showUsageAccessRequestDialog() {
-        AccessibilityRequestDialog().show(requireActivity(), "accessibility")
-    }
-
-    private fun showInfoDialog() {
-        HowToDialog().show(requireActivity(), "how_to")
-    }
-
-    private fun displayPreferenceFragment() {
-        val fragmentManager = childFragmentManager
-        if (fragmentManager.findFragmentByTag(SettingsFragment.TAG) == null) {
-            fragmentManager.commit(viewLifecycleOwner) {
-                add(requireNotNull(actionView).id(), SettingsFragment(), SettingsFragment.TAG)
-            }
-        }
-    }
-
-    companion object {
-
-        const val TAG = "MainFragment"
-    }
+    const val TAG = "MainFragment"
+  }
 }

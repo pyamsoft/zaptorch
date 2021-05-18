@@ -19,55 +19,54 @@ package com.pyamsoft.zaptorch.service.command
 import android.view.KeyEvent
 import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class PulseCommand @Inject internal constructor(
-    preferences: TorchPreferences
-) : BaseCommand(preferences) {
+internal class PulseCommand @Inject internal constructor(preferences: TorchPreferences) :
+    BaseCommand(preferences) {
 
-    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
-        handler.onCommandStart(TorchState.Pulse)
-        while (isActive) {
-            // In case something is planning on killing the torch
-            yield()
+  override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
+    handler.onCommandStart(TorchState.Pulse)
+    while (isActive) {
+      // In case something is planning on killing the torch
+      yield()
 
-            // FIXME(Peter)
-            // If this fails, it continues to loop and try instead of throwing an error and stopping
-            // What can we do about this?
+      // FIXME(Peter)
+      // If this fails, it continues to loop and try instead of throwing an error and stopping
+      // What can we do about this?
 
-            handler.forceTorchOn(TorchState.Pulse)?.also { error ->
-                Timber.e(error, "Force torch ON failed. Stop pulse")
-                return error
-            }
-            delay(PULSE_TIMEOUT)
+      handler.forceTorchOn(TorchState.Pulse)?.also { error ->
+        Timber.e(error, "Force torch ON failed. Stop pulse")
+        return error
+      }
+      delay(PULSE_TIMEOUT)
 
-            handler.forceTorchOff()?.also { error ->
-                Timber.e(error, "Force torch OFF failed. Stop pulse")
-                return error
-            }
+      handler.forceTorchOff()?.also { error ->
+        Timber.e(error, "Force torch OFF failed. Stop pulse")
+        return error
+      }
 
-            delay(PULSE_TIMEOUT)
-        }
-
-        return null
+      delay(PULSE_TIMEOUT)
     }
 
-    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
-        return keyCode == KeyEvent.KEYCODE_VOLUME_UP
-    }
+    return null
+  }
 
-    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
-        return preferences.isPulseEnabled()
-    }
+  override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    return keyCode == KeyEvent.KEYCODE_VOLUME_UP
+  }
 
-    companion object {
-        private const val PULSE_TIMEOUT = 600L
-    }
+  override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+    return preferences.isPulseEnabled()
+  }
+
+  companion object {
+    private const val PULSE_TIMEOUT = 600L
+  }
 }

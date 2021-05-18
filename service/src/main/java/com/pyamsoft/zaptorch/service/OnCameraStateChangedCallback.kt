@@ -20,6 +20,5 @@ import com.pyamsoft.zaptorch.core.TorchState
 
 internal interface OnCameraStateChangedCallback {
 
-    fun onUnavailable(state: TorchState)
-
+  fun onUnavailable(state: TorchState)
 }

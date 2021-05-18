@@ -25,65 +25,58 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class TorchOffService : JobIntentService(), LifecycleOwner {
 
-    @JvmField
-    @Inject
-    internal var binder: TorchBinder? = null
+  @JvmField @Inject internal var binder: TorchBinder? = null
 
-    private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
+  private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
 
-    override fun getLifecycle(): Lifecycle {
-        return registry
+  override fun getLifecycle(): Lifecycle {
+    return registry
+  }
+
+  override fun onCreate() {
+    super.onCreate()
+    Injector.obtainFromApplication<ZapTorchComponent>(this)
+        .plusServiceComponent()
+        .create()
+        .inject(this)
+
+    requireNotNull(binder).bind(lifecycleScope) {
+      // This should not handle any events
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        Injector.obtainFromApplication<ZapTorchComponent>(this)
-            .plusServiceComponent()
-            .create()
-            .inject(this)
+    registry.currentState = Lifecycle.State.RESUMED
+  }
 
-        requireNotNull(binder).bind(lifecycleScope) {
-            // This should not handle any events
-        }
+  override fun onDestroy() {
+    super.onDestroy()
 
-        registry.currentState = Lifecycle.State.RESUMED
+    binder?.unbind()
+    binder = null
+
+    registry.currentState = Lifecycle.State.DESTROYED
+  }
+
+  override fun onHandleWork(intent: Intent) {
+    try {
+      requireNotNull(binder).handleToggle(lifecycleScope)
+    } catch (e: IllegalStateException) {
+      Timber.e(e, "Error toggling torch")
     }
+  }
 
-    override fun onDestroy() {
-        super.onDestroy()
+  companion object {
 
-        binder?.unbind()
-        binder = null
+    private const val JOB_ID = 42069
 
-        registry.currentState = Lifecycle.State.DESTROYED
+    @JvmStatic
+    fun enqueue(context: Context) {
+      val intent = Intent(context.applicationContext, TorchOffService::class.java)
+      enqueueWork(context, TorchOffService::class.java, JOB_ID, intent)
     }
-
-    override fun onHandleWork(intent: Intent) {
-        try {
-            requireNotNull(binder).handleToggle(lifecycleScope)
-        } catch (e: IllegalStateException) {
-            Timber.e(e, "Error toggling torch")
-        }
-    }
-
-    companion object {
-
-        private const val JOB_ID = 42069
-
-        @JvmStatic
-        fun enqueue(context: Context) {
-            val intent = Intent(context.applicationContext, TorchOffService::class.java)
-            enqueueWork(
-                context,
-                TorchOffService::class.java,
-                JOB_ID,
-                intent
-            )
-        }
-    }
+  }
 }

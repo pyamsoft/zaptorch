@@ -20,15 +20,11 @@ import androidx.annotation.CheckResult
 
 interface TorchPreferences {
 
-    @CheckResult
-    suspend fun getButtonDelayTime(): Long
+  @CheckResult suspend fun getButtonDelayTime(): Long
 
-    @CheckResult
-    suspend fun isTorchEnabled(): Boolean
+  @CheckResult suspend fun isTorchEnabled(): Boolean
 
-    @CheckResult
-    suspend fun isPulseEnabled(): Boolean
+  @CheckResult suspend fun isPulseEnabled(): Boolean
 
-    @CheckResult
-    suspend fun isStrobeEnabled(): Boolean
+  @CheckResult suspend fun isStrobeEnabled(): Boolean
 }

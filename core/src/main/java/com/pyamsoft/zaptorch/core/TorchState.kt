@@ -17,8 +17,8 @@
 package com.pyamsoft.zaptorch.core
 
 sealed class TorchState {
-    object None : TorchState()
-    object Toggle : TorchState()
-    object Pulse : TorchState()
-    object Strobe : TorchState()
+  object None : TorchState()
+  object Toggle : TorchState()
+  object Pulse : TorchState()
+  object Strobe : TorchState()
 }

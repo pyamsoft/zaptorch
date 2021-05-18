@@ -27,35 +27,33 @@ import dagger.Provides
 import dagger.multibindings.IntoSet
 import javax.inject.Qualifier
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class InternalApi
+@Qualifier @Retention(AnnotationRetention.BINARY) internal annotation class InternalApi
 
 @Module
 abstract class NotificationModule {
 
-    @Binds
+  @Binds
+  @CheckResult
+  internal abstract fun bindNotification(impl: NotificationHandlerImpl): NotificationHandler
+
+  @Binds
+  @IntoSet
+  @InternalApi
+  internal abstract fun bindPasteDispatcher(impl: TorchNotificationDispatcher): NotifyDispatcher<*>
+
+  @Module
+  companion object {
+
+    @Provides
+    @JvmStatic
     @CheckResult
-    internal abstract fun bindNotification(impl: NotificationHandlerImpl): NotificationHandler
-
-    @Binds
-    @IntoSet
     @InternalApi
-    internal abstract fun bindPasteDispatcher(impl: TorchNotificationDispatcher): NotifyDispatcher<*>
-
-    @Module
-    companion object {
-
-        @Provides
-        @JvmStatic
-        @CheckResult
-        @InternalApi
-        internal fun provideNotifier(
-            // Need to use MutableSet instead of Set because of Java -> Kotlin fun.
-            @InternalApi dispatchers: MutableSet<NotifyDispatcher<*>>,
-            context: Context
-        ): Notifier {
-            return Notifier.createDefault(context, dispatchers)
-        }
+    internal fun provideNotifier(
+        // Need to use MutableSet instead of Set because of Java -> Kotlin fun.
+        @InternalApi dispatchers: MutableSet<NotifyDispatcher<*>>,
+        context: Context
+    ): Notifier {
+      return Notifier.createDefault(context, dispatchers)
     }
+  }
 }

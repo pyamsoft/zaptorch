@@ -35,71 +35,59 @@ import javax.inject.Inject
 
 class TorchPreferenceFragment : AppSettingsPreferenceFragment(), UiController<UnitControllerEvent> {
 
-    @JvmField
-    @Inject
-    internal var spacer: SettingsSpacer? = null
+  @JvmField @Inject internal var spacer: SettingsSpacer? = null
 
-    @JvmField
-    @Inject
-    internal var settingsView: SettingsView? = null
+  @JvmField @Inject internal var settingsView: SettingsView? = null
 
-    @JvmField
-    @Inject
-    internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
+  @JvmField @Inject internal var toolbarView: ToolbarView<UnitViewState, SettingsViewEvent>? = null
 
-    @JvmField
-    @Inject
-    internal var factory: ZapTorchViewModelFactory? = null
-    private val viewModel by fromViewModelFactory<SettingsViewModel> { factory?.create(this) }
+  @JvmField @Inject internal var factory: ZapTorchViewModelFactory? = null
+  private val viewModel by fromViewModelFactory<SettingsViewModel> { factory?.create(this) }
 
-    private var stateSaver: StateSaver? = null
+  private var stateSaver: StateSaver? = null
 
-    override val preferenceXmlResId: Int = R.xml.preferences
+  override val preferenceXmlResId: Int = R.xml.preferences
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-        Injector.obtainFromApplication<ZapTorchComponent>(view.context)
-            .plusSettingsComponent()
-            .create(requireToolbarActivity(), listView, preferenceScreen)
-            .inject(this)
+    Injector.obtainFromApplication<ZapTorchComponent>(view.context)
+        .plusSettingsComponent()
+        .create(requireToolbarActivity(), listView, preferenceScreen)
+        .inject(this)
 
-        stateSaver = createComponent(
+    stateSaver =
+        createComponent(
             savedInstanceState,
             viewLifecycleOwner,
             viewModel,
             this,
             requireNotNull(settingsView),
             requireNotNull(toolbarView),
-            requireNotNull(spacer)
-        ) {
-            return@createComponent when (it) {
-                is SettingsViewEvent.SignificantScroll -> viewModel.handleScroll(it.visible)
-            }
+            requireNotNull(spacer)) {
+          return@createComponent when (it) {
+            is SettingsViewEvent.SignificantScroll -> viewModel.handleScroll(it.visible)
+          }
         }
-    }
+  }
 
-    override fun onControllerEvent(event: UnitControllerEvent) {
-    }
+  override fun onControllerEvent(event: UnitControllerEvent) {}
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        stateSaver?.saveState(outState)
-    }
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    stateSaver?.saveState(outState)
+  }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        stateSaver = null
-        settingsView = null
-        toolbarView = null
-        factory = null
-    }
+  override fun onDestroyView() {
+    super.onDestroyView()
+    stateSaver = null
+    settingsView = null
+    toolbarView = null
+    factory = null
+  }
 
-    companion object {
+  companion object {
 
-        const val TAG = "TorchPreferenceFragment"
-    }
+    const val TAG = "TorchPreferenceFragment"
+  }
 }

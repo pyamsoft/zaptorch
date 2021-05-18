@@ -24,26 +24,23 @@ import com.pyamsoft.pydroid.ui.widget.scroll.HideOnScrollListener
 import com.pyamsoft.zaptorch.settings.SettingsViewEvent.SignificantScroll
 import javax.inject.Inject
 
-internal class SettingsView @Inject internal constructor(
-    recyclerView: RecyclerView,
-    parent: PreferenceScreen
-) : PrefUiView<UnitViewState, SettingsViewEvent>(parent) {
+internal class SettingsView
+@Inject
+internal constructor(recyclerView: RecyclerView, parent: PreferenceScreen) :
+    PrefUiView<UnitViewState, SettingsViewEvent>(parent) {
 
-    private var scrollListener: RecyclerView.OnScrollListener? = null
+  private var scrollListener: RecyclerView.OnScrollListener? = null
 
-    init {
-        doOnInflate {
-            val listener = HideOnScrollListener.create(true) {
-                publish(SignificantScroll(it))
-            }
-            recyclerView.addOnScrollListener(listener)
-            scrollListener = listener
-        }
-
-        doOnTeardown {
-            scrollListener?.also { recyclerView.removeOnScrollListener(it) }
-            scrollListener = null
-        }
+  init {
+    doOnInflate {
+      val listener = HideOnScrollListener.create(true) { publish(SignificantScroll(it)) }
+      recyclerView.addOnScrollListener(listener)
+      scrollListener = listener
     }
 
+    doOnTeardown {
+      scrollListener?.also { recyclerView.removeOnScrollListener(it) }
+      scrollListener = null
+    }
+  }
 }

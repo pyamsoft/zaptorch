@@ -21,17 +21,19 @@ import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.arch.UnitControllerEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.bus.EventBus
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-internal class SettingsViewModel @Inject internal constructor(
+internal class SettingsViewModel
+@Inject
+internal constructor(
     private val scrollBus: EventBus<SignificantScrollEvent>,
 ) : UiViewModel<UnitViewState, UnitControllerEvent>(UnitViewState) {
 
-    internal fun handleScroll(visible: Boolean) {
-        viewModelScope.launch(context = Dispatchers.Default) {
-            scrollBus.send(SignificantScrollEvent(visible))
-        }
+  internal fun handleScroll(visible: Boolean) {
+    viewModelScope.launch(context = Dispatchers.Default) {
+      scrollBus.send(SignificantScrollEvent(visible))
     }
+  }
 }

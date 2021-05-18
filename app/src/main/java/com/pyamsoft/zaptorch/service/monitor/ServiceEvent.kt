@@ -20,5 +20,5 @@ import com.pyamsoft.zaptorch.core.TorchError
 
 sealed class ServiceEvent {
 
-    data class RenderError(val error: TorchError) : ServiceEvent()
+  data class RenderError(val error: TorchError) : ServiceEvent()
 }

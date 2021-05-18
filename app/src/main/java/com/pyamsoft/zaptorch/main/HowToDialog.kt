@@ -23,20 +23,19 @@ import androidx.fragment.app.DialogFragment
 
 class HowToDialog : DialogFragment() {
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(requireActivity())
-            .setMessage(
-                """
+  override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    return AlertDialog.Builder(requireActivity())
+        .setMessage(
+            """
     Commands:
-    
+
     Press the Volume keys in the following sequences
     ↓ ↓ - Toggle flash light
     ↑ ↑ - Pulse slowly
     ↓ ↑ - Strobe effect quickly
-            """.trimIndent()
-            )
-            .setTitle("How to Use")
-            .setNeutralButton("Got It") { _, _ -> dismiss() }
-            .create()
-    }
+            """.trimIndent())
+        .setTitle("How to Use")
+        .setNeutralButton("Got It") { _, _ -> dismiss() }
+        .create()
+  }
 }

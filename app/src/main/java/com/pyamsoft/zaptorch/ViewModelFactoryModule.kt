@@ -23,7 +23,7 @@ import dagger.Module
 @Module
 abstract class ViewModelFactoryModule {
 
-    @Binds
-    @CheckResult
-    internal abstract fun bindFactory(impl: ZapTorchViewModelFactoryImpl): ZapTorchViewModelFactory
+  @Binds
+  @CheckResult
+  internal abstract fun bindFactory(impl: ZapTorchViewModelFactoryImpl): ZapTorchViewModelFactory
 }

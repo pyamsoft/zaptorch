@@ -30,85 +30,83 @@ import com.pyamsoft.pydroid.notify.NotifyData
 import com.pyamsoft.pydroid.notify.NotifyDispatcher
 import com.pyamsoft.pydroid.notify.NotifyId
 import com.pyamsoft.zaptorch.service.R
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import timber.log.Timber
 
 @Singleton
-internal class TorchNotificationDispatcher @Inject internal constructor(
+internal class TorchNotificationDispatcher
+@Inject
+internal constructor(
     private val context: Context,
     receiverClass: Class<out BroadcastReceiver>,
     @ColorRes notificationColor: Int,
 ) : NotifyDispatcher<TorchNotification> {
 
-    private val color = ContextCompat.getColor(context, notificationColor)
-    private val notificationManager by lazy { requireNotNull(context.getSystemService<NotificationManager>()) }
-    private val pendingIntent by lazy {
-        PendingIntent.getBroadcast(
-            context,
-            RC,
-            Intent(context, receiverClass),
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+  private val color = ContextCompat.getColor(context, notificationColor)
+  private val notificationManager by lazy {
+    requireNotNull(context.getSystemService<NotificationManager>())
+  }
+  private val pendingIntent by lazy {
+    PendingIntent.getBroadcast(
+        context, RC, Intent(context, receiverClass), PendingIntent.FLAG_UPDATE_CURRENT)
+  }
+
+  private fun setupNotificationChannel(channelInfo: NotifyChannelInfo) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      Timber.d("No channel below Android O")
+      return
     }
 
-    private fun setupNotificationChannel(channelInfo: NotifyChannelInfo) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            Timber.d("No channel below Android O")
-            return
+    val channel: NotificationChannel? = notificationManager.getNotificationChannel(channelInfo.id)
+    if (channel != null) {
+      Timber.d("Channel already exists: ${channel.id}")
+      return
+    }
+
+    val notificationGroup = NotificationChannelGroup(channelInfo.id, channelInfo.title)
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val notificationChannel =
+        NotificationChannel(channelInfo.id, channelInfo.title, importance).apply {
+          lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+          description = channelInfo.description
+          enableLights(false)
+          enableVibration(false)
         }
 
-        val channel: NotificationChannel? =
-            notificationManager.getNotificationChannel(channelInfo.id)
-        if (channel != null) {
-            Timber.d("Channel already exists: ${channel.id}")
-            return
-        }
-
-
-        val notificationGroup = NotificationChannelGroup(channelInfo.id, channelInfo.title)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val notificationChannel =
-            NotificationChannel(channelInfo.id, channelInfo.title, importance).apply {
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-                description = channelInfo.description
-                enableLights(false)
-                enableVibration(false)
-            }
-
-        Timber.d("Create notification channel and group ${notificationChannel.id} ${notificationGroup.id}")
-        notificationManager.apply {
-            createNotificationChannelGroup(notificationGroup)
-            createNotificationChannel(notificationChannel)
-        }
+    Timber.d(
+        "Create notification channel and group ${notificationChannel.id} ${notificationGroup.id}")
+    notificationManager.apply {
+      createNotificationChannelGroup(notificationGroup)
+      createNotificationChannel(notificationChannel)
     }
+  }
 
-    override fun build(
-        id: NotifyId,
-        channelInfo: NotifyChannelInfo,
-        notification: TorchNotification
-    ): Notification {
-        setupNotificationChannel(channelInfo)
-        return NotificationCompat.Builder(context, channelInfo.id)
-            .setContentIntent(pendingIntent)
-            .setContentTitle("Torch is On")
-            .setContentText("Click to turn off")
-            .setSmallIcon(R.drawable.ic_light_notification)
-            .setAutoCancel(true)
-            .setWhen(0)
-            .setOngoing(false)
-            .setColor(color)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
-    }
+  override fun build(
+      id: NotifyId,
+      channelInfo: NotifyChannelInfo,
+      notification: TorchNotification
+  ): Notification {
+    setupNotificationChannel(channelInfo)
+    return NotificationCompat.Builder(context, channelInfo.id)
+        .setContentIntent(pendingIntent)
+        .setContentTitle("Torch is On")
+        .setContentText("Click to turn off")
+        .setSmallIcon(R.drawable.ic_light_notification)
+        .setAutoCancel(true)
+        .setWhen(0)
+        .setOngoing(false)
+        .setColor(color)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .build()
+  }
 
-    override fun canShow(notification: NotifyData): Boolean {
-        return notification is TorchNotification
-    }
+  override fun canShow(notification: NotifyData): Boolean {
+    return notification is TorchNotification
+  }
 
-    companion object {
+  companion object {
 
-        private const val RC = 1009
-    }
-
+    private const val RC = 1009
+  }
 }

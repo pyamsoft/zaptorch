@@ -21,18 +21,14 @@ import com.pyamsoft.pydroid.arch.UnitViewState
 import com.pyamsoft.pydroid.ui.arch.PrefUiView
 import javax.inject.Inject
 
-class SettingsSpacer @Inject internal constructor(
-    parent: PreferenceScreen
-) : PrefUiView<UnitViewState, SettingsViewEvent>(parent) {
+class SettingsSpacer @Inject internal constructor(parent: PreferenceScreen) :
+    PrefUiView<UnitViewState, SettingsViewEvent>(parent) {
 
-    init {
-        doOnInflate {
-            val pref = PreferenceBottomSpace(parent.context)
-            parent.addPreference(pref)
-            doOnTeardown {
-                parent.removePreference(pref)
-            }
-        }
+  init {
+    doOnInflate {
+      val pref = PreferenceBottomSpace(parent.context)
+      parent.addPreference(pref)
+      doOnTeardown { parent.removePreference(pref) }
     }
-
+  }
 }

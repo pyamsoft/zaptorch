@@ -16,12 +16,11 @@
 
 package com.pyamsoft.zaptorch.core
 
-
 interface CameraInteractor : TorchOn {
 
-    fun initialize()
+  fun initialize()
 
-    fun destroy()
+  fun destroy()
 
-    suspend fun handleKeyPress(action: Int, keyCode: Int)
+  suspend fun handleKeyPress(action: Int, keyCode: Int)
 }

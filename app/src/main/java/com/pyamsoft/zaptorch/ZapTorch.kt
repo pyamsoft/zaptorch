@@ -25,50 +25,49 @@ import com.pyamsoft.zaptorch.service.torchoff.TorchOffReceiver
 
 class ZapTorch : Application() {
 
-    private val component by lazy {
-        val url = "https://github.com/pyamsoft/zaptorch"
-        val provider = PYDroid.init(
+  private val component by lazy {
+    val url = "https://github.com/pyamsoft/zaptorch"
+    val provider =
+        PYDroid.init(
             this,
             PYDroid.Parameters(
                 viewSourceUrl = url,
                 bugReportUrl = "$url/issues",
                 privacyPolicyUrl = PRIVACY_POLICY_URL,
                 termsConditionsUrl = TERMS_CONDITIONS_URL,
-                version = BuildConfig.VERSION_CODE
-            )
+                version = BuildConfig.VERSION_CODE))
+
+    // Using pydroid-notify
+    OssLibraries.usingNotify = true
+
+    return@lazy DaggerZapTorchComponent.factory()
+        .create(
+            isDebugMode(),
+            this,
+            provider.get().theming(),
+            provider.get().imageLoader(),
+            TorchOffReceiver::class.java,
+            R.color.colorPrimary,
         )
+  }
 
-        // Using pydroid-notify
-        OssLibraries.usingNotify = true
+  override fun getSystemService(name: String): Any? {
+    // This weird construct is to ensure that component is initialized
+    return component.run { PYDroid.getSystemService(name) } ?: fallbackGetSystemService(name)
+  }
 
-        return@lazy DaggerZapTorchComponent.factory()
-            .create(
-                isDebugMode(),
-                this,
-                provider.get().theming(),
-                provider.get().imageLoader(),
-                TorchOffReceiver::class.java,
-                R.color.colorPrimary,
-            )
+  @CheckResult
+  private fun fallbackGetSystemService(name: String): Any? {
+    return if (ZapTorchComponent::class.java.name == name) component
+    else {
+      super.getSystemService(name)
     }
+  }
 
-    override fun getSystemService(name: String): Any? {
-        // This weird construct is to ensure that component is initialized
-        return component.run { PYDroid.getSystemService(name) } ?: fallbackGetSystemService(name)
-    }
+  companion object {
 
-    @CheckResult
-    private fun fallbackGetSystemService(name: String): Any? {
-        return if (ZapTorchComponent::class.java.name == name) component else {
-            super.getSystemService(name)
-        }
-    }
-
-    companion object {
-
-        const val PRIVACY_POLICY_URL =
-            "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
-        const val TERMS_CONDITIONS_URL =
-            "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
-    }
+    const val PRIVACY_POLICY_URL = "https://pyamsoft.blogspot.com/p/zaptorch-privacy-policy.html"
+    const val TERMS_CONDITIONS_URL =
+        "https://pyamsoft.blogspot.com/p/zaptorch-terms-and-conditions.html"
+  }
 }

@@ -20,7 +20,5 @@ import androidx.annotation.CheckResult
 
 interface TorchOff {
 
-    @CheckResult
-    suspend fun forceTorchOff(): Throwable?
-
+  @CheckResult suspend fun forceTorchOff(): Throwable?
 }

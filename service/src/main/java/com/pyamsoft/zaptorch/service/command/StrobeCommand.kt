@@ -19,59 +19,58 @@ package com.pyamsoft.zaptorch.service.command
 import android.view.KeyEvent
 import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.yield
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class StrobeCommand @Inject internal constructor(
-    preferences: TorchPreferences
-) : BaseCommand(preferences) {
+internal class StrobeCommand @Inject internal constructor(preferences: TorchPreferences) :
+    BaseCommand(preferences) {
 
-    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
-        handler.onCommandStart(TorchState.Pulse)
-        while (isActive) {
-            // In case something is planning on killing the torch
-            yield()
+  override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
+    handler.onCommandStart(TorchState.Pulse)
+    while (isActive) {
+      // In case something is planning on killing the torch
+      yield()
 
-            // FIXME(Peter)
-            // If this fails, it continues to loop and try instead of throwing an error and stopping
-            // What can we do about this?
+      // FIXME(Peter)
+      // If this fails, it continues to loop and try instead of throwing an error and stopping
+      // What can we do about this?
 
-            handler.forceTorchOn(TorchState.Strobe)?.also { error ->
-                Timber.e(error, "Force torch ON failed. Stop strobe")
-                return error
-            }
-            delay(STROBE_TIMEOUT)
+      handler.forceTorchOn(TorchState.Strobe)?.also { error ->
+        Timber.e(error, "Force torch ON failed. Stop strobe")
+        return error
+      }
+      delay(STROBE_TIMEOUT)
 
-            handler.forceTorchOff()?.also { error ->
-                Timber.e(error, "Force torch ON failed. Stop strobe")
-                return error
-            }
+      handler.forceTorchOff()?.also { error ->
+        Timber.e(error, "Force torch ON failed. Stop strobe")
+        return error
+      }
 
-            delay(STROBE_TIMEOUT)
-        }
-
-        return null
+      delay(STROBE_TIMEOUT)
     }
 
-    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
-        return if (isFirstPressComplete) {
-            keyCode == KeyEvent.KEYCODE_VOLUME_UP
-        } else {
-            keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-        }
-    }
+    return null
+  }
 
-    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
-        return preferences.isStrobeEnabled()
+  override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    return if (isFirstPressComplete) {
+      keyCode == KeyEvent.KEYCODE_VOLUME_UP
+    } else {
+      keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
     }
+  }
 
-    companion object {
-        private const val STROBE_TIMEOUT = 60L
-    }
+  override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+    return preferences.isStrobeEnabled()
+  }
+
+  companion object {
+    private const val STROBE_TIMEOUT = 60L
+  }
 }

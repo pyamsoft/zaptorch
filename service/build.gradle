@@ -21,66 +21,65 @@ apply plugin: 'kotlin-kapt'
 //noinspection GroovyMissingReturnStatement
 android {
 
-	kotlinOptions {
-		freeCompilerArgs += '-Xallow-result-return-type'
-	}
+  kotlinOptions {
+    freeCompilerArgs += '-Xallow-result-return-type'
+  }
 
-	compileSdkVersion rootProject.ext.maxSdk
+  compileSdkVersion rootProject.ext.maxSdk
 
-	//noinspection GroovyMissingReturnStatement
-	defaultConfig {
-		minSdkVersion rootProject.ext.minSdk
-		targetSdkVersion rootProject.ext.maxSdk
+  //noinspection GroovyMissingReturnStatement
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSdk
+    targetSdkVersion rootProject.ext.maxSdk
 
-		resConfigs "en"
-	}
+    resConfigs "en"
+  }
 
-	kotlinOptions {
-		jvmTarget = "1.8"
-	}
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 
-	buildTypes {
-		release {
-			minifyEnabled false
-		}
-	}
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 
-	buildFeatures {
-		viewBinding true
-		buildConfig false
-	}
+  buildFeatures {
+    viewBinding true
+    buildConfig false
+  }
 }
 
 // Kapt flags
 kapt {
-	correctErrorTypes = true
-	useBuildCache = true
-	mapDiagnosticLocations = true
+  correctErrorTypes = true
+  useBuildCache = true
+  mapDiagnosticLocations = true
 
-	javacOptions {
-		option("-Xlint:unchecked")
-		option("-Xlint:deprecation")
-		option("-Xmaxerrs", 10000)
-	}
+  javacOptions {
+    option("-Xlint:unchecked")
+    option("-Xlint:deprecation")
+    option("-Xmaxerrs", 10000)
+  }
 }
 
 dependencies {
-	// Android Support
-	api "androidx.core:core-ktx:$core"
-	api "androidx.preference:preference:$preference"
+  // Android Support
+  api "androidx.core:core-ktx:$core"
+  api "androidx.preference:preference:$preference"
 
-	// PYDroid notify
-	// API for Dagger
-	api "com.github.pyamsoft.pydroid:notify:$pydroid"
+  // PYDroid notify
+  // API for Dagger
+  api "com.github.pyamsoft.pydroid:notify:$pydroid"
 
-	implementation "com.google.dagger:dagger:$dagger"
-	kapt "com.google.dagger:dagger-compiler:$dagger"
+  implementation "com.google.dagger:dagger:$dagger"
+  kapt "com.google.dagger:dagger-compiler:$dagger"
 
-	api project(':core')
+  api project(':core')
 }
-

@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.material.R as R2
 import com.pyamsoft.pydroid.arch.BaseUiView
 import com.pyamsoft.pydroid.arch.UnitViewEvent
 import com.pyamsoft.pydroid.arch.UnitViewState
@@ -32,55 +33,54 @@ import com.pyamsoft.zaptorch.R
 import com.pyamsoft.zaptorch.ZapTorch
 import com.pyamsoft.zaptorch.databinding.ToolbarBinding
 import javax.inject.Inject
-import com.google.android.material.R as R2
 
-internal class MainToolbarView @Inject internal constructor(
+internal class MainToolbarView
+@Inject
+internal constructor(
     owner: LifecycleOwner,
     toolbarActivityProvider: ToolbarActivityProvider,
     theming: ThemeProvider,
     parent: ViewGroup
 ) : BaseUiView<UnitViewState, UnitViewEvent, ToolbarBinding>(parent) {
 
-    override val viewBinding = ToolbarBinding::inflate
+  override val viewBinding = ToolbarBinding::inflate
 
-    override val layoutRoot by boundView { appbar }
+  override val layoutRoot by boundView { appbar }
 
-    init {
-        doOnInflate {
-            setupToolbar(toolbarActivityProvider, theming)
+  init {
+    doOnInflate {
+      setupToolbar(toolbarActivityProvider, theming)
 
-            layoutRoot.doOnApplyWindowInsets(owner) { v, insets, padding ->
-                v.updatePadding(top = padding.top + insets.systemWindowInsetTop)
-            }
-        }
-
-        doOnTeardown {
-            binding.toolbar.removePrivacy()
-            toolbarActivityProvider.setToolbar(null)
-        }
+      layoutRoot.doOnApplyWindowInsets(owner) { v, insets, padding ->
+        v.updatePadding(top = padding.top + insets.systemWindowInsetTop)
+      }
     }
 
-    private fun setupToolbar(
-        toolbarActivityProvider: ToolbarActivityProvider,
-        theming: ThemeProvider
-    ) {
-        val theme = if (theming.isDarkTheme()) {
-            R2.style.ThemeOverlay_MaterialComponents
+    doOnTeardown {
+      binding.toolbar.removePrivacy()
+      toolbarActivityProvider.setToolbar(null)
+    }
+  }
+
+  private fun setupToolbar(
+      toolbarActivityProvider: ToolbarActivityProvider,
+      theming: ThemeProvider
+  ) {
+    val theme =
+        if (theming.isDarkTheme()) {
+          R2.style.ThemeOverlay_MaterialComponents
         } else {
-            R2.style.ThemeOverlay_MaterialComponents_Light
+          R2.style.ThemeOverlay_MaterialComponents_Light
         }
 
-        binding.toolbar.apply {
-            popupTheme = theme
-            toolbarActivityProvider.setToolbar(this)
-            setTitle(R.string.app_name)
-            ViewCompat.setElevation(this, 0F)
-        }
-
-        binding.toolbar.addPrivacy(
-            viewScope, ZapTorch.PRIVACY_POLICY_URL,
-            ZapTorch.TERMS_CONDITIONS_URL
-        )
+    binding.toolbar.apply {
+      popupTheme = theme
+      toolbarActivityProvider.setToolbar(this)
+      setTitle(R.string.app_name)
+      ViewCompat.setElevation(this, 0F)
     }
 
+    binding.toolbar.addPrivacy(
+        viewScope, ZapTorch.PRIVACY_POLICY_URL, ZapTorch.TERMS_CONDITIONS_URL)
+  }
 }

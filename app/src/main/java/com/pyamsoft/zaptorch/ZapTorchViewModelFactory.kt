@@ -28,25 +28,25 @@ import javax.inject.Provider
 
 interface ZapTorchViewModelFactory {
 
-    @CheckResult
-    fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory
-
+  @CheckResult fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory
 }
 
 @Reusable
-internal class ZapTorchViewModelFactoryImpl @Inject internal constructor(
+internal class ZapTorchViewModelFactoryImpl
+@Inject
+internal constructor(
     // Need JvmSuppressWildcards for Dagger
     private val viewModels: Map<Class<*>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ZapTorchViewModelFactory {
 
-    override fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
-        return object : SavedStateViewModelFactory(owner, null) {
-            override fun <T : ViewModel> createViewModel(
-                modelClass: Class<T>,
-                savedState: UiSavedState
-            ): ViewModel {
-                return viewModels[modelClass]?.get() ?: fail(modelClass)
-            }
-        }
+  override fun create(owner: SavedStateRegistryOwner): ViewModelProvider.Factory {
+    return object : SavedStateViewModelFactory(owner, null) {
+      override fun <T : ViewModel> createViewModel(
+          modelClass: Class<T>,
+          savedState: UiSavedState
+      ): ViewModel {
+        return viewModels[modelClass]?.get() ?: fail(modelClass)
+      }
     }
+  }
 }

@@ -23,11 +23,11 @@ import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.pydroid.loader.ImageLoader
 import com.pyamsoft.pydroid.ui.theme.Theming
 import com.pyamsoft.zaptorch.ZapTorchComponent.ZaptorchModule
-import com.pyamsoft.zaptorch.service.ServiceModule
-import com.pyamsoft.zaptorch.service.notification.NotificationModule
 import com.pyamsoft.zaptorch.main.MainComponent
 import com.pyamsoft.zaptorch.main.MainFragmentComponent
 import com.pyamsoft.zaptorch.service.ServiceComponent
+import com.pyamsoft.zaptorch.service.ServiceModule
+import com.pyamsoft.zaptorch.service.notification.NotificationModule
 import com.pyamsoft.zaptorch.settings.SettingsComponent
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
 import dagger.BindsInstance
@@ -41,45 +41,41 @@ import javax.inject.Singleton
 @Component(modules = [ZaptorchModule::class, ServiceModule::class, NotificationModule::class])
 interface ZapTorchComponent {
 
-    @CheckResult
-    fun plusMainComponent(): MainComponent.Factory
+  @CheckResult fun plusMainComponent(): MainComponent.Factory
+
+  @CheckResult fun plusMainFragmentComponent(): MainFragmentComponent.Factory
+
+  @CheckResult fun plusSettingsComponent(): SettingsComponent.Factory
+
+  @CheckResult fun plusServiceComponent(): ServiceComponent.Factory
+
+  @Component.Factory
+  interface Factory {
 
     @CheckResult
-    fun plusMainFragmentComponent(): MainFragmentComponent.Factory
+    fun create(
+        @Named("debug") @BindsInstance debug: Boolean,
+        @BindsInstance context: Context,
+        @BindsInstance theming: Theming,
+        @BindsInstance imageLoader: ImageLoader,
+        @BindsInstance receiverClass: Class<out BroadcastReceiver>,
+        @BindsInstance notificationColor: Int,
+    ): ZapTorchComponent
+  }
 
-    @CheckResult
-    fun plusSettingsComponent(): SettingsComponent.Factory
-
-    @CheckResult
-    fun plusServiceComponent(): ServiceComponent.Factory
-
-    @Component.Factory
-    interface Factory {
-
-        @CheckResult
-        fun create(
-            @Named("debug") @BindsInstance debug: Boolean,
-            @BindsInstance context: Context,
-            @BindsInstance theming: Theming,
-            @BindsInstance imageLoader: ImageLoader,
-            @BindsInstance receiverClass: Class<out BroadcastReceiver>,
-            @BindsInstance notificationColor: Int,
-        ): ZapTorchComponent
-    }
+  @Module
+  abstract class ZaptorchModule {
 
     @Module
-    abstract class ZaptorchModule {
+    companion object {
 
-        @Module
-        companion object {
-
-            @Provides
-            @Singleton
-            @JvmStatic
-            @CheckResult
-            internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
-                return EventBus.create(emitOnlyWhenActive = true)
-            }
-        }
+      @Provides
+      @Singleton
+      @JvmStatic
+      @CheckResult
+      internal fun provideScrollBus(): EventBus<SignificantScrollEvent> {
+        return EventBus.create(emitOnlyWhenActive = true)
+      }
     }
+  }
 }

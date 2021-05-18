@@ -19,28 +19,26 @@ package com.pyamsoft.zaptorch.service
 import android.hardware.camera2.CameraManager
 import androidx.annotation.CheckResult
 
-internal class TorchCallback internal constructor(
+internal class TorchCallback
+internal constructor(
     private val onUnavailable: (String) -> Unit,
 ) : CameraManager.TorchCallback() {
 
-    private var cameraId: String? = null
+  private var cameraId: String? = null
 
-    @CheckResult
-    fun id(): String? {
-        return cameraId
-    }
+  @CheckResult
+  fun id(): String? {
+    return cameraId
+  }
 
-    override fun onTorchModeChanged(
-        cameraId: String,
-        enabled: Boolean
-    ) {
-        super.onTorchModeChanged(cameraId, enabled)
-        this.cameraId = cameraId
-    }
+  override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+    super.onTorchModeChanged(cameraId, enabled)
+    this.cameraId = cameraId
+  }
 
-    override fun onTorchModeUnavailable(cameraId: String) {
-        super.onTorchModeUnavailable(cameraId)
-        this.cameraId = null
-        onUnavailable(cameraId)
-    }
+  override fun onTorchModeUnavailable(cameraId: String) {
+    super.onTorchModeUnavailable(cameraId)
+    this.cameraId = null
+    onUnavailable(cameraId)
+  }
 }

@@ -21,33 +21,30 @@ import com.pyamsoft.pydroid.arch.UiViewModel
 import com.pyamsoft.pydroid.bus.EventBus
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
 import com.pyamsoft.zaptorch.settings.SignificantScrollEvent
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-internal class MainViewModel @Inject internal constructor(
+internal class MainViewModel
+@Inject
+internal constructor(
     serviceInteractor: VolumeServiceInteractor,
     visibilityBus: EventBus<SignificantScrollEvent>
-) : UiViewModel<MainViewState, MainControllerEvent>(
-    MainViewState(
-        isVisible = true,
-        isServiceRunning = false
-    )
-) {
+) :
+    UiViewModel<MainViewState, MainControllerEvent>(
+        MainViewState(isVisible = true, isServiceRunning = false)) {
 
-    init {
-        viewModelScope.launch(context = Dispatchers.Default) {
-            serviceInteractor.observeServiceState { setState { copy(isServiceRunning = it) } }
-        }
-
-        viewModelScope.launch(context = Dispatchers.Default) {
-            visibilityBus.onEvent {
-                setState { copy(isVisible = it.visible) }
-            }
-        }
+  init {
+    viewModelScope.launch(context = Dispatchers.Default) {
+      serviceInteractor.observeServiceState { setState { copy(isServiceRunning = it) } }
     }
 
-    internal fun handleServiceAction() {
-        publish(MainControllerEvent.OnServiceStateChanged(state.isServiceRunning))
+    viewModelScope.launch(context = Dispatchers.Default) {
+      visibilityBus.onEvent { setState { copy(isVisible = it.visible) } }
     }
+  }
+
+  internal fun handleServiceAction() {
+    publish(MainControllerEvent.OnServiceStateChanged(state.isServiceRunning))
+  }
 }

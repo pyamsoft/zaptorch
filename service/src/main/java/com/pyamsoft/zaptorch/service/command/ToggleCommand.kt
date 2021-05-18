@@ -19,33 +19,32 @@ package com.pyamsoft.zaptorch.service.command
 import android.view.KeyEvent
 import com.pyamsoft.zaptorch.core.TorchPreferences
 import com.pyamsoft.zaptorch.core.TorchState
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.yield
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class ToggleCommand @Inject internal constructor(
-    preferences: TorchPreferences
-) : BaseCommand(preferences) {
+internal class ToggleCommand @Inject internal constructor(preferences: TorchPreferences) :
+    BaseCommand(preferences) {
 
-    override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
-        handler.onCommandStart(TorchState.Toggle)
+  override suspend fun CoroutineScope.onClaimTorch(handler: Command.Handler): Throwable? {
+    handler.onCommandStart(TorchState.Toggle)
 
-        // In case something is planning on killing the torch
-        yield()
+    // In case something is planning on killing the torch
+    yield()
 
-        return handler.forceTorchOn(TorchState.Toggle)?.also { error ->
-            Timber.e(error, "Force torch ON failed. Stop Toggle")
-        }
+    return handler.forceTorchOn(TorchState.Toggle)?.also { error ->
+      Timber.e(error, "Force torch ON failed. Stop Toggle")
     }
+  }
 
-    override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
-        return keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
-    }
+  override suspend fun isKeyCodeHandled(keyCode: Int, isFirstPressComplete: Boolean): Boolean {
+    return keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+  }
 
-    override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
-        return preferences.isTorchEnabled()
-    }
+  override suspend fun isCommandEnabled(preferences: TorchPreferences): Boolean {
+    return preferences.isTorchEnabled()
+  }
 }

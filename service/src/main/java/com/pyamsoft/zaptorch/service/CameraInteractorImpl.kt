@@ -20,103 +20,101 @@ import android.view.KeyEvent
 import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.*
 import com.pyamsoft.zaptorch.service.command.Command
-import kotlinx.coroutines.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import kotlinx.coroutines.*
+import timber.log.Timber
 
 @Singleton
-internal class CameraInteractorImpl @Inject internal constructor(
+internal class CameraInteractorImpl
+@Inject
+internal constructor(
     private val cameraProvider: Provider<CameraInterface>,
     private val notificationHandler: NotificationHandler,
     // Need JvmSuppressWildcards for Dagger
     private val commands: Set<@JvmSuppressWildcards Command>,
 ) : CameraInteractor, TorchOffInteractor, Command.Handler {
 
-    private var cameraInterface: CameraInterface? = null
+  private var cameraInterface: CameraInterface? = null
 
-    override suspend fun handleKeyPress(action: Int, keyCode: Int) {
-        val self = this
-        withContext(context = Dispatchers.Default) {
-            Enforcer.assertOffMainThread()
-            if (action != KeyEvent.ACTION_UP) {
-                return@withContext
-            }
+  override suspend fun handleKeyPress(action: Int, keyCode: Int) {
+    val self = this
+    withContext(context = Dispatchers.Default) {
+      Enforcer.assertOffMainThread()
+      if (action != KeyEvent.ACTION_UP) {
+        return@withContext
+      }
 
-            for (command in commands) {
-                val name = command.id()
-                val otherCommands = commands.filter { it.id() !== name }
-                if (command.handle(keyCode, self)) {
-                    otherCommands.forEach { it.reset() }
-                    Timber.d("Torch handled by $name")
-                }
-            }
+      for (command in commands) {
+        val name = command.id()
+        val otherCommands = commands.filter { it.id() !== name }
+        if (command.handle(keyCode, self)) {
+          otherCommands.forEach { it.reset() }
+          Timber.d("Torch handled by $name")
         }
+      }
     }
+  }
 
-    override suspend fun onCommandStart(state: TorchState) {
-        Timber.d("Start command: $state")
-        notificationHandler.start()
-    }
+  override suspend fun onCommandStart(state: TorchState) {
+    Timber.d("Start command: $state")
+    notificationHandler.start()
+  }
 
-    override suspend fun onCommandStop() {
-        Timber.d("Stop command")
-        notificationHandler.stop()
-    }
+  override suspend fun onCommandStop() {
+    Timber.d("Stop command")
+    notificationHandler.stop()
+  }
 
-    override fun initialize() {
-        Enforcer.assertOnMainThread()
+  override fun initialize() {
+    Enforcer.assertOnMainThread()
 
-        // Reset
-        clearCommands()
-        teardown()
+    // Reset
+    clearCommands()
+    teardown()
 
-        cameraInterface = cameraProvider.get().apply {
-            setOnUnavailableCallback { state ->
-                Timber.w("Torch unavailable: $state")
-                clearCommands()
-                notificationHandler.stop()
-            }
-        }
-    }
-
-    override suspend fun forceTorchOn(state: TorchState): Throwable? =
-        withContext(context = Dispatchers.IO) {
-            cameraInterface?.forceTorchOn(state)
-        }
-
-    override suspend fun forceTorchOff(): Throwable? =
-        withContext(context = Dispatchers.IO) {
-            cameraInterface?.forceTorchOff()
-        }
-
-    override suspend fun killTorch() {
-        withContext(context = Dispatchers.Default) {
-            Timber.d("Kill torch")
+    cameraInterface =
+        cameraProvider.get().apply {
+          setOnUnavailableCallback { state ->
+            Timber.w("Torch unavailable: $state")
             clearCommands()
             notificationHandler.stop()
-            cameraInterface?.forceTorchOff()
+          }
         }
-    }
+  }
 
-    private fun clearCommands() {
-        commands.forEach { it.reset() }
-    }
+  override suspend fun forceTorchOn(state: TorchState): Throwable? =
+      withContext(context = Dispatchers.IO) { cameraInterface?.forceTorchOn(state) }
 
-    private fun destroyCommands() {
-        commands.forEach { it.destroy() }
-    }
+  override suspend fun forceTorchOff(): Throwable? =
+      withContext(context = Dispatchers.IO) { cameraInterface?.forceTorchOff() }
 
-    private fun teardown() {
-        notificationHandler.stop()
-        cameraInterface?.destroy()
-        cameraInterface = null
+  override suspend fun killTorch() {
+    withContext(context = Dispatchers.Default) {
+      Timber.d("Kill torch")
+      clearCommands()
+      notificationHandler.stop()
+      cameraInterface?.forceTorchOff()
     }
+  }
 
-    override fun destroy() {
-        destroyCommands()
-        teardown()
-    }
+  private fun clearCommands() {
+    commands.forEach { it.reset() }
+  }
 
+  private fun destroyCommands() {
+    commands.forEach { it.destroy() }
+  }
+
+  private fun teardown() {
+    notificationHandler.stop()
+    cameraInterface?.destroy()
+    cameraInterface = null
+  }
+
+  override fun destroy() {
+    destroyCommands()
+    teardown()
+  }
 }

@@ -20,6 +20,5 @@ import com.pyamsoft.pydroid.arch.UiViewEvent
 
 sealed class SettingsViewEvent : UiViewEvent {
 
-    data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
+  data class SignificantScroll internal constructor(val visible: Boolean) : SettingsViewEvent()
 }
-

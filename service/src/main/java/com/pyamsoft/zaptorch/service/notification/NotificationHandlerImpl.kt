@@ -20,36 +20,33 @@ import com.pyamsoft.pydroid.notify.Notifier
 import com.pyamsoft.pydroid.notify.NotifyChannelInfo
 import com.pyamsoft.pydroid.notify.toNotifyId
 import com.pyamsoft.zaptorch.core.NotificationHandler
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import timber.log.Timber
 
 @Singleton
-internal class NotificationHandlerImpl @Inject internal constructor(
-    @InternalApi private val notifier: Notifier
-) : NotificationHandler {
+internal class NotificationHandlerImpl
+@Inject
+internal constructor(@InternalApi private val notifier: Notifier) : NotificationHandler {
 
-    override fun start() {
-        stop()
-        notifier.show(
+  override fun start() {
+    stop()
+    notifier.show(
             ID,
             NotifyChannelInfo(
                 id = "zaptorch_foreground",
                 title = "Torch Service",
-                description = "Notification related to the ZapTorch service"
-            ),
-            TorchNotification
-        ).also {
-            Timber.d("Start notification: $it")
-        }
-    }
+                description = "Notification related to the ZapTorch service"),
+            TorchNotification)
+        .also { Timber.d("Start notification: $it") }
+  }
 
-    override fun stop() {
-        notifier.cancel(ID)
-    }
+  override fun stop() {
+    notifier.cancel(ID)
+  }
 
-    companion object {
+  companion object {
 
-        private val ID = 1345.toNotifyId()
-    }
+    private val ID = 1345.toNotifyId()
+  }
 }

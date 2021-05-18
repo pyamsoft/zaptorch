@@ -43,129 +43,105 @@ import kotlin.LazyThreadSafetyMode.NONE
 
 class MainActivity : ChangeLogActivity(), UiController<UnitControllerEvent> {
 
-    @JvmField
-    @Inject
-    internal var toolbar: MainToolbarView? = null
+  @JvmField @Inject internal var toolbar: MainToolbarView? = null
 
-    @JvmField
-    @Inject
-    internal var mainView: MainFrameView? = null
+  @JvmField @Inject internal var mainView: MainFrameView? = null
 
-    @JvmField
-    @Inject
-    internal var theming: Theming? = null
+  @JvmField @Inject internal var theming: Theming? = null
 
-    @JvmField
-    @Inject
-    internal var factory: ZapTorchViewModelFactory? = null
-    private val viewModel by fromViewModelFactory<ToolbarViewModel> { factory?.create(this) }
+  @JvmField @Inject internal var factory: ZapTorchViewModelFactory? = null
+  private val viewModel by fromViewModelFactory<ToolbarViewModel> { factory?.create(this) }
 
-    private var stateSaver: StateSaver? = null
+  private var stateSaver: StateSaver? = null
 
-    override val versionName: String = BuildConfig.VERSION_NAME
+  override val versionName: String = BuildConfig.VERSION_NAME
 
-    override val applicationIcon: Int = R.mipmap.ic_launcher
+  override val applicationIcon: Int = R.mipmap.ic_launcher
 
-    override val snackbarRoot: ViewGroup by lazy(NONE) {
-        findViewById<CoordinatorLayout>(R.id.snackbar_root)
-    }
+  override val snackbarRoot: ViewGroup by lazy(NONE) {
+    findViewById<CoordinatorLayout>(R.id.snackbar_root)
+  }
 
-    override val fragmentContainerId: Int
-        get() = requireNotNull(mainView).id()
+  override val fragmentContainerId: Int
+    get() = requireNotNull(mainView).id()
 
-    override val changelog = buildChangeLog {
-        bugfix("When the flashlight is unavailable, the service will not attempt to keep connecting.")
-        feature("Enable and Disable the Torch command on ↓ ↓↑")
-        feature("Enable and Disable the Torch command on ↑ ↑")
-        feature("Enable and Disable the Torch command on ↓ ↑")
-    }
+  override val changelog = buildChangeLog {
+    bugfix("When the flashlight is unavailable, the service will not attempt to keep connecting.")
+    feature("Enable and Disable the Torch command on ↓ ↓↑")
+    feature("Enable and Disable the Torch command on ↑ ↑")
+    feature("Enable and Disable the Torch command on ↓ ↑")
+  }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_ZapTorch)
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.snackbar_screen)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    setTheme(R.style.Theme_ZapTorch)
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.snackbar_screen)
 
-        val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
-        Injector.obtainFromApplication<ZapTorchComponent>(this)
-            .plusMainComponent()
-            .create(this, layoutRoot, this) {
-                requireNotNull(theming).isDarkTheme(this)
-            }
-            .inject(this)
+    val layoutRoot = findViewById<ConstraintLayout>(R.id.content_root)
+    Injector.obtainFromApplication<ZapTorchComponent>(this)
+        .plusMainComponent()
+        .create(this, layoutRoot, this) { requireNotNull(theming).isDarkTheme(this) }
+        .inject(this)
 
-        val component = requireNotNull(mainView)
-        val toolbarComponent = requireNotNull(toolbar)
-        val dropshadow = DropshadowView.create(layoutRoot)
+    val component = requireNotNull(mainView)
+    val toolbarComponent = requireNotNull(toolbar)
+    val dropshadow = DropshadowView.create(layoutRoot)
 
-        stableLayoutHideNavigation()
+    stableLayoutHideNavigation()
 
-        stateSaver = createComponent(
-            savedInstanceState,
-            this,
-            viewModel,
-            this,
-            component,
-            toolbarComponent,
-            dropshadow
-        ) {
-            // TODO Handle any controller events
+    stateSaver =
+        createComponent(
+            savedInstanceState, this, viewModel, this, component, toolbarComponent, dropshadow) {
+          // TODO Handle any controller events
         }
 
-        layoutRoot.layout {
-            toolbarComponent.also {
-                connect(it.id(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-            }
+    layoutRoot.layout {
+      toolbarComponent.also {
+        connect(it.id(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
 
-            dropshadow.also {
-                connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
-                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-            }
+      dropshadow.also {
+        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
 
-            component.also {
-                connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
-                connect(
-                    it.id(),
-                    ConstraintSet.BOTTOM,
-                    ConstraintSet.PARENT_ID,
-                    ConstraintSet.BOTTOM
-                )
-                connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-                constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
-            }
-        }
-
-        showMainFragment()
+      component.also {
+        connect(it.id(), ConstraintSet.TOP, toolbarComponent.id(), ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+        connect(it.id(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        connect(it.id(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constrainHeight(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+        constrainWidth(it.id(), ConstraintSet.MATCH_CONSTRAINT)
+      }
     }
 
-    override fun onControllerEvent(event: UnitControllerEvent) {
-    }
+    showMainFragment()
+  }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        stateSaver?.saveState(outState)
-    }
+  override fun onControllerEvent(event: UnitControllerEvent) {}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stateSaver = null
-        mainView = null
-        toolbar = null
-        factory = null
-    }
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    stateSaver?.saveState(outState)
+  }
 
-    private fun showMainFragment() {
-        val fm = supportFragmentManager
-        if (fm.findFragmentByTag(MainFragment.TAG) == null) {
-            fm.commit(this) {
-                add(fragmentContainerId, MainFragment(), MainFragment.TAG)
-            }
-        }
+  override fun onDestroy() {
+    super.onDestroy()
+    stateSaver = null
+    mainView = null
+    toolbar = null
+    factory = null
+  }
+
+  private fun showMainFragment() {
+    val fm = supportFragmentManager
+    if (fm.findFragmentByTag(MainFragment.TAG) == null) {
+      fm.commit(this) { add(fragmentContainerId, MainFragment(), MainFragment.TAG) }
     }
+  }
 }

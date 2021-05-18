@@ -16,12 +16,11 @@
 
 package com.pyamsoft.zaptorch.core
 
-
 interface VolumeServiceInteractor {
 
-    suspend fun setServiceState(changed: Boolean)
+  suspend fun setServiceState(changed: Boolean)
 
-    suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit)
+  suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit)
 
-    suspend fun observeCameraState(onError: suspend (TorchError) -> Unit)
+  suspend fun observeCameraState(onError: suspend (TorchError) -> Unit)
 }

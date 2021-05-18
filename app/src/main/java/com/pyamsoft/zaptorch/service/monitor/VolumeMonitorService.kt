@@ -28,69 +28,67 @@ import com.pyamsoft.pydroid.ui.Injector
 import com.pyamsoft.zaptorch.ZapTorchComponent
 import com.pyamsoft.zaptorch.service.error.CameraErrorExplanation
 import com.pyamsoft.zaptorch.service.monitor.ServiceEvent.RenderError
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class VolumeMonitorService : AccessibilityService(), LifecycleOwner {
 
-    @JvmField
-    @Inject
-    internal var binder: ServiceBinder? = null
+  @JvmField @Inject internal var binder: ServiceBinder? = null
 
-    private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
+  private val registry by lazy(LazyThreadSafetyMode.NONE) { LifecycleRegistry(this) }
 
-    override fun getLifecycle(): Lifecycle {
-        return registry
+  override fun getLifecycle(): Lifecycle {
+    return registry
+  }
+
+  override fun onKeyEvent(event: KeyEvent): Boolean {
+    val action = event.action
+    val keyCode = event.keyCode
+    binder?.handleKeyEvent(lifecycleScope, action, keyCode)
+
+    // Never consume events
+    return false
+  }
+
+  override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
+    Timber.d("onAccessibilityEvent")
+  }
+
+  override fun onInterrupt() {
+    Timber.e("onInterrupt")
+  }
+
+  override fun onCreate() {
+    super.onCreate()
+    Injector.obtainFromApplication<ZapTorchComponent>(this)
+        .plusServiceComponent()
+        .create()
+        .inject(this)
+
+    requireNotNull(binder).bind(lifecycleScope) {
+      return@bind when (it) {
+        is RenderError -> CameraErrorExplanation.showError(applicationContext)
+      }
     }
 
-    override fun onKeyEvent(event: KeyEvent): Boolean {
-        val action = event.action
-        val keyCode = event.keyCode
-        binder?.handleKeyEvent(lifecycleScope, action, keyCode)
+    registry.currentState = Lifecycle.State.RESUMED
+  }
 
-        // Never consume events
-        return false
-    }
+  override fun onServiceConnected() {
+    super.onServiceConnected()
+    requireNotNull(binder).start(lifecycleScope)
+  }
 
-    override fun onAccessibilityEvent(accessibilityEvent: AccessibilityEvent) {
-        Timber.d("onAccessibilityEvent")
-    }
+  override fun onUnbind(intent: Intent): Boolean {
+    binder?.handleStop(lifecycleScope)
+    return super.onUnbind(intent)
+  }
 
-    override fun onInterrupt() {
-        Timber.e("onInterrupt")
-    }
+  override fun onDestroy() {
+    super.onDestroy()
+    binder?.unbind()
+    binder = null
 
-    override fun onCreate() {
-        super.onCreate()
-        Injector.obtainFromApplication<ZapTorchComponent>(this)
-            .plusServiceComponent()
-            .create()
-            .inject(this)
-
-        requireNotNull(binder).bind(lifecycleScope) {
-            return@bind when (it) {
-                is RenderError -> CameraErrorExplanation.showError(applicationContext)
-            }
-        }
-
-        registry.currentState = Lifecycle.State.RESUMED
-    }
-
-    override fun onServiceConnected() {
-        super.onServiceConnected()
-        requireNotNull(binder).start(lifecycleScope)
-    }
-
-    override fun onUnbind(intent: Intent): Boolean {
-        binder?.handleStop(lifecycleScope)
-        return super.onUnbind(intent)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binder?.unbind()
-        binder = null
-
-        registry.currentState = Lifecycle.State.DESTROYED
-    }
+    registry.currentState = Lifecycle.State.DESTROYED
+  }
 }

@@ -29,33 +29,28 @@ import dagger.Subcomponent
 import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
-@Subcomponent(
-    modules = [
-        SettingsComponent.ComponentModule::class,
-        ViewModelFactoryModule::class
-    ]
-)
+@Subcomponent(modules = [SettingsComponent.ComponentModule::class, ViewModelFactoryModule::class])
 interface SettingsComponent {
 
-    fun inject(fragment: TorchPreferenceFragment)
+  fun inject(fragment: TorchPreferenceFragment)
 
-    @Subcomponent.Factory
-    interface Factory {
+  @Subcomponent.Factory
+  interface Factory {
 
-        @CheckResult
-        fun create(
-            @BindsInstance toolbarActivity: ToolbarActivity,
-            @BindsInstance listView: RecyclerView,
-            @BindsInstance preferenceScreen: PreferenceScreen
-        ): SettingsComponent
-    }
+    @CheckResult
+    fun create(
+        @BindsInstance toolbarActivity: ToolbarActivity,
+        @BindsInstance listView: RecyclerView,
+        @BindsInstance preferenceScreen: PreferenceScreen
+    ): SettingsComponent
+  }
 
-    @Module
-    abstract class ComponentModule {
+  @Module
+  abstract class ComponentModule {
 
-        @Binds
-        @IntoMap
-        @ClassKey(SettingsViewModel::class)
-        internal abstract fun settingsViewModel(viewModel: SettingsViewModel): ViewModel
-    }
+    @Binds
+    @IntoMap
+    @ClassKey(SettingsViewModel::class)
+    internal abstract fun settingsViewModel(viewModel: SettingsViewModel): ViewModel
+  }
 }

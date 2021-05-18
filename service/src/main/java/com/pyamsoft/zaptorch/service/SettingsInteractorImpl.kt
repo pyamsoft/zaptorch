@@ -23,12 +23,13 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-internal class SettingsInteractorImpl @Inject internal constructor(
-    private val clearPreferences: ClearPreferences
-) : SettingsInteractor {
+internal class SettingsInteractorImpl
+@Inject
+internal constructor(private val clearPreferences: ClearPreferences) : SettingsInteractor {
 
-    override suspend fun clearAll() = withContext(context = Dispatchers.Default) {
+  override suspend fun clearAll() =
+      withContext(context = Dispatchers.Default) {
         Enforcer.assertOffMainThread()
         clearPreferences.clearAll()
-    }
+      }
 }

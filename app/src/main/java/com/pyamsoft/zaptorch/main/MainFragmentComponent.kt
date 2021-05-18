@@ -30,32 +30,28 @@ import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
 @Subcomponent(
-    modules = [
-        MainFragmentComponent.ComponentModule::class,
-        ViewModelFactoryModule::class
-    ]
-)
+    modules = [MainFragmentComponent.ComponentModule::class, ViewModelFactoryModule::class])
 interface MainFragmentComponent {
 
-    fun inject(fragment: MainFragment)
+  fun inject(fragment: MainFragment)
 
-    @Subcomponent.Factory
-    interface Factory {
+  @Subcomponent.Factory
+  interface Factory {
 
-        @CheckResult
-        fun create(
-            @BindsInstance owner: LifecycleOwner,
-            @BindsInstance toolbarActivity: ToolbarActivity,
-            @BindsInstance parent: ViewGroup
-        ): MainFragmentComponent
-    }
+    @CheckResult
+    fun create(
+        @BindsInstance owner: LifecycleOwner,
+        @BindsInstance toolbarActivity: ToolbarActivity,
+        @BindsInstance parent: ViewGroup
+    ): MainFragmentComponent
+  }
 
-    @Module
-    abstract class ComponentModule {
+  @Module
+  abstract class ComponentModule {
 
-        @Binds
-        @IntoMap
-        @ClassKey(MainViewModel::class)
-        internal abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
-    }
+    @Binds
+    @IntoMap
+    @ClassKey(MainViewModel::class)
+    internal abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
+  }
 }

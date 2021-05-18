@@ -16,8 +16,7 @@
 
 package com.pyamsoft.zaptorch.core
 
-
 interface TorchOffInteractor {
 
-    suspend fun killTorch()
+  suspend fun killTorch()
 }

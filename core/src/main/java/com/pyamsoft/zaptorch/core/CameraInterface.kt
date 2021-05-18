@@ -18,8 +18,7 @@ package com.pyamsoft.zaptorch.core
 
 interface CameraInterface : TorchOn, TorchOff {
 
-    fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit)
+  fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit)
 
-    fun destroy()
-
+  fun destroy()
 }

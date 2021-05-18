@@ -19,24 +19,23 @@ package com.pyamsoft.zaptorch.service
 import com.pyamsoft.zaptorch.core.CameraInterface
 import com.pyamsoft.zaptorch.core.TorchState
 
-internal abstract class CameraCommon protected constructor(
-) : CameraInterface, OnCameraStateChangedCallback {
+internal abstract class CameraCommon protected constructor() :
+    CameraInterface, OnCameraStateChangedCallback {
 
-    private var unavailableCallback: ((TorchState) -> Unit)? = null
+  private var unavailableCallback: ((TorchState) -> Unit)? = null
 
-    final override fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit) {
-        this.unavailableCallback = onUnavailable
-    }
+  final override fun setOnUnavailableCallback(onUnavailable: (TorchState) -> Unit) {
+    this.unavailableCallback = onUnavailable
+  }
 
-    override fun onUnavailable(state: TorchState) {
-        unavailableCallback?.invoke(state)
-    }
+  override fun onUnavailable(state: TorchState) {
+    unavailableCallback?.invoke(state)
+  }
 
-    final override fun destroy() {
-        release()
-        unavailableCallback = null
-    }
+  final override fun destroy() {
+    release()
+    unavailableCallback = null
+  }
 
-    protected abstract fun release()
-
+  protected abstract fun release()
 }

@@ -25,25 +25,26 @@ import com.pyamsoft.zaptorch.R
 
 class CameraErrorExplanation : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_ZapTorch_Error)
-        super.onCreate(savedInstanceState)
-    }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    setTheme(R.style.Theme_ZapTorch_Error)
+    super.onCreate(savedInstanceState)
+  }
 
-    override fun onPostResume() {
-        super.onPostResume()
-        CameraErrorDialog().show(this, "camera_error")
-    }
+  override fun onPostResume() {
+    super.onPostResume()
+    CameraErrorDialog().show(this, "camera_error")
+  }
 
-    companion object {
+  companion object {
 
-        @JvmStatic
-        fun showError(context: Context) {
-            val appContext = context.applicationContext
-            val intent = Intent(appContext, CameraErrorExplanation::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            appContext.startActivity(intent)
-        }
+    @JvmStatic
+    fun showError(context: Context) {
+      val appContext = context.applicationContext
+      val intent =
+          Intent(appContext, CameraErrorExplanation::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+          }
+      appContext.startActivity(intent)
     }
+  }
 }

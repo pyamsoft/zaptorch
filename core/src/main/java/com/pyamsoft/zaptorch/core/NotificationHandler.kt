@@ -18,7 +18,7 @@ package com.pyamsoft.zaptorch.core
 
 interface NotificationHandler {
 
-    fun start()
+  fun start()
 
-    fun stop()
+  fun stop()
 }

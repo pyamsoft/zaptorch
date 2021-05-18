@@ -22,47 +22,46 @@ import com.pyamsoft.pydroid.core.Enforcer
 import com.pyamsoft.zaptorch.core.NotificationHandler
 import com.pyamsoft.zaptorch.core.TorchError
 import com.pyamsoft.zaptorch.core.VolumeServiceInteractor
-import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.*
 
 @Singleton
-internal class VolumeServiceInteractorImpl @Inject internal constructor(
+internal class VolumeServiceInteractorImpl
+@Inject
+internal constructor(
     private val notificationHandler: NotificationHandler,
     private val errorBus: EventBus<TorchError>
 ) : VolumeServiceInteractor {
 
-    private val runningStateBus = EventBus.create<Boolean>(
-        emitOnlyWhenActive = true,
-        replayCount = 1
-    )
+  private val runningStateBus = EventBus.create<Boolean>(emitOnlyWhenActive = true, replayCount = 1)
 
-    private val cameraErrorStream by lazy {
-        object : EventConsumer<TorchError> {
-            override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
-                errorBus.onEvent { event ->
-                    notificationHandler.stop()
-                    emitter(event)
-                }
-            }
+  private val cameraErrorStream by lazy {
+    object : EventConsumer<TorchError> {
+      override suspend fun onEvent(emitter: suspend (event: TorchError) -> Unit) {
+        errorBus.onEvent { event ->
+          notificationHandler.stop()
+          emitter(event)
         }
+      }
     }
+  }
 
-    override suspend fun setServiceState(changed: Boolean) {
+  override suspend fun setServiceState(changed: Boolean) {
+    Enforcer.assertOffMainThread()
+    runningStateBus.send(changed)
+  }
+
+  override suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit) {
+    withContext(context = Dispatchers.Default) {
+      Enforcer.assertOffMainThread()
+      return@withContext runningStateBus.onEvent(onEvent)
+    }
+  }
+
+  override suspend fun observeCameraState(onError: suspend (TorchError) -> Unit) =
+      withContext(context = Dispatchers.Default) {
         Enforcer.assertOffMainThread()
-        runningStateBus.send(changed)
-    }
-
-    override suspend fun observeServiceState(onEvent: suspend (Boolean) -> Unit) {
-        withContext(context = Dispatchers.Default) {
-            Enforcer.assertOffMainThread()
-            return@withContext runningStateBus.onEvent(onEvent)
-        }
-    }
-
-    override suspend fun observeCameraState(onError: suspend (TorchError) -> Unit) =
-        withContext(context = Dispatchers.Default) {
-            Enforcer.assertOffMainThread()
-            cameraErrorStream.onEvent(onError)
-        }
+        cameraErrorStream.onEvent(onError)
+      }
 }
